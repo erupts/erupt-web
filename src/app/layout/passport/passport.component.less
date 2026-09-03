@@ -164,18 +164,40 @@
     }
 }
 
+// ── Dark theme ────────────────────────────────────────────────────
+// Surfaces and text already follow the --erupt-* tokens; only the decorative
+// background image carries a baked-in light ground and needs a dark variant.
+:host-context(.dark) ::ng-deep {
+    // Page drops to the layout ground so the container-colored card reads as a
+    // raised surface (in light both are white and the shadows do that job, but
+    // black-based shadows vanish on a dark ground).
+    .lp-page {
+        background-color: var(--erupt-bg-layout, #000);
+        background-image: url('/assets/passport/passport-bg-dark.svg');
+    }
+
+    // hairline ring instead of the invisible shadows
+    .lp-card {
+        box-shadow: 0 0 0 1px var(--erupt-fill-tertiary, rgba(255, 255, 255, 0.08)),
+        0 24px 56px rgba(0, 0, 0, 0.35);
+    }
+}
+
 // ── Brutalist skin ────────────────────────────────────────────────
-// Only active when <html> has the .brutalist-theme class.
+// Only active when <html> has the .brutalist-theme class. Colors come from
+// the global --raft-* tokens (styles/brutalist-theme.less), which swap
+// ink/paper under html.brutalist-theme.dark — so this skin follows the dark
+// theme for free; the fallbacks mirror the original light values.
 :host-context(.brutalist-theme) ::ng-deep {
 
     .lp-page {
-        background-color: #e3ebee;
+        background-color: var(--raft-cream, #e3ebee);
     }
 
     .lp-side-nav {
         height: 44px;
-        background: #fff;
-        border-bottom: 1.5px solid #0a0a0a;
+        background: var(--raft-paper, #fff);
+        border-bottom: 1.5px solid var(--raft-ink, #0a0a0a);
     }
 
     .lp-side-brand {
@@ -191,32 +213,32 @@
         font-weight: 700;
         letter-spacing: 0.06em;
         text-transform: uppercase;
-        color: #0a0a0a;
+        color: var(--raft-ink, #0a0a0a);
     }
 
     .lp-nav-btn {
         border-radius: 0;
-        color: #0a0a0a;
+        color: var(--raft-ink, #0a0a0a);
         transition: background 0.15s;
 
         &:hover {
-            color: #0a0a0a;
-            background: rgba(10, 10, 10, 0.08);
+            color: var(--raft-ink, #0a0a0a);
+            background: var(--raft-muted, rgba(10, 10, 10, 0.08));
         }
     }
 
     .lp-nav-divider {
-        background: rgba(10, 10, 10, 0.20);
+        background: var(--raft-muted, rgba(10, 10, 10, 0.20));
     }
 
     .lp-nav-lang i[nz-icon] {
-        color: #0a0a0a;
+        color: var(--raft-ink, #0a0a0a);
         border-radius: 0;
         transition: background 0.15s;
 
         &:hover {
-            color: #0a0a0a;
-            background: rgba(10, 10, 10, 0.08);
+            color: var(--raft-ink, #0a0a0a);
+            background: var(--raft-muted, rgba(10, 10, 10, 0.08));
         }
     }
 
@@ -226,9 +248,10 @@
 
     .lp-card {
         max-width: 400px;
-        border: 1.5px solid #0a0a0a;
+        background: var(--raft-paper, #fff);
+        border: 1.5px solid var(--raft-ink, #0a0a0a);
         border-radius: 0;
-        box-shadow: 8px 8px 0 #0a0a0a;
+        box-shadow: 8px 8px 0 var(--raft-ink, #0a0a0a);
         animation: lpCardInBrutalist 0.40s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
@@ -236,12 +259,12 @@
         from {
             opacity: 0;
             transform: translate(6px, 6px);
-            box-shadow: 0 0 0 #0a0a0a;
+            box-shadow: 0 0 0 var(--raft-ink, #0a0a0a);
         }
         to {
             opacity: 1;
             transform: translate(0, 0);
-            box-shadow: 8px 8px 0 #0a0a0a;
+            box-shadow: 8px 8px 0 var(--raft-ink, #0a0a0a);
         }
     }
 
@@ -250,17 +273,17 @@
         font-family: 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', Menlo, Consolas, monospace;
         font-size: 11px;
         letter-spacing: 0.05em;
-        color: rgba(10, 10, 10, 0.55);
+        color: var(--raft-text-2, rgba(10, 10, 10, 0.55));
         text-transform: uppercase;
 
         a {
-            color: #0a0a0a;
-            border-bottom: 1px solid rgba(10, 10, 10, 0.35);
+            color: var(--raft-ink, #0a0a0a);
+            border-bottom: 1px solid var(--raft-muted, rgba(10, 10, 10, 0.35));
             padding-bottom: 1px;
 
             &:hover {
-                color: #0a0a0a;
-                border-bottom-color: #0a0a0a;
+                color: var(--raft-ink, #0a0a0a);
+                border-bottom-color: var(--raft-ink, #0a0a0a);
             }
         }
     }

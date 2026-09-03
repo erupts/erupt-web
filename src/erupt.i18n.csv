@@ -130,6 +130,12 @@ setting.group.navigation,导航,導航,Navigation,Navigation,ナビゲーショ�
 setting.group.table,表格,表格,Table,Tableau,テーブル,표,Таблица,Tabla,Tabelle,Tabela,Tabel,الجدول
 setting.group.other,其他,其他,Others,Autres,その他,기타,Прочее,Otros,Sonstiges,Outros,Lainnya,أخرى
 setting.dark,夜间模式,夜間模式,Dark mode,Le mode nuit,ナイトモード,야간모드,Ночной режим,Modo nocturno,Die nachtmodus.,Modo de noite,Mode malam,الوضع الليلي
+setting.color-scheme,明暗模式,明暗模式,Color scheme,Mode de couleur,カラーモード,명암 모드,Цветовая схема,Esquema de color,Farbschema,Esquema de cores,Skema warna,وضع الألوان
+setting.theme-light,亮色,亮色,Light,Clair,ライト,라이트,Светлая,Claro,Hell,Claro,Terang,فاتح
+setting.theme-dark,暗色,暗色,Dark,Sombre,ダーク,다크,Тёмная,Oscuro,Dunkel,Escuro,Gelap,داكن
+setting.theme-auto,跟随系统,跟隨系統,System,Système,システム,시스템,Системная,Sistema,System,Sistema,Sistem,النظام
+setting.compact,紧凑模式,緊湊模式,Compact mode,Mode compact,コンパクトモード,컴팩트 모드,Компактный режим,Modo compacto,Kompaktmodus,Modo compacto,Mode ringkas,الوضع المضغوط
+setting.aside-dark,深色侧边栏,深色側邊欄,Dark sidebar,Barre latérale sombre,ダークサイドバー,다크 사이드바,Тёмная боковая панель,Barra lateral oscura,Dunkle Seitenleiste,Barra lateral escura,Bilah sisi gelap,شريط جانبي داكن
 setting.clear-cache,清理本地缓存,清理本地緩存,Clear Local Cache,Nettoyer votre cache local,로컬캐시지우기,로컬캐시청소,Очистка местного кэша,Limpiar el caché local,Räumen sie den lokalen bereich auf,Limpar o cache local,Bersihkan tembolok lokal,تنظيف التخزين المؤقت المحلي
 setting.clear,清理,清理,Clear,nettoyage,整理する,청소,очист,limpieza,Reinigen.,limpar,membersihkan,تنظيف
 setting.confirm,确认要清理所有的本地缓存吗？,確認要清理所有的本地緩存嗎？,Are you sure you want to clean up all local caches?,Confirmez que vous voulez nettoyer tout votre cache local?,全てのローカルキャッシュをクリアしますか？,로컬캐시를모두청소하시겠습니까?,Подтверждаю.,Confirma que quieres limpiar todo el caché local?,"Sind sie sicher, dass sie alle lokalen konten löschen möchten?",Confirma que queres limpar todo o cache local?,Konfirmasi untuk membersihkan semua tembolok lokal?,هل تم التأكيد على تنظيف جميع التخزين المؤقت المحلية؟

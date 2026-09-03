@@ -26,6 +26,17 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     tenantDomainInfo = EruptTenantInfoData.get();
 
+    // Dark theme — reflects the class index.html applied before bootstrap.
+    darkTheme: boolean = document.documentElement.classList.contains("dark");
+
+    toggleDarkTheme(): void {
+        this.darkTheme = !this.darkTheme;
+        // Persist an explicit choice (replaces a previous "auto" as well),
+        // honored by index.html pre-bootstrap on the next load.
+        localStorage.setItem("dark-theme", String(this.darkTheme));
+        window["eruptApplyDarkTheme"](this.darkTheme);
+    }
+
     // Brutalist Theme skin — reflects the class index.html applied before bootstrap.
     brutalistTheme: boolean = document.documentElement.classList.contains("brutalist-theme");
 

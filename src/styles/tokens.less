@@ -82,6 +82,113 @@ html.dark {
     --ant-primary-3: color-mix(in srgb, var(--ant-primary-color) 32%, #141414);
 }
 
+// Dark sidebar in light mode (classic admin layout, html.aside-dark).
+// Scoped away from the global dark theme — there the sidebar is already dark —
+// and from the brutalist skin, which owns its own sidebar look.
+html.aside-dark:not(.dark):not(.brutalist-theme) {
+    // Hooks exposed by the compiled @delon layout styles.
+    // NOTE: the selected-bg hook paints the <li>, which CONTAINS the expanded
+    // submenu <ul> — a strong color there floods the whole open subtree.
+    // Keep it transparent and paint the leaf link instead (leaves carry href).
+    --alain-default-aside-bg: #001529;
+    --alain-default-aside-nav-divider: rgba(255, 255, 255, 0.12);
+    --alain-default-aside-nav-selected-bg: transparent;
+
+    .alain-default__aside {
+        .sidebar-nav__item-link {
+            color: rgba(255, 255, 255, 0.68);
+
+            &:hover {
+                color: #fff;
+                background-color: rgba(255, 255, 255, 0.06);
+            }
+        }
+
+        .sidebar-nav__selected {
+            // active-trail parents only tint their own title, never the subtree
+            > .sidebar-nav__item-link {
+                color: #fff;
+            }
+
+            // solid primary rounded block on the selected leaf row only
+            > .sidebar-nav__item-link[href] {
+                background-color: var(--ant-primary-color);
+
+                &:hover {
+                    background-color: var(--ant-primary-color);
+                }
+            }
+        }
+
+        .sidebar-nav__group-title {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        // delon draws the expand arrows with ink-colored gradients
+        .sidebar-nav__sub-arrow::before,
+        .sidebar-nav__sub-arrow::after {
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75));
+        }
+
+        .sidebar-nav__pin {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .sidebar-nav--pinned {
+            border-bottom-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .sidebar-nav__drag-handle:hover {
+            color: rgba(255, 255, 255, 0.75);
+        }
+
+        // dual-column mode rail
+        .dual-menu__rail {
+            border-right-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .dual-menu__rail-item {
+            color: rgba(255, 255, 255, 0.65);
+
+            &:hover {
+                background: rgba(255, 255, 255, 0.08);
+                color: #fff;
+            }
+
+            &--active {
+                background: var(--ant-primary-color);
+                color: #fff;
+            }
+        }
+
+        // bottom utility bar
+        .fold {
+            color: rgba(255, 255, 255, 0.65);
+            background: #001529;
+            border-top-color: rgba(255, 255, 255, 0.12);
+
+            .fold__btn:hover {
+                color: #fff;
+                background: rgba(255, 255, 255, 0.08);
+            }
+
+            .fold__btn--active {
+                background: rgba(255, 255, 255, 0.12);
+            }
+        }
+
+        .aside-loading-overlay {
+            background: rgba(0, 21, 41, 0.75);
+        }
+    }
+
+    // the 1px sidebar edge line looks harsh against the navy panel
+    .erupt-side:after,
+    .alain-default__aside:after {
+        border-right-color: rgba(0, 0, 0, 0.18);
+    }
+}
+
 // style.dark.css is compiled from less with a fixed primary color, so it would
 // repaint brand-colored controls in the stock dark blue. Re-anchor the most
 // visible primary surfaces to the runtime --ant-primary-* variables; html.dark

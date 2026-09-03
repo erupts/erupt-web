@@ -1,0 +1,18 @@
+// Compact theme bundle — same lazy-bundle mechanism as styles.dark.less
+// (emitted as "style.compact.css", swapped in by window.eruptApplyCompactTheme).
+// Recompiles the full ng-zorro + @delon styles with the official compact
+// sizing variables; colors stay on the default light palette.
+@import 'ng-zorro-antd/ng-zorro-antd.less';
+@import 'ng-zorro-antd/code-editor/style/entry.less';
+@import 'ng-zorro-antd/resizable/style/entry.less';
+
+// Equivalent of @delon/theme/compact.less minus '@delon/chart' (not installed)
+@import '@delon/theme/theme-default.less';
+@import '@delon/theme/system/index.less';
+@import '@delon/theme/layout-default/style/index.less';
+@import '@delon/theme/layout-blank/style/index.less';
+@import '@delon/abc/index.less';
+@import '@delon/theme/theme-compact.less';
+
+// Keep project-level theme variable overrides in sync with src/styles/theme.less
+@alain-default-header-hg: 44px !important;

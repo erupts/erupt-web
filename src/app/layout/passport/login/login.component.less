@@ -1,10 +1,14 @@
 :host {
     display: block;
 
-    --lf-ink: #0a0a0a;
-    --lf-paper: #fff;
-    --lf-muted: rgba(10, 10, 10, 0.55);
-    --lf-hair: rgba(10, 10, 10, 0.12);
+    // Anchor the local skin vars to the global raft tokens so the brutalist
+    // dark variant (html.brutalist-theme.dark swaps ink/paper) carries through;
+    // the fallbacks only apply when the brutalist skin is off, where these
+    // vars are unused anyway.
+    --lf-ink: var(--raft-ink, #0a0a0a);
+    --lf-paper: var(--raft-paper, #fff);
+    --lf-muted: var(--raft-text-2, rgba(10, 10, 10, 0.55));
+    --lf-hair: var(--raft-muted, rgba(10, 10, 10, 0.12));
     --lf-mono: 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', Menlo, Consolas, monospace;
 
     // ── Head (default: soft) ─────────────────────────────────────
@@ -216,6 +220,7 @@
         input:-webkit-autofill:hover,
         input:-webkit-autofill:focus,
         input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 1000px var(--lf-paper, #fff) inset !important;
             -webkit-text-fill-color: var(--lf-ink) !important;
             caret-color: var(--lf-ink);
         }
@@ -289,12 +294,12 @@
 
         .ant-input-affix-wrapper {
             border: 1.5px solid var(--lf-ink) !important;
-            background: #fff;
+            background: var(--lf-paper, #fff);
             padding: 6px 12px !important;
         }
 
         .ant-input-affix-wrapper:hover {
-            background: rgba(10, 10, 10, 0.03);
+            background: var(--raft-cream, rgba(10, 10, 10, 0.03));
         }
 
         .ant-input-affix-wrapper:focus,
@@ -316,7 +321,7 @@
         // ── Group addon (eye toggle) ─────────────────────────────
         .ant-input-group-addon {
             border-radius: 0 !important;
-            background: #fff !important;
+            background: var(--lf-paper, #fff) !important;
             border: 1.5px solid var(--lf-ink) !important;
             border-left: none !important;
             color: var(--lf-ink);
@@ -353,7 +358,7 @@
         .ant-checkbox-inner {
             border-radius: 0 !important;
             border: 1.5px solid var(--lf-ink) !important;
-            background: #fff;
+            background: var(--lf-paper, #fff);
         }
 
         .ant-checkbox-checked .ant-checkbox-inner {

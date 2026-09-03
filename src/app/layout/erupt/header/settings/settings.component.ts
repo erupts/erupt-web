@@ -30,8 +30,22 @@ export class SettingsComponent implements OnInit {
     // Brutalist Theme skin — reflects the class index.html applied before bootstrap.
     brutalistTheme: boolean = document.documentElement.classList.contains("brutalist-theme");
 
-    // Dark theme — reflects the class index.html applied before bootstrap.
-    darkTheme: boolean = document.documentElement.classList.contains("dark");
+    // Color scheme: light / dark / auto (follow the OS). index.html applied the
+    // saved choice before bootstrap; here we only reflect and update it.
+    darkMode: 'light' | 'dark' | 'auto' = (() => {
+        const pref = localStorage.getItem("dark-theme");
+        if (pref === "auto") return "auto";
+        if (pref === "true") return "dark";
+        if (pref === "false") return "light";
+        // no saved choice — reflect the site-config default already applied
+        return document.documentElement.classList.contains("dark") ? "dark" : "light";
+    })();
+
+    // Compact theme — reflects the class index.html applied before bootstrap.
+    compactTheme: boolean = document.documentElement.classList.contains("compact");
+
+    // Dark sidebar in light mode — pure class toggle (styles in tokens.less).
+    asideDark: boolean = document.documentElement.classList.contains("aside-dark");
 
     // Theme color — user choice (localStorage) wins over the site config default.
     // Curated palette: mid-tone (600-level) hues that stay readable under white
@@ -52,6 +66,24 @@ export class SettingsComponent implements OnInit {
         "#0891b2", // peacock cyan
         "#475569"  // graphite slate
     ];
+
+    // Raft candy palette (400-level hues from raft.build) — offered while the
+    // brutalist skin is on: pastel accents designed to pair with ink borders
+    // and dark text rather than the white-text mid-tones above.
+    brutalistPresetColors: string[] = [
+        "#fe7da8", // raft pink (site default accent)
+        "#f97264", // raft red
+        "#f8a16f", // raft orange
+        "#ffd441", // raft yellow
+        "#a9d877", // raft lime
+        "#28ccf3", // raft cyan
+        "#bbafe6", // raft purple
+        "#c0b9b1"  // raft stone
+    ];
+
+    get activePresetColors(): string[] {
+        return this.brutalistTheme ? this.brutalistPresetColors : this.presetColors;
+    }
 
     themeColor: string = localStorage.getItem("theme-color") || WindowModel.theme?.primaryColor || "#1677ff";
 
@@ -106,12 +138,27 @@ export class SettingsComponent implements OnInit {
         }
     }
 
-    toggleDarkTheme(value: boolean) {
-        this.darkTheme = value;
-        // Applies html.dark and mounts/unmounts style.dark.css (defined in index.html).
-        window["eruptApplyDarkTheme"](value);
-        // Persist so the choice survives reload (honored by index.html on next load).
-        localStorage.setItem("dark-theme", String(value));
+    setDarkMode(mode: 'light' | 'dark' | 'auto') {
+        this.darkMode = mode;
+        // Persisted as "true" | "false" | "auto"; index.html honors it on load
+        // and follows OS scheme changes while in auto mode.
+        localStorage.setItem("dark-theme", mode === "auto" ? "auto" : String(mode === "dark"));
+        const dark = mode === "auto"
+            ? window.matchMedia("(prefers-color-scheme: dark)").matches
+            : mode === "dark";
+        window["eruptApplyDarkTheme"](dark);
+    }
+
+    toggleCompactTheme(value: boolean) {
+        this.compactTheme = value;
+        localStorage.setItem("compact-theme", String(value));
+        window["eruptApplyCompactTheme"](value);
+    }
+
+    toggleAsideDark(value: boolean) {
+        this.asideDark = value;
+        localStorage.setItem("aside-dark", String(value));
+        document.documentElement.classList.toggle("aside-dark", value);
     }
 
     toggleBrutalistTheme(value: boolean) {

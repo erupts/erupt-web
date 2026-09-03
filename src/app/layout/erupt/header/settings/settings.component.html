@@ -3,7 +3,7 @@
 <div class="setting-item setting-item--stack">
     <span>{{'setting.theme-color' | translate}}</span>
     <div class="theme-color-picker">
-        @for (c of presetColors; track c) {
+        @for (c of activePresetColors; track c) {
             <span class="theme-color-picker__swatch"
                   [style.background]="c"
                   [class.theme-color-picker__swatch--active]="themeColorHex.toLowerCase() === c"
@@ -11,7 +11,7 @@
         }
         <!-- custom color: a conic-rainbow swatch wrapping a native color input -->
         <label class="theme-color-picker__swatch theme-color-picker__custom"
-               [class.theme-color-picker__swatch--active]="!presetColors.includes(themeColorHex.toLowerCase())">
+               [class.theme-color-picker__swatch--active]="!activePresetColors.includes(themeColorHex.toLowerCase())">
             <input type="color" [value]="themeColorHex" (change)="setThemeColor($any($event.target).value)">
         </label>
         <span class="theme-color-picker__reset" (click)="resetThemeColor()"
@@ -47,9 +47,23 @@
     </div>
 </div>
 <div class="setting-item">
-    <span>{{'setting.dark' | translate}}</span>
-    <nz-switch nzSize="small" [(ngModel)]="darkTheme"
-               (ngModelChange)="toggleDarkTheme($event)"></nz-switch>
+    <span>{{'setting.color-scheme' | translate}}</span>
+    <nz-radio-group [(ngModel)]="darkMode" (ngModelChange)="setDarkMode($event)"
+                    nzSize="small" nzButtonStyle="solid">
+        <label nz-radio-button nzValue="light">{{'setting.theme-light' | translate}}</label>
+        <label nz-radio-button nzValue="dark">{{'setting.theme-dark' | translate}}</label>
+        <label nz-radio-button nzValue="auto">{{'setting.theme-auto' | translate}}</label>
+    </nz-radio-group>
+</div>
+<div class="setting-item">
+    <span>{{'setting.compact' | translate}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="compactTheme"
+               (ngModelChange)="toggleCompactTheme($event)"></nz-switch>
+</div>
+<div class="setting-item">
+    <span>{{'setting.aside-dark' | translate}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="asideDark"
+               (ngModelChange)="toggleAsideDark($event)"></nz-switch>
 </div>
 <div class="setting-item">
     <span>Brutalist Theme</span>

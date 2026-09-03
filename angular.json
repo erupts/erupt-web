@@ -75,6 +75,16 @@
                                 "input": "src/styles.dark.less",
                                 "bundleName": "style.dark",
                                 "inject": false
+                            },
+                            {
+                                "input": "src/styles.compact.less",
+                                "bundleName": "style.compact",
+                                "inject": false
+                            },
+                            {
+                                "input": "src/styles.compact-dark.less",
+                                "bundleName": "style.compact-dark",
+                                "inject": false
                             }
                         ],
                         "scripts": [],

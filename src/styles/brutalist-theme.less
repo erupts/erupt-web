@@ -33,20 +33,15 @@ html.brutalist-theme {
     /* Drive every split border (menu, header, tree, cards) off the ink color */
     --ant-border-color-split: var(--raft-ink);
 
-    /* Lock the primary color to cyan while the Brutalist Theme skin is on. Higher
-     * specificity than the app's dynamic `html`-level primary, and it reverts the
-     * moment the class is removed. --raft-accent follows it automatically below. */
-    --ant-primary-color: var(--raft-cyan);
-    --ant-primary-color-hover: var(--raft-cyan);
-    --ant-primary-color-active: var(--raft-cyan);
-
-    /* Candy accents — constant across light/dark */
+    /* Candy accents — constant across light/dark. The accent follows the
+     * runtime theme color (settings drawer / site config); --raft-cyan is only
+     * the skin's suggested preset, not a lock. */
     --raft-accent: var(--ant-primary-color, #F585B4);  /* follows the theme color — active / selected / primary CTA */
     --raft-yellow: #FFC93E;       /* brand / logo tile                       */
     --raft-green: #93D655;        /* success / switch-on                     */
     --raft-orange: #F6935B;       /* danger / destructive                    */
     --raft-cyan: #4FC8EC;         /* available accent (unused by default)    */
-    --raft-accent-soft: rgba(79, 200, 236, 0.16); /* faint accent wash — selected rows, date range */
+    --raft-accent-soft: color-mix(in srgb, var(--raft-accent) 16%, transparent); /* faint accent wash — selected rows, date range */
 
     /* Hard shadows — small, and used sparingly */
     --raft-sh: 3px 3px 0 var(--raft-ink);
@@ -64,6 +59,12 @@ html.brutalist-theme.dark {
     --raft-text-2: #B0A78F;
     --raft-muted: #3A3529;
     --raft-panel: #14120B;        /* sidebar stays ink-black, darker than paper */
+
+    /* re-anchor the light brand washes to the dark paper (mirrors the
+     * html.dark remap in tokens.less, but on the raft ground) */
+    --ant-primary-1: color-mix(in srgb, var(--ant-primary-color) 14%, #201C12);
+    --ant-primary-2: color-mix(in srgb, var(--ant-primary-color) 22%, #201C12);
+    --ant-primary-3: color-mix(in srgb, var(--ant-primary-color) 32%, #201C12);
 }
 
 /* ================================================================== *

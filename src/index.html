@@ -289,25 +289,60 @@
         if (_nbPref === "true") {
             document.documentElement.classList.add("brutalist-theme");
         }
-        // Dark theme: toggles html.dark and lazy-loads the compiled dark
-        // stylesheet (style.dark.css). Shared with the settings drawer via
-        // window.eruptApplyDarkTheme so the logic lives in one place.
-        window.eruptApplyDarkTheme = function (dark) {
-            document.documentElement.classList.toggle("dark", dark);
-            var link = document.getElementById("site-theme-dark");
-            if (dark && !link) {
+        // Theme bundles: dark and compact are compiled as separate lazy
+        // stylesheets; using both loads the merged compact-dark bundle.
+        // One <link> is swapped between the three — shared with the settings
+        // drawer via window.eruptApply*Theme so the logic lives in one place.
+        window.eruptSyncThemeBundles = function () {
+            var cls = document.documentElement.classList;
+            var dark = cls.contains("dark");
+            var compact = cls.contains("compact");
+            var href = dark && compact ? "style.compact-dark.css"
+                : dark ? "style.dark.css"
+                    : compact ? "style.compact.css" : null;
+            var link = document.getElementById("site-theme-style");
+            if (!href) {
+                if (link) link.parentNode.removeChild(link);
+                return;
+            }
+            href += "?_=" + __t__;
+            if (!link) {
                 link = document.createElement("link");
-                link.id = "site-theme-dark";
+                link.id = "site-theme-style";
                 link.rel = "stylesheet";
-                link.href = "style.dark.css?_=" + __t__;
                 document.head.appendChild(link);
-            } else if (!dark && link) {
-                link.parentNode.removeChild(link);
+            }
+            if (link.getAttribute("href") !== href) {
+                link.setAttribute("href", href);
             }
         };
+        window.eruptApplyDarkTheme = function (dark) {
+            document.documentElement.classList.toggle("dark", dark);
+            window.eruptSyncThemeBundles();
+        };
+        window.eruptApplyCompactTheme = function (compact) {
+            document.documentElement.classList.toggle("compact", compact);
+            window.eruptSyncThemeBundles();
+        };
+        // dark-theme: "true" | "false" | "auto" (follow the OS color scheme)
         var _darkPref = localStorage.getItem("dark-theme");
-        if (_darkPref === "true") {
+        var _mqDark = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+        if (_darkPref === "true" || (_darkPref === "auto" && _mqDark && _mqDark.matches)) {
             window.eruptApplyDarkTheme(true);
+        }
+        if (_mqDark && _mqDark.addEventListener) {
+            _mqDark.addEventListener("change", function (e) {
+                if (localStorage.getItem("dark-theme") === "auto") {
+                    window.eruptApplyDarkTheme(e.matches);
+                }
+            });
+        }
+        if (localStorage.getItem("compact-theme") === "true") {
+            window.eruptApplyCompactTheme(true);
+        }
+        // Dark sidebar in light mode — pure class toggle, styles in tokens.less
+        if (localStorage.getItem("aside-dark") === "true") {
+            document.documentElement.classList.add("aside-dark");
         }
         // A user-picked theme color (settings drawer) tints the preloader too.
         var _tcPref = localStorage.getItem("theme-color");
@@ -323,6 +358,12 @@
                 }
                 if (_darkPref === null && window.eruptSiteConfig.darkTheme) {
                     window.eruptApplyDarkTheme(true);
+                }
+                if (localStorage.getItem("compact-theme") === null && window.eruptSiteConfig.compactTheme) {
+                    window.eruptApplyCompactTheme(true);
+                }
+                if (localStorage.getItem("aside-dark") === null && window.eruptSiteConfig.asideDark) {
+                    document.documentElement.classList.add("aside-dark");
                 }
                 if (_tcPref === null && window.eruptSiteConfig.theme && window.eruptSiteConfig.theme.primaryColor) {
                     _preloaderEl.style.setProperty("--pl-accent", window.eruptSiteConfig.theme.primaryColor);

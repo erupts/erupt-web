@@ -1,0 +1,6 @@
+// Combined dark + compact bundle ("style.compact-dark.css") — loaded when both
+// modes are on. Less variables are lazily evaluated, so importing the compact
+// sizing variables after the full dark bundle re-sizes everything while the
+// dark palette stays in effect.
+@import './styles.dark.less';
+@import '@delon/theme/theme-compact.less';
