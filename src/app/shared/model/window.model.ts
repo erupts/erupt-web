@@ -32,6 +32,9 @@ export class WindowModel {
 
     public static theme: {
         primaryColor?: string,
+        // Header bar color: "primary" (follow the primary color) or a literal
+        // CSS color; users can still override it in the settings drawer.
+        headerColor?: string,
         [key: string]: any
     }
 
