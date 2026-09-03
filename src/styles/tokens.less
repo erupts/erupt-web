@@ -211,14 +211,18 @@ html.aside-dark:not(.brutalist-theme) {
     }
 }
 
-// style.dark.css is compiled from less with a fixed primary color, so it would
-// repaint brand-colored controls in the stock dark blue. Re-anchor the most
-// visible primary surfaces to the runtime --ant-primary-* variables; html.dark
-// out-specifies the compiled rules regardless of stylesheet order.
-// NOTE: no bare `html.dark a` rule here — its (0,1,1) specificity would beat
-// component link styles like the sidebar menu's (0,1,0). Plain links are
-// re-anchored at the end of styles.dark.less instead, where source order wins.
-html.dark {
+// The lazy theme bundles (style.dark.css, style.compact.css and their merge)
+// are compiled from less with a FIXED primary color, so they would repaint
+// brand-colored controls in the stock blue. Re-anchor the most visible primary
+// surfaces to the runtime --ant-primary-* variables; the scoped selectors
+// out-specify the compiled rules regardless of stylesheet order. (The normal
+// light theme uses ng-zorro's variable.css and needs none of this.)
+// NOTE: no bare `html.dark a`-style rule here — its (0,1,1) specificity would
+// beat component link styles like the sidebar menu's (0,1,0). Plain links are
+// re-anchored at the end of themes/dark.less / themes/compact.less instead,
+// where source order wins.
+html.dark,
+html.compact {
     .ant-btn-primary:not([disabled]) {
         border-color: var(--ant-primary-color);
         background: var(--ant-primary-color);

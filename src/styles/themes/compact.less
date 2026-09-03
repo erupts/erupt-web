@@ -1,4 +1,4 @@
-// Compact theme bundle — same lazy-bundle mechanism as styles.dark.less
+// Compact theme bundle — same lazy-bundle mechanism as ./dark.less
 // (emitted as "style.compact.css", swapped in by window.eruptApplyCompactTheme).
 // Recompiles the full ng-zorro + @delon styles with the official compact
 // sizing variables; colors stay on the default light palette.
@@ -13,6 +13,20 @@
 @import '@delon/theme/layout-blank/style/index.less';
 @import '@delon/abc/index.less';
 @import '@delon/theme/theme-compact.less';
+
+// ── Project re-anchors — appended last so source order beats the imports ──
+// (mirrors the tail of ./dark.less; the compiled compact css above fixes
+// links to the stock blue, while the app's brand color is a runtime variable)
+
+// Plain links follow the runtime brand color. Kept at (0,0,1) specificity so
+// component link styles still take precedence.
+a {
+    color: var(--ant-primary-color);
+}
+
+a:hover {
+    color: var(--ant-primary-color-hover);
+}
 
 // Keep project-level theme variable overrides in sync with src/styles/theme.less
 @alain-default-header-hg: 44px !important;

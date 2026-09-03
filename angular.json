@@ -72,17 +72,17 @@
                             "node_modules/vditor/src/assets/less/index.less",
                             "node_modules/@xterm/xterm/css/xterm.css",
                             {
-                                "input": "src/styles.dark.less",
+                                "input": "src/styles/themes/dark.less",
                                 "bundleName": "style.dark",
                                 "inject": false
                             },
                             {
-                                "input": "src/styles.compact.less",
+                                "input": "src/styles/themes/compact.less",
                                 "bundleName": "style.compact",
                                 "inject": false
                             },
                             {
-                                "input": "src/styles.compact-dark.less",
+                                "input": "src/styles/themes/compact-dark.less",
                                 "bundleName": "style.compact-dark",
                                 "inject": false
                             }
