@@ -122,8 +122,12 @@ export class StartupService {
         if (WindowModel.eruptEvent) {
             WindowModel.eruptEvent.startup && WindowModel.eruptEvent.startup();
         }
-        // Route reuse
-        this.settingSrv.layout['reuse'] = !!this.settingSrv.layout['reuse'];
+        // Route reuse (multi-tab): a choice persisted from the settings drawer
+        // wins; otherwise fall back to the site-config default
+        // (eruptSiteConfig.tabReuse, off by default).
+        this.settingSrv.layout['reuse'] = 'reuse' in this.settingSrv.layout
+            ? !!this.settingSrv.layout['reuse']
+            : !!WindowModel.config['tabReuse'];
         // Table border
         this.settingSrv.layout['bordered'] = false !== this.settingSrv.layout['bordered'];
         // Breadcrumb navigation
