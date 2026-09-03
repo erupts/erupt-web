@@ -56,7 +56,8 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     printLoading: boolean = false;
 
-    treeWidth: number = 280;
+    // Default matches the skeleton's .sk-nav width so there is no jump on load
+    treeWidth: number = 235;
 
     resizing: boolean = false;
 

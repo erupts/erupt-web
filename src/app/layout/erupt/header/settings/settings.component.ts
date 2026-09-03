@@ -60,7 +60,7 @@ export class SettingsComponent implements OnInit {
         "#db2777", // rose pink
         "#e11d48", // rose red
         "#ff6b2a", // erupt lava orange
-        "#d97706", // amber
+        "#65a30d", // lime
         "#059669", // emerald
         "#0d9488", // teal
         "#0891b2", // peacock cyan
