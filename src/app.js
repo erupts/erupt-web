@@ -4,8 +4,8 @@ window.eruptSiteConfig = {
     title: "Erupt Engine",
     desc: "Common Data Framework",
     dialogLogin: false,
-    copyright: true, //是否保留显示版权信息
-    tabReuse: false, //是否开启多页签，默认不开启（用户在设置面板中的选择优先于该默认值）
+    copyright: true, // whether to show the copyright footer
+    tabReuse: false, // enable multi-tab route reuse by default (the user's choice in the settings drawer takes precedence)
     logoPath: null,
     logoFoldPath: null,
     loginLogoPath: null,

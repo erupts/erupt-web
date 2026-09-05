@@ -10,8 +10,9 @@ import {
 import {I18NService} from "@core";
 
 /**
- * 设计器数据结构：镜像后端 @Erupt / @EruptField / @Edit / @View 注解结构（原始成员名），
- * 后端通过 JsonAnnotationProxy 将其伪装为运行时注解实例。
+ * Designer data structure: mirrors the backend @Erupt / @EruptField / @Edit / @View
+ * annotation structure (original member names). The backend disguises it as runtime
+ * annotation instances via JsonAnnotationProxy.
  */
 export interface DesignerForm {
     pkg: string;

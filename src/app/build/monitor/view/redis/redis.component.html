@@ -17,7 +17,7 @@
         </div>
 
         <div class="monitor-body">
-            <!-- 关键指标 -->
+            <!-- Key metrics -->
             <div nz-row [nzGutter]="16">
                 <div nz-col [nzXs]="12" [nzMd]="6">
                     <nz-card [nzBordered]="false" class="stat-card">
@@ -54,7 +54,7 @@
                 </div>
             </div>
 
-            <!-- 健康指标 -->
+            <!-- Health metrics -->
             <div nz-row [nzGutter]="16">
                 <div nz-col [nzXs]="12" [nzMd]="6">
                     <nz-card [nzBordered]="false" class="stat-card">
@@ -92,7 +92,7 @@
                 </div>
             </div>
 
-            <!-- Redis 信息 + 命令统计 -->
+            <!-- Redis info + command stats -->
             <div nz-row [nzGutter]="16" class="equal-cards">
                 <div nz-col [nzXs]="24" [nzMd]="12">
                     <nz-card [nzBordered]="false" [nzTitle]="redisTitle">
@@ -156,7 +156,7 @@
                 </div>
             </div>
 
-            <!-- Key 数量趋势 -->
+            <!-- Key count trend -->
             <nz-card [nzBordered]="false" [nzTitle]="keyTitle">
                 <ng-template #keyTitle><i nz-icon nzType="fund"></i>{{ 'monitor.redis.key_trend' | translate }}
                 </ng-template>

@@ -1,10 +1,10 @@
-已覆盖的核心能力：
-- 24 种图表类型（G2Plot + S2 透视表）
-- 全局过滤器（级联联动、必填、隐藏、默认值）
-- 子模型（多数据源 + 字段映射）
-- 表格下钻分析
-- 图表点击联动筛选
-- 栅格拖拽布局
-- 草稿/发布版本管理 + 回滚
-- 亮/暗主题、背景配置
-- 自动刷新、全屏、导出 
+Core capabilities covered:
+- 24 chart types (G2Plot + S2 pivot table)
+- Global filters (cascading linkage, required, hidden, default values)
+- Sub-models (multiple data sources + field mapping)
+- Table drill-down analysis
+- Chart click linkage filtering
+- Grid drag-and-drop layout
+- Draft / published version management + rollback
+- Light / dark theme, background config
+- Auto refresh, fullscreen, export

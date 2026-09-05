@@ -274,8 +274,8 @@ export class UiBuildService {
                             }
                         } else {
                             obj.tag = {
-                                true: {text: this.i18n.fanyi('是'), color: 'green'},
-                                false: {text: this.i18n.fanyi('否'), color: 'red'},
+                                true: {text: this.i18n.fanyi('Y'), color: 'green'},
+                                false: {text: this.i18n.fanyi('N'), color: 'red'},
                             };
                         }
                     }
