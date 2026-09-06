@@ -1,8 +1,8 @@
 import {Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {EruptModel} from "../../model/erupt.model";
+import {EruptModel, Power} from "../../model/erupt.model";
 import {DataService} from "@shared/service/data.service";
 import {DataHandlerService} from "../../service/data-handler.service";
-import {MenuService, SettingsService} from "@delon/theme";
+import {SettingsService} from "@delon/theme";
 import {I18NService} from "@core";
 import {NzFormatEmitEvent, NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
 import {NzMessageService} from "ng-zorro-antd/message";
@@ -11,6 +11,7 @@ import {EditComponent} from "../edit/edit.component";
 import {Scene} from "../../model/erupt.enum";
 import {Status} from "../../model/erupt-api.model";
 import {EruptBuildModel} from "../../model/erupt-build.model";
+import {StatusService} from "@shared/service/status.service";
 
 @Component({
     standalone: false,
@@ -24,7 +25,7 @@ export class LayoutTreeComponent implements OnInit {
                 public settingSrv: SettingsService,
                 private i18n: I18NService,
                 private dataHandler: DataHandlerService,
-                private menuSrv: MenuService,
+                private statusService: StatusService,
                 @Inject(NzMessageService) private msg: NzMessageService,
                 @Inject(NzModalService) private modal: NzModalService) {
     }
@@ -51,31 +52,36 @@ export class LayoutTreeComponent implements OnInit {
 
     @ViewChild('treeBody') treeBody: ElementRef;
 
-    private linkTreeField: string;
-
+    /** Build model of the erupt referenced by `linkTree.field`; resolved by the backend, so its
+     *  `eruptModel.eruptName` is the real model name (not the field name / return type). */
     private treeBuildModel: EruptBuildModel;
 
     sortAsc: boolean | null = null;
 
-    get canAdd(): boolean { return !!this.linkTreeField && null != this.menuSrv.getItem(this.linkTreeField + '@ADD'); }
-    get canEdit(): boolean { return !!this.linkTreeField && null != this.menuSrv.getItem(this.linkTreeField + '@EDIT'); }
-    get canDelete(): boolean { return !!this.linkTreeField && null != this.menuSrv.getItem(this.linkTreeField + '@DELETE'); }
+    get canAdd(): boolean { return this.hasTreePower('add', 'ADD'); }
+    get canEdit(): boolean { return this.hasTreePower('edit', 'EDIT'); }
+    get canDelete(): boolean { return this.hasTreePower('delete', 'DELETE'); }
+
+    /**
+     * Static `@Power` flag of the tree erupt AND the current user's menu permission
+     * (`<eruptName>@<fun>`), keyed by the backend-resolved erupt name.
+     */
+    private hasTreePower(powerKey: keyof Power, fun: string): boolean {
+        const tree = this.treeBuildModel?.eruptModel;
+        if (!tree) return false;
+        if (tree.eruptJson.power?.[powerKey] === false) return false;
+        return this.statusService.hasMenuValue(tree.eruptName + '@' + fun);
+    }
+
     ngOnInit() {
-        const cfgField = this.eruptModel.eruptJson.linkTree?.field;
-        if (cfgField) {
-            const fm = this.eruptModel.eruptFieldModels?.find(f => f.fieldName === cfgField);
-            this.linkTreeField = fm?.fieldReturnName;
-        }
         this.loadTreeData();
-        if (this.canAdd || this.canEdit || this.canDelete) {
-            this.fetchTreeBuildModel();
-        }
+        this.fetchTreeBuildModel();
     }
 
     private fetchTreeBuildModel() {
         const cfgField = this.eruptModel.eruptJson.linkTree?.field;
-        const fieldModel = this.eruptModel.eruptFieldModelMap?.get(cfgField);
-        this.data.getEruptBuildByField(this.eruptModel.eruptName, fieldModel.fieldName).subscribe(eb => {
+        if (!cfgField) return;
+        this.data.getEruptBuildByField(this.eruptModel.eruptName, cfgField).subscribe(eb => {
             this.treeBuildModel = eb;
         });
     }

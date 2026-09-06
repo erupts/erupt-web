@@ -11,6 +11,7 @@ import {
     ViewContainerRef
 } from "@angular/core";
 import {IframeManagerService} from "@shared/service/iframe-manager.service";
+import {StatusService} from "@shared/service/status.service";
 import {DOCUMENT} from "@angular/common";
 import {NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router} from "@angular/router";
 
@@ -119,6 +120,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 private i18n: I18NService,
                 private utilsService: UtilsService,
                 private iframeManager: IframeManagerService,
+                private statusService: StatusService,
                 @Optional()
                 @Inject(ReuseTabService)
                 private reuseTabService: ReuseTabService,
@@ -253,8 +255,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
     loadMenu(flush = false): Observable<MenuVo[]> {
         return this.data.getMenu(flush).pipe(tap(res => {
             this.menu = res;
-
-            // this.statusService.menus = res;
+            this.statusService.menus = res;
             const hiddenMenus: Menu[] = [];
             function generateTree(menus, pid): Menu[] {
                 let result: Menu[] = [];
