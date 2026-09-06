@@ -17,6 +17,14 @@ export interface CanvasModel {
     dataType: string;
     model: string;
     purpose: string | null;
+    /** Write operations the page may offer on this model (add / update / delete); empty = read-only */
+    writes: string[];
+}
+
+/** A generation round already in flight, reported by the backend across reloads */
+export interface CanvasGenerating {
+    startedAt: number;
+    message: string;
 }
 
 export interface CanvasInfo {
@@ -27,6 +35,8 @@ export interface CanvasInfo {
     activeVersion: number | null;
     publishVersion: number | null;
     versions: CanvasVersion[];
+    /** Non-null when a round was already running when the designer was opened */
+    generating: CanvasGenerating | null;
 }
 
 export interface ModelGroup {
@@ -54,6 +64,11 @@ export class CanvasApiService {
     private base = RestPath.erupt + '/ai-canvas/build';
 
     constructor(private _http: _HttpClient) {
+    }
+
+    /** Polled while a round is in flight; resolves to null once it is done or gone */
+    generating(code: string): Observable<R<CanvasGenerating | null>> {
+        return this._http.get(`${this.base}/generating/${code}`);
     }
 
     info(code: string): Observable<R<CanvasInfo>> {

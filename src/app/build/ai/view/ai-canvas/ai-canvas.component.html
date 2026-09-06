@@ -64,6 +64,21 @@
                             <nz-spin nzSimple></nz-spin>
                         </div>
                     }
+                    @if (pageErrors.length) {
+                        <div class="frame-errors">
+                            <span nz-icon nzType="warning" nzTheme="fill" class="frame-errors-icon"></span>
+                            <div class="frame-errors-body">
+                                <div class="frame-errors-title">{{ 'ai.canvas.page_errors' | translate }}</div>
+                                @for (err of pageErrors; track err) {
+                                    <div class="frame-error">{{ err }}</div>
+                                }
+                            </div>
+                            <button nz-button nzType="primary" nzSize="small" (click)="fixErrors()"
+                                    [disabled]="generating">{{ 'ai.canvas.fix_errors' | translate }}</button>
+                            <span nz-icon nzType="close" nzTheme="outline" class="frame-errors-close"
+                                  (click)="pageErrors = []"></span>
+                        </div>
+                    }
                     <iframe #frameRef class="preview-frame" [srcdoc]="previewHtml" (load)="onFrameLoad()"></iframe>
                 </div>
             } @else {
@@ -91,7 +106,7 @@
                 </div>
             </div>
         }
-        <div class="bubbles">
+        <div #bubblesRef class="bubbles">
             @if (loading) {
                 <div class="bubbles-loading">
                     <nz-spin nzSimple></nz-spin>
@@ -139,7 +154,13 @@
                         <div class="generating-head">
                             <nz-spin nzSimple nzSize="small"></nz-spin>
                             <span>{{ 'ai.canvas.generating' | translate }}</span>
+                            @if (generatingElapsed) {
+                                <span class="progress-step">{{ generatingElapsed }}</span>
+                            }
                         </div>
+                        @if (detached) {
+                            <div class="detached-note">{{ 'ai.canvas.detached_note' | translate }}</div>
+                        }
                         @if (streamingText) {
                             <pre #streamRef class="stream-code">{{ streamTail }}</pre>
                         }
