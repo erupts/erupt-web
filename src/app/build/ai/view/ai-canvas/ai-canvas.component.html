@@ -77,12 +77,18 @@
 
     <!-- Right: generation conversation -->
     <div class="chat-pane">
-        @if (modelLabel) {
-            <!-- Data model is fixed on the canvas record; shown as conversation context -->
-            <div class="chat-context" [title]="dataType + ' / ' + targetModel">
+        @if (models.length) {
+            <!-- Data models are bound on the canvas record; shown as conversation context, one chip each -->
+            <div class="chat-context">
                 <span nz-icon nzType="database" nzTheme="outline"></span>
-                <span class="chat-context-label">{{ modelLabel }}</span>
-                <span class="chat-context-type">{{ dataType }}</span>
+                <div class="chat-context-models">
+                    @for (m of models; track m.dataType + '/' + m.model) {
+                        <span class="chat-context-model" [title]="modelTitle(m)">
+                            <span class="chat-context-label">{{ modelLabel(m) }}</span>
+                            <span class="chat-context-type">{{ m.dataType }}</span>
+                        </span>
+                    }
+                </div>
             </div>
         }
         <div class="bubbles">

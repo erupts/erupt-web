@@ -12,10 +12,16 @@ export interface CanvasVersion {
     createTime: string;
 }
 
+/** One data model bound to the canvas, configured as a MULTI_FORM block on the record */
+export interface CanvasModel {
+    dataType: string;
+    model: string;
+    purpose: string | null;
+}
+
 export interface CanvasInfo {
     name: string;
-    dataType: string | null;
-    targetModel: string | null;
+    models: CanvasModel[];
     style: string | null;
     llmId: number | null;
     activeVersion: number | null;

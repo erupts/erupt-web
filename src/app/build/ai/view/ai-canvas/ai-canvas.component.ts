@@ -9,7 +9,7 @@ import {SharedModule} from '@shared/shared.module';
 import {I18NService} from '@core';
 import {NzCodeEditorModule} from 'ng-zorro-antd/code-editor';
 import {SseMessage, SseMessageEvent} from '../../model/chat.model';
-import {CanvasApiService, CanvasInfo, CanvasStyle, CanvasVersion, Llm, ModelGroup} from '../../service/canvas-api.service';
+import {CanvasApiService, CanvasInfo, CanvasStyle, CanvasVersion, Llm, ModelGroup, CanvasModel} from '../../service/canvas-api.service';
 
 /** Element picked from the preview iframe, referenced in the next generation round */
 interface PickedElement {
@@ -67,10 +67,8 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
 
     name = '';
 
-    /** Data source type + model: configured on the AiCanvas record, read-only here */
-    dataType: string | null = null;
-
-    targetModel: string | null = null;
+    /** Data models bound on the AiCanvas record, read-only here */
+    models: CanvasModel[] = [];
 
     style: string | null = null;
 
@@ -166,8 +164,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         this.versions = info.versions || [];
         this.activeVersion = info.activeVersion;
         this.publishVersion = info.publishVersion;
-        this.dataType = info.dataType;
-        this.targetModel = info.targetModel;
+        this.models = info.models || [];
         if (this.activeVersion) {
             this.refreshPreview();
         }
@@ -187,12 +184,17 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         return this.style ? this.styles.find(s => s.id === this.style) : undefined;
     }
 
-    /** Display label of the canvas's data model, resolved against the provider catalog */
-    get modelLabel(): string | null {
-        if (!this.targetModel) return null;
-        const group = this.modelGroups.find(g => g.type === this.dataType);
-        const model = group?.models.find(m => m.value === this.targetModel);
-        return model ? model.label : this.targetModel;
+    /** Display label of a bound data model, resolved against the provider catalog */
+    modelLabel(binding: CanvasModel): string {
+        const group = this.modelGroups.find(g => g.type === binding.dataType);
+        const model = group?.models.find(m => m.value === binding.model);
+        return model ? model.label : binding.model;
+    }
+
+    /** Hover text of a model chip: type / code, plus the purpose hint when set */
+    modelTitle(binding: CanvasModel): string {
+        const head = `${binding.dataType} / ${binding.model}`;
+        return binding.purpose ? `${head}\n${binding.purpose}` : head;
     }
 
     /** End-user access URL of this page, served by the frontend route */
@@ -355,7 +357,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     send(): void {
         const msg = this.content?.trim();
         if (!msg || this.generating) return;
-        if (!this.dataType || !this.targetModel) {
+        if (!this.models.length) {
             this.message.warning(this.i18n.fanyi('ai.canvas.model_not_configured'));
             return;
         }

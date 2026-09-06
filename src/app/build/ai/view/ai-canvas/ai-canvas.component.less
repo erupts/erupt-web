@@ -148,6 +148,31 @@
     font-size: 12px;
     flex-shrink: 0;
 
+    // Chips scroll sideways instead of wrapping so the bar keeps its fixed height
+    .chat-context-models {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .chat-context-model {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        max-width: 220px;
+        padding: 1px 8px;
+        border: 1px solid var(--ant-border-color-split);
+        background: var(--erupt-bg-layout, rgba(0, 0, 0, 0.02));
+        flex-shrink: 0;
+    }
+
     .chat-context-label {
         font-weight: 500;
         overflow: hidden;
