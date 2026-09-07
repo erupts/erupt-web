@@ -7,6 +7,7 @@ import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
+import {UtilsService} from "@shared/service/utils.service";
 import {downloadFile} from "@shared/util/erupt.util";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {VL} from "../../build/erupt/model/erupt-field.model";
@@ -32,6 +33,7 @@ export class DataService {
 
     constructor(private _http: _HttpClient,
                 private i18n: I18NService,
+                private utilsService: UtilsService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         DataService.tokenService = this.tokenService;
     }
@@ -512,9 +514,11 @@ export class DataService {
         );
     }
 
-    //get menu, pass flush=true to rebuild the menu cache from the database
+    //get menu, pass flush=true to rebuild the menu cache from the database;
+    //tenant sessions use their own endpoint so the flush recomputes tenant menus, never platform ones
     getMenu(flush?: boolean): Observable<MenuVo[]> {
-        return this._http.get<MenuVo[]>(RestPath.erupt + "/menu", flush ? {flush: true} : null, {
+        let path = this.utilsService.isTenantToken() ? "/tenant/menu" : "/menu";
+        return this._http.get<MenuVo[]>(RestPath.erupt + path, flush ? {flush: true} : null, {
             observe: "body"
         });
     }

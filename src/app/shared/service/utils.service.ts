@@ -15,7 +15,10 @@ export class UtilsService {
     }
 
     isTenantToken(): boolean {
-        return this.tokenService.get().token.split(".").length == 3
+        let token: string = this.tokenService.get().token;
+        // "t_" prefix marks a tenant session token; the split check keeps legacy unsigned-JWT
+        // tenant tokens (issued before tokens became opaque) working until they expire
+        return token.startsWith("t_") || token.split(".").length == 3;
     }
 
     async loadScript(src: string) {

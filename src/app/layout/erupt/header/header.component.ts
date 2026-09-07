@@ -14,6 +14,7 @@ import {DataService} from "@shared/service/data.service";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {NoticeComponent} from "../component/notice/notice.component";
+import {UtilsService} from "@shared/service/utils.service";
 import {NzNotificationService} from "ng-zorro-antd/notification";
 import {AnnouncementDetailComponent} from "../component/announcement-detail/announcement-detail.component";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
@@ -98,8 +99,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
         return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");
     }
 
+    // Notices and announcements are keyed by platform user id; tenant sessions get no entry point
+    // (bell, unread polling, announcement popups all hang off this flag)
     get isEruptNotice(): boolean {
-        return EruptAppData.get().properties["erupt-notice"];
+        return EruptAppData.get().properties["erupt-notice"] && !this.utilsService.isTenantToken();
     }
 
     openDrawer() {
@@ -118,6 +121,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 private appViewService: AppViewService,
                 private dataService: DataService,
                 private menuSrv: MenuService,
+                private utilsService: UtilsService,
                 @Inject(NzDrawerService) private drawer: NzDrawerService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(NzModalService) private modal: NzModalService,
