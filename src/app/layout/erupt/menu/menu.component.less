@@ -24,6 +24,23 @@
 }
 
 // Pin icon — sits in the 32px right-padding area of .sidebar-nav__item-link
+// Inline spinner on the menu item whose route is loading; takes the pin's slot
+.sidebar-nav__loading {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: var(--ant-primary-color, #1677ff);
+    animation: erupt-menu-loading-spin 0.9s linear infinite;
+    z-index: 1;
+}
+
+@keyframes erupt-menu-loading-spin {
+    from { transform: translateY(-50%) rotate(0deg); }
+    to   { transform: translateY(-50%) rotate(360deg); }
+}
+
 .sidebar-nav__pin {
     position: absolute;
     right: 10px;

@@ -137,11 +137,11 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         // ]
         router.events.subscribe(evt => {
             if (evt instanceof NavigationStart) {
-                fetchTimer = setTimeout(() => { this.isFetching = true; }, 300);
+                fetchTimer = setTimeout(() => this.setFetching(true), 300);
             }
             if (evt instanceof NavigationError || evt instanceof NavigationCancel) {
                 clearTimeout(fetchTimer);
-                this.isFetching = false;
+                this.setFetching(false);
                 if (evt instanceof NavigationError) {
                     _message.error(`Unable to load route ${evt.url}, please refresh the page or clear the cache and try again!`, {nzDuration: 1000 * 3});
                 }
@@ -159,9 +159,17 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             clearTimeout(fetchTimer);
             setTimeout(() => {
                 scroll.scrollToTop();
-                this.isFetching = false;
+                this.setFetching(false);
             }, 200);
         });
+    }
+
+    /** Route-loading state: local flag, shared flag for the sidebar spinner, and a busy cursor on <html> */
+    private setFetching(on: boolean): void {
+        this.isFetching = on;
+        this.statusService.routeLoading = on;
+        if (!on) this.statusService.pendingMenuLink = null;
+        this.doc.documentElement.classList.toggle('erupt-route-loading', on);
     }
 
     private setClass() {

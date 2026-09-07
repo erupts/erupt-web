@@ -257,3 +257,9 @@ tr.cdk-drag-preview {
     }
 
 }
+
+// Busy cursor everywhere while a route / lazy module is loading (class toggled by the erupt layout)
+html.erupt-route-loading,
+html.erupt-route-loading * {
+    cursor: progress !important;
+}

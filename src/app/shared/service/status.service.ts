@@ -11,6 +11,12 @@ export class StatusService {
     /** Raw menu list of the current user, as returned by the backend (includes hidden button/api menus). */
     menus: MenuVo[] = [];
 
+    /** True while a route (lazy module) is loading; set by the erupt layout from router events. */
+    routeLoading: boolean = false;
+
+    /** Link of the sidebar menu item whose click started the current navigation, for the inline spinner. */
+    pendingMenuLink: string | null = null;
+
     constructor() {
     }
 

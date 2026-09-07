@@ -1,44 +1,34 @@
-.erupt-progress-bar {
+// Route / lazy-module loading indicator: a shimmer bar along the very top of the viewport.
+// Its color follows --erupt-header-progress, which applyHeaderColor() sets to the header
+// foreground whenever the header is colored, so the bar never blends into the header.
+@progress-color: var(--erupt-header-progress, var(--ant-primary-color, #1677ff));
+
+.erupt-route-loading {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 2px;
+    right: 0;
+    height: 3px;
     z-index: 99999;
     overflow: hidden;
+    pointer-events: none;
+    background: color-mix(in srgb, @progress-color 18%, transparent);
+    box-shadow: 0 1px 6px color-mix(in srgb, @progress-color 35%, transparent);
 
     &::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        background: var(--ant-primary-color, #1677ff);
-        animation: erupt-bar-1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
-    }
-
-    &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        background: var(--ant-primary-color, #1677ff);
-        animation: erupt-bar-2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
-        animation-delay: 1.15s;
+        inset: 0;
+        width: 40%;
+        border-radius: 3px;
+        background: linear-gradient(90deg, transparent 0%, @progress-color 40%, @progress-color 60%, transparent 100%);
+        animation: erupt-route-loading-sweep 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
 }
 
-@keyframes erupt-bar-1 {
-    0%   { left: -35%; width: 35%; }
-    60%  { left: 100%; width: 100%; }
-    100% { left: 100%; width: 100%; }
-}
-
-@keyframes erupt-bar-2 {
-    0%   { left: -200%; width: 35%; }
-    60%  { left: 107%; width: 60%; }
-    100% { left: 107%; width: 60%; }
+@keyframes erupt-route-loading-sweep {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(250%); }
 }
 
 ::ng-deep {

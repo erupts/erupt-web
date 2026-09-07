@@ -66,7 +66,9 @@
                 </span>
               }
               <span class="sidebar-nav__item-text" [innerHTML]="i._text" [attr.title]="i.text"></span>
-              @if (!collapsed && !isPad) {
+              @if (statusService.routeLoading && statusService.pendingMenuLink === i.link) {
+                <i nz-icon nzType="loading" class="sidebar-nav__loading"></i>
+              } @else if (!collapsed && !isPad) {
                 <i nz-icon nzType="pushpin"
                    [nzTheme]="isFavorite(i) ? 'fill' : 'outline'"
                    class="sidebar-nav__pin"

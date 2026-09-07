@@ -15,7 +15,8 @@ const HEADER_TOKENS = [
     "--erupt-header-fill-strong",
     "--erupt-header-active-bg",
     "--erupt-header-active-text",
-    "--erupt-header-border"
+    "--erupt-header-border",
+    "--erupt-header-progress"
 ];
 
 export function applyHeaderColor(value: string | null): void {
@@ -38,6 +39,9 @@ export function applyHeaderColor(value: string | null): void {
         el.style.setProperty("--erupt-header-active-bg", "rgba(255, 255, 255, 0.22)");
         el.style.setProperty("--erupt-header-active-text", "#fff");
         el.style.setProperty("--erupt-header-border", "rgba(0, 0, 0, 0.12)");
+        // Route-loading bar sits on top of the header; a brand-colored bar would vanish on a
+        // brand-colored header, so it follows the header foreground instead
+        el.style.setProperty("--erupt-header-progress", "#fff");
     } else {
         // Light custom bar — ink foreground, translucent-black states
         el.style.setProperty("--erupt-header-text", "rgba(0, 0, 0, 0.88)");
@@ -47,6 +51,7 @@ export function applyHeaderColor(value: string | null): void {
         el.style.setProperty("--erupt-header-active-bg", "rgba(0, 0, 0, 0.08)");
         el.style.setProperty("--erupt-header-active-text", "rgba(0, 0, 0, 0.88)");
         el.style.setProperty("--erupt-header-border", "rgba(0, 0, 0, 0.1)");
+        el.style.setProperty("--erupt-header-progress", "rgba(0, 0, 0, 0.85)");
     }
 }
 

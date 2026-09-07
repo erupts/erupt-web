@@ -1,4 +1,5 @@
 import {Direction, Directionality} from '@angular/cdk/bidi';
+import {StatusService} from "@shared/service/status.service";
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {DOCUMENT} from '@angular/common';
 import {
@@ -135,6 +136,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         private ngZone: NgZone,
         private sanitizer: DomSanitizer,
         private appViewService: AppViewService,
+        public statusService: StatusService,
         @Inject(DOCUMENT) private doc: NzSafeAny,
         @Inject(WINDOW) private win: NzSafeAny,
         @Optional() private directionality: Directionality
@@ -249,6 +251,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     to(item: Menu): void {
         this.select.emit(item);
         if (item.disabled) return;
+        this.statusService.pendingMenuLink = item.link || null;
 
         if (item.externalLink) {
             if (item.target === '_blank') {
