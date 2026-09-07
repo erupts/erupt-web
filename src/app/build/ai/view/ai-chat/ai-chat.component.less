@@ -9,6 +9,9 @@
 :host {
     height: 100%;
     overflow: auto;
+    // Same as ai-canvas: shrink to the space left by the reuse-tab bar in the layout column
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 /* Root layout: fills the host and sets a min-height fallback (ensures full-screen height even when ancestors have no height) */

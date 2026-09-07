@@ -21,10 +21,14 @@ export interface CanvasModel {
     writes: string[];
 }
 
-/** A generation round already in flight, reported by the backend across reloads */
+/**
+ * The running-round marker the backend keeps for a canvas. Alive while a round runs;
+ * gone once a version is filed; carries `error` when the round failed (reported once).
+ */
 export interface CanvasGenerating {
     startedAt: number;
     message: string;
+    error?: string | null;
 }
 
 export interface CanvasInfo {
@@ -97,21 +101,14 @@ export class CanvasApiService {
         return this._http.get<R<Llm[]>>(`${this.base}/llms`);
     }
 
+    /**
+     * Start a generation round; returns as soon as the round is opened. Progress and
+     * outcome are then read through `generating()`, the same poll used after a reload.
+     * Only the picked element's selector travels — the backend holds the page source.
+     */
     generate(code: string, message: string, style: string | null, llmId: number | null,
-             element: string | null): Observable<R<CanvasVersion>> {
-        return this._http.post<R<CanvasVersion>>(`${this.base}/generate/${code}`, {message, style, llmId, element});
-    }
-
-    /** SSE URL of the streaming generate endpoint (EventSource is GET-only, token travels as _token) */
-    generateSseUrl(code: string, message: string, style: string | null, llmId: number | null, token: string,
-                   element: string | null): string {
-        const params = new URLSearchParams({message, _token: token});
-        if (style) params.set('style', style);
-        if (llmId != null) params.set('llmId', String(llmId));
-        // Only the picked element's selector travels here — the backend already holds the
-        // full page source, so it resolves the element there without shipping its markup
-        if (element) params.set('element', element);
-        return `${this.base}/generate-sse/${code}?${params.toString()}`;
+             element: string | null): Observable<R<void>> {
+        return this._http.post<R<void>>(`${this.base}/generate/${code}`, {message, style, llmId, element});
     }
 
     active(code: string, versionId: number): Observable<R<void>> {

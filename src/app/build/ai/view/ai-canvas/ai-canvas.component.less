@@ -6,6 +6,10 @@
 :host {
     height: 100%;
     display: block;
+    // The host is a flex item of the layout's column (.erupt_content); with the reuse-tab bar
+    // present, height: 100% alone overflows by the bar height and pushes the sender off-screen
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .designer-layout {
@@ -365,21 +369,6 @@
         font-size: 11px;
         background: var(--ant-primary-1, #e6f7ff);
         color: var(--ant-primary-color, #1890ff);
-    }
-
-    /* Live code stream: fixed-height scrolling tail as progress feedback */
-    .stream-code {
-        margin: 8px 0 0;
-        max-height: 200px;
-        overflow-y: auto;
-        background: #1e1e1e;
-        color: #9cdcfe;
-        border-radius: 6px;
-        padding: 8px 10px;
-        font-size: 11px;
-        line-height: 1.5;
-        white-space: pre-wrap;
-        word-break: break-all;
     }
 }
 

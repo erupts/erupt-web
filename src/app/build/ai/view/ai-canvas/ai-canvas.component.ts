@@ -1,14 +1,12 @@
-import {Component, ElementRef, Inject, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Location} from '@angular/common';
 import {ActivatedRoute} from '@angular/router';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
-import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
 import {SharedModule} from '@shared/shared.module';
 import {I18NService} from '@core';
 import {NzCodeEditorModule} from 'ng-zorro-antd/code-editor';
-import {SseMessage, SseMessageEvent} from '../../model/chat.model';
 import {CanvasApiService, CanvasGenerating, CanvasInfo, CanvasStyle, CanvasVersion, Llm, ModelGroup, CanvasModel} from '../../service/canvas-api.service';
 
 /** Element picked from the preview iframe, referenced in the next generation round */
@@ -31,8 +29,6 @@ interface PickedElement {
     providers: [CanvasApiService]
 })
 export class AiCanvasComponent implements OnInit, OnDestroy {
-
-    @ViewChild('streamRef') streamRef?: ElementRef<HTMLPreElement>;
 
     @ViewChild('bubblesRef') bubblesRef?: ElementRef<HTMLDivElement>;
 
@@ -100,18 +96,15 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
 
     previewHtml: SafeHtml | null = null;
 
-    /** Streaming code accumulated during generation, shown as live progress */
-    streamingText = '';
-
     /** Runtime errors relayed by the SDK from the preview iframe (postMessage), cleared on reload */
     pageErrors: string[] = [];
 
     static readonly MAX_PAGE_ERRORS = 5;
 
     /**
-     * True while showing a round this browser is not streaming: it was started
-     * before the designer was opened, or the page was reloaded mid-round. There is
-     * no token stream to re-attach to, so the state is polled instead.
+     * True while showing a round this designer did not start: it was already running
+     * when the page was opened (or reloaded mid-round). Same polling either way, the
+     * flag only drives the explanatory note in the progress bubble.
      */
     detached = false;
 
@@ -121,6 +114,9 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     private pollTimer: any = null;
 
     static readonly POLL_INTERVAL = 3000;
+
+    /** 1s ticker while a round runs so the elapsed time in the bubble keeps moving between polls */
+    private elapsedTimer: any = null;
 
     /** True while element-pick mode is active on the preview iframe */
     picking = false;
@@ -140,8 +136,6 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         return this.pendingMessage;
     }
 
-    private eventSource: EventSource | null = null;
-
     constructor(
         private api: CanvasApiService,
         private route: ActivatedRoute,
@@ -150,8 +144,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         private modal: NzModalService,
         private i18n: I18NService,
         private ngZone: NgZone,
-        private location: Location,
-        @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService
+        private location: Location
     ) {
     }
 
@@ -160,7 +153,6 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.eventSource?.close();
         this.stopPolling();
         this.exitPick();
         window.removeEventListener('message', this.onFrameMessage);
@@ -193,7 +185,11 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         if (this.activeVersion) {
             this.refreshPreview();
         }
-        if (info.generating) {
+        if (info.generating?.error) {
+            // The last round failed while nobody was watching; the marker is consumed by this read
+            this.message.error(info.generating.error);
+            this.stopPolling();
+        } else if (info.generating) {
             this.attachToRunningRound(info.generating);
         } else {
             this.stopPolling();
@@ -201,28 +197,29 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Show a round that is running without this browser watching it. The stream is
-     * unrecoverable, so the requirement and start time come from the backend marker
-     * and completion is detected by polling.
+     * Show a round that was already running when the designer opened. Requirement and
+     * start time come from the backend marker; completion is detected by polling, exactly
+     * like a round started here.
      */
     private attachToRunningRound(state: CanvasGenerating): void {
         this.generating = true;
         this.detached = true;
         this.generatingSince = state.startedAt;
         this.pendingMessage = state.message || '';
-        this.streamingText = '';
         this.startPolling();
     }
 
+    /** Poll the running marker until it is gone (version filed) or reports a failure */
     private startPolling(): void {
+        if (!this.elapsedTimer) this.elapsedTimer = setInterval(() => void 0, 1000);
         if (this.pollTimer) return;
         this.pollTimer = setInterval(() => {
             this.api.generating(this.code).subscribe({
                 next: res => {
-                    if (!res.data) this.onDetachedRoundEnded();
+                    if (!res.data || res.data.error) this.onRoundEnded(res.data?.error || null);
                 },
                 // A failing poll must not strand the designer in a generating state
-                error: () => this.onDetachedRoundEnded()
+                error: () => this.onRoundEnded(null)
             });
         }, AiCanvasComponent.POLL_INTERVAL);
     }
@@ -232,15 +229,29 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
             clearInterval(this.pollTimer);
             this.pollTimer = null;
         }
+        if (this.elapsedTimer) {
+            clearInterval(this.elapsedTimer);
+            this.elapsedTimer = null;
+        }
     }
 
-    /** The polled round is over: reload to pick up whatever version it filed, if any */
-    private onDetachedRoundEnded(): void {
+    /**
+     * The round is over. On failure the message goes back into the input (when this
+     * designer wrote it); otherwise reload to pick up whatever version got filed.
+     */
+    private onRoundEnded(error: string | null): void {
         this.stopPolling();
         const before = this.versions.length;
+        const startedHere = !this.detached;
         this.detached = false;
         this.generating = false;
         this.generatingSince = null;
+        if (error) {
+            this.message.error(error);
+            if (startedHere) this.restorePending();
+            this.pendingMessage = '';
+            return;
+        }
         this.pendingMessage = '';
         this.api.info(this.code).subscribe({
             next: res => {
@@ -248,7 +259,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
                 if (this.versions.length > before) {
                     this.message.success(this.i18n.fanyi('ai.canvas.generated'));
                 } else {
-                    // Finished with nothing filed: stopped elsewhere, or it failed
+                    // Finished with nothing filed: stopped elsewhere
                     this.message.info(this.i18n.fanyi('ai.canvas.round_ended_empty'));
                 }
                 this.scrollBubblesToBottom();
@@ -487,44 +498,16 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         const picked = this.picked;
         this.content = '';
         this.picked = null;
-        this.streamingText = '';
         this.scrollBubblesToBottom();
-        const token = this.tokenService.get()?.token || '';
-        this.eventSource = new EventSource(this.api.generateSseUrl(
-            this.code, msg, this.style, this.llmId, token,
-            picked?.selector ?? null));
-        this.eventSource.onmessage = event => {
-            const body: SseMessage = JSON.parse(event.data);
-            if (body.event === SseMessageEvent.TOKEN && body.data) {
-                this.ngZone.run(() => {
-                    this.streamingText += body.data;
-                    this.scrollStreamToBottom();
-                    this.scrollBubblesToBottom();
-                });
-            } else if (body.event === SseMessageEvent.DONE) {
-                const payload = body.data ? JSON.parse(body.data) : {};
-                this.ngZone.run(() => {
-                    this.closeSse();
-                    if (payload.version) {
-                        this.versions.push(payload.version);
-                        this.activeVersion = payload.version.id;
-                        this.refreshPreview();
-                        this.scrollBubblesToBottom();
-                    } else {
-                        this.message.error(payload.error || 'Generation failed');
-                        this.restorePending();
-                    }
-                });
-            }
-        };
-        this.eventSource.onerror = () => {
-            this.ngZone.run(() => {
-                if (!this.generating) return;
-                this.closeSse();
-                this.message.error(this.i18n.fanyi('ai.canvas.stream_broken'));
+        this.api.generate(this.code, msg, this.style, this.llmId, picked?.selector ?? null).subscribe({
+            // The round is open on the backend; follow it the same way a reloaded designer would
+            next: () => this.startPolling(),
+            error: () => {
+                this.generating = false;
+                this.generatingSince = null;
                 this.restorePending();
-            });
-        };
+            }
+        });
     }
 
     /** Cancel the running generation: the explicit stop signal makes the backend
@@ -532,7 +515,8 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     stop(): void {
         this.api.stop(this.code).subscribe();
         this.stopPolling();
-        this.closeSse();
+        this.generating = false;
+        this.generatingSince = null;
         this.restorePending();
         this.detached = false;
     }
@@ -540,24 +524,6 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
     private restorePending(): void {
         this.content = this.pendingMessage;
         this.picked = this.pendingPicked;
-    }
-
-    private closeSse(): void {
-        this.eventSource?.close();
-        this.eventSource = null;
-        this.generating = false;
-        this.streamingText = '';
-        this.generatingSince = null;
-    }
-
-    /** Tail of the streaming output shown in the progress bubble, kept short to stay light */
-    get streamTail(): string {
-        return this.streamingText.length > 1500 ? this.streamingText.slice(-1500) : this.streamingText;
-    }
-
-    private scrollStreamToBottom(): void {
-        const el = this.streamRef?.nativeElement;
-        if (el) el.scrollTop = el.scrollHeight;
     }
 
     /** Pin the conversation pane to its latest bubble; deferred so the new bubble is rendered first */
