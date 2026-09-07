@@ -1,0 +1,23 @@
+@import '../shared.less';
+
+.term-area {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    background: #15161b;
+    padding: 8px;
+}
+
+.term-wrap {
+    width: 100%;
+    height: 100%;
+
+    .xterm-viewport {
+        overflow-y: auto !important;
+        background-color: transparent !important;
+    }
+}
+
+.overlay.light {
+    background: rgba(21, 22, 27, 0.55);
+}

@@ -18,6 +18,8 @@ export class EruptMicroAppComponent implements AfterViewInit {
 
     @Input() url: string | null;
 
+    @Input() height: string | null;
+
     spin: boolean = false;
 
     @ViewChild('microApp') microApp: ElementRef;

@@ -25,5 +25,9 @@ module.exports = {
     '/erupt-terminal': {
         ...proxy,
         ws: true
+    },
+    '/erupt-remote': {
+        ...proxy,
+        ws: true
     }
 };

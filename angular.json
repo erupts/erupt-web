@@ -89,6 +89,7 @@
                         ],
                         "scripts": [],
                         "allowedCommonJsDependencies": [
+                            "@novnc/novnc/lib/rfb.js",
                             "ajv",
                             "ajv-formats",
                             "mockjs",
