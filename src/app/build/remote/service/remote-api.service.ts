@@ -13,6 +13,6 @@ export class RemoteApiService {
 
     /** Issues a one-time session ticket; each WebSocket connection needs a fresh one. */
     ticket(hostId: string): Observable<R<TicketVo>> {
-        return this.http.get<R<TicketVo>>(`${RestPath.erupt}/remote/RemoteHost/ticket/${hostId}`);
+        return this.http.get<R<TicketVo>>(`${RestPath.erupt}/remote/ticket/${hostId}`);
     }
 }
