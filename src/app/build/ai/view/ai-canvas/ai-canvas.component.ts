@@ -1,11 +1,12 @@
 import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Location} from '@angular/common';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzModalService} from 'ng-zorro-antd/modal';
 import {SharedModule} from '@shared/shared.module';
-import {I18NService} from '@core';
+import {I18NService, leaveReuseTab, setReuseTabTitle} from '@core';
+import {ReuseTabService} from '@delon/abc/reuse-tab';
 import {NzCodeEditorModule} from 'ng-zorro-antd/code-editor';
 import {CanvasApiService, CanvasGenerating, CanvasInfo, CanvasStyle, CanvasVersion, Llm, ModelGroup, CanvasModel} from '../../service/canvas-api.service';
 
@@ -144,12 +145,14 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
         private modal: NzModalService,
         private i18n: I18NService,
         private ngZone: NgZone,
-        private location: Location
+        private location: Location,
+        private router: Router,
+        private reuseTab: ReuseTabService
     ) {
     }
 
     goBack(): void {
-        this.location.back();
+        leaveReuseTab(this.reuseTab, this.router, this.location);
     }
 
     ngOnDestroy(): void {
@@ -176,6 +179,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
 
     private applyInfo(info: CanvasInfo): void {
         this.name = info.name;
+        setReuseTabTitle(this.reuseTab, this.route, info.name);
         this.style = info.style;
         this.llmId = info.llmId;
         this.versions = info.versions || [];

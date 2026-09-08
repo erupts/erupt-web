@@ -11,6 +11,8 @@ import {
 } from '@angular/core';
 import {Location} from '@angular/common';
 import {Router} from '@angular/router';
+import {ReuseTabService} from '@delon/abc/reuse-tab';
+import {leaveReuseTab} from '@core';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {Terminal} from '@xterm/xterm';
 import {FitAddon} from '@xterm/addon-fit';
@@ -64,7 +66,8 @@ export class SshComponent implements OnInit, OnDestroy {
         private location: Location,
         private api: RemoteApiService,
         private ngZone: NgZone,
-        @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService
+        @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+        private reuseTab: ReuseTabService
     ) {
     }
 
@@ -160,8 +163,7 @@ export class SshComponent implements OnInit, OnDestroy {
 
     back(): void {
         this.ws?.close(1000, 'closed by user');
-        if (window.history.length > 1) this.location.back();
-        else this.router.navigate(['/build/table/RemoteHost']);
+        leaveReuseTab(this.reuseTab, this.router, this.location, '/build/table/RemoteHost');
     }
 
     // ------------------------------------------------------------------ toolbar actions

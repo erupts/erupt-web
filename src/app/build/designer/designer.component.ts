@@ -1,11 +1,12 @@
 import {Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Location} from "@angular/common";
 import {Subscription} from "rxjs";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
-import {I18NService} from "@core";
+import {I18NService, leaveReuseTab, setReuseTabTitle} from "@core";
+import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, FormSize, PagingType, Scene} from "../erupt/model/erupt.enum";
 import {EruptBuildModel} from "../erupt/model/erupt-build.model";
 import {KV} from "../erupt/model/util.model";
@@ -105,7 +106,9 @@ export class DesignerComponent implements OnInit, OnDestroy {
                 private dataHandlerService: DataHandlerService,
                 private i18n: I18NService,
                 private msg: NzMessageService,
-                private modal: NzModalService) {
+                private modal: NzModalService,
+                private reuseTab: ReuseTabService,
+                private router: Router) {
     }
 
     ngOnInit(): void {
@@ -122,6 +125,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
                         this.form.erupt.name = res.data.name;
                     }
                     this.form.className = res.data.className;
+                    setReuseTabTitle(this.reuseTab, this.route, res.data.name || res.data.className);
                     this.keySeq = this.form.fields.length;
                     this.dirty = false;
                 });
@@ -300,7 +304,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
     }
 
     back(): void {
-        this.location.back();
+        leaveReuseTab(this.reuseTab, this.router, this.location, '/designer');
     }
 
     // Delete key removes selected field (no-op when an input is focused)

@@ -11,6 +11,8 @@ import {
 } from '@angular/core';
 import {Location} from '@angular/common';
 import {Router} from '@angular/router';
+import {ReuseTabService} from '@delon/abc/reuse-tab';
+import {leaveReuseTab} from '@core';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import RFB from '@novnc/novnc/lib/rfb.js';
 import {Status} from '../../../erupt/model/erupt-api.model';
@@ -81,7 +83,8 @@ export class DesktopComponent implements OnInit, OnDestroy {
         private location: Location,
         private api: RemoteApiService,
         private ngZone: NgZone,
-        @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService
+        @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+        private reuseTab: ReuseTabService
     ) {
     }
 
@@ -178,11 +181,7 @@ export class DesktopComponent implements OnInit, OnDestroy {
 
     back(): void {
         this.rfb?.disconnect();
-        if (window.history.length > 1) {
-            this.location.back();
-        } else {
-            this.router.navigate(['/build/table/RemoteHost']);
-        }
+        leaveReuseTab(this.reuseTab, this.router, this.location, '/build/table/RemoteHost');
     }
 
     // ------------------------------------------------------------------ credentials

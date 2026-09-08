@@ -3,6 +3,8 @@ import {Location} from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Status} from '../../../erupt/model/erupt-api.model';
 import {RemoteApiService} from '../../service/remote-api.service';
+import {ReuseTabService} from '@delon/abc/reuse-tab';
+import {leaveReuseTab, setReuseTabTitle} from '@core';
 
 /**
  * Route target for /remote/:id — requests the first ticket to learn the host's protocol,
@@ -46,7 +48,8 @@ export class RemoteEntryComponent implements OnInit {
     ticket = '';
     error = '';
 
-    constructor(private route: ActivatedRoute, private router: Router, private location: Location, private api: RemoteApiService) {
+    constructor(private route: ActivatedRoute, private router: Router, private location: Location, private api: RemoteApiService,
+                private reuseTab: ReuseTabService) {
     }
 
     ngOnInit(): void {
@@ -63,6 +66,8 @@ export class RemoteEntryComponent implements OnInit {
                     return;
                 }
                 this.hostName = res.data.name;
+                // Not a menu item: name the tab after the host instead of the /remote/:id address
+                setReuseTabTitle(this.reuseTab, this.route, this.hostName);
                 this.ticket = res.data.ticket;
                 this.protocol = res.data.protocol;
             },
@@ -71,7 +76,6 @@ export class RemoteEntryComponent implements OnInit {
     }
 
     back(): void {
-        if (window.history.length > 1) this.location.back();
-        else this.router.navigate(['/build/table/RemoteHost']);
+        leaveReuseTab(this.reuseTab, this.router, this.location, '/build/table/RemoteHost');
     }
 }
