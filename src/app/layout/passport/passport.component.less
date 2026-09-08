@@ -26,14 +26,14 @@
         }
 
         // ── Top nav ──────────────────────────────────────────────────
+        // Floats over the page background: no fill, no rule — the card is the only
+        // hard-edged surface on this page.
         .lp-side-nav {
-            height: 56px;
+            height: 64px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
-            padding: 0 28px;
-            background: var(--erupt-bg-spotlight, #fbfcfd);
-            border-bottom: 1px solid var(--ant-border-color-split);
+            padding: 0 32px;
         }
 
         .lp-side-brand {
@@ -45,7 +45,7 @@
         }
 
         .lp-side-brand-img {
-            height: 24px;
+            height: 26px;
             object-fit: contain;
         }
 
@@ -57,35 +57,35 @@
             line-height: 1;
         }
 
+        // Icon actions grouped in one translucent pill instead of a row of divided buttons
         .lp-side-nav-actions {
             display: flex;
             align-items: center;
             gap: 2px;
+            padding: 3px;
+            border-radius: 999px;
+            background: color-mix(in srgb, var(--erupt-bg-container, #fff) 72%, transparent);
+            box-shadow: inset 0 0 0 1px var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         .lp-nav-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 34px;
-            height: 34px;
-            border-radius: 7px;
-            font-size: 16px;
-            color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.50));
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            font-size: 15px;
+            color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.55));
             text-decoration: none;
             transition: color 0.18s, background 0.18s;
 
             &:hover {
-                color: var(--erupt-text, rgba(0, 0, 0, 0.80));
+                color: var(--erupt-text, rgba(0, 0, 0, 0.85));
                 background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
             }
-        }
-
-        .lp-nav-divider {
-            width: 1px;
-            height: 18px;
-            background: var(--erupt-fill, rgba(0, 0, 0, 0.10));
-            margin: 0 6px;
         }
 
         .lp-nav-lang {
@@ -94,18 +94,23 @@
 
             i18n-choice {
                 flex: none;
+                display: inline-flex;
             }
 
             i[nz-icon] {
-                font-size: 16px;
-                color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.50));
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+                font-size: 15px;
+                color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.55));
                 cursor: pointer;
-                padding: 9px;
-                border-radius: 7px;
+                border-radius: 999px;
                 transition: color 0.18s, background 0.18s;
 
                 &:hover {
-                    color: var(--erupt-text, rgba(0, 0, 0, 0.80));
+                    color: var(--erupt-text, rgba(0, 0, 0, 0.85));
                     background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
                 }
             }
@@ -176,6 +181,10 @@
         background-image: url('/assets/passport/passport-bg-dark.svg');
     }
 
+    .lp-side-nav-actions {
+        box-shadow: inset 0 0 0 1px var(--erupt-fill-tertiary, rgba(255, 255, 255, 0.08));
+    }
+
     // hairline ring instead of the invisible shadows
     .lp-card {
         box-shadow: 0 0 0 1px var(--erupt-fill-tertiary, rgba(255, 255, 255, 0.08)),
@@ -196,8 +205,19 @@
 
     .lp-side-nav {
         height: 44px;
+        padding: 0 28px;
         background: var(--raft-paper, #fff);
         border-bottom: 1.5px solid var(--raft-ink, #0a0a0a);
+    }
+
+    .lp-side-nav-actions {
+        padding: 0;
+        gap: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 
     .lp-side-brand {
@@ -225,10 +245,6 @@
             color: var(--raft-ink, #0a0a0a);
             background: var(--raft-muted, rgba(10, 10, 10, 0.08));
         }
-    }
-
-    .lp-nav-divider {
-        background: var(--raft-muted, rgba(10, 10, 10, 0.20));
     }
 
     .lp-nav-lang i[nz-icon] {
