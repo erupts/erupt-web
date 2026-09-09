@@ -131,6 +131,7 @@ export interface DesignerEdit {
     choiceType?: { type?: ChoiceEnum; vl?: DesignerVL[] };
     multiChoiceType?: { vl?: DesignerVL[] };
     tagsType?: { tags?: string[]; joinSeparator?: string; maxTagCount?: number; allowExtension?: boolean };
+    autoCompleteType?: { values?: string[]; triggerLength?: number };
     attachmentType?: { type?: AttachmentEnum; maxLimit?: number; size?: number; fileTypes?: string[] };
     codeEditType?: { language?: string; height?: number };
     referenceTreeType?: { id?: string; label?: string; pid?: string };
@@ -138,6 +139,7 @@ export interface DesignerEdit {
     checkboxType?: { id?: string; label?: string };
     groupType?: { fields?: string[]; collapsed?: boolean };
     calloutType?: { value?: string; style?: string };
+    tplType?: { path?: string; engine?: string; enable?: boolean };
 }
 
 export interface DesignerVL {
@@ -183,7 +185,8 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
             {type: EditType.DATE, label: "designer.type.date", icon: "calendar", edit: {dateType: {type: DateEnum.DATE}}},
             {type: EditType.SLIDER, label: "designer.type.slider", icon: "sliders", edit: {sliderType: {min: 0, max: 100, step: 1}}},
             {type: EditType.RATE, label: "designer.type.rate", icon: "star", edit: {rateType: {count: 5}}},
-            {type: EditType.COLOR, label: "designer.type.color", icon: "bg-colors"}
+            {type: EditType.COLOR, label: "designer.type.color", icon: "bg-colors"},
+            {type: EditType.HIDDEN, label: "designer.type.hidden", icon: "eye-invisible"}
         ]
     },
     {
@@ -216,7 +219,13 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
                     }
                 }
             },
-            {type: EditType.TAGS, label: "designer.type.tags", icon: "tags", edit: {tagsType: {tags: []}}}
+            {type: EditType.TAGS, label: "designer.type.tags", icon: "tags", edit: {tagsType: {tags: []}}},
+            {
+                type: EditType.AUTO_COMPLETE,
+                label: "designer.type.auto_complete",
+                icon: "search",
+                edit: {autoCompleteType: {values: [], triggerLength: 1}}
+            }
         ]
     },
     {
@@ -238,7 +247,22 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
             {type: EditType.MARKDOWN, label: "designer.type.markdown", icon: "read"},
             {type: EditType.CODE_EDITOR, label: "designer.type.code_editor", icon: "code", edit: {codeEditType: {language: "json", height: 300}}},
             {type: EditType.MAP, label: "designer.type.map", icon: "environment"},
-            {type: EditType.SIGNATURE, label: "designer.type.signature", icon: "highlight"}
+            {type: EditType.SIGNATURE, label: "designer.type.signature", icon: "highlight"},
+            {
+                type: EditType.TPL,
+                label: "designer.type.tpl",
+                icon: "layout",
+                noView: true,
+                edit: {tplType: {path: "", engine: "Native", enable: true}}
+            },
+            {
+                type: EditType.BUTTON,
+                label: "designer.type.button",
+                icon: "play-circle",
+                noView: true,
+                disabled: true,
+                disabledTip: "designer.handler.disabled_tip"
+            }
         ]
     },
     {
@@ -246,7 +270,8 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
         items: [
             {type: EditType.DIVIDE, label: "designer.type.divide", icon: "line", noView: true},
             {type: EditType.GROUP, label: "designer.type.group", icon: "block", noView: true, edit: {groupType: {fields: [], collapsed: false}}},
-            {type: EditType.CALLOUT, label: "designer.type.callout", icon: "profile", noView: true, edit: {calloutType: {value: "", style: "CARD"}}}
+            {type: EditType.CALLOUT, label: "designer.type.callout", icon: "profile", noView: true, edit: {calloutType: {value: "", style: "CARD"}}},
+            {type: EditType.EMPTY, label: "designer.type.empty", icon: "border", noView: true}
         ]
     },
     {
@@ -302,6 +327,14 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
                 icon: "node-expand",
                 needLink: true,
                 edit: {referenceTreeType: {}},
+                disabled: true,
+                disabledTip: "designer.reference.disabled_tip"
+            },
+            {
+                type: EditType.MULTI_FORM,
+                label: "designer.type.multi_form",
+                icon: "form",
+                needLink: true,
                 disabled: true,
                 disabledTip: "designer.reference.disabled_tip"
             },

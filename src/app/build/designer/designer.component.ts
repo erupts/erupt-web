@@ -297,6 +297,12 @@ export class DesignerComponent implements OnInit, OnDestroy {
         if (e.type === EditType.TEXTAREA) {
             e.textareaType = e.textareaType || {};
         }
+        if (e.type === EditType.TPL) {
+            e.tplType = e.tplType || {path: "", engine: "Native", enable: true};
+        }
+        if (e.type === EditType.AUTO_COMPLETE) {
+            e.autoCompleteType = e.autoCompleteType || {values: [], triggerLength: 1};
+        }
     }
 
     deselect(): void {
@@ -431,7 +437,8 @@ export class DesignerComponent implements OnInit, OnDestroy {
     // fields available for vis selection: all form fields (by field name)
     visFieldOptions(): { name: string; label: string }[] {
         return this.form.fields
-            .filter(f => f.edit.type !== this.editType.DIVIDE && f.edit.type !== this.editType.GROUP)
+            .filter(f => f.edit.type !== this.editType.DIVIDE && f.edit.type !== this.editType.GROUP
+                && f.edit.type !== this.editType.EMPTY && f.edit.type !== this.editType.TPL)
             .map(f => ({name: f.fieldName, label: f.edit.title + " (" + f.fieldName + ")"}));
     }
 
@@ -574,7 +581,8 @@ export class DesignerComponent implements OnInit, OnDestroy {
     private static readonly FULL_LINE_TYPES = new Set<EditType>([
         EditType.DIVIDE, EditType.GROUP, EditType.CALLOUT, EditType.COMBINE, EditType.TEXTAREA, EditType.MARKDOWN,
         EditType.TAGS, EditType.CHECKBOX, EditType.ATTACHMENT, EditType.HTML_EDITOR, EditType.MAP,
-        EditType.CODE_EDITOR, EditType.SIGNATURE, EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE
+        EditType.CODE_EDITOR, EditType.SIGNATURE, EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE,
+        EditType.TPL, EditType.MULTI_FORM
     ]);
 
     // whether a canvas field occupies a full row: FULL_LINE form size, naturally full-width types, or INPUT with fullSpan
@@ -592,7 +600,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
     // only reference-type components require a linked model config
     private static readonly LINK_TYPES = new Set<EditType>([
         EditType.REFERENCE_TABLE, EditType.REFERENCE_TREE, EditType.CHECKBOX,
-        EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE, EditType.COMBINE
+        EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE, EditType.COMBINE, EditType.MULTI_FORM
     ]);
 
     needLink(type: EditType): boolean {
@@ -652,6 +660,11 @@ export class DesignerComponent implements OnInit, OnDestroy {
                 || e.type === EditType.CHECKBOX && (!e.checkboxType?.id || !e.checkboxType?.label);
             if (missingRefField) {
                 this.msg.warning(this.i18n.fanyi("designer.ref_field_required") + ": " + field.edit.title);
+                this.select(field);
+                return false;
+            }
+            if (e.type === EditType.TPL && !e.tplType?.path) {
+                this.msg.warning(this.i18n.fanyi("designer.tpl_path_required") + ": " + field.edit.title);
                 this.select(field);
                 return false;
             }

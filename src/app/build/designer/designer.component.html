@@ -188,6 +188,11 @@
                                     @case (editType.TAGS) {
                                         <nz-select nzDisabled nzMode="tags" style="width: 100%"></nz-select>
                                     }
+                                    @case (editType.AUTO_COMPLETE) {
+                                        <nz-input-group nzSuffixIcon="search">
+                                            <input nz-input disabled [placeholder]="field.edit.placeHolder || ''"/>
+                                        </nz-input-group>
+                                    }
                                     @case (editType.GROUP) {
                                         <div class="mock-group">
                                             <span nz-icon nzType="block"></span>
@@ -207,6 +212,21 @@
                                             A</label>
                                         <label nz-checkbox nzDisabled>{{ 'designer.option_label' | translate }}
                                             B</label>
+                                    }
+                                    @case (editType.HIDDEN) {
+                                        <div class="mock-block">
+                                            <span nz-icon nzType="eye-invisible"></span>
+                                            <span>{{ 'designer.type.hidden' | translate }}</span>
+                                        </div>
+                                    }
+                                    @case (editType.EMPTY) {
+                                        <div class="mock-block" style="background: transparent"></div>
+                                    }
+                                    @case (editType.TPL) {
+                                        <div class="mock-block">
+                                            <span nz-icon nzType="layout"></span>
+                                            <span>{{ field.edit.tplType?.path || ('designer.tpl_path' | translate) }}</span>
+                                        </div>
                                     }
                                     @case (editType.ATTACHMENT) {
                                         <button nz-button nzType="dashed" disabled>
@@ -426,6 +446,21 @@
                                                    style="width: 100%" (ngModelChange)="saveDraft()"></nz-select>
                                     </div>
                                 }
+                                @case (editType.AUTO_COMPLETE) {
+                                    <nz-divider [nzText]="'designer.type_config' | translate"
+                                                nzOrientation="left" nzPlain></nz-divider>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.auto_complete_values' | translate }}</label>
+                                        <nz-select [(ngModel)]="selected.edit.autoCompleteType!.values" nzMode="tags"
+                                                   style="width: 100%" (ngModelChange)="saveDraft()"></nz-select>
+                                    </div>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.trigger_length' | translate }}</label>
+                                        <nz-input-number [(ngModel)]="selected.edit.autoCompleteType!.triggerLength"
+                                                         [nzMin]="0" style="width: 100%"
+                                                         (ngModelChange)="saveDraft()"></nz-input-number>
+                                    </div>
+                                }
                                 @case (editType.REFERENCE_TABLE) {
                                     <nz-divider [nzText]="'designer.ref_config' | translate"
                                                 nzOrientation="left" nzPlain></nz-divider>
@@ -587,6 +622,24 @@
                                                        (ngModelChange)="saveDraft()"></nz-select>
                                         </div>
                                     }
+                                }
+                                @case (editType.TPL) {
+                                    <nz-divider [nzText]="'designer.type_config' | translate"
+                                                nzOrientation="left" nzPlain></nz-divider>
+                                    <div class="prop-item">
+                                        <label><span style="color:#ff4d4f">*</span> {{ 'designer.tpl_path' | translate }}</label>
+                                        <input nz-input [(ngModel)]="selected.edit.tplType!.path" placeholder="/tpl/demo.html"
+                                               (ngModelChange)="saveDraft()"/>
+                                    </div>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.tpl_engine' | translate }}</label>
+                                        <nz-select style="width: 100%" [(ngModel)]="selected.edit.tplType!.engine"
+                                                   (ngModelChange)="saveDraft()">
+                                            @for (s of ['Native', 'FreeMarker', 'Thymeleaf', 'Velocity', 'Beetl', 'Enjoy']; track s) {
+                                                <nz-option [nzValue]="s" [nzLabel]="s"></nz-option>
+                                            }
+                                        </nz-select>
+                                    </div>
                                 }
                                 @case (editType.CODE_EDITOR) {
                                     <nz-divider [nzText]="'designer.type_config' | translate"
