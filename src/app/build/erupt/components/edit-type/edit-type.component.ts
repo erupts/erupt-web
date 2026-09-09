@@ -400,6 +400,10 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         if (edit.type === EditType.ATTACHMENT) {
             return !edit.$viewValue || edit.$viewValue.length === 0;
         }
+        // MULTI_FORM keeps its editable blocks in $tempValue; $value is the row list loaded at init
+        if (edit.type === EditType.MULTI_FORM) {
+            return !edit.$tempValue || edit.$tempValue.length === 0;
+        }
         let value = edit.$value;
         if (value === null || value === undefined || value === "") {
             return true;
