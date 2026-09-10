@@ -333,6 +333,9 @@ export class DesignerComponent implements OnInit, OnDestroy {
         event.stopPropagation();
         let copy: DesignerField = JSON.parse(JSON.stringify(field));
         copy.key = "f" + (++this.keySeq) + "_" + Date.now();
+        // a copy is a new field, not the source under another name; keeping the id would make
+        // publish treat it as a rename and move the source column's data onto the copy
+        delete copy.id;
         copy.fieldName = this.nextFieldName();
         this.form.fields.splice(this.form.fields.indexOf(field) + 1, 0, copy);
         this.select(copy);

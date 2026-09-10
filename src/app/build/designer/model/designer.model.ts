@@ -98,6 +98,9 @@ export interface DesignerPower {
 
 export interface DesignerField {
     key: string;            // frontend-only unique identifier
+    id?: string;            // stable field identity assigned by the backend on publish; renaming
+                            // a field keeps it, which is how the storage layer knows to move the
+                            // existing column instead of adding an empty one. Never reuse it.
     fieldName: string;
     linkErupt?: string;     // linked @Erupt class name for reference-type fields
     view?: DesignerView;
