@@ -7,7 +7,14 @@ import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {NzConfigService} from "ng-zorro-antd/core/config";
 import {TableSize} from "../../../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
-import {applyHeaderColor} from "@shared/util/theme.util";
+import {
+    applyHeaderColor,
+    applyThemeColor,
+    BRUTALIST_PRESET_COLORS,
+    DEFAULT_THEME_COLOR,
+    THEME_PRESET_COLORS,
+    toHexColor
+} from "@shared/util/theme.util";
 
 type Skin = 'default' | 'brutalist' | 'liquid-glass';
 
@@ -56,56 +63,24 @@ export class SettingsComponent implements OnInit {
     // Compact theme — reflects the class index.html applied before bootstrap.
     compactTheme: boolean = document.documentElement.classList.contains("compact");
 
-    // Theme color — user choice (localStorage) wins over the site config default.
-    // Curated palette: mid-tone (600-level) hues that stay readable under white
-    // text and hold up in both light and dark themes.
-    presetColors: string[] = [
-        "#1677ff", // daybreak blue (ant design)
-        "#2563eb", // sapphire blue
-        "#0ea5e9", // sky blue
-        "#4f46e5", // indigo
-        "#7c3aed", // violet
-        "#c026d3", // fuchsia
-        "#db2777", // rose pink
-        "#e11d48", // rose red
-        "#ff6b2a", // erupt lava orange
-        "#65a30d", // lime
-        "#059669", // emerald
-        "#0d9488", // teal
-        "#0891b2", // peacock cyan
-        "#475569"  // graphite slate
-    ];
+    // Palettes live in @shared/util/theme.util so this drawer and the login
+    // page picker can never drift apart.
+    presetColors: string[] = THEME_PRESET_COLORS;
 
-    // Raft candy palette (400-level hues from raft.build) — offered while the
-    // brutalist skin is on: pastel accents designed to pair with ink borders
-    // and dark text rather than the white-text mid-tones above.
-    brutalistPresetColors: string[] = [
-        "#fe7da8", // raft pink (site default accent)
-        "#f97264", // raft red
-        "#f8a16f", // raft orange
-        "#ffd441", // raft yellow
-        "#a9d877", // raft lime
-        "#28ccf3", // raft cyan
-        "#bbafe6", // raft purple
-        "#c0b9b1"  // raft stone
-    ];
+    brutalistPresetColors: string[] = BRUTALIST_PRESET_COLORS;
 
     get activePresetColors(): string[] {
         return this.brutalistTheme ? this.brutalistPresetColors : this.presetColors;
     }
 
-    themeColor: string = localStorage.getItem("theme-color") || WindowModel.theme?.primaryColor || "#1677ff";
+    themeColor: string = localStorage.getItem("theme-color") || WindowModel.theme?.primaryColor || DEFAULT_THEME_COLOR;
 
     setThemeColor(color: string) {
-        this.themeColor = color;
-        localStorage.setItem("theme-color", color);
-        this.nzConfigService.set("theme", {...WindowModel.theme, primaryColor: color});
+        this.themeColor = applyThemeColor(this.nzConfigService, color);
     }
 
     resetThemeColor() {
-        localStorage.removeItem("theme-color");
-        this.themeColor = WindowModel.theme?.primaryColor || "#1677ff";
-        this.nzConfigService.set("theme", {...WindowModel.theme, primaryColor: this.themeColor});
+        this.themeColor = applyThemeColor(this.nzConfigService, null);
     }
 
     // Header (top bar) color: "" = follow theme, "primary" = theme color, or a literal color.
@@ -132,13 +107,8 @@ export class SettingsComponent implements OnInit {
         applyHeaderColor(value || WindowModel.theme?.headerColor || null);
     }
 
-    // <input type="color"> only accepts #rrggbb; the site config may use rgb().
     get themeColorHex(): string {
-        const m = this.themeColor.match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
-        if (m) {
-            return "#" + [1, 2, 3].map(i => (+m[i]).toString(16).padStart(2, "0")).join("");
-        }
-        return this.themeColor;
+        return toHexColor(this.themeColor);
     }
 
     ngOnInit() {

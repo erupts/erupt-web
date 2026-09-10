@@ -4,6 +4,7 @@
  */
 
 import {
+    BgColorsOutline,
     AimOutline,
     ApartmentOutline,
     ApiOutline,
@@ -130,6 +131,7 @@ import {
 } from '@ant-design/icons-angular/icons';
 
 export const ICONS_AUTO = [
+    BgColorsOutline,
     ArrowUpOutline,
     CodeOutline,
     ExportOutline,

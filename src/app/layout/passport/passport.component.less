@@ -304,3 +304,95 @@
         }
     }
 }
+
+// ── Liquid Glass skin ─────────────────────────────────────────────
+// Only active when <html> has the .liquid-glass class. The ambient field is
+// painted on <body> and the --lg-* material tokens come from
+// styles/themes/liquid-glass.less, which swaps them under
+// html.liquid-glass.dark — so this skin follows the dark theme for free.
+// Scoped here rather than in the theme file because the component's own
+// :host-prefixed rules would otherwise win the specificity tie.
+:host-context(.liquid-glass) ::ng-deep {
+
+    // drop the stock artwork so the ambient field behind it shows through
+    .lp-page {
+        background-color: transparent;
+        background-image: none;
+    }
+
+    .lp-side-nav-actions {
+        background: var(--lg-tint, rgba(255, 255, 255, 0.46));
+        box-shadow: inset 0 0 0 1px var(--lg-hairline, rgba(255, 255, 255, 0.65));
+        backdrop-filter: var(--lg-blur, saturate(180%) blur(22px));
+        -webkit-backdrop-filter: var(--lg-blur, saturate(180%) blur(22px));
+    }
+
+    // The card holds the form, so it uses the denser utility-bar tint rather
+    // than the panel tint — inputs and labels must stay fully legible.
+    .lp-card {
+        border: 1px solid var(--lg-hairline, rgba(255, 255, 255, 0.65));
+        border-radius: var(--lg-radius, 6px);
+        background: var(--lg-sheen, none), var(--lg-fold-tint, rgba(255, 255, 255, 0.84));
+        backdrop-filter: var(--lg-blur, saturate(180%) blur(22px));
+        -webkit-backdrop-filter: var(--lg-blur, saturate(180%) blur(22px));
+        box-shadow: var(--lg-shadow, 0 12px 32px rgba(24, 32, 56, 0.1)), var(--lg-specular, none);
+    }
+}
+
+// ── Theme color panel ─────────────────────────────────────────────
+// Rendered into a cdk overlay, so it sits outside the host element and cannot
+// live inside the :host block above. Angular still stamps the component's
+// _ngcontent attribute on it, so the styles stay scoped to this component.
+.lp-color-panel {
+    display: grid;
+    grid-template-columns: repeat(8, 22px);
+    gap: 8px;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--erupt-bg-elevated, #fff);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12);
+}
+
+.lp-swatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+
+    &:hover {
+        transform: scale(1.15);
+    }
+
+    &--active {
+        box-shadow: 0 0 0 2px var(--erupt-bg-elevated, #fff), 0 0 0 4px var(--ant-primary-color);
+    }
+
+    // custom color: rainbow tile hiding a native color input
+    &--custom {
+        position: relative;
+        overflow: hidden;
+        background: conic-gradient(#f5222d, #faad14, #52c41a, #13c2c2, #1677ff, #722ed1, #f5222d);
+
+        input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+    }
+
+    &--reset {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+        border: 1px dashed var(--erupt-border, #d9d9d9);
+
+        &:hover {
+            transform: none;
+            color: var(--ant-primary-color);
+            border-color: var(--ant-primary-color);
+        }
+    }
+}
