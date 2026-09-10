@@ -47,12 +47,12 @@
                             },
                             {
                                 "glob": "**/*",
-                                "input": "./node_modules/font-awesome/fonts/",
-                                "output": "/assets/font-awesome/fonts/"
+                                "input": "./node_modules/@fortawesome/fontawesome-free/webfonts/",
+                                "output": "/assets/font-awesome/webfonts/"
                             },
                             {
                                 "glob": "**/*",
-                                "input": "./node_modules/font-awesome/css/",
+                                "input": "./node_modules/@fortawesome/fontawesome-free/css/",
                                 "output": "/assets/font-awesome/css/"
                             },
                             {
