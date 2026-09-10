@@ -97,21 +97,20 @@ span.ripple {
 }
 
 .erupt-drag-sort {
-    // the checkbox column doubles as the drag zone: grip icon on the left, checkbox on the right
-    tbody tr > td:first-child {
+    // The checkbox column doubles as the drag zone: grip icon on the left, checkbox on the right.
+    // Only real data rows get a grip — the empty state and the zero-height column measuring row
+    // are rows too, and both would otherwise paint a grip on an empty table.
+    tbody tr:not(.ant-table-placeholder):not(.ant-table-measure-now) > td:first-child {
         position: relative;
         user-select: none;
+        cursor: grab;
 
         &::before {
             .drag-grip-icon();
         }
     }
 
-    tbody tr > td:first-child {
-        cursor: grab;
-    }
-
-    tbody tr:hover > td:first-child::before {
+    tbody tr:not(.ant-table-placeholder):not(.ant-table-measure-now):hover > td:first-child::before {
         background-color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.55));
     }
 
