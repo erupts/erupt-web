@@ -247,20 +247,22 @@
         }
 
         /* ---- liquid glass skin (html.liquid-glass) ---- */
+        /* Same field as the app shell, built off --pl-accent so the splash
+           already carries the user's brand color before Angular boots. */
         html.liquid-glass .preloader {
-            background-color: #e9edf5;
+            background-color: color-mix(in srgb, var(--pl-accent) 10%, #eef1f6);
             background-image:
-                radial-gradient(1100px 780px at 6% -12%, rgba(122, 162, 255, .55), transparent 62%),
-                radial-gradient(980px 700px at 98% -6%, rgba(255, 150, 197, .40), transparent 60%),
-                radial-gradient(900px 820px at 46% 112%, rgba(122, 226, 214, .42), transparent 62%);
+                radial-gradient(1100px 780px at 6% -12%, color-mix(in srgb, var(--pl-accent) 62%, transparent), transparent 62%),
+                radial-gradient(980px 700px at 98% -6%, color-mix(in srgb, color-mix(in srgb, var(--pl-accent) 55%, #ff5fa2) 48%, transparent), transparent 60%),
+                radial-gradient(900px 820px at 46% 112%, color-mix(in srgb, color-mix(in srgb, var(--pl-accent) 55%, #3fe0cf) 48%, transparent), transparent 62%);
         }
 
         html.liquid-glass.dark .preloader {
-            background-color: #0b0d12;
+            background-color: color-mix(in srgb, var(--pl-accent) 7%, #0b0d12);
             background-image:
-                radial-gradient(1100px 780px at 6% -12%, rgba(62, 92, 200, .42), transparent 62%),
-                radial-gradient(980px 700px at 98% -6%, rgba(168, 70, 160, .30), transparent 60%),
-                radial-gradient(900px 820px at 46% 112%, rgba(32, 140, 148, .28), transparent 62%);
+                radial-gradient(1100px 780px at 6% -12%, color-mix(in srgb, var(--pl-accent) 44%, transparent), transparent 62%),
+                radial-gradient(980px 700px at 98% -6%, color-mix(in srgb, color-mix(in srgb, var(--pl-accent) 55%, #b44aac) 32%, transparent), transparent 60%),
+                radial-gradient(900px 820px at 46% 112%, color-mix(in srgb, color-mix(in srgb, var(--pl-accent) 55%, #229a9e) 30%, transparent), transparent 62%);
         }
 
         .preloader-hidden-add         { opacity: 1; display: flex; }

@@ -49,6 +49,14 @@
             overflow: hidden;
         }
 
+        /* Liquid Glass: the shell already paints an ambient field and a glass
+           slab behind this frame, so the welcome page drops its own backdrop
+           and lets that show through instead of stamping a white rectangle on
+           it. An iframe renders transparent when its document does. */
+        html body {
+            background: none;
+        }
+
         @keyframes rise {
             from { opacity: 0; transform: translate(4px, 6px); }
             to   { opacity: 1; transform: none; }
@@ -541,6 +549,18 @@
         }
         .pager s.on::before { opacity: 1; }
     </style>
+<script>
+    // This frame is same-origin with the shell, so the active skin can be read
+    // straight from localStorage — no query-parameter plumbing needed. Applied
+    // before first paint so the white backdrop never flashes.
+    try {
+        if (localStorage.getItem('liquid-glass') === 'true') {
+            document.documentElement.classList.add('liquid-glass');
+        }
+    } catch (e) {
+        // storage blocked (private mode) — keep the default backdrop
+    }
+</script>
 </head>
 <body>
     <!-- artboard: ghost erupt page -->

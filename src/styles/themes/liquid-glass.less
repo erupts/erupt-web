@@ -53,11 +53,16 @@ html.liquid-glass {
     --lg-shadow: 0 12px 32px rgba(24, 32, 56, 0.10), 0 2px 8px rgba(24, 32, 56, 0.06);
     --lg-specular: inset 0 1px 0 rgba(255, 255, 255, 0.85);
 
-    /* Ambient color field behind everything */
-    --lg-canvas: #dbe3f1;
-    --lg-wash-1: rgba(104, 148, 255, 0.78);
-    --lg-wash-2: rgba(255, 128, 186, 0.58);
-    --lg-wash-3: rgba(96, 220, 208, 0.58);
+    /* Ambient color field behind everything, derived from the runtime brand
+     * color so the glass picks up whatever the user set in the settings drawer.
+     * The two companion washes are the brand hue pulled halfway toward a warm
+     * and a cool neighbour: enough separation to read as a field rather than a
+     * flat tint, while still obviously belonging to the same palette. */
+    --lg-hue: var(--ant-primary-color, #1677ff);
+    --lg-canvas: color-mix(in srgb, var(--lg-hue) 10%, #eef1f6);
+    --lg-wash-1: color-mix(in srgb, var(--lg-hue) 62%, transparent);
+    --lg-wash-2: color-mix(in srgb, color-mix(in srgb, var(--lg-hue) 55%, #ff5fa2) 48%, transparent);
+    --lg-wash-3: color-mix(in srgb, color-mix(in srgb, var(--lg-hue) 55%, #3fe0cf) 48%, transparent);
 
     /* Pages paint --erupt-bg-layout as their full canvas; clearing it lets the
      * glass slab below show through instead of an opaque gray sheet. */
@@ -88,10 +93,10 @@ html.liquid-glass.dark {
     --lg-shadow: 0 12px 36px rgba(0, 0, 0, 0.48), 0 2px 8px rgba(0, 0, 0, 0.32);
     --lg-specular: inset 0 1px 0 rgba(255, 255, 255, 0.10);
 
-    --lg-canvas: #0b0d12;
-    --lg-wash-1: rgba(66, 98, 214, 0.55);
-    --lg-wash-2: rgba(180, 74, 172, 0.40);
-    --lg-wash-3: rgba(34, 150, 158, 0.38);
+    --lg-canvas: color-mix(in srgb, var(--lg-hue) 7%, #0b0d12);
+    --lg-wash-1: color-mix(in srgb, var(--lg-hue) 44%, transparent);
+    --lg-wash-2: color-mix(in srgb, color-mix(in srgb, var(--lg-hue) 55%, #b44aac) 32%, transparent);
+    --lg-wash-3: color-mix(in srgb, color-mix(in srgb, var(--lg-hue) 55%, #229a9e) 30%, transparent);
 }
 
 /* ================================================================== *
