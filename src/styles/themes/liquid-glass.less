@@ -1,0 +1,370 @@
+/**
+ * Erupt Theme — "Apple Liquid Glass": a translucent, blurred material skin
+ * inspired by the macOS/iPadOS glass sidebar language.
+ *
+ * Design language
+ *   - The page canvas is an ambient color field (soft radial washes) that is
+ *     never covered: every shell surface floats above it.
+ *   - The sidebar is a real glass panel: translucent tint + backdrop blur +
+ *     saturation boost, a bright specular top edge, and a soft wide shadow.
+ *   - The content area keeps its own components untouched; it only becomes a
+ *     rounded translucent slab inset by --lg-gap so the ambient field shows
+ *     through the gutter and visually fuses the menu with the content.
+ *   - Corners are softly rounded, never pill-like; hairlines are light, never black.
+ *
+ * OPTIONAL OVERRIDE
+ *   Every rule is scoped under `html.liquid-glass`. Without that class the app
+ *   renders with the stock theme. Toggle at runtime via:
+ *       document.documentElement.classList.toggle('liquid-glass')
+ *   (see `src/app.js` -> `eruptSiteConfig.liquidGlass`). Add `dark` as well
+ *   (`html.liquid-glass.dark`) for the dark variant. Mutually exclusive with
+ *   the brutalist skin — the settings drawer turns the other one off.
+ *
+ * GOTCHA — backdrop-filter makes an element the containing block for its
+ *   `position: fixed` descendants. The sidebar wrap may use it (no fixed
+ *   children); `.erupt_content` must NOT, because the fixed reuse-tab lives
+ *   inside it. The content slab is translucent-only for that reason.
+ */
+
+/* ------------------------------------------------------------------ *
+ * Design tokens (scoped so they never leak into the default theme)
+ * ------------------------------------------------------------------ */
+html.liquid-glass {
+    /* Shell geometry — the gutter that fuses menu and content */
+    --lg-gap: 8px;
+    --lg-radius: 6px;
+    --lg-radius-sm: 6px;
+    --lg-header-h: 44px;
+
+    /* The material itself */
+    --lg-blur: saturate(180%) blur(22px);
+    --lg-tint: rgba(255, 255, 255, 0.46);          /* sidebar / header glass   */
+    --lg-tint-weak: rgba(255, 255, 255, 0.30);     /* content slab             */
+    /* Specular sheen laid over the tint: bright at the top edge, gone by a
+     * third down — what makes a flat translucent rectangle read as glass. */
+    --lg-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 34%);
+    --lg-hairline: rgba(255, 255, 255, 0.65);      /* lit edge of a panel      */
+    --lg-divider: rgba(0, 0, 0, 0.06);             /* separators inside glass  */
+    --lg-hover: rgba(255, 255, 255, 0.60);         /* row hover fill           */
+    /* Bottom utility bar: denser than the panel and blurred on its own, so menu
+     * rows scrolling underneath dissolve instead of showing through. */
+    --lg-fold-tint: rgba(255, 255, 255, 0.84);
+    --lg-fold-blur: saturate(180%) blur(18px);
+    --lg-shadow: 0 12px 32px rgba(24, 32, 56, 0.10), 0 2px 8px rgba(24, 32, 56, 0.06);
+    --lg-specular: inset 0 1px 0 rgba(255, 255, 255, 0.85);
+
+    /* Ambient color field behind everything */
+    --lg-canvas: #dbe3f1;
+    --lg-wash-1: rgba(104, 148, 255, 0.78);
+    --lg-wash-2: rgba(255, 128, 186, 0.58);
+    --lg-wash-3: rgba(96, 220, 208, 0.58);
+
+    /* Pages paint --erupt-bg-layout as their full canvas; clearing it lets the
+     * glass slab below show through instead of an opaque gray sheet. */
+    --erupt-bg-layout: transparent;
+
+    /* Shell surfaces driven by @delon layout hooks */
+    --alain-default-aside-bg: transparent;
+    --alain-default-content-bg: transparent;
+    /* never wash the selected <li> — it CONTAINS the expanded submenu <ul> */
+    --alain-default-aside-nav-selected-bg: transparent;
+    --alain-default-aside-nav-divider: var(--lg-divider);
+
+    /* Top bar rides the same material (a user-picked header color still wins:
+     * applyHeaderColor() sets these inline on <html>) */
+    --erupt-header-bg: var(--lg-tint);
+    --erupt-header-border: transparent;
+}
+
+/* Dark — the field goes deep, the glass goes smoky, the specular stays */
+html.liquid-glass.dark {
+    --lg-tint: rgba(46, 48, 58, 0.50);
+    --lg-tint-weak: rgba(20, 21, 27, 0.42);
+    --lg-sheen: linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0) 34%);
+    --lg-hairline: rgba(255, 255, 255, 0.14);
+    --lg-divider: rgba(255, 255, 255, 0.09);
+    --lg-hover: rgba(255, 255, 255, 0.09);
+    --lg-fold-tint: rgba(38, 40, 49, 0.86);
+    --lg-shadow: 0 12px 36px rgba(0, 0, 0, 0.48), 0 2px 8px rgba(0, 0, 0, 0.32);
+    --lg-specular: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+
+    --lg-canvas: #0b0d12;
+    --lg-wash-1: rgba(66, 98, 214, 0.55);
+    --lg-wash-2: rgba(180, 74, 172, 0.40);
+    --lg-wash-3: rgba(34, 150, 158, 0.38);
+}
+
+/* ================================================================== *
+ * AMBIENT FIELD
+ *   Painted on <body> so it propagates to the canvas and stays put while
+ *   inner panels scroll. Every shell surface above is translucent.
+ * ================================================================== */
+html.liquid-glass body {
+    background-color: var(--lg-canvas);
+    background-image:
+        radial-gradient(1100px 780px at 6% -12%, var(--lg-wash-1), transparent 62%),
+        radial-gradient(980px 700px at 98% -6%, var(--lg-wash-2), transparent 60%),
+        radial-gradient(900px 820px at 46% 112%, var(--lg-wash-3), transparent 62%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* ================================================================== *
+ * SHELL — header, sidebar panel, content slab
+ * ================================================================== */
+
+/* --- Top bar: frosted strip, no rule; the gutter does the separating --- */
+html.liquid-glass .erupt-header.erupt-header_fixed {
+    backdrop-filter: var(--lg-blur);
+    -webkit-backdrop-filter: var(--lg-blur);
+    box-shadow: var(--lg-specular);
+}
+
+html.liquid-glass .alain-default__header {
+    border-bottom-color: transparent;
+}
+
+/* --- Sidebar: the aside stays a transparent slot; its inner wrap is the
+ *     glass panel, so the shadow can spread into the gutter and the rounded
+ *     corners clip the nav and the bottom utility bar. ------------------ */
+html.liquid-glass .alain-default__aside {
+    overflow: visible;
+    background: transparent;
+}
+
+/* the stock 1px right rule would cut across the floating panel */
+html.liquid-glass .alain-default__aside::after,
+html.liquid-glass .erupt-side::after {
+    display: none;
+}
+
+html.liquid-glass .alain-default__aside-wrap {
+    position: relative;          /* re-anchors .fold and the loading overlay */
+    height: calc(100% - var(--lg-gap) * 2);
+    margin: var(--lg-gap) 0 var(--lg-gap) var(--lg-gap);
+    overflow: hidden;
+    border: 1px solid var(--lg-hairline);
+    border-radius: var(--lg-radius);
+    background: var(--lg-sheen), var(--lg-tint);
+    backdrop-filter: var(--lg-blur);
+    -webkit-backdrop-filter: var(--lg-blur);
+    box-shadow: var(--lg-shadow), var(--lg-specular);
+}
+
+/* --- Content slab: components inside are untouched, the area itself becomes
+ *     a rounded translucent sheet inset by the same gutter. No backdrop-filter
+ *     here (see the header comment) — the ambient field is already soft. --- */
+html.liquid-glass.ltr .erupt_content,
+html.liquid-glass.rtl .erupt_content {
+    height: calc(100vh - var(--lg-header-h) - var(--lg-gap) * 2);
+    overflow: hidden;
+    border: 1px solid var(--lg-hairline);
+    border-radius: var(--lg-radius);
+    background: var(--lg-sheen), var(--lg-tint-weak);
+    box-shadow: var(--lg-shadow), var(--lg-specular);
+}
+
+html.liquid-glass.ltr .erupt_content {
+    margin: calc(var(--lg-header-h) + var(--lg-gap)) var(--lg-gap) var(--lg-gap)
+        calc(var(--sidebar-width, 200px) + var(--lg-gap));
+}
+
+html.liquid-glass.ltr .alain-default__collapsed .erupt_content {
+    margin-left: calc(var(--collapsed-width, 48px) + var(--lg-gap));
+}
+
+html.liquid-glass.rtl .erupt_content {
+    margin: calc(var(--lg-header-h) + var(--lg-gap))
+        calc(var(--sidebar-width, 200px) + var(--lg-gap)) var(--lg-gap) var(--lg-gap);
+}
+
+html.liquid-glass.rtl .alain-default__collapsed .erupt_content {
+    margin-right: calc(var(--collapsed-width, 48px) + var(--lg-gap));
+}
+
+/* Under pad the sidebar slides over the content, which keeps only the gutter */
+@media (max-width: 767px) {
+    html.liquid-glass.ltr .erupt_content,
+    html.liquid-glass.rtl .erupt_content {
+        margin-left: var(--lg-gap);
+        margin-right: var(--lg-gap);
+    }
+}
+
+/* --- Multi-tab bar: fixed, so it floats ON the slab. Keep it transparent and
+ *     inset by the slab's 1px border so the rounded top reads as one piece. */
+html.liquid-glass .alain-default__fixed .reuse-tab {
+    /* !important — @delon/abc pins the fixed tab bar with `top: 44px !important` */
+    top: calc(var(--lg-header-h) + var(--lg-gap) + 1px) !important;
+    left: calc(var(--sidebar-width, 200px) + var(--lg-gap) + 1px);
+    right: calc(var(--lg-gap) + 1px);
+    margin-left: 0;
+    margin-right: 0;
+    overflow: hidden;
+    border-radius: calc(var(--lg-radius) - 1px) calc(var(--lg-radius) - 1px) 0 0;
+}
+
+html.liquid-glass .alain-default__collapsed .reuse-tab {
+    left: calc(var(--collapsed-width, 48px) + var(--lg-gap) + 1px);
+}
+
+html.liquid-glass.rtl .alain-default__fixed .reuse-tab {
+    right: calc(var(--sidebar-width, 200px) + var(--lg-gap) + 1px);
+    left: calc(var(--lg-gap) + 1px);
+}
+
+html.liquid-glass.rtl .alain-default__collapsed .reuse-tab {
+    right: calc(var(--collapsed-width, 48px) + var(--lg-gap) + 1px);
+    left: calc(var(--lg-gap) + 1px);
+}
+
+html.liquid-glass .reuse-tab__card {
+    background: transparent;
+    border-bottom-color: var(--lg-divider);
+}
+
+/* ================================================================== *
+ * LEFT MENU — rows become soft pills on the glass
+ * ================================================================== */
+html.liquid-glass {
+
+    /* Breathing room inside the panel. It goes on the scroll container, not the
+     * menu itself: erupt-menu carries an inline `padding-top: 0 !important`
+     * that no stylesheet can beat, and padding here scrolls away with the rows
+     * instead of permanently insetting the list. The bottom pad stacks on the
+     * menu's own 38px fold clearance, lifting the last row off the bar. */
+    .alain-default__aside .alain-default__aside-inner {
+        padding-top: var(--lg-gap);
+        padding-bottom: var(--lg-gap);
+    }
+
+    /* drop delon's 3px guide bar; the pill carries the selection */
+    .alain-default__aside .sidebar-nav__item {
+        border-left: 0 !important;
+    }
+
+    .alain-default__aside .sidebar-nav__item-link {
+        margin: 1px 6px;
+        border-radius: var(--lg-radius-sm);
+        transition: background-color 0.15s ease, color 0.15s ease;
+
+        &:hover {
+            background-color: var(--lg-hover);
+            color: var(--erupt-text, rgba(0, 0, 0, 0.88));
+        }
+    }
+
+    /* active-trail parents only tint their own title, never the subtree */
+    .alain-default__aside .sidebar-nav__selected {
+        background-color: transparent;
+    }
+
+    .alain-default__aside .sidebar-nav__selected > .sidebar-nav__item-link {
+        color: var(--ant-primary-color);
+    }
+
+    /* selected leaf (leaves carry href) — brand-tinted glass pill */
+    .alain-default__aside .sidebar-nav__selected > .sidebar-nav__item-link[href] {
+        background-color: color-mix(in srgb, var(--ant-primary-color) 16%, transparent);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ant-primary-color) 26%, transparent);
+        color: var(--ant-primary-color);
+        font-weight: 600;
+
+        &:hover {
+            background-color: color-mix(in srgb, var(--ant-primary-color) 22%, transparent);
+        }
+    }
+
+    .alain-default__aside .sidebar-nav__group-title {
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+        font-size: 12px;
+        letter-spacing: 0.02em;
+    }
+
+    /* Collapsed rail — square-ish pill hugging the icon */
+    .alain-default__collapsed .alain-default__aside .sidebar-nav__item-link {
+        margin: 2px 4px;
+    }
+
+    /* Bottom utility bar — its own, denser pane of glass. It sits above the
+     * scrolling menu (z-index 5), so its backdrop blur is what hides the rows
+     * passing underneath; the tint alone would let them read through.
+     * Nested inside the wrap's backdrop-filter, which scopes the blur to the
+     * panel — exactly the region we want sampled. */
+    .alain-default__aside .fold {
+        background: var(--lg-fold-tint);
+        backdrop-filter: var(--lg-fold-blur);
+        -webkit-backdrop-filter: var(--lg-fold-blur);
+        border-top: 1px solid var(--lg-divider);
+        border-right: 0;
+    }
+
+    /* Short scrim above the bar so a row scrolling in fades out rather than
+     * being sliced by the hairline. */
+    .alain-default__aside .fold::before {
+        content: '';
+        position: absolute;
+        right: 0;
+        bottom: 100%;
+        left: 0;
+        height: 14px;
+        background: linear-gradient(to top, var(--lg-fold-tint), transparent);
+        pointer-events: none;
+    }
+
+    .alain-default__aside .fold__btn:hover {
+        background: var(--lg-hover);
+    }
+
+    .alain-default__aside .aside-loading-overlay {
+        background: transparent;
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+    }
+
+    /* dual-column mode rail sits on the same glass */
+    .alain-default__aside .dual-menu__rail {
+        border-right-color: var(--lg-divider);
+    }
+}
+
+/* ================================================================== *
+ * COMPONENT POLISH — continuous corners, glassy floating overlays
+ * ================================================================== */
+html.liquid-glass {
+
+    .ant-btn, .ant-input, .ant-input-affix-wrapper, .ant-input-number,
+    .ant-select-selector, .ant-picker, .ant-tag, .ant-alert, .ant-segmented,
+    .ant-segmented-item-label, .ant-pagination-item, .ant-message-notice-content {
+        border-radius: var(--lg-radius-sm);
+    }
+
+    .ant-card, .ant-modal-content, .ant-drawer-content, .ant-dropdown-menu,
+    .ant-popover-inner, .ant-notification-notice, .ant-tooltip-inner {
+        border-radius: var(--lg-radius);
+    }
+
+    /* Floating overlays pick up the material; they always sit over opaque
+     * content, so the blur has something real to work with. */
+    .ant-dropdown-menu,
+    .ant-popover-inner {
+        border: 1px solid var(--lg-hairline);
+        background-image: var(--lg-sheen);
+        background-color: var(--lg-tint);
+        backdrop-filter: var(--lg-blur);
+        -webkit-backdrop-filter: var(--lg-blur);
+        box-shadow: var(--lg-shadow), var(--lg-specular);
+    }
+
+    .ant-dropdown-menu-item:hover,
+    .ant-dropdown-menu-submenu-title:hover {
+        background-color: var(--lg-hover);
+    }
+}
+
+/* Reduced motion — the pills stop animating for users who ask */
+@media (prefers-reduced-motion: reduce) {
+    html.liquid-glass .alain-default__aside .sidebar-nav__item-link {
+        transition: none;
+    }
+}

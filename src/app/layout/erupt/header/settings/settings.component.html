@@ -61,14 +61,13 @@
                (ngModelChange)="toggleCompactTheme($event)"></nz-switch>
 </div>
 <div class="setting-item">
-    <span>{{'setting.aside-dark' | translate}}</span>
-    <nz-switch nzSize="small" [(ngModel)]="asideDark"
-               (ngModelChange)="toggleAsideDark($event)"></nz-switch>
-</div>
-<div class="setting-item">
-    <span>Brutalist Theme</span>
-    <nz-switch nzSize="small" [(ngModel)]="brutalistTheme"
-               (ngModelChange)="toggleBrutalistTheme($event)"></nz-switch>
+    <span>{{'setting.skin' | translate}}</span>
+    <nz-select [(ngModel)]="skin" nzSize="small" style="width: 116px;"
+               (ngModelChange)="setSkin($event)">
+        <nz-option nzValue="default" [nzLabel]="'setting.skin-default'|translate"></nz-option>
+        <nz-option nzValue="brutalist" nzLabel="Brutalist"></nz-option>
+        <nz-option nzValue="liquid-glass" nzLabel="Liquid Glass"></nz-option>
+    </nz-select>
 </div>
 
 <!-- ── Navigation ──────────────────────────────────────────────── -->

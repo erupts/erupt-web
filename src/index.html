@@ -246,6 +246,23 @@
             background: #f5f5f0;
         }
 
+        /* ---- liquid glass skin (html.liquid-glass) ---- */
+        html.liquid-glass .preloader {
+            background-color: #e9edf5;
+            background-image:
+                radial-gradient(1100px 780px at 6% -12%, rgba(122, 162, 255, .55), transparent 62%),
+                radial-gradient(980px 700px at 98% -6%, rgba(255, 150, 197, .40), transparent 60%),
+                radial-gradient(900px 820px at 46% 112%, rgba(122, 226, 214, .42), transparent 62%);
+        }
+
+        html.liquid-glass.dark .preloader {
+            background-color: #0b0d12;
+            background-image:
+                radial-gradient(1100px 780px at 6% -12%, rgba(62, 92, 200, .42), transparent 62%),
+                radial-gradient(980px 700px at 98% -6%, rgba(168, 70, 160, .30), transparent 60%),
+                radial-gradient(900px 820px at 46% 112%, rgba(32, 140, 148, .28), transparent 62%);
+        }
+
         .preloader-hidden-add         { opacity: 1; display: flex; }
         .preloader-hidden-add-active  { opacity: 0; }
         .preloader-hidden             { display: none; }
@@ -288,6 +305,12 @@
         var _nbPref = localStorage.getItem("brutalist-theme");
         if (_nbPref === "true") {
             document.documentElement.classList.add("brutalist-theme");
+        }
+        // Optional Liquid Glass skin — same pre-bootstrap treatment. Mutually
+        // exclusive with the brutalist skin; the saved brutalist flag wins.
+        var _lgPref = localStorage.getItem("liquid-glass");
+        if (_lgPref === "true" && _nbPref !== "true") {
+            document.documentElement.classList.add("liquid-glass");
         }
         // Theme bundles: dark and compact are compiled as separate lazy
         // stylesheets; using both loads the merged compact-dark bundle.
@@ -344,10 +367,6 @@
         if (localStorage.getItem("compact-theme") === "true") {
             window.eruptApplyCompactTheme(true);
         }
-        // Dark sidebar in light mode — pure class toggle, styles in tokens.less
-        if (localStorage.getItem("aside-dark") === "true") {
-            document.documentElement.classList.add("aside-dark");
-        }
         // A user-picked theme color (settings drawer) tints the preloader too.
         var _tcPref = localStorage.getItem("theme-color");
         if (_tcPref) {
@@ -360,14 +379,15 @@
                 if (_nbPref === null && window.eruptSiteConfig.brutalistTheme) {
                     document.documentElement.classList.add("brutalist-theme");
                 }
+                if (_lgPref === null && window.eruptSiteConfig.liquidGlass
+                    && !document.documentElement.classList.contains("brutalist-theme")) {
+                    document.documentElement.classList.add("liquid-glass");
+                }
                 if (_darkPref === null && window.eruptSiteConfig.darkTheme) {
                     window.eruptApplyDarkTheme(true);
                 }
                 if (localStorage.getItem("compact-theme") === null && window.eruptSiteConfig.compactTheme) {
                     window.eruptApplyCompactTheme(true);
-                }
-                if (localStorage.getItem("aside-dark") === null && window.eruptSiteConfig.asideDark) {
-                    document.documentElement.classList.add("aside-dark");
                 }
                 if (_tcPref === null && window.eruptSiteConfig.theme && window.eruptSiteConfig.theme.primaryColor) {
                     _preloaderEl.style.setProperty("--pl-accent", window.eruptSiteConfig.theme.primaryColor);

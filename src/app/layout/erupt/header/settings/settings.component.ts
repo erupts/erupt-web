@@ -9,6 +9,8 @@ import {TableSize} from "../../../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
 import {applyHeaderColor} from "@shared/util/theme.util";
 
+type Skin = 'default' | 'brutalist' | 'liquid-glass';
+
 @Component({
     standalone: false,
     selector: 'erupt-settings',
@@ -27,8 +29,18 @@ export class SettingsComponent implements OnInit {
                 public rtl: RTLService) {
     }
 
-    // Brutalist Theme skin — reflects the class index.html applied before bootstrap.
-    brutalistTheme: boolean = document.documentElement.classList.contains("brutalist-theme");
+    // Visual skin layered over the light/dark theme — at most one is active, so
+    // it is a single choice rather than independent toggles. Reflects the class
+    // index.html applied before bootstrap.
+    skin: Skin = document.documentElement.classList.contains("brutalist-theme")
+        ? "brutalist"
+        : document.documentElement.classList.contains("liquid-glass")
+            ? "liquid-glass"
+            : "default";
+
+    get brutalistTheme(): boolean {
+        return this.skin === "brutalist";
+    }
 
     // Color scheme: light / dark / auto (follow the OS). index.html applied the
     // saved choice before bootstrap; here we only reflect and update it.
@@ -43,9 +55,6 @@ export class SettingsComponent implements OnInit {
 
     // Compact theme — reflects the class index.html applied before bootstrap.
     compactTheme: boolean = document.documentElement.classList.contains("compact");
-
-    // Dark sidebar in light mode — pure class toggle (styles in tokens.less).
-    asideDark: boolean = document.documentElement.classList.contains("aside-dark");
 
     // Theme color — user choice (localStorage) wins over the site config default.
     // Curated palette: mid-tone (600-level) hues that stay readable under white
@@ -105,7 +114,7 @@ export class SettingsComponent implements OnInit {
     // Preset bar colors: one classic dark plus distinct mid-tone hues —
     // clearly distinguishable at swatch size, all pairing with white text.
     headerPresets: string[] = [
-        "#141414", // ink — same surface as the dark sidebar (tokens.less aside-dark)
+        "#141414", // ink
         "#2563eb", // sapphire blue
         "#0d9488", // teal
         "#7c3aed", // violet
@@ -155,17 +164,16 @@ export class SettingsComponent implements OnInit {
         window["eruptApplyCompactTheme"](value);
     }
 
-    toggleAsideDark(value: boolean) {
-        this.asideDark = value;
-        localStorage.setItem("aside-dark", String(value));
-        document.documentElement.classList.toggle("aside-dark", value);
-    }
-
-    toggleBrutalistTheme(value: boolean) {
-        this.brutalistTheme = value;
-        document.documentElement.classList.toggle("brutalist-theme", value);
-        // Persist so the choice survives reload (honored by index.html on next load).
-        localStorage.setItem("brutalist-theme", String(value));
+    // Both flags are still written on every change: index.html reads them
+    // pre-bootstrap, and eruptSiteConfig.brutalistTheme / .liquidGlass remain
+    // the documented site-config switches, so the storage contract is unchanged.
+    setSkin(value: Skin) {
+        this.skin = value;
+        const root = document.documentElement;
+        root.classList.toggle("brutalist-theme", value === "brutalist");
+        root.classList.toggle("liquid-glass", value === "liquid-glass");
+        localStorage.setItem("brutalist-theme", String(value === "brutalist"));
+        localStorage.setItem("liquid-glass", String(value === "liquid-glass"));
     }
 
     setLayout(name: string, value: any) {
