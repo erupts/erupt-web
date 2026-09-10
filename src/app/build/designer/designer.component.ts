@@ -172,7 +172,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
             tableName: "",
             erupt: {
                 name: "",
-                power: {add: true, edit: true, delete: true, query: true, viewDetails: true, export: true, importable: true, print: true},
+                power: {add: true, edit: true, delete: true, query: true, viewDetails: true, export: true, importable: true, print: true, cellEdit: true},
                 layout: {formSize: FormSize.DEFAULT, formSteps: false, pagingType: PagingType.BACKEND, pageSize: 10, tableLeftFixed: 0, tableRightFixed: 0},
                 vis: []
             },

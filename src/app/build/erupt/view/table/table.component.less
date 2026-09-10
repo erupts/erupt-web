@@ -450,3 +450,112 @@
         }
     }
 }
+
+// ─── In-place cell editing ────────────────────────────────────────────────
+.erupt-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 22px;
+
+    .erupt-cell-text {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        // a tag brings its own right margin, which would push the pencil off centre
+        .ant-tag {
+            margin-right: 0;
+        }
+
+        &.erupt-cell-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            white-space: normal;
+        }
+    }
+
+    .erupt-cell-swatch {
+        font-size: 1.2rem;
+    }
+
+    // the affordance stays out of the way until the cell is pointed at, so a table of
+    // editable columns still reads as a table rather than a wall of icons
+    .erupt-cell-icon {
+        flex: none;
+        opacity: 0;
+        cursor: pointer;
+        font-size: 12px;
+        color: var(--erupt-text-secondary, #8c8c8c);
+        transition: opacity .15s ease-in-out, color .15s ease-in-out;
+
+        &:hover {
+            color: var(--erupt-primary, #1890ff);
+        }
+    }
+
+    // centred columns: the text stops stretching and the pencil leaves the flow, so the
+    // value sits in the middle whether or not the affordance is showing
+    &.erupt-cell-center {
+        position: relative;
+        justify-content: center;
+
+        .erupt-cell-text {
+            flex: none;
+        }
+
+        .erupt-cell-icon {
+            position: absolute;
+            right: 0;
+        }
+    }
+
+    &.erupt-cell-editable:hover .erupt-cell-icon {
+        opacity: .55;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+// Below the cdk overlay container (z-index 1000): a select, date or colour picker opened from
+// inside the editor renders in that container, and a mask stacked above it would swallow every
+// click on the dropdown.
+.erupt-cell-pop-mask {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+}
+
+// only placement and sizing here; the look comes from the theme's .ant-popover rules
+.erupt-cell-pop {
+    position: fixed;
+    z-index: 901;
+
+    ::ng-deep .ant-popover-inner-content {
+        width: 320px;
+        max-height: 60vh;
+        overflow: auto;
+    }
+
+    // the row form's label and bottom spacing have no place in a cell-sized panel
+    ::ng-deep .ant-form-item {
+        margin-bottom: 0;
+    }
+
+    ::ng-deep .ant-form-item-label,
+    ::ng-deep .ant-form-item-explain {
+        display: none;
+    }
+
+    .erupt-cell-editor-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 12px;
+    }
+}

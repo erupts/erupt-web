@@ -770,6 +770,12 @@
                                (ngModelChange)="saveDraft()"></nz-switch>
                 </div>
                 <div class="prop-switch">
+                    <label>{{ 'designer.power_cell_edit' | translate }}</label>
+                    <nz-switch nzSize="small" [(ngModel)]="form.erupt.power!.cellEdit"
+                               [nzDisabled]="!form.erupt.power!.edit"
+                               (ngModelChange)="saveDraft()"></nz-switch>
+                </div>
+                <div class="prop-switch">
                     <label>{{ 'designer.power_delete' | translate }}</label>
                     <nz-switch nzSize="small" [(ngModel)]="form.erupt.power!.delete"
                                (ngModelChange)="saveDraft()"></nz-switch>

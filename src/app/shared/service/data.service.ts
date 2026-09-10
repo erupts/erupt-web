@@ -401,6 +401,19 @@ export class DataService {
         });
     }
 
+    //in-table cell edit: update a single field of one row
+    updateEruptCell(eruptName: string, id: any, field: string, value: any): Observable<EruptApiModel> {
+        return this._http.post(RestPath.dataModify + "/" + eruptName + "/update-cell", {
+            id: id,
+            field: field,
+            value: value
+        }, null, {
+            headers: {
+                erupt: eruptName
+            }
+        });
+    }
+
     //drag sort, sortData: id -> sort value
     dragSortEruptData(eruptName: string, sortData: { [id: string]: number }): Observable<EruptApiModel> {
         return this._http.post(RestPath.dataModify + "/" + eruptName + "/drag-sort", sortData, null, {

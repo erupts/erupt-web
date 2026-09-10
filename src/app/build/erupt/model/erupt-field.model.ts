@@ -90,6 +90,8 @@ export interface Edit {
     dynamic: { dependField: string, condition: string, noMatch: FormCtrl, match: FormCtrl };
     onchange: string;
     readOnly: Readonly;
+    // whether this field may be edited directly in the table, when the model allows it
+    cellEdit?: boolean;
     placeHolder: string;
     search: Search;
     tabType?: TabType;
@@ -131,6 +133,8 @@ export interface Edit {
 interface Readonly {
     add: boolean;
     edit: boolean;
+    // whether the API still accepts a value for this field while it is read-only in the form
+    allowChange?: boolean;
 }
 
 interface HtmlEditorType {

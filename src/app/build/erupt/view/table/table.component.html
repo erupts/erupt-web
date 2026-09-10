@@ -588,3 +588,83 @@
         </nz-list>
     }
 </ng-template>
+<ng-template #cellEditTpl let-item let-col="column">
+    <div class="erupt-cell" [class.erupt-cell-editable]="cellEditAllowed(item)"
+         [class.erupt-cell-center]="cellCentered(col)"
+         (dblclick)="beginCellEdit(item, col, $event)">
+        @switch (cellKind(col)) {
+            @case ("bool") {
+                <span class="erupt-cell-text">
+                    @if (cellDisplay(item, col)) {
+                        <nz-tag [nzColor]="cellTagColor(item, col)">{{ cellDisplay(item, col) }}</nz-tag>
+                    }
+                </span>
+            }
+            @case ("tags") {
+                <span class="erupt-cell-text erupt-cell-tags">
+                    @for (tag of cellTags(item, col); track $index) {
+                        <span class="e-tag">{{ tag }}</span>
+                    }
+                </span>
+            }
+            @case ("color") {
+                <span class="erupt-cell-text">
+                    @if (cellDisplay(item, col)) {
+                        <i class="fa fa-square erupt-cell-swatch" [style.color]="cellDisplay(item, col)"
+                           aria-hidden="true"></i>
+                    }
+                </span>
+            }
+            @case ("progress") {
+                <span class="erupt-cell-text e-progress">
+                    <span class="e-progress-outer">
+                        <span class="e-progress-inner" [style.width.%]="cellProgress(item, col)"
+                              [style.background]="cellProgress(item, col) >= 100 ? '#52c41a' : '#1890ff'"></span>
+                    </span>
+                    <span class="e-progress-text">{{ cellProgress(item, col) }}%</span>
+                </span>
+            }
+            @default {
+                <span class="erupt-cell-text" [style.color]="cellColor(item, col)">{{ cellDisplay(item, col) }}</span>
+            }
+        }
+        @if (cellEditAllowed(item)) {
+            <span class="erupt-cell-icon" nz-icon nzType="edit" nzTheme="outline"
+                  [nz-tooltip]="'table.cell.edit'|translate" nzTooltipPlacement="top"
+                  (click)="beginCellEdit(item, col, $event)"></span>
+        }
+    </div>
+</ng-template>
+<!-- The editor floats over the cell but is rendered here, in the table's own view. The grid
+     renders cells with OnPush, so a panel bound inside a cell template would never react to
+     the editor closing itself. -->
+@if (editingCell) {
+    <div class="erupt-cell-pop-mask" (click)="cancelCellEdit()"></div>
+    <!-- ant-popover markup, so the panel inherits the theme's popover styling instead of
+         hand-rolled shadows and spacing that drift from it -->
+    <div #cellPop class="erupt-cell-pop ant-popover" [ngClass]="'ant-popover-placement-' + cellEditPlacement"
+         [style.top.px]="cellEditPos.top" [style.left.px]="cellEditPos.left"
+         [style.visibility]="cellEditPlaced ? null : 'hidden'">
+        <div class="ant-popover-arrow"></div>
+        <div class="ant-popover-content">
+            <div class="ant-popover-inner" role="tooltip">
+                <div>
+                    <div class="ant-popover-title">{{ cellEditTitle }}</div>
+                    <div class="ant-popover-inner-content">
+                        <erupt-edit-type [eruptBuildModel]="cellEditModel" [col]="cellEditCol" size="small"
+                                         layout="vertical" [mode]="Scene.EDIT" [readonly]="cellSaving"/>
+                        <div class="erupt-cell-editor-actions">
+                            <button nz-button nzSize="small" [disabled]="cellSaving" (click)="cancelCellEdit()">
+                                {{ 'global.cancel'|translate }}
+                            </button>
+                            <button nz-button nzType="primary" nzSize="small" [nzLoading]="cellSaving"
+                                    (click)="commitCellEdit()">
+                                {{ 'global.ok'|translate }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

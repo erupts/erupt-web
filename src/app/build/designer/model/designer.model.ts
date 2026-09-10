@@ -93,6 +93,7 @@ export interface DesignerPower {
     export?: boolean;
     importable?: boolean;
     print?: boolean;
+    cellEdit?: boolean;
 }
 
 export interface DesignerField {

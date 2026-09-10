@@ -4,7 +4,7 @@ import {ViewTypeComponent} from "../components/view-type/view-type.component";
 import {MarkdownComponent} from "../components/markdown/markdown.component";
 import {CodeEditorComponent} from "../components/code-editor/code-editor.component";
 import {DataService} from "@shared/service/data.service";
-import {Inject, Injectable} from "@angular/core";
+import {Inject, Injectable, TemplateRef} from "@angular/core";
 import {I18NService} from "@core";
 import {STColumn, STData} from "@delon/abc/st";
 import {NzModalService} from "ng-zorro-antd/modal";
@@ -75,9 +75,11 @@ export class UiBuildService {
      * @param lineData
      *     true   data is in flat single-row text form
      *     false  data is in hierarchical JSON form
-     * @param dataConvert whether data conversion is needed, e.g. bool conversion, choice conversion
+     * @param cellEditRender template rendered in place of the cell for in-place editing; columns whose field
+     *        cannot be edited inline (see {@link UiBuildService.cellEditable}) keep their normal rendering
      */
-    viewToAlainTableConfig(eruptBuildModel: EruptBuildModel, lineData: boolean, dataConvert?: boolean): STColumn[] {
+    viewToAlainTableConfig(eruptBuildModel: EruptBuildModel, lineData: boolean,
+                           cellEditRender?: TemplateRef<any>): STColumn[] {
         let cols: STColumn[] = [];
         const views = eruptBuildModel.eruptModel.tableColumns;
         let layout = eruptBuildModel.eruptModel.eruptJson.layout;
@@ -148,20 +150,14 @@ export class UiBuildService {
                     };
                     break;
                 case EditType.CHOICE:
+                    // the query returns the stored value; the label and its colour are looked up here
                     obj.format = (item: any) => {
-                        if (item[view.column] != null) {
-                            if (dataConvert) {
-                                return "<span style='color:" + view.eruptFieldModel.choiceMap.get(item[view.column] + "")?.color + "'>"
-                                    + view.eruptFieldModel.choiceMap.get(item[view.column] + "")?.label
-                                    + "</span>";
-                            } else {
-                                return "<span style='color:" + view.eruptFieldModel.choiceLabelMap.get(item[view.column] + "")?.color + "'>"
-                                    + item[view.column]
-                                    + "</span>";
-                            }
-                        } else {
+                        if (item[view.column] == null) {
                             return "";
                         }
+                        const vl = view.eruptFieldModel.choiceMap.get(item[view.column] + "");
+                        return "<span style='color:" + (vl?.color ?? "") + "'>"
+                            + (vl?.label ?? item[view.column]) + "</span>";
                     };
                     break;
             }
@@ -253,32 +249,15 @@ export class UiBuildService {
                     obj.className = "text-center";
                     obj.width = titleWidth + 18;
                     obj.type = "tag";
-                    if (dataConvert) {
-                        obj.tag = {
-                            true: {text: edit.boolType.trueText, color: 'green'},
-                            false: {text: edit.boolType.falseText, color: 'red'},
-                        };
-                    } else {
-                        if (edit.title) {
-                            if (edit.boolType) {
-                                obj.tag = {
-                                    [edit.boolType.trueText]: {
-                                        text: edit.boolType.trueText,
-                                        color: 'green'
-                                    },
-                                    [edit.boolType.falseText]: {
-                                        text: edit.boolType.falseText,
-                                        color: 'red'
-                                    },
-                                };
-                            }
-                        } else {
-                            obj.tag = {
-                                true: {text: this.i18n.fanyi('Y'), color: 'green'},
-                                false: {text: this.i18n.fanyi('N'), color: 'red'},
-                            };
-                        }
-                    }
+                    // the query returns the raw boolean, so the tag is always keyed by value;
+                    // a field with no edit config has no wording to use and falls back to Y / N
+                    obj.tag = edit && edit.title && edit.boolType ? {
+                        true: {text: edit.boolType.trueText, color: 'green'},
+                        false: {text: edit.boolType.falseText, color: 'red'},
+                    } : {
+                        true: {text: this.i18n.fanyi('Y'), color: 'green'},
+                        false: {text: this.i18n.fanyi('N'), color: 'red'},
+                    };
                     break;
                 case ViewType.LINK:
                     obj.type = "link";
@@ -730,10 +709,105 @@ export class UiBuildService {
             if (null != obj.fixed && null == obj.width) {
                 obj.width = titleWidth + 50;
             }
+            if (cellEditRender && UiBuildService.cellEditable(view)) {
+                obj.render = cellEditRender;
+                // a render template bypasses format, so the cell has to rebuild the display
+                // itself and needs to know which view type it is standing in for
+                obj[UiBuildService.VIEW_TYPE_KEY] = view.type;
+                obj[UiBuildService.FIELD_NAME_KEY] = view.eruptFieldModel.fieldName;
+            }
             cols.push(obj);
             i++;
         }
         return cols;
+    }
+
+    // key under which an editable column carries its erupt view type
+    static readonly VIEW_TYPE_KEY = "__eruptViewType";
+
+    // key under which an editable column carries the name of the erupt field it edits. A reference
+    // column is indexed by its projection (eruptOrg_name) while the write targets the field itself
+    // (eruptOrg), so the two cannot be read off the same string.
+    static readonly FIELD_NAME_KEY = "__eruptFieldName";
+
+    // View types the cell can reproduce once a render template takes over from the column format.
+    // Everything else either paints custom markup (a progress bar is reproduced, an image grid is
+    // not) or opens a viewer on click, and losing that silently is worse than not offering inline
+    // editing, so those columns keep their normal rendering and are edited through the row form.
+    private static readonly CELL_EDIT_VIEW_TYPES: ViewType[] = [
+        ViewType.TEXT, ViewType.SAFE_TEXT, ViewType.NUMBER, ViewType.PROGRESS,
+        ViewType.COLOR, ViewType.DATE, ViewType.DATE_TIME, ViewType.BOOLEAN
+    ];
+
+    // Types the cell can host. The two single-object references are picked in the very modal the
+    // row form opens, not in the floating panel. Left out on purpose: PASSWORD (the value is
+    // masked, so there is nothing to edit), the sub-table editors MULTI_FORM / TAB_TABLE_ADD and
+    // COMBINE (a whole child form does not belong in a cell), the full-screen editors HTML_EDITOR
+    // / CODE_EDITOR / MARKDOWN / MAP / SIGNATURE / ATTACHMENT, and the layout-only types DIVIDE /
+    // GROUP / CALLOUT / EMPTY / TPL / BUTTON / HIDDEN, which carry no value to show. The
+    // many-to-many editors CHECKBOX / MULTI_CHOICE / TAB_TREE / TAB_TABLE_REFER are left out for a
+    // different reason: the list query does not select collection fields, so the editor would open
+    // blank on a row that does have values and overwrite them.
+    private static readonly CELL_EDIT_TYPES: EditType[] = [
+        EditType.INPUT, EditType.TEXTAREA, EditType.NUMBER, EditType.SLIDER,
+        EditType.BOOLEAN, EditType.DATE, EditType.CHOICE,
+        EditType.COLOR, EditType.RATE, EditType.TAGS,
+        EditType.AUTO_COMPLETE, EditType.REFERENCE_TREE, EditType.REFERENCE_TABLE
+    ];
+
+    // the single-object references, which a cell edits by replacing the whole reference
+    static isReferenceEdit(type: EditType): boolean {
+        return type === EditType.REFERENCE_TREE || type === EditType.REFERENCE_TABLE;
+    }
+
+    /**
+     * Whether a table column maps to a single field that can be edited in place. The field must
+     * take part in the form (non-blank title) and must not be read-only there — the grid offers
+     * inline editing exactly where the row form would offer an enabled control.
+     */
+    static cellEditable(view: View): boolean {
+        const field = view.eruptFieldModel;
+        if (!field) {
+            return false;
+        }
+        const edit = field.eruptFieldJson.edit;
+        if (!edit || !edit.title) {
+            return false;
+        }
+        if (view.column !== field.fieldName && !UiBuildService.isReferenceEdit(edit.type)) {
+            // the column is a projection of a referenced entity (eruptOrg_name). Only a reference
+            // picker can edit that, because it replaces the whole reference rather than the
+            // projected value, and the other projections of the same field move with it.
+            return false;
+        }
+        if (UiBuildService.isReferenceEdit(edit.type)) {
+            // the picker reads the field it depends on out of the model it is given, and a cell
+            // editor is handed a one-field model
+            const dependField = edit.type === EditType.REFERENCE_TREE
+                ? edit.referenceTreeType?.dependField : edit.referenceTableType?.dependField;
+            if (dependField) {
+                return false;
+            }
+        }
+        if (edit.readOnly && edit.readOnly.edit) {
+            return false;
+        }
+        // the field may opt out even when its model allows cell editing
+        if (edit.cellEdit === false) {
+            return false;
+        }
+        // a custom column template owns its markup, and a tpl view turns the column into a link
+        // that opens a template page; an inline editor would swallow either
+        if (view.template) {
+            return false;
+        }
+        if (view.tpl && view.tpl.enable) {
+            return false;
+        }
+        if (UiBuildService.CELL_EDIT_VIEW_TYPES.indexOf(view.type) === -1) {
+            return false;
+        }
+        return UiBuildService.CELL_EDIT_TYPES.indexOf(edit.type) !== -1;
     }
 
     attachmentView(view: View, path: string) {

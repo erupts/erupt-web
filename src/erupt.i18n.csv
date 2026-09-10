@@ -1241,3 +1241,5 @@ ai.chat.image_message,[图片],[圖片],[Image],[Image],[画像],[이미지],[И
 ai.chat.model,模型,模型,Model,Modèle,モデル,모델,Модель,Modelo,Modell,Modelo,Model,النموذج
 designer.max_length,最大字数,最大字數,Max Length,Longueur max,最大文字数,최대 글자 수,Макс. длина,Longitud máx.,Max. Länge,Comprimento máx.,Panjang maks,الحد الأقصى للطول
 designer.max_length_unlimited,不限制,不限制,Unlimited,Illimité,無制限,제한 없음,Без ограничений,Sin límite,Unbegrenzt,Sem limite,Tak terbatas,غير محدود
+table.cell.edit,双击单元格编辑,雙擊儲存格編輯,Double-click to edit,Double-cliquez pour modifier,ダブルクリックで編集,두 번 클릭하여 편집,Двойной щелчок для редактирования,Doble clic para editar,Zum Bearbeiten doppelklicken,Clique duas vezes para editar,Klik dua kali untuk mengedit,انقر نقرا مزدوجا للتحرير
+designer.power_cell_edit,单元格编辑,儲存格編輯,Cell editing,Édition de cellule,セル編集,셀 편집,Редактирование ячеек,Edición de celdas,Zellbearbeitung,Edição de célula,Edit sel,تحرير الخلية

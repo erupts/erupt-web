@@ -22,6 +22,7 @@ import {EditComponent} from "../edit/edit.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
 import {
+    EditType,
     FormSize,
     OperationIfExprBehavior,
     OperationMode,
@@ -37,19 +38,21 @@ import {
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
-import {EruptFieldModel, View} from "../../model/erupt-field.model";
+import {EruptFieldModel, View, VL} from "../../model/erupt-field.model";
 import {Observable} from "rxjs";
 import {UiBuildService} from "../../service/ui-build.service";
 import {EruptColumnConfig, LocalSettingsService} from "../../service/local-settings.service";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ModalButtonOptions, NzModalRef, NzModalService} from "ng-zorro-antd/modal";
+import {TreeSelectComponent} from "../../components/tree-select/tree-select.component";
 import {STChange, STColumn, STColumnButton, STComponent, STDragOptions, STPage} from "@delon/abc/st";
 import {AppViewService} from "@shared/service/app-view.service";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
 import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
 import {TableStyle} from "../../model/erupt.vo";
+import {colRules} from "@shared/model/util.model";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {WindowModel} from "@shared/model/window.model";
 import {PrintTypeComponent} from "../../components/print-type/print-type";
@@ -91,6 +94,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
     @ViewChild("st", {static: false})
     st: STComponent;
+
+    @ViewChild("cellEditTpl", {static: true})
+    cellEditTpl: TemplateRef<any>;
 
     @ViewChild("printSelectTpl", {static: true})
     printSelectTpl: TemplateRef<any>;
@@ -643,7 +649,8 @@ export class TableComponent implements OnInit, OnDestroy {
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
         }
-        let viewCols = this.uiBuildService.viewToAlainTableConfig(this.eruptBuildModel, true);
+        let viewCols = this.uiBuildService.viewToAlainTableConfig(this.eruptBuildModel, true,
+            this.cellEditPower() ? this.cellEditTpl : undefined);
         for (let viewCol of viewCols) {
             viewCol.iif = () => {
                 return viewCol['show'] && this.visFieldVisible(this.colIndexStr(viewCol));
@@ -1403,6 +1410,415 @@ export class TableComponent implements OnInit, OnDestroy {
             const v = f.eruptFieldJson.edit?.$value;
             return v !== null && v !== undefined && v !== '';
         });
+    }
+
+    // ─── In-place cell editing ────────────────────────────────────────────────
+
+    // on by default: a cell runs the same pipeline as the edit form, so a table that may be
+    // edited offers it unless @Power(cellEdit = false) withdraws it
+    private cellEditPower(): boolean {
+        const power = this.eruptBuildModel.eruptModel.eruptJson.power;
+        return power.edit && power.cellEdit;
+    }
+
+    Scene = Scene;
+
+    // a cell editor is always a single full-width control
+    cellEditCol = colRules[1];
+
+    // the cell currently open for editing; the row is held too, because the editor lives in a
+    // shared overlay template rather than inside the cell it belongs to
+    editingCell: { id: any, field: string, row: any } = null;
+
+    // single-field build model driving the editor; a clone, so the row form's own
+    // state on eruptBuildModel is never touched by an inline edit
+    cellEditModel: EruptBuildModel = null;
+
+    cellSaving: boolean = false;
+
+    // heading of the floating editor, so a panel outside the column still names its field
+    cellEditTitle: string = "";
+
+    // viewport position of the floating editor, measured from the cell it belongs to
+    cellEditPos: { top: number, left: number } = {top: 0, left: 0};
+
+    // ant placement of the floating editor, so its arrow keeps pointing at the cell
+    cellEditPlacement: string = "bottomLeft";
+
+    // hidden until measured, so the panel never flashes at a stale position
+    cellEditPlaced: boolean = false;
+
+    @ViewChild("cellPop", {static: false})
+    cellPop: ElementRef<HTMLElement>;
+
+    private cellEditAnchor: DOMRect = null;
+
+    private cellFieldModel(fieldName: string): EruptFieldModel {
+        return this.eruptBuildModel.eruptModel.eruptFieldModels.find(f => f.fieldName === fieldName);
+    }
+
+    // the erupt field a column edits, which is its index for every column except a reference
+    // projection, where the index names the projected column instead
+    private colFieldName(col: STColumn): string {
+        return col[UiBuildService.FIELD_NAME_KEY] || this.colIndexStr(col);
+    }
+
+    cellEditing(item: any, col: STColumn): boolean {
+        return !!this.editingCell
+            && this.editingCell.field === this.colIndexStr(col)
+            && this.editingCell.id === item[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol];
+    }
+
+    // a row may withdraw edit permission on its own via __power__, as the row edit button does
+    cellEditAllowed(item: any): boolean {
+        if (item[TableStyle.power]) {
+            return (<Power>item[TableStyle.power]).edit !== false;
+        }
+        return true;
+    }
+
+    beginCellEdit(item: any, col: STColumn, event?: Event): void {
+        if (this.cellSaving || !this.cellEditAllowed(item)) {
+            return;
+        }
+        const fieldName = this.colFieldName(col);
+        const field = this.cellFieldModel(fieldName);
+        if (!field) {
+            return;
+        }
+        if (UiBuildService.isReferenceEdit(field.eruptFieldJson.edit.type)) {
+            this.pickReferenceCell(item, field);
+            return;
+        }
+        // the editor is the very same component the row form uses, fed a one-field model
+        const clone: EruptFieldModel = cloneDeep(field);
+        this.cellEditModel = {
+            eruptModel: {
+                ...this.eruptBuildModel.eruptModel,
+                eruptFieldModels: [clone]
+            }
+        } as EruptBuildModel;
+        this.dataHandler.objectToEruptValue({[fieldName]: item[fieldName]}, this.cellEditModel);
+        this.cellEditTitle = clone.eruptFieldJson.edit.title;
+        // the cell, never the edit icon inside it, is what the panel lines up with
+        const target = event?.currentTarget as HTMLElement;
+        const anchor = target?.closest(".erupt-cell") as HTMLElement || target;
+        this.cellEditAnchor = anchor?.getBoundingClientRect() || null;
+        this.cellEditPlaced = false;
+        // measure from the top-left corner, so a clamped position from a previous open
+        // cannot squeeze the panel's shrink-to-fit width
+        this.cellEditPos = {top: 0, left: 0};
+        this.editingCell = {
+            id: item[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol],
+            field: fieldName,
+            row: item
+        };
+        // place it once it exists, so its real size drives the flipping and clamping
+        setTimeout(() => this.placeCellEditor());
+    }
+
+    cancelCellEdit(): void {
+        if (this.cellSaving) {
+            return;
+        }
+        this.editingCell = null;
+        this.cellEditModel = null;
+    }
+
+    // anchor under the cell, flipping to its other edge when the panel would overflow
+    private placeCellEditor(): void {
+        const rect = this.cellEditAnchor;
+        const panel = this.cellPop?.nativeElement;
+        if (!rect || !panel) {
+            this.cellEditPos = {top: 80, left: 80};
+            this.cellEditPlaced = true;
+            return;
+        }
+        const margin = 8;
+        const width = panel.offsetWidth;
+        const height = panel.offsetHeight;
+        // align on the cell's left edge, or its right edge when the panel would run off screen
+        let left = rect.left;
+        let align = "Left";
+        if (left + width > window.innerWidth - margin) {
+            left = rect.right - width;
+            align = "Right";
+        }
+        // the ant placement class supplies the arrow gap, so the top sits flush on the cell
+        let top = rect.bottom;
+        let side = "bottom";
+        if (top + height > window.innerHeight - margin) {
+            top = rect.top - height;
+            side = "top";
+        }
+        this.cellEditPlacement = side + align;
+        this.cellEditPos = {
+            top: Math.max(margin, Math.min(top, window.innerHeight - height - margin)),
+            left: Math.max(margin, Math.min(left, window.innerWidth - width - margin))
+        };
+        this.cellEditPlaced = true;
+    }
+
+    commitCellEdit(): void {
+        if (!this.editingCell || this.cellSaving) {
+            return;
+        }
+        const {id, field, row: item} = this.editingCell;
+        // reuse the form's own value conversion, so dates, choices and prefixes behave identically
+        const value = this.dataHandler.eruptValueToObject(this.cellEditModel)[field] ?? null;
+        if (value === item[field] || (this.blankCell(value) && this.blankCell(item[field]))) {
+            this.cancelCellEdit();
+            return;
+        }
+        this.saveCell(id, field, value, () => {
+            this.editingCell = null;
+            this.cellEditModel = null;
+        });
+    }
+
+    /**
+     * A reference is chosen in the very modal the row form opens, so the cell goes straight to it
+     * rather than to a panel whose only control opens that same modal. The row carries the
+     * projected label and not the referenced id, so the picker starts empty: whatever is chosen
+     * replaces the reference, and an existing one cannot be cleared this way.
+     */
+    private pickReferenceCell(item: any, field: EruptFieldModel): void {
+        if (this.cellSaving) {
+            return;
+        }
+        // a panel left open on another cell would sit behind the modal
+        this.cancelCellEdit();
+        const id = item[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol];
+        // the picker writes its selection onto the field it is handed, so it gets a blank clone
+        const clone: EruptFieldModel = cloneDeep(field);
+        clone.eruptFieldJson.edit.$value = null;
+        clone.eruptFieldJson.edit.$tempValue = null;
+        if (clone.eruptFieldJson.edit.type === EditType.REFERENCE_TREE) {
+            this.pickReferenceTree(id, field.fieldName, clone);
+        } else {
+            this.pickReferenceRow(id, field.fieldName, clone);
+        }
+    }
+
+    private pickReferenceTree(id: any, fieldName: string, clone: EruptFieldModel): void {
+        const treeType = clone.eruptFieldJson.edit.referenceTreeType;
+        const ref = this.modal.create({
+            nzWrapClassName: "modal-xs",
+            nzKeyboard: true,
+            nzDraggable: true,
+            nzStyle: {top: "30px"},
+            nzTitle: clone.eruptFieldJson.edit.title,
+            nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
+            nzContent: TreeSelectComponent,
+            nzOnOk: () => {
+                const picked = clone.eruptFieldJson.edit.$tempValue;
+                if (!picked) {
+                    this.msg.warning(this.i18n.fanyi("global.select.one"));
+                    return false;
+                }
+                this.saveCell(id, fieldName, {
+                    [treeType.id]: picked.id,
+                    [treeType.label]: picked.label
+                });
+                return true;
+            }
+        });
+        Object.assign(ref.getContentComponent(), {
+            eruptModel: this.eruptBuildModel.eruptModel,
+            eruptField: clone,
+            dependVal: null,
+            multiple: false
+        });
+    }
+
+    private pickReferenceRow(id: any, fieldName: string, clone: EruptFieldModel): void {
+        const tableType = clone.eruptFieldJson.edit.referenceTableType;
+        const ref = this.modal.create({
+            nzWrapClassName: "modal-xxl",
+            nzKeyboard: true,
+            nzDraggable: true,
+            nzStyle: {top: "24px"},
+            nzBodyStyle: {padding: "0"},
+            nzTitle: clone.eruptFieldJson.edit.title,
+            nzCancelText: this.i18n.fanyi("global.close") + "（ESC）",
+            nzContent: TableComponent,
+            nzOnOk: () => {
+                const picked = clone.eruptFieldJson.edit.$tempValue;
+                if (!picked) {
+                    this.msg.warning(this.i18n.fanyi("global.select.one"));
+                    return false;
+                }
+                this.saveCell(id, fieldName, {
+                    [tableType.id]: picked[tableType.id],
+                    // the picker's rows are flat, so a nested label reaches it with "_" separators
+                    [tableType.label]: picked[tableType.label.replace(".", "_")] || "-----"
+                });
+                return true;
+            }
+        });
+        ref.getContentComponent().referenceTable = {
+            eruptBuild: {eruptModel: this.eruptBuildModel.eruptModel} as EruptBuildModel,
+            eruptField: clone,
+            mode: SelectMode.radio,
+            dependVal: null,
+            parentEruptName: null,
+            tabRef: false
+        };
+    }
+
+    private saveCell(id: any, field: string, value: any, onSuccess?: () => void): void {
+        this.cellSaving = true;
+        this.dataService.updateEruptCell(this.eruptBuildModel.eruptModel.eruptName, id, field, value)
+            .subscribe({
+                next: res => {
+                    this.cellSaving = false;
+                    if (res.status === Status.SUCCESS) {
+                        this.msg.success(this.i18n.fanyi("global.update.success"));
+                        onSuccess?.();
+                        // the server may have derived other columns of the row, so re-read the page
+                        this.query();
+                    }
+                    // a rejected edit keeps the editor open so the value can be corrected
+                },
+                error: () => {
+                    this.cellSaving = false;
+                }
+            });
+    }
+
+    // Columns with a render template bypass the column format, so the read-only text of an
+    // editable cell is produced here. Only the types the grid offers inline need covering.
+    cellDisplay(item: any, col: STColumn): string {
+        const fieldName = this.colIndexStr(col);
+        const value = item[fieldName];
+        if (this.blankCell(value)) {
+            return "";
+        }
+        const edit = this.cellFieldModel(fieldName)?.eruptFieldJson.edit;
+        switch (edit?.type) {
+            case EditType.BOOLEAN:
+                return value === true || value === "true"
+                    ? (edit.boolType.trueText || this.i18n.fanyi("Y"))
+                    : (edit.boolType.falseText || this.i18n.fanyi("N"));
+            case EditType.CHOICE:
+                return this.cellChoice(fieldName, value)?.label ?? String(value);
+            case EditType.NUMBER:
+            case EditType.SLIDER:
+                return isNaN(Number(value)) ? String(value) : Number(value).toLocaleString();
+            default:
+                return this.cellDateDisplay(col, value);
+        }
+    }
+
+    // dates reach the client as ISO text, which is unreadable raw; mirror what the DATE and
+    // DATE_TIME columns render through their format
+    private cellDateDisplay(col: STColumn, value: any): string {
+        const viewType = col[UiBuildService.VIEW_TYPE_KEY];
+        if (viewType !== ViewType.DATE && viewType !== ViewType.DATE_TIME) {
+            return String(value);
+        }
+        const text = String(value);
+        if (viewType === ViewType.DATE && text.startsWith("<") && text.endsWith(">")) {
+            return text;
+        }
+        const date = new Date(text);
+        if (isNaN(date.getTime())) {
+            return text;
+        }
+        return viewType === ViewType.DATE ? date.toLocaleDateString() : date.toLocaleString();
+    }
+
+    /**
+     * A column with a render template bypasses the column format, its "tag" type and its click
+     * handler, so an editable cell has to paint itself. This says which shape to paint; the
+     * editable view types are limited to the ones covered here.
+     */
+    cellKind(col: STColumn): string {
+        const viewType = col[UiBuildService.VIEW_TYPE_KEY];
+        if (viewType === ViewType.PROGRESS) {
+            return "progress";
+        }
+        if (viewType === ViewType.COLOR) {
+            return "color";
+        }
+        const editType = this.cellFieldModel(this.colIndexStr(col))?.eruptFieldJson.edit?.type;
+        if (editType === EditType.BOOLEAN) {
+            return "bool";
+        }
+        if (editType === EditType.TAGS) {
+            return "tags";
+        }
+        return "text";
+    }
+
+    // tags are stored joined by a separator, or as a JSON array when the separator is "[]"
+    cellTags(item: any, col: STColumn): string[] {
+        const fieldName = this.colIndexStr(col);
+        const value = item[fieldName];
+        if (this.blankCell(value)) {
+            return [];
+        }
+        const sep = this.cellFieldModel(fieldName)?.eruptFieldJson.edit?.tagsType?.joinSeparator;
+        if (sep === "[]") {
+            try {
+                return JSON.parse(value);
+            } catch (e) {
+                return [value];
+            }
+        }
+        return String(value).split(sep);
+    }
+
+    // percentage a PROGRESS column would fill, using the slider bounds when the field has them
+    cellProgress(item: any, col: STColumn): number {
+        const fieldName = this.colIndexStr(col);
+        const num = Number(item[fieldName]);
+        if (isNaN(num)) {
+            return 0;
+        }
+        const edit = this.cellFieldModel(fieldName)?.eruptFieldJson.edit;
+        const slider = edit?.type === EditType.SLIDER ? edit.sliderType : null;
+        const min = slider?.min || 0;
+        const max = slider ? slider.max : 100;
+        const range = max - min;
+        return range > 0 ? Math.round(Math.min(Math.max((num - min) / range * 100, 0), 100)) : 0;
+    }
+
+    cellTagColor(item: any, col: STColumn): string {
+        const value = item[this.colIndexStr(col)];
+        if (this.blankCell(value)) {
+            return null;
+        }
+        return value === true || value === "true" ? "green" : "red";
+    }
+
+    // the column asked for centred content (BOOLEAN, TAGS ...), which the cell's flex row
+    // would otherwise override
+    cellCentered(col: STColumn): boolean {
+        const cls = col.className;
+        if (!cls) {
+            return false;
+        }
+        return Array.isArray(cls) ? cls.indexOf("text-center") !== -1 : String(cls).indexOf("text-center") !== -1;
+    }
+
+    // keeps the colour a CHOICE column would normally paint, without going through innerHTML
+    cellColor(item: any, col: STColumn): string {
+        const fieldName = this.colIndexStr(col);
+        const edit = this.cellFieldModel(fieldName)?.eruptFieldJson.edit;
+        if (edit?.type !== EditType.CHOICE) {
+            return null;
+        }
+        return this.cellChoice(fieldName, item[fieldName])?.color || null;
+    }
+
+    // options may be declared inline or produced by a fetch handler, and choiceMap holds both
+    private cellChoice(fieldName: string, value: any): VL {
+        return this.cellFieldModel(fieldName)?.choiceMap?.get(value + "");
+    }
+
+    private blankCell(value: any): boolean {
+        return value === null || value === undefined || value === "";
     }
 
     private colIndexStr(col: STColumn): string {

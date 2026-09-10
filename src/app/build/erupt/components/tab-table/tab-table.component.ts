@@ -76,7 +76,7 @@ export class TabTableComponent implements OnInit {
             this.loading = false;
         }, 300);
         if (this.onlyRead) {
-            this.column = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true);
+            this.column = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false);
         } else {
             const viewValue: STColumn[] = [];
             viewValue.push({
@@ -88,7 +88,7 @@ export class TabTableComponent implements OnInit {
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
 
-            viewValue.push(...this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true));
+            viewValue.push(...this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false));
             let operators: STColumnButton[] = [];
             if (this.mode == "add") {
                 operators.push({
@@ -241,10 +241,15 @@ export class TabTableComponent implements OnInit {
                             let ed = eruptFieldModel.eruptFieldJson.edit;
                             switch (ed.type) {
                                 case EditType.BOOLEAN:
-                                    v[key] = v[key] === ed.boolType.trueText;
+                                    // the query returns the raw boolean; older payloads carried the wording
+                                    v[key] = typeof v[key] === "boolean" ? v[key] : v[key] === ed.boolType.trueText;
                                     break;
                                 case EditType.CHOICE:
+                                    // the query returns the stored value; older payloads carried the label
                                     for (let vl of eruptFieldModel.componentValue) {
+                                        if (vl.value == v[key]) {
+                                            break;
+                                        }
                                         if (vl.label == v[key]) {
                                             v[key] = vl.value;
                                             break;
