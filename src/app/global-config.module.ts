@@ -5,7 +5,6 @@ import {ALAIN_CONFIG, AlainConfig} from '@delon/util/config';
 import {ReuseTabModule, ReuseTabService, ReuseTabStrategy} from '@delon/abc/reuse-tab';
 import {throwIfAlreadyLoaded} from '@core';
 import {environment} from '@env/environment';
-import {GANTT_GLOBAL_CONFIG, GANTT_I18N_LOCALE_TOKEN, zhHansLocale} from '@worktile/gantt';
 // #region reuse-tab
 /**
  * To enable [route reuse](https://ng-alain.com/components/reuse-tab), you need to:
@@ -55,14 +54,9 @@ const zorroProvides = [{provide: NZ_CONFIG, useValue: ngZorroConfig}];
 
 // #endregion
 
-// #region Gantt Config
-
-const ganttProvides = [
-    {provide: GANTT_GLOBAL_CONFIG, useValue: {}},
-    {provide: GANTT_I18N_LOCALE_TOKEN, useValue: [zhHansLocale]}
-];
-
-// #endregion
+// Gantt config lives on GanttComponent instead: @worktile/gantt has no subpath entry
+// point, so importing even a token from here pulled the whole library (126 KB) into
+// the eager root bundle, while the gantt view itself is lazy.
 
 @NgModule({
     imports: [...alainModules, ...(environment.modules || [])],
@@ -76,7 +70,7 @@ export class GlobalConfigModule {
     static forRoot(): ModuleWithProviders<GlobalConfigModule> {
         return {
             ngModule: GlobalConfigModule,
-            providers: [...alainProvides, ...zorroProvides, ...ganttProvides]
+            providers: [...alainProvides, ...zorroProvides]
         };
     }
 }

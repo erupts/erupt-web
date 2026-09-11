@@ -4,6 +4,7 @@ import {SharedModule} from "@shared/shared.module";
 import {NzAffixModule} from "ng-zorro-antd/affix";
 import {HttpClientModule} from "@angular/common/http";
 import {DragDropModule} from "@angular/cdk/drag-drop";
+import {GanttHostComponent} from "./vis/gantt/gantt-host.component";
 import {DataHandlerService} from "./service/data-handler.service";
 import {EditTypeComponent} from "./components/edit-type/edit-type.component";
 import {PrintTypeComponent} from "./components/print-type/print-type";
@@ -51,9 +52,7 @@ import {MultiChoiceComponent} from './components/multi-choice/multi-choice.compo
 import {SignaturePadComponent} from './components/signature-pad/signature-pad.component';
 import {SmartSearchComponent} from './components/smart-search/smart-search.component';
 import {NzSegmentedModule} from "ng-zorro-antd/segmented";
-import {GanttComponent} from "./vis/gantt/gantt.component";
 import {CalendarComponent} from "./vis/calendar/calendar.component";
-import {NgxGanttModule} from "@worktile/gantt";
 import {NzCalendarModule} from "ng-zorro-antd/calendar";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzSpaceModule} from "ng-zorro-antd/space";
@@ -78,7 +77,6 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         NzRateModule,
         NzEmptyModule,
         NzSegmentedModule,
-        NgxGanttModule,
         NzCalendarModule,
         NzButtonModule,
         NzSpaceModule,
@@ -89,7 +87,8 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         AiChatComponent,
         NzMenuItemComponent,
         NzDropdownMenuComponent,
-        NzDropdownDirective
+        NzDropdownDirective,
+        GanttHostComponent
     ],
     providers: [
         DataHandlerService,
@@ -150,7 +149,6 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         MultiChoiceComponent,
         SignaturePadComponent,
         SmartSearchComponent,
-        GanttComponent,
         CalendarComponent,
         FormViewComponent
     ]
