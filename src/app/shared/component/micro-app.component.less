@@ -1,5 +1,10 @@
 :host {
-    #erupt-micro-app-ele {
+    display: block;
+    height: 100%;
+
+    // The container used to carry a fixed id; the app name is per sub app now, so this
+    // targets the element itself.
+    ::ng-deep micro-app {
         background: var(--erupt-bg-container, #fff);
     }
 }

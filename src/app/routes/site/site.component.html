@@ -4,7 +4,10 @@
       <a [href]="targetUrl" target="_blank">{{targetUrl}}</a>
     </p>
   }
-  @if (url && !iframeManager.isInitialized()) {
+  @if (url && micro) {
+    <erupt-micro-app [url]="url" height="100%"></erupt-micro-app>
+  }
+  @if (url && !micro && !iframeManager.isInitialized()) {
     <nz-spin [nzSpinning]="spin" style="height:100%;width: 100%">
       <iframe (load)="iframeLoad()" [src]="url | safeUrl" frameborder="0" height="100%" width="100%" style="vertical-align: bottom;">
       </iframe>

@@ -43,6 +43,8 @@ function joinPath(type: string, value: string): string {
             return "/" + menuValue;
         case MenuTypeEnum.link:
             return "/site/" + encodeURIComponent(window.btoa(encodeURIComponent(menuValue)));
+        case MenuTypeEnum.microLink:
+            return "/msite/" + encodeURIComponent(window.btoa(encodeURIComponent(menuValue)));
         case MenuTypeEnum.fill:
             if (menuValue.startsWith("/")) {
                 return "/fill" + menuValue;
