@@ -69,7 +69,6 @@
                         "styles": [
                             "node_modules/@worktile/gantt/styles/index.scss",
                             "src/styles.less",
-                            "node_modules/vditor/src/assets/less/index.less",
                             "node_modules/@xterm/xterm/css/xterm.css",
                             {
                                 "input": "src/styles/themes/dark.less",
@@ -97,7 +96,6 @@
                             "moment",
                             "print-js",
                             "lodash",
-                            "vditor",
                             "html2canvas",
                             "size-sensor",
                             "pdfast",

@@ -5,14 +5,105 @@
 
     ::ng-deep {
         .markdown-editor-container {
-            background: var(--erupt-fill-secondary, #eee);
+            // No tinted wrapper: the editor should read as one input, the way every
+            // other field in the form does.
+            background: transparent;
+        }
+
+        // The editor box itself carries the ant-input silhouette.
+        .vditor {
+            border: 1px solid var(--erupt-border, #d9d9d9);
+            border-radius: 4px;
+            background: var(--erupt-bg-container, #fff);
+            transition: border-color .2s, box-shadow .2s;
+
+            &:focus-within {
+                border-color: var(--ant-primary-5, #40a9ff);
+                box-shadow: 0 0 0 2px var(--ant-primary-1, rgba(24, 144, 255, .2));
+            }
         }
 
         .vditor-container {
-            min-height: 300px;
-            overflow-y: auto;
+            background: transparent;
+        }
+
+        // Toolbar: flat strip, hairline rule, no gradient or shadow.
+        .vditor-toolbar {
+            background: var(--erupt-bg-spotlight, #fafafa);
+            border-bottom: 1px solid var(--erupt-border, #d9d9d9);
+            border-radius: 4px 4px 0 0;
+            padding: 2px 6px;
+
+            &--pin {
+                border-radius: 0;
+            }
+        }
+
+        .vditor-toolbar__item {
+            // The upload control is a <div> while every other trigger is a <button>,
+            // and only a button centres its own content — that left the upload icon
+            // sitting 5.5px high and 3px narrow. Centre both the same way.
+            > .vditor-tooltipped {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .vditor-tooltipped {
+                padding: 5px 7px;
+                border-radius: 4px;
+                color: var(--erupt-text-secondary, rgba(0, 0, 0, .65));
+
+                svg {
+                    width: 14px;
+                    height: 14px;
+                }
+
+                &:hover {
+                    background: var(--erupt-fill-tertiary, rgba(0, 0, 0, .04));
+                    color: var(--ant-primary-color, #1890ff);
+                }
+            }
+
+            .vditor-menu--current {
+                color: var(--ant-primary-color, #1890ff);
+            }
+        }
+
+        .vditor-toolbar__divider {
+            border-left: 1px solid var(--erupt-border, #d9d9d9);
+            opacity: .6;
+            margin: 0 2px;
+        }
+
+        // Editing surfaces inherit the form's type colour instead of vditor's own.
+        .vditor-reset,
+        .vditor-sv,
+        .vditor-preview {
+            color: var(--erupt-text, rgba(0, 0, 0, .88));
             background: var(--erupt-bg-container, #fff);
-            border: 1px solid var(--erupt-border, #c4c4c4);
+        }
+
+        .vditor-resize__icon {
+            background: var(--erupt-bg-container, #fff);
+            border-color: var(--erupt-border, #d9d9d9);
+        }
+
+        // Read-only preview (grid cell → modal): drop the editor chrome entirely.
+        .markdown-editor-container.is-readonly {
+            .vditor {
+                border: none;
+                border-radius: 0;
+
+                &:focus-within {
+                    box-shadow: none;
+                }
+            }
+
+            // Every button is inert once disabled() runs — show the text, not the chrome.
+            .vditor-toolbar {
+                display: none;
+            }
         }
     }
 }

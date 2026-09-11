@@ -9,7 +9,9 @@ import {
     OnInit,
     ViewChild
 } from '@angular/core';
-import Vditor from 'vditor';
+// Type-only: the runtime bundle is fetched lazily from assets, so that a form
+// without a markdown field never pays for it.
+import type Vditor from 'vditor';
 import {EruptFieldModel} from "../../model/erupt-field.model";
 import {EruptModel} from "../../model/erupt.model";
 import {RestPath} from "../../model/erupt.enum";
@@ -41,7 +43,7 @@ export class MarkdownComponent implements OnInit, AfterViewInit, DoCheck, OnDest
 
     public loading: boolean = true;
 
-    private editorHeight: number = 480;
+    private editorHeight: number = 360;
 
     private cdnPath: string = 'assets/vditor';
 
@@ -51,37 +53,43 @@ export class MarkdownComponent implements OnInit, AfterViewInit, DoCheck, OnDest
 
     private _lastValue: any;
 
-    // default toolbar configuration
-    private defaultToolbar = [
-        'emoji',
+    private destroyed: boolean = false;
+
+    // Default toolbar: the everyday marks stay visible, the rest folds into "more"
+    // so the field does not out-shout the form around it.
+    private defaultToolbar: any[] = [
         'headings',
         'bold',
         'italic',
-        'strike',
+        '|',
         'link',
+        'quote',
+        'code',
         '|',
         'list',
         'ordered-list',
-        'check',
-        'outdent',
-        'indent',
         '|',
-        'quote',
-        'line',
-        'code',
-        'inline-code',
-        '|',
-        'upload',
         'table',
-        '|',
-        'undo',
-        'redo',
-        '|',
-        'fullscreen',
-        'edit-mode',
-        'both',
+        'upload',
+        {
+            name: 'more',
+            toolbar: [
+                'strike',
+                'inline-code',
+                'check',
+                'line',
+                'outdent',
+                'indent',
+                'emoji',
+                'outline',
+                'edit-mode',
+                'both',
+                'undo',
+                'redo'
+            ]
+        },
         'preview',
-        'outline',
+        'fullscreen'
     ];
 
     constructor(
@@ -104,23 +112,49 @@ export class MarkdownComponent implements OnInit, AfterViewInit, DoCheck, OnDest
     }
 
     ngAfterViewInit() {
-        // delay initialization to ensure the DOM has rendered
-        setTimeout(() => {
-            this.lazy.loadScript(`${this.cdnPath}/dist/index.min.js`).then(() => {
-                this.initVditor();
-            }).catch(error => {
-                this.loading = false;
-                this.editorError = true;
-                console.error('Failed to load Vditor script:', error);
-            });
-        }, 100);
+        // Script and stylesheet ride together: the css is no longer in the global
+        // bundle, so it must land before the editor paints.
+        Promise.all([
+            this.lazy.loadScript(`${this.cdnPath}/dist/index.min.js`),
+            this.lazy.loadStyle(`${this.cdnPath}/dist/index.css`)
+        ]).then(() => this.waitForVditorGlobal()).then(ctor => {
+            if (this.destroyed) {
+                return;
+            }
+            this.initVditor(ctor);
+        }).catch(error => {
+            this.loading = false;
+            this.editorError = true;
+            console.error('Failed to load Vditor:', error);
+        });
+    }
+
+    /**
+     * The UMD bundle assigns window.Vditor as it evaluates; a cached lazy-load
+     * resolves before that assignment lands, so poll briefly for the global.
+     */
+    private waitForVditorGlobal(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            let tries = 0;
+            const poll = () => {
+                const ctor = (window as any).Vditor;
+                if (ctor) {
+                    resolve(ctor);
+                } else if (++tries > 100) {
+                    reject(new Error('Vditor global is not available'));
+                } else {
+                    setTimeout(poll, 20);
+                }
+            };
+            poll();
+        });
     }
 
     /**
      * Initialize the Vditor editor
      * Uses the merged configuration to initialize the editor
      */
-    private initVditor() {
+    private initVditor(VditorCtor: any) {
         try {
             // check if vditorContainer exists
             if (!this.vditorContainer) {
@@ -130,16 +164,22 @@ export class MarkdownComponent implements OnInit, AfterViewInit, DoCheck, OnDest
                 return;
             }
 
+            const dark = document.documentElement.classList.contains('dark');
+
             // get the upload URL, consistent with the original CKEditor
             const uploadUrl = RestPath.file + "/upload-html-editor/" + this.erupt.eruptName + "/" +
                 this.eruptField.fieldName + "?_erupt=" + this.erupt.eruptName + "&_token=" + this.tokenService.get().token;
-            ;
-            this.vditor = new Vditor(this.vditorContainer.nativeElement, {
+            this.vditor = new VditorCtor(this.vditorContainer.nativeElement, {
                 height: this.editorHeight,
-                minHeight: 60,
+                minHeight: 180,
                 mode: this.editorMode,
                 cache: {
                     enable: false // disable caching to avoid conflicts between different instances
+                },
+                // Let the user trade form real estate for writing room instead of
+                // baking one tall box into every record.
+                resize: {
+                    enable: true
                 },
                 upload: {
                     url: uploadUrl,
@@ -153,10 +193,15 @@ export class MarkdownComponent implements OnInit, AfterViewInit, DoCheck, OnDest
                 input: (value) => {
                     this.eruptField.eruptFieldJson.edit.$value = value;
                 },
-                theme: document.documentElement.classList.contains('dark') ? 'dark' : 'classic',
+                theme: dark ? 'dark' : 'classic',
                 preview: {
                     theme: {
-                        current: document.documentElement.classList.contains('dark') ? 'dark' : 'light'
+                        current: dark ? 'dark' : 'light'
+                    },
+                    // Pin the highlight theme: only these two ship under assets, every
+                    // other highlight.js stylesheet was dropped from the payload.
+                    hljs: {
+                        style: dark ? 'github-dark' : 'github'
                     }
                 },
                 lang: 'zh_CN',
@@ -175,7 +220,9 @@ export class MarkdownComponent implements OnInit, AfterViewInit, DoCheck, OnDest
                         this._lastValue = this.eruptField.eruptFieldJson.edit.$value;
                         this.vditor.setValue(val);
                     }, 100)
-                }
+                },
+                // Caller-supplied overrides win over every default above.
+                ...this.editorConfig
             });
         } catch (error) {
             this.loading = false;
@@ -212,6 +259,7 @@ export class MarkdownComponent implements OnInit, AfterViewInit, DoCheck, OnDest
     }
 
     ngOnDestroy() {
+        this.destroyed = true;
         if (this.vditor) {
             this.vditor.destroy();
         }
