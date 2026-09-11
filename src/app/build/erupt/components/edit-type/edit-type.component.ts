@@ -25,6 +25,7 @@ import {NzImageService} from "ng-zorro-antd/image";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {BehaviorSubject, skip} from "rxjs";
 import {SignaturePadComponent} from "../signature-pad/signature-pad.component";
+import {AiAssistVariant} from "../ai-assist/ai-assist.component";
 
 @Component({
     standalone: false,
@@ -60,6 +61,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     eruptModel: EruptModel;
 
     editType = EditType;
+
+    aiVariant = AiAssistVariant;
 
     htmlEditorType = HtmlEditTypeEnum;
 

@@ -1,0 +1,303 @@
+// The assistant carries its own violet accent rather than the runtime brand color:
+// it reads as "AI" on any theme, and never collides with whatever primary the site
+// picked. Held in custom properties so the dark theme can lift it off a dark ground.
+:host {
+    --ai-from: #6366f1;
+    --ai-accent: #a855f7;
+    --ai-soft: rgba(168, 85, 247, 0.11);
+    --ai-soft-hover: rgba(168, 85, 247, 0.2);
+
+    display: inline-flex;
+    align-items: center;
+}
+
+:host-context(html.dark) {
+    --ai-from: #818cf8;
+    --ai-accent: #c084fc;
+    --ai-soft: rgba(192, 132, 252, 0.16);
+    --ai-soft-hover: rgba(192, 132, 252, 0.26);
+}
+
+// ── Trigger ──────────────────────────────────────────────────────
+.ai-trigger {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    font-family: inherit;
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.4));
+    cursor: pointer;
+    transition: color 0.18s ease, background-color 0.18s ease;
+
+    // Holds the icon and the spinner ring, so the ring stays circular whether the
+    // trigger is a 22px square or a label-bearing pill
+    &__mark {
+        position: relative;
+        flex: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 22px;
+        height: 22px;
+    }
+
+    &__icon {
+        width: 14px;
+        height: 14px;
+        position: relative;
+        z-index: 1;
+        transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    &__label {
+        white-space: nowrap;
+    }
+
+    &:hover:not(:disabled) {
+        color: var(--ai-accent);
+        background: var(--ai-soft);
+
+        .ai-trigger__icon {
+            transform: scale(1.12) rotate(8deg);
+        }
+    }
+
+    &:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+    }
+
+    // Ring that only exists while a draft is streaming. 50% (not the trigger's own
+    // radius) so the conic gradient is clipped to a circle — on a rounded square
+    // its corners survive and the ring reads as a spinning box.
+    &__glow {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &--busy {
+        color: var(--ai-accent);
+        background: var(--ai-soft);
+
+        .ai-trigger__icon {
+            animation: ai-pulse 1.1s ease-in-out infinite;
+        }
+
+        .ai-trigger__glow {
+            opacity: 1;
+            background: conic-gradient(from 0deg, transparent 0%, var(--ai-from) 45%, var(--ai-accent) 70%, transparent 85%);
+            animation: ai-spin 0.9s linear infinite;
+            // hollow it out so only a 1.5px ring shows
+            mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px));
+            -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px));
+        }
+    }
+
+    // Pill form, for the hosts that have horizontal room to spare. The word "AI"
+    // is what actually makes the control findable; a bare icon never was.
+    &--pill {
+        width: auto;
+        height: 24px;
+        padding: 0 9px 0 5px;
+        gap: 4px;
+        color: var(--ai-accent);
+        background: var(--ai-soft);
+        font-size: 12.5px;
+        font-weight: 500;
+
+        .ai-trigger__mark {
+            width: 16px;
+            height: 16px;
+        }
+
+        .ai-trigger__icon {
+            width: 13px;
+            height: 13px;
+        }
+
+        &:hover:not(:disabled) {
+            background: var(--ai-soft-hover);
+
+            // the pill is already prominent; spare it the wiggle
+            .ai-trigger__icon {
+                transform: none;
+            }
+        }
+
+        &.ai-trigger--busy {
+            background: var(--ai-soft-hover);
+        }
+    }
+}
+
+@keyframes ai-spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes ai-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(0.92); opacity: 0.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ai-trigger--busy {
+        .ai-trigger__icon,
+        .ai-trigger__glow {
+            animation: none;
+        }
+    }
+}
+
+// ── Panel ────────────────────────────────────────────────────────
+.ai-panel {
+    width: 272px;
+}
+
+.ai-panel__prompt {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 6px 0 9px;
+    height: 34px;
+    border: 1px solid var(--erupt-border, #e5e7eb);
+    border-radius: 8px;
+    background: var(--erupt-bg-layout, rgba(0, 0, 0, 0.02));
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+
+    &.is-focused {
+        border-color: var(--ai-from);
+        background: var(--erupt-bg-container, #fff);
+        box-shadow: 0 0 0 3px var(--ai-soft);
+    }
+}
+
+.ai-panel__prompt-icon {
+    flex: none;
+    width: 13px;
+    height: 13px;
+    color: var(--ai-accent);
+}
+
+.ai-panel__input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 20px;
+    color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+
+    &::placeholder {
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.35));
+    }
+}
+
+.ai-panel__send {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    border-radius: 6px;
+    background: linear-gradient(135deg, var(--ai-from), var(--ai-accent));
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.18s ease;
+
+    svg {
+        width: 13px;
+        height: 13px;
+    }
+
+    &:hover:not(:disabled) {
+        transform: translateY(-1px);
+    }
+
+    &:disabled {
+        background: var(--erupt-fill, rgba(0, 0, 0, 0.12));
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.3));
+        cursor: not-allowed;
+        transform: none;
+    }
+}
+
+.ai-panel__list {
+    margin-top: 6px;
+}
+
+.ai-panel__footer {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--erupt-border-secondary, rgba(0, 0, 0, 0.06));
+}
+
+.ai-panel__item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    height: 32px;
+    padding: 0 8px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    text-align: left;
+    color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+
+    &-icon {
+        flex: none;
+        width: 15px;
+        height: 15px;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.4));
+        transition: color 0.15s ease;
+    }
+
+    &:hover {
+        background: var(--ai-soft);
+
+        .ai-panel__item-icon {
+            color: var(--ai-accent);
+        }
+    }
+
+    &--quiet {
+        font-size: 12px;
+        height: 28px;
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.45));
+    }
+}
+
+// The popover body lives in the cdk overlay container, outside this component's
+// view, so it needs a piercing rule; the overlay class keeps it scoped.
+::ng-deep .ai-assist-overlay {
+    .ant-popover-inner {
+        border-radius: 10px;
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .ant-popover-inner-content {
+        padding: 8px;
+    }
+
+    .ant-popover-arrow {
+        display: none;
+    }
+}

@@ -10,8 +10,30 @@ import {DataHandlerService} from "../../service/data-handler.service";
     selector: 'erupt-textarea',
     templateUrl: './textarea.component.html',
     styles: [`
+        .erupt-textarea-shell {
+            position: relative;
+        }
+
+        /* Room for the tray, so it never sits on top of the last line of text.
+           nzAutosize measures scrollHeight, so the reserved strip is honoured. */
+        .erupt-textarea-shell textarea {
+            padding-bottom: 34px;
+        }
+
+        .erupt-textarea-tray {
+            position: absolute;
+            right: 8px;
+            bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-left: 6px;
+            border-radius: 7px;
+            /* opaque, so scrolled text passes behind it rather than through it */
+            background: var(--erupt-bg-container, #fff);
+        }
+
         .erupt-textarea-count {
-            text-align: right;
             font-size: 12px;
             opacity: .55;
             line-height: 1.6;

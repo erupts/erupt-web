@@ -87,6 +87,8 @@ export interface Edit {
     desc: string;
     type: EditType;
     show: boolean;
+    // whether the inline AI writing assistant is offered on this field; absent means yes
+    ai?: boolean;
     dynamic: { dependField: string, condition: string, noMatch: FormCtrl, match: FormCtrl };
     onchange: string;
     readOnly: Readonly;

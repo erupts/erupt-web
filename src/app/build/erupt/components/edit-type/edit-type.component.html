@@ -128,6 +128,9 @@
                                [name]="field.fieldName"
                                [placeholder]="field.eruptFieldJson.edit.placeHolder"
                                [disabled]="isReadonly(field)">
+                        <erupt-ai-assist nzInputSuffix [eruptModel]="eruptModel" [power]="eruptBuildModel?.power" [eruptField]="field"
+                                         [parentEruptName]="parentEruptName"
+                                         [disabled]="isReadonly(field)"></erupt-ai-assist>
                     </nz-input-wrapper>
                     @if (field.eruptFieldJson.edit.inputType.length > 0) {
                         <div class="field-char-count">{{ (field.eruptFieldJson.edit.$value || '').length }}/{{ field.eruptFieldJson.edit.inputType.length }}</div>
@@ -317,7 +320,12 @@
                             <erupt-textarea [eruptModel]="eruptModel" [eruptBuildModel]="eruptBuildModel"
                                             [eruptField]="field"
                                             [eruptParentName]="parentEruptName"
-                                            [readonly]="isReadonly(field)"></erupt-textarea>
+                                            [readonly]="isReadonly(field)">
+                                <erupt-ai-assist textareaAction [variant]="aiVariant.PILL" [eruptModel]="eruptModel"
+                                                 [power]="eruptBuildModel?.power" [eruptField]="field"
+                                                 [parentEruptName]="parentEruptName"
+                                                 [disabled]="isReadonly(field)"></erupt-ai-assist>
+                            </erupt-textarea>
                         </se>
                     </div>
                 }
@@ -326,8 +334,15 @@
                         <se [label]="field.eruptFieldJson.edit.title"
                             [required]="field.eruptFieldJson.edit.notNull"
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
-                            <erupt-markdown [eruptField]="field" [erupt]="eruptModel"
-                                            [readonly]="isReadonly(field)"></erupt-markdown>
+                            <div class="erupt-ai-hold">
+                                <erupt-markdown [eruptField]="field" [erupt]="eruptModel"
+                                                [readonly]="isReadonly(field)"></erupt-markdown>
+                                <div class="erupt-ai-tray">
+                                    <erupt-ai-assist [variant]="aiVariant.PILL" [eruptModel]="eruptModel" [power]="eruptBuildModel?.power"
+                                                     [eruptField]="field" [parentEruptName]="parentEruptName"
+                                                     [disabled]="isReadonly(field)"></erupt-ai-assist>
+                                </div>
+                            </div>
                         </se>
                     </div>
                 }
@@ -579,16 +594,23 @@
                         <se [label]="field.eruptFieldJson.edit.title"
                             [required]="field.eruptFieldJson.edit.notNull"
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
-                            @if (field.eruptFieldJson.edit.htmlEditorType.value === htmlEditorType.CKEDITOR) {
-                                <ckeditor [(value)]="field.eruptFieldJson.edit.$value"
-                                          [readonly]="isReadonly(field)"
-                                          [eruptField]="field" [erupt]="eruptModel"></ckeditor>
-                            }
-                            @if (field.eruptFieldJson.edit.htmlEditorType.value === htmlEditorType.UEDITOR) {
-                                <erupt-ueditor [eruptField]="field" [erupt]="eruptModel"
-                                               [readonly]="isReadonly(field)">
-                                </erupt-ueditor>
-                            }
+                            <div class="erupt-ai-hold">
+                                @if (field.eruptFieldJson.edit.htmlEditorType.value === htmlEditorType.CKEDITOR) {
+                                    <ckeditor [(value)]="field.eruptFieldJson.edit.$value"
+                                              [readonly]="isReadonly(field)"
+                                              [eruptField]="field" [erupt]="eruptModel"></ckeditor>
+                                }
+                                @if (field.eruptFieldJson.edit.htmlEditorType.value === htmlEditorType.UEDITOR) {
+                                    <erupt-ueditor [eruptField]="field" [erupt]="eruptModel"
+                                                   [readonly]="isReadonly(field)">
+                                    </erupt-ueditor>
+                                }
+                                <div class="erupt-ai-tray">
+                                    <erupt-ai-assist [variant]="aiVariant.PILL" [eruptModel]="eruptModel" [power]="eruptBuildModel?.power"
+                                                     [eruptField]="field" [parentEruptName]="parentEruptName"
+                                                     [disabled]="isReadonly(field)"></erupt-ai-assist>
+                                </div>
+                            </div>
                         </se>
                     </div>
                 }
@@ -617,6 +639,10 @@
                                                    [eruptName]="eruptModel.eruptName"
                                                    [fieldName]="field.fieldName"
                                                    [parentEruptName]="parentEruptName">
+                                    <erupt-ai-assist codeEditorAction class="erupt-ai-action" [variant]="aiVariant.PILL"
+                                                     [eruptModel]="eruptModel" [power]="eruptBuildModel?.power"
+                                                     [eruptField]="field" [parentEruptName]="parentEruptName"
+                                                     [disabled]="isReadonly(field)"></erupt-ai-assist>
                                 </erupt-code-editor>
                             </se>
                         </div>

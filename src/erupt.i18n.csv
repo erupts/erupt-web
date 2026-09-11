@@ -1242,5 +1242,16 @@ designer.max_length,最大字数,最大字數,Max Length,Longueur max,最大文�
 designer.max_length_unlimited,不限制,不限制,Unlimited,Illimité,無制限,제한 없음,Без ограничений,Sin límite,Unbegrenzt,Sem limite,Tak terbatas,غير محدود
 table.cell.edit,双击单元格编辑,雙擊儲存格編輯,Double-click to edit,Double-cliquez pour modifier,ダブルクリックで編集,두 번 클릭하여 편집,Двойной щелчок для редактирования,Doble clic para editar,Zum Bearbeiten doppelklicken,Clique duas vezes para editar,Klik dua kali untuk mengedit,انقر نقرا مزدوجا للتحرير
 designer.power_cell_edit,单元格编辑,儲存格編輯,Cell editing,Édition de cellule,セル編集,셀 편집,Редактирование ячеек,Edición de celdas,Zellbearbeitung,Edição de célula,Edit sel,تحرير الخلية
+ai_assist.generate,生成,生成,Generate,Générer,生成,생성,Создать,Generar,Generieren,Gerar,Hasilkan,إنشاء
+ai_assist.polish,润色,潤色,Polish,Améliorer,推敲,다듬기,Улучшить,Pulir,Überarbeiten,Aprimorar,Perhalus,تحسين
+ai_assist.continue,续写,續寫,Continue,Continuer,続きを書く,이어쓰기,Продолжить,Continuar,Fortsetzen,Continuar,Lanjutkan,متابعة
+ai_assist.expand,扩写,擴寫,Expand,Développer,詳しく書く,확장,Расширить,Ampliar,Erweitern,Expandir,Perluas,توسيع
+ai_assist.shorten,精简,精簡,Shorten,Raccourcir,要約,줄이기,Сократить,Acortar,Kürzen,Encurtar,Perpendek,اختصار
+ai_assist.placeholder,告诉 AI 怎么写,告訴 AI 怎麼寫,Tell AI what to write,Dites à l'IA quoi écrire,AI への指示,AI에게 지시,Что написать,Indica qué escribir,Was soll geschrieben werden,Diga à IA o que escrever,Beri tahu AI,أخبر الذكاء الاصطناعي بما يكتب
+ai_assist.send,发送,發送,Send,Envoyer,送信,보내기,Отправить,Enviar,Senden,Enviar,Kirim,إرسال
+ai_assist.undo,撤销,撤銷,Undo,Annuler,元に戻す,실행 취소,Отменить,Deshacer,Rückgängig,Desfazer,Urungkan,تراجع
+ai_assist.stop,停止,停止,Stop,Arrêter,停止,중지,Остановить,Detener,Stoppen,Parar,Hentikan,إيقاف
 setting.skin,主题风格,主題風格,Theme style,Style de thème,テーマスタイル,테마 스타일,Стиль темы,Estilo de tema,Themenstil,Estilo do tema,Gaya tema,نمط السمة
 setting.skin-default,默认,預設,Default,Défaut,デフォルト,기본,По умолчанию,Predeterminado,Standard,Padrão,Default,افتراضي
+ai_assist.title,AI 助手,AI 助手,AI assistant,Assistant IA,AI アシスタント,AI 어시스턴트,AI-помощник,Asistente de IA,KI-Assistent,Assistente de IA,Asisten AI,مساعد الذكاء الاصطناعي
+ai_assist.pill,AI,AI,AI,AI,AI,AI,AI,AI,AI,AI,AI,AI

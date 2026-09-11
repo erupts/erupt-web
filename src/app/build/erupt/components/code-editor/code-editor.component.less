@@ -10,15 +10,28 @@
             display: block;
         }
         
+        // Given a surface of its own: three bare glyphs floating on syntax-highlighted
+        // code read as part of the code, so the group is hard to spot. Dimmed at rest,
+        // solid on hover. Position is unchanged.
         .toolbar {
             position: absolute;
             right: 10px;
             bottom: 10px;
             margin: 0 12px;
-            padding: 6px 12px;
+            padding: 3px 5px;
             display: flex;
             align-items: center;
             z-index: 10;
+            border: 1px solid var(--erupt-border-secondary, rgba(0, 0, 0, 0.08));
+            border-radius: 7px;
+            background: var(--erupt-bg-container, #fff);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+            opacity: 0.85;
+            transition: opacity 0.2s ease;
+
+            &:hover {
+                opacity: 1;
+            }
 
             .ant-btn {
                 color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));

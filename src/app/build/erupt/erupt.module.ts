@@ -28,6 +28,7 @@ import {CheckboxComponent} from './components/checkbox/checkbox.component';
 import {SafeTemplateComponent} from './components/safe-template/safe-template.component';
 import {DateComponent} from './components/date/date.component';
 import {MarkdownComponent} from './components/markdown/markdown.component';
+import {AiAssistComponent} from './components/ai-assist/ai-assist.component';
 import {UiBuildService} from "./service/ui-build.service";
 import {ChoiceComponent} from "./components/choice/choice.component";
 import {TagsComponent} from "./components/tags/tags.component";
@@ -123,6 +124,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         SafeTemplateComponent,
         DateComponent,
         MarkdownComponent,
+        AiAssistComponent,
         ChoiceComponent,
         TagsComponent,
         TextareaComponent,
@@ -143,6 +145,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         CodeEditorComponent,
         SafeTemplateComponent,
         MarkdownComponent,
+        AiAssistComponent,
         AttachmentSelectComponent,
         MultiChoiceComponent,
         SignaturePadComponent,

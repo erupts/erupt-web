@@ -14,7 +14,9 @@ import {UEditorComponent} from "@shared/component/ueditor/ueditor.component";
                  [config]="editorConfig"></ueditor>
 
     `,
-    styles: []
+    // Both this host and the bare <ueditor> inside it default to inline; either one
+    // left that way collapses the wrapper the assistant's tray positions against.
+    styles: [`:host, ueditor { display: block; }`]
 })
 export class EruptUeditorComponent implements OnInit, OnChanges {
 

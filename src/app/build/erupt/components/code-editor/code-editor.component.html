@@ -8,6 +8,9 @@
                     [nzEditorOption]="editorOption">
     </nz-code-editor>
     <div class="toolbar">
+        <!-- Slot for field-level actions that belong with Copy/Fullscreen rather
+             than floating over the code. Fed by edit-type for CODE_EDITOR. -->
+        <ng-content select="[codeEditorAction]"></ng-content>
         <button nz-button nzType="text" nzSize="small" nz-tooltip nzTooltipTitle="Copy"
                 (click)="copyCode()" style="margin-right:4px;">
             <i nz-icon nzType="copy" nzTheme="outline"></i>

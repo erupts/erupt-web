@@ -1,24 +1,31 @@
 @let textareaType = edit.textareaType;
-@if (textareaType?.mentionPrefix?.length > 0) {
-    <nz-mention [nzSuggestions]="suggestions"
-                [nzPrefix]="textareaType.mentionPrefix"
-                [nzLoading]="loading"
-                (nzOnSearchChange)="loadMentions()">
-        <textarea nz-input class="erupt-input" nzMentionTrigger
+<div class="erupt-textarea-shell">
+    @if (textareaType?.mentionPrefix?.length > 0) {
+        <nz-mention [nzSuggestions]="suggestions"
+                    [nzPrefix]="textareaType.mentionPrefix"
+                    [nzLoading]="loading"
+                    (nzOnSearchChange)="loadMentions()">
+            <textarea nz-input class="erupt-input" nzMentionTrigger
+                      [name]="eruptField.fieldName"
+                      [nzAutosize]="{ minRows: textareaType?.minRows || 3, maxRows: textareaType?.maxRows || 20 }"
+                      [(ngModel)]="edit.$value"
+                      [maxlength]="maxLength"
+                      [placeholder]="edit.placeHolder"
+                      [disabled]="readonly"></textarea>
+        </nz-mention>
+    } @else {
+        <textarea nz-input class="erupt-input"
                   [name]="eruptField.fieldName"
                   [nzAutosize]="{ minRows: textareaType?.minRows || 3, maxRows: textareaType?.maxRows || 20 }"
                   [(ngModel)]="edit.$value"
                   [maxlength]="maxLength"
                   [placeholder]="edit.placeHolder"
                   [disabled]="readonly"></textarea>
-    </nz-mention>
-} @else {
-    <textarea nz-input class="erupt-input"
-              [name]="eruptField.fieldName"
-              [nzAutosize]="{ minRows: textareaType?.minRows || 3, maxRows: textareaType?.maxRows || 20 }"
-              [(ngModel)]="edit.$value"
-              [maxlength]="maxLength"
-              [placeholder]="edit.placeHolder"
-              [disabled]="readonly"></textarea>
-}
-<div class="erupt-textarea-count">{{ (edit.$value || '').length }}@if (maxLength) { / {{ maxLength }}}</div>
+    }
+    <div class="erupt-textarea-tray">
+        <div class="erupt-textarea-count">{{ (edit.$value || '').length }}@if (maxLength) { / {{ maxLength }}}</div>
+        <!-- Field-level action slot. Inside the control rather than below it, so the
+             assistant plainly belongs to this field; the textarea reserves the room. -->
+        <ng-content select="[textareaAction]"></ng-content>
+    </div>
+</div>

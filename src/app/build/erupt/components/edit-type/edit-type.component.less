@@ -221,3 +221,33 @@
 
     }
 }
+
+// Inline AI assistant placement. Every host keeps the assistant inside the control:
+// textarea and the code editor have slots of their own, while the rich editors
+// (markdown, html) get a tray pinned into their bottom-right corner — they own their
+// top edge with a toolbar and have no count row to borrow.
+.erupt-ai-hold {
+    position: relative;
+
+    .erupt-ai-tray {
+        position: absolute;
+        right: 12px;
+        bottom: 10px;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        padding: 2px;
+        border-radius: 8px;
+        // opaque, so editor content passes behind the tray rather than through it
+        background: var(--erupt-bg-container, #fff);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
+}
+
+// Assistant projected into the code editor's own action toolbar (Copy /
+// Fullscreen) instead of floating over the first line of code, where it
+// overlapped the text and was easy to miss. Sits ahead of them with the same
+// gap the toolbar already uses between its buttons.
+.erupt-ai-action {
+    margin-right: 4px;
+}
