@@ -10,8 +10,17 @@
         <span class="ai-trigger__mark">
             <span class="ai-trigger__glow"></span>
             <svg class="ai-trigger__icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                <path d="M8 1.4 9.25 5.15 13 6.4 9.25 7.65 8 11.4 6.75 7.65 3 6.4 6.75 5.15Z" fill="currentColor"/>
-                <path d="M12.6 10.2 13.05 11.55 14.4 12 13.05 12.45 12.6 13.8 12.15 12.45 10.8 12 12.15 11.55Z" fill="currentColor"/>
+                <defs>
+                    <linearGradient [attr.id]="gradientId" x1="2" y1="1" x2="14" y2="14"
+                                    gradientUnits="userSpaceOnUse">
+                        <stop class="ai-trigger__stop-from" offset="0"/>
+                        <stop class="ai-trigger__stop-to" offset="1"/>
+                    </linearGradient>
+                </defs>
+                <path d="M8 1.4 9.25 5.15 13 6.4 9.25 7.65 8 11.4 6.75 7.65 3 6.4 6.75 5.15Z"
+                      [attr.fill]="'url(#' + gradientId + ')'"/>
+                <path d="M12.6 10.2 13.05 11.55 14.4 12 13.05 12.45 12.6 13.8 12.15 12.45 10.8 12 12.15 11.55Z"
+                      [attr.fill]="'url(#' + gradientId + ')'"/>
             </svg>
         </span>
         @if (variant === variantEnum.PILL) {

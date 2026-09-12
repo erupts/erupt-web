@@ -50,6 +50,16 @@ export class AiAssistComponent implements OnDestroy {
 
     variantEnum = AiAssistVariant;
 
+    /**
+     * The glyph is filled by an SVG gradient, which can only be referenced by id.
+     * Every instance gets its own: a shared id would resolve to whichever copy sits
+     * first in the document, and the rest would lose their fill the moment that one
+     * unmounted with its modal.
+     */
+    private static gradientSeq: number = 0;
+
+    readonly gradientId: string = `ai-spark-${++AiAssistComponent.gradientSeq}`;
+
     panelVisible: boolean = false;
 
     promptFocused: boolean = false;
