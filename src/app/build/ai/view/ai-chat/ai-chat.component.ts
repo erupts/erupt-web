@@ -442,7 +442,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         const token = this.tokenService.get()?.token || '';
         const contextParam = this.context ? `&contextPrompt=${encodeURIComponent(this.context)}` : '';
         const imagesParam = images?.length ? `&images=${encodeURIComponent(JSON.stringify(images))}` : '';
-        const url = RestPath.erupt + `/ai/chat/send?chatId=${chatId}&message=${encodeURIComponent(message)}&_token=${encodeURIComponent(token)}&agentId=${this.selectAgentId ?? ''}&llmId=${this.selectLlmId ?? ''}&autoToolCall=${this.autoToolCall}${contextParam}${imagesParam}`;
+        const url = RestPath.erupt + `/ai/chat/send?chatId=${chatId}&message=${encodeURIComponent(message)}&_token=${encodeURIComponent(token)}&agentId=${this.selectAgentId ?? ''}&llmId=${this.selectLlmId ?? ''}&autoToolCall=${this.autoToolCall}&_lang=${encodeURIComponent(this.i18n.currentLang || '')}${contextParam}${imagesParam}`;
         state.eventSource = new EventSource(url);
         this.pendingSse.set(chatId, state);
         this.streaming = true;

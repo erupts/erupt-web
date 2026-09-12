@@ -2,6 +2,7 @@ import {Inject, Injectable} from '@angular/core';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {RestPath} from '../model/erupt.enum';
 import {SseMessageEvent} from '../../ai/model/chat.model';
+import {I18NService} from '@core';
 
 /** What the assistant should do to the field; mirrors AiFieldRequest.Action on the backend */
 export enum AiFieldAction {
@@ -35,7 +36,8 @@ export interface AiFieldRequest {
 @Injectable({providedIn: 'root'})
 export class AiFieldService {
 
-    constructor(@Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
+    constructor(@Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
+                private i18n: I18NService) {
     }
 
     /**
@@ -48,7 +50,10 @@ export class AiFieldService {
         const headers: { [key: string]: string } = {
             'Content-Type': 'application/json',
             'token': this.tokenService.get()?.token || '',
-            'erupt': eruptName
+            'erupt': eruptName,
+            // This call bypasses the http interceptor, so the console language is set by hand;
+            // without it the model answers in whatever language it leans towards
+            'lang': this.i18n.currentLang || ''
         };
         if (parentEruptName) headers['eruptParent'] = parentEruptName;
 
