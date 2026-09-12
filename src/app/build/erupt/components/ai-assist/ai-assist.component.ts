@@ -1,5 +1,7 @@
 import {Component, Input, OnDestroy} from '@angular/core';
 import {NzMessageService} from 'ng-zorro-antd/message';
+import {NzNotificationService} from 'ng-zorro-antd/notification';
+import {I18NService} from '@core';
 import {EruptFieldModel} from '../../model/erupt-field.model';
 import {EruptModel, Power} from '../../model/erupt.model';
 import {EditType} from '../../model/erupt.enum';
@@ -80,7 +82,19 @@ export class AiAssistComponent implements OnDestroy {
 
     private pending: string | null = null;
 
+    /**
+     * Well past a toast's few seconds. The draft lands in one field of a long form,
+     * often one that has scrolled out of view while the stream ran, and this notice
+     * is what says which field to go read — it has to outlive a glance away.
+     */
+    private static readonly NOTIFY_DURATION: number = 10000;
+
+    /** Long enough to recognise the draft, short enough that the notice stays one card */
+    private static readonly EXCERPT_LENGTH: number = 90;
+
     constructor(private aiFieldService: AiFieldService,
+                private i18n: I18NService,
+                private notification: NzNotificationService,
                 private msg: NzMessageService) {
     }
 
@@ -162,6 +176,7 @@ export class AiAssistComponent implements OnDestroy {
             this.abort.signal
         ).then(() => {
             this.finish(draft);
+            this.notifyDone(draft);
         }).catch(e => {
             if (e?.name === 'AbortError') {
                 this.finish(draft);
@@ -197,6 +212,41 @@ export class AiAssistComponent implements OnDestroy {
         this.running = false;
         this.abort = null;
         this.instruction = '';
+    }
+
+    /**
+     * Says a draft arrived, which field got it, and what it says. Only for a run that
+     * finished on its own: a draft the user stopped needs no report, they were watching.
+     */
+    private notifyDone(draft: string): void {
+        if (!draft || !draft.trim()) return;
+        const field = AiAssistComponent.escapeHtml(this.edit.title || this.eruptField.fieldName);
+        this.notification.create(
+            'success',
+            this.i18n.fanyi('ai_assist.done'),
+            `<b>${field}</b><br/>${this.excerpt(draft)}`,
+            {nzDuration: AiAssistComponent.NOTIFY_DURATION}
+        );
+    }
+
+    /**
+     * What the model actually wrote, trimmed to a glance. A rich text or markdown draft
+     * is markup, so the tags come out first — the notice wants the words, not the angle
+     * brackets. Plain fields keep every character they hold, `a < b` included.
+     */
+    private excerpt(draft: string): string {
+        const stripped = this.batched ? draft.replace(/<[^>]*>/g, ' ') : draft;
+        const text = stripped.replace(/\s+/g, ' ').trim();
+        const clipped = text.length > AiAssistComponent.EXCERPT_LENGTH
+            ? text.slice(0, AiAssistComponent.EXCERPT_LENGTH) + '…'
+            : text;
+        return AiAssistComponent.escapeHtml(clipped);
+    }
+
+    /** nz-notification binds its title and content through innerHTML */
+    private static escapeHtml(text: string): string {
+        return text.replace(/[&<>"]/g, c =>
+            ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'})[c] as string);
     }
 
     /** While a draft streams the trigger is a stop button, so the panel must not open */
