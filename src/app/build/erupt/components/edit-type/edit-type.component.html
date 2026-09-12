@@ -78,7 +78,7 @@
                             <iframe
                                 [src]="dataService.getFieldTplPath(eruptBuildModel.eruptModel.eruptName,field.fieldName) | safeUrl"
                                 style="width:100%;border: none;vertical-align: bottom;"
-                                (load)="iframeHeight($event)">
+                                (load)="tplFrameLoad($event, field)">
                             </iframe>
                         </div>
                     }
