@@ -93,6 +93,11 @@
              [ngStyle]="{overflowX:'hidden',overflowY:(linkTree||showAiPanel)?'auto':'hidden',height:(linkTree||showAiPanel)?'100%':'auto'}">
             <div class="tc-container">
 
+                <!-- ── Model description (@Erupt desc), folds into the toolbar info button ── -->
+                <erupt-page-desc [desc]="eruptBuildModel.eruptModel.eruptJson.desc"
+                                 [key]="eruptBuildModel.eruptModel.eruptName"
+                                 [mode]="PageDescMode.STRIP"></erupt-page-desc>
+
                 <!-- ── Toolbar ── -->
                 <div class="tc-toolbar">
                     @if (linkTree && treeCollapsed) {
@@ -288,6 +293,9 @@
                         }
                     </div>
                     <div class="tc-utils">
+                        <erupt-page-desc [desc]="eruptBuildModel.eruptModel.eruptJson.desc"
+                                         [key]="eruptBuildModel.eruptModel.eruptName"
+                                         [mode]="PageDescMode.ICON"></erupt-page-desc>
                         @if (isAiEnabled) {
                             <button nz-button nzSize="small"
                                     nz-tooltip [nzTooltipTitle]="'AI'|translate"
@@ -623,6 +631,11 @@
                     </span>
                     <span class="e-progress-text">{{ cellProgress(item, col) }}%</span>
                 </span>
+            }
+            @case ("html") {
+                <!-- TEXT / DATE / DATE_TIME: same as the column's default safeHtml rendering -->
+                <span class="erupt-cell-text" [style.color]="cellColor(item, col)"
+                      [innerHTML]="cellDisplay(item, col) | safeHtml"></span>
             }
             @default {
                 <span class="erupt-cell-text" [style.color]="cellColor(item, col)">{{ cellDisplay(item, col) }}</span>

@@ -212,6 +212,18 @@
         gap: 8px;
     }
 
+    // Inline wrappers (the <span> around the import pair, nz-badge around export) would
+    // otherwise lay their 24px buttons on a text line box and grow the bar by 1-2px, so
+    // it no longer lines up with the 39px tree / search headers beside it.
+    .tc-actions > span,
+    .tc-actions > nz-badge,
+    .tc-utils > span,
+    .tc-utils > nz-badge {
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
+    }
+
     .tc-utils {
         display: flex;
         align-items: center;

@@ -47,7 +47,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {ModalButtonOptions, NzModalRef, NzModalService} from "ng-zorro-antd/modal";
 import {TreeSelectComponent} from "../../components/tree-select/tree-select.component";
 import {STChange, STColumn, STColumnButton, STComponent, STDragOptions, STPage} from "@delon/abc/st";
-import {AppViewService} from "@shared/service/app-view.service";
+import {PageDescMode} from "@shared/component/page-desc/page-desc.component";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
 import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
@@ -69,6 +69,8 @@ import printJS from 'print-js';
 })
 export class TableComponent implements OnInit, OnDestroy {
 
+    readonly PageDescMode = PageDescMode;
+
     protected readonly VisType = VisType;
 
     constructor(
@@ -77,7 +79,7 @@ export class TableComponent implements OnInit, OnDestroy {
         private msg: NzMessageService,
         @Inject(NzModalService)
         private modal: NzModalService,
-        private appViewService: AppViewService,
+
         public dataService: DataService,
         private dataHandler: DataHandlerService,
         private uiBuildService: UiBuildService,
@@ -284,8 +286,6 @@ export class TableComponent implements OnInit, OnDestroy {
             header: {
                 erupt: value
             }
-        }, (eb: EruptBuildModel) => {
-            this.appViewService.setRouterViewDesc(eb.eruptModel.eruptJson.desc);
         });
     }
 
@@ -1748,7 +1748,14 @@ export class TableComponent implements OnInit, OnDestroy {
         if (editType === EditType.TAGS) {
             return "tags";
         }
-        return "text";
+        // Without a render template these columns go through ST's default `safeHtml`, so a
+        // backend value like `<span style='color:#09f'>…</span>` paints as markup; keep that.
+        // SAFE_TEXT exists precisely to escape (its column sets safeType "text"), and a NUMBER
+        // is formatted from the raw value, so both stay plain text.
+        if (viewType === ViewType.SAFE_TEXT || viewType === ViewType.NUMBER) {
+            return "text";
+        }
+        return "html";
     }
 
     // tags are stored joined by a separator, or as a JSON array when the separator is "[]"

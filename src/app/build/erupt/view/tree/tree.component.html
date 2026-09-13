@@ -149,6 +149,10 @@
         <!-- ── Right detail area ── -->
         <div class="tree-detail">
 
+            <!-- ── Model description (@Erupt desc), folds into the header info button ── -->
+            <erupt-page-desc [desc]="eruptBuildModel.eruptModel.eruptJson.desc" [key]="eruptName"
+                             [mode]="PageDescMode.STRIP"></erupt-page-desc>
+
             @if (showEdit) {
             <div class="tree-detail-header">
                 @if (selectLeaf) {
@@ -191,6 +195,8 @@
                         </button>
                     }
                 }
+                <erupt-page-desc class="page-desc--end" [desc]="eruptBuildModel.eruptModel.eruptJson.desc" [key]="eruptName"
+                                 [mode]="PageDescMode.ICON"></erupt-page-desc>
             </div>
             }
 

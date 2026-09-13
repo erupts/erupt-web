@@ -28,6 +28,7 @@ import {SocketService} from "@shared/service/socket.service";
 import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 import {SyncVirtualScrollDirective} from "@shared/directive/sync-virtual-scroll.directive";
 import {InjectorRefDirective} from "@shared/directive/injector-ref.directive";
+import {PageDescComponent} from "@shared/component/page-desc/page-desc.component";
 import {EnumToArrayPipe} from "@shared/pipe/enum-array.pipe";
 import {KeysPipe} from "@shared/pipe/keys.pipe";
 import {DragDropModule} from '@angular/cdk/drag-drop';
@@ -38,6 +39,7 @@ import {LocalPipe} from "@shared/pipe/local.pipe";
 // #endregion
 
 // #region your componets & directives
+const COMPONENTS: any[] = [EruptIframeComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent, CkeditorComponent, PageDescComponent];
 const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, EnumToArrayPipe, I18nPipe, LocalPipe, SyncVirtualScrollDirective, InjectorRefDirective, KeysPipe];
 
 // #endregion

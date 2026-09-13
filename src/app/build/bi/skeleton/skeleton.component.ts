@@ -11,7 +11,7 @@ import {DrillComponent} from "../drill/drill.component";
 import {STColumn, STComponent, STPage} from "@delon/abc/st";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
-import {AppViewService} from "@shared/service/app-view.service";
+import {PageDescMode} from "@shared/component/page-desc/page-desc.component";
 import {CodeEditorComponent} from "../../erupt/components/code-editor/code-editor.component";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 
@@ -23,6 +23,8 @@ import {EruptIframeComponent} from "@shared/component/iframe.component";
     styles: []
 })
 export class SkeletonComponent implements OnInit, OnDestroy {
+
+    readonly PageDescMode = PageDescMode;
 
     bi: Bi;
 
@@ -100,7 +102,7 @@ export class SkeletonComponent implements OnInit, OnDestroy {
                 public route: ActivatedRoute,
                 private handlerService: HandlerService,
                 public settingSrv: SettingsService,
-                private appViewService: AppViewService,
+
                 @Inject(NzMessageService) private msg: NzMessageService,
                 @Inject(NzModalService) private modal: NzModalService
     ) {
@@ -118,7 +120,6 @@ export class SkeletonComponent implements OnInit, OnDestroy {
             this.hideCondition = false;
             this.dataService.getBiBuild(this.name).subscribe(res => {
                 this.bi = res;
-                this.appViewService.setRouterViewDesc(this.bi.remark)
                 if (this.bi.pageType == pageType.front) {
                     this.biTable.page = {
                         show: true,

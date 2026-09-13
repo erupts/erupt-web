@@ -1,0 +1,96 @@
+:host {
+    display: block;
+    flex-shrink: 0;
+}
+
+// nothing rendered (no desc, or the other mode's turn): drop out of the flex row entirely
+// so the toolbar's gap does not leave an empty 8px slot. @if leaves only comment nodes,
+// which :empty ignores.
+:host:empty {
+    display: none;
+}
+
+// the toolbar button variant is inline, and pushes to the row end when asked
+:host.page-desc-host--icon {
+    display: inline-flex;
+    align-items: center;
+}
+
+:host.page-desc--end {
+    margin-left: auto;
+}
+
+// The page toolbars below the strip are 7px padding + 24px small button + 1px rule = 39px;
+// the strip matches that when it holds a single line, and grows with longer text up to
+// --page-desc-max-height, after which the body scrolls.
+@strip-h: 39px;
+@line-h: 20px;
+@content-h: @strip-h - 1px - 14px; // 24px: the toolbar's control height
+
+.page-desc {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    box-sizing: border-box;
+    min-height: @strip-h;
+    padding: 7px 15px;
+    // brand-tinted info surface; --ant-primary-1 is remapped for the dark theme in tokens.less
+    background: var(--ant-primary-1, #e6f4ff);
+    border-bottom: 1px solid var(--ant-border-color-split);
+    color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+    font-size: 13px;
+    line-height: @line-h;
+
+    &__icon {
+        flex-shrink: 0;
+        // centred on the first text line (body padding + half the line/icon difference)
+        margin-top: ((@content-h - @line-h) / 2) + ((@line-h - 14px) / 2);
+        font-size: 14px;
+        line-height: 1;
+        color: var(--ant-primary-color);
+    }
+
+    &__body {
+        flex: 1;
+        min-width: 0;
+        // a 20px line sits centred in the 24px control height of the toolbar
+        padding: ((@content-h - @line-h) / 2) 0;
+        max-height: var(--page-desc-max-height, 120px);
+        overflow-y: auto;
+        word-break: break-word;
+
+        ::ng-deep p:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__close {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        margin-top: (@content-h - 20px) / 2;
+        border-radius: 4px;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+        font-size: 12px;
+        transition: color 0.15s, background 0.15s;
+
+        &:hover {
+            color: var(--erupt-text, rgba(0, 0, 0, 0.88));
+            background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
+        }
+    }
+}
+
+// popover body (cdk overlay, outside the host)
+::ng-deep .page-desc-popover .ant-popover-inner-content {
+    max-width: 360px;
+    font-size: 13px;
+    line-height: 20px;
+
+    .page-desc__pop p:last-child {
+        margin-bottom: 0;
+    }
+}
