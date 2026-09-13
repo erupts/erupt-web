@@ -91,6 +91,8 @@ export class SettingsComponent implements OnInit {
     // clearly distinguishable at swatch size, all pairing with white text.
     headerPresets: string[] = [
         "#141414", // ink
+        "#001529", // pro navy — the Ant Design Pro dark header
+        "#2c3e50", // midnight — desaturated blue-gray, softer than ink
         "#2563eb", // sapphire blue
         "#0d9488", // teal
         "#7c3aed", // violet

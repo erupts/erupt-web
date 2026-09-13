@@ -88,16 +88,22 @@ export function isDarkColor(color: string): boolean {
 // Curated palette: mid-tone (600-level) hues that stay readable under white
 // text and hold up in both the light and dark themes.
 export const THEME_PRESET_COLORS: string[] = [
+    // Ordered around the hue wheel so the swatch rows read as a gradient:
+    // blues → purples → pinks/reds → oranges → greens → neutral.
     "#1677ff", // daybreak blue (ant design)
     "#2563eb", // sapphire blue
     "#0ea5e9", // sky blue
     "#4f46e5", // indigo
+    "#5e6ad2", // periwinkle — muted indigo, the calm SaaS default
     "#7c3aed", // violet
     "#c026d3", // fuchsia
     "#db2777", // rose pink
     "#e11d48", // rose red
+    "#9f1239", // wine — deep red for finance / government skins
     "#ff6b2a", // erupt lava orange
+    "#c2410c", // terracotta — earthy orange, the warm counterpart of wine
     "#65a30d", // lime
+    "#15803d", // pine — the classic green between lime and emerald
     "#059669", // emerald
     "#0d9488", // teal
     "#0891b2", // peacock cyan
