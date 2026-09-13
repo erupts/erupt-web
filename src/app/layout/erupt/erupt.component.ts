@@ -37,6 +37,7 @@ import {
 } from "@ant-design/icons-angular/icons";
 import {DataService} from "@shared/service/data.service";
 import {generateMenuPath} from "@shared/util/erupt.util";
+import {RecentMenus} from "@shared/util/recent-menu.util";
 import {MenuTypeEnum, MenuVo} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
@@ -151,6 +152,11 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 return;
             }
             const navUrl = (evt as NavigationEnd).urlAfterRedirects || (evt as NavigationEnd).url;
+            // remember the menu this navigation landed on (the welcome page lists them)
+            const hit = this.menuSrv.find({url: navUrl, recursive: true});
+            if (hit && hit.link && !hit.hide) {
+                RecentMenus.push(hit.link, hit.text || '');
+            }
             const isManagedRoute = navUrl.startsWith('/site/')
                 || navUrl.startsWith('/tpl/');
             if (!isManagedRoute) {
