@@ -7,6 +7,7 @@ import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {NzConfigService} from "ng-zorro-antd/core/config";
 import {TableSize} from "../../../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
+import {MenuMode} from "@shared/model/erupt-menu";
 import {
     applyHeaderColor,
     applyThemeColor,
@@ -151,27 +152,36 @@ export class SettingsComponent implements OnInit {
     }
 
     // Menu layout mode radio: normal single-column, split (top-level tabs in the
-    // header) or dual-column (first-level rail inside the sidebar). Split mode
-    // replaces the header breadcrumbs with the category tabs.
-    get menuMode(): 'normal' | 'split' | 'dual' {
-        if (this.layout['splitMenu']) return 'split';
-        if (this.layout['dualMenu']) return 'dual';
-        return 'normal';
+    // header), dual-column (first-level rail inside the sidebar) or top (whole
+    // menu in the header, no sidebar). Split and top modes take the header space,
+    // so they replace the breadcrumbs.
+    readonly MenuMode = MenuMode;
+
+    get menuMode(): MenuMode {
+        if (this.layout['splitMenu']) return MenuMode.SPLIT;
+        if (this.layout['dualMenu']) return MenuMode.DUAL;
+        if (this.layout['topMenu']) return MenuMode.TOP;
+        return MenuMode.NORMAL;
     }
 
-    setMenuMode(mode: 'normal' | 'split' | 'dual') {
-        if (mode === 'split') {
+    setMenuMode(mode: MenuMode) {
+        if (mode === MenuMode.SPLIT || mode === MenuMode.TOP) {
             this.settingSrv.setLayout('breadcrumbs', false);
-        } else if (this.layout['splitMenu']) {
-            // restore breadcrumbs only when leaving split mode
+        } else if (this.layout['splitMenu'] || this.layout['topMenu']) {
+            // restore breadcrumbs only when leaving a header-menu mode
             this.settingSrv.setLayout('breadcrumbs', true);
         }
-        this.settingSrv.setLayout('splitMenu', mode === 'split');
-        this.settingSrv.setLayout('dualMenu', mode === 'dual');
+        this.settingSrv.setLayout('splitMenu', mode === MenuMode.SPLIT);
+        this.settingSrv.setLayout('dualMenu', mode === MenuMode.DUAL);
+        this.settingSrv.setLayout('topMenu', mode === MenuMode.TOP);
     }
 
     toggleBreadcrumbs(value: boolean) {
-        if (value) this.settingSrv.setLayout('splitMenu', false);
+        if (value) {
+            // breadcrumbs and a header menu cannot share the bar
+            this.settingSrv.setLayout('splitMenu', false);
+            this.settingSrv.setLayout('topMenu', false);
+        }
         this.settingSrv.setLayout('breadcrumbs', value);
     }
 

@@ -223,6 +223,27 @@ html.liquid-glass.rtl .alain-default__collapsed .reuse-tab {
     left: calc(var(--lg-gap) + 1px);
 }
 
+/* Top-menu mode (no sidebar): the slab and the tab bar start at the gutter.
+ * Out-specifies the sidebar-width rules above and the layout's own
+ * `left/right: 0 !important` for the tab bar. Mobile keeps the drawer. */
+@media (min-width: 768px) {
+    html.liquid-glass.ltr .alain-default__top-menu .erupt_content,
+    html.liquid-glass.ltr .alain-default__top-menu.alain-default__collapsed .erupt_content {
+        margin-left: var(--lg-gap);
+    }
+
+    html.liquid-glass.rtl .alain-default__top-menu .erupt_content,
+    html.liquid-glass.rtl .alain-default__top-menu.alain-default__collapsed .erupt_content {
+        margin-right: var(--lg-gap);
+    }
+
+    html.liquid-glass .alain-default__top-menu .reuse-tab,
+    html.liquid-glass .alain-default__top-menu.alain-default__collapsed .reuse-tab {
+        left: calc(var(--lg-gap) + 1px) !important;
+        right: calc(var(--lg-gap) + 1px) !important;
+    }
+}
+
 html.liquid-glass .reuse-tab__card {
     background: transparent;
     border-bottom-color: var(--lg-divider);

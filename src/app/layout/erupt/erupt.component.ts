@@ -182,7 +182,10 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 ["alain-default"]: true,
                 [`alain-default__fixed`]: true,
                 [`alain-default__boxed`]: layout['boxed'],
-                [`alain-default__collapsed`]: layout.collapsed
+                [`alain-default__collapsed`]: layout.collapsed,
+                // top-menu mode: the whole menu lives in the header, the sidebar is
+                // hidden on desktop and the content takes the full width
+                [`alain-default__top-menu`]: layout['topMenu']
             },
             true
         );

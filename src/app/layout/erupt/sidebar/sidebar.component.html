@@ -28,14 +28,17 @@
         </div>
         <nz-dropdown-menu #menuModes="nzDropdownMenu">
             <ul nz-menu nzSelectable="false">
-                <li nz-menu-item [nzSelected]="!splitMenu && !dualMenu" (click)="setMenuMode('normal')">
+                <li nz-menu-item [nzSelected]="!splitMenu && !dualMenu && !topMenu" (click)="setMenuMode(MenuMode.NORMAL)">
                     <i nz-icon nzType="unordered-list"></i> {{ 'menu.normal_mode' | translate }}
                 </li>
-                <li nz-menu-item [nzSelected]="splitMenu" (click)="setMenuMode('split')">
+                <li nz-menu-item [nzSelected]="splitMenu" (click)="setMenuMode(MenuMode.SPLIT)">
                     <i nz-icon nzType="layout"></i> {{ 'menu.split_mode' | translate }}
                 </li>
-                <li nz-menu-item [nzSelected]="dualMenu" (click)="setMenuMode('dual')">
+                <li nz-menu-item [nzSelected]="dualMenu" (click)="setMenuMode(MenuMode.DUAL)">
                     <i nz-icon nzType="pic-left"></i> {{ 'menu.dual_mode' | translate }}
+                </li>
+                <li nz-menu-item [nzSelected]="topMenu" (click)="setMenuMode(MenuMode.TOP)">
+                    <i nz-icon nzType="border-top"></i> {{ 'menu.top_mode' | translate }}
                 </li>
             </ul>
         </nz-dropdown-menu>

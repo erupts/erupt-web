@@ -205,6 +205,33 @@
         pointer-events: none;
     }
 
+    // ── Top-menu mode: no sidebar on desktop, content and tab bar span the full width.
+    //    Under 768px the sidebar stays as the off-canvas drawer (the header nav is
+    //    hidden-mobile), so nothing changes there.
+    @media (min-width: 768px) {
+        .alain-default__top-menu {
+            .alain-default__aside,
+            .erupt-side {
+                display: none;
+            }
+
+            .reuse-tab {
+                left: 0 !important;
+                right: 0 !important;
+            }
+        }
+
+        .ltr .alain-default__top-menu .erupt_content,
+        .ltr .alain-default__top-menu.alain-default__collapsed .erupt_content {
+            margin-left: 0;
+        }
+
+        .rtl .alain-default__top-menu .erupt_content,
+        .rtl .alain-default__top-menu.alain-default__collapsed .erupt_content {
+            margin-right: 0;
+        }
+    }
+
     .ltr {
         .erupt_content {
             margin-top: @header-h;

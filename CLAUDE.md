@@ -18,6 +18,7 @@ No test suite is present in this project.
 ## Code Style
 
 - All code comments must be written in **English**.
+- Prefer TypeScript `enum`s over string-literal union types for closed sets of values (menu types, modes, statuses, field types…). Put them next to the model they describe (e.g. `MenuMode` / `MenuTypeEnum` in `@shared/model/erupt-menu`), expose them to templates via a `readonly X = X` field, and never compare against raw string literals in `.ts` or `.html`.
 
 ## Architecture Overview
 
