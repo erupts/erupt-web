@@ -905,7 +905,8 @@ export class UiBuildService {
             if (path.indexOf("{") !== -1 && path.indexOf("}") !== -1) {
                 path = path.replace(/\{(\w+)\}/g, (match, key) => item[key]);
             }
-            this.router.navigate([path]);
+            // navigateByUrl keeps a query string (?erupt=X) as query params; navigate() would encode it into the segment
+            this.router.navigateByUrl(path);
         }
     }
 }
