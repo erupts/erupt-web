@@ -6,12 +6,16 @@
 :host {
     height: 100%;
     display: block;
+    // The host is a flex item of the layout's column (.erupt_content); with the reuse-tab bar
+    // present, height: 100% alone overflows by the bar height and pushes the sender off-screen
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .designer-layout {
     height: 100%;
     display: flex;
-    background: #f5f5f5;
+    background: var(--erupt-bg-spotlight, #f5f5f5);
 }
 
 /* ========== Left: preview ========== */
@@ -20,7 +24,7 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    background: #fff;
+    background: var(--erupt-bg-container, #fff);
 }
 
 .preview-bar {
@@ -65,7 +69,7 @@
     min-height: 0;
     display: flex;
     justify-content: center;
-    background: #eef0f4 radial-gradient(#d4d8e0 1px, transparent 1px);
+    background: var(--erupt-bg-layout, #eef0f4) radial-gradient(var(--erupt-border, #d4d8e0) 1px, transparent 1px);
     background-size: 18px 18px;
     padding: 14px;
     overflow: auto;
@@ -75,7 +79,7 @@
     position: relative;
     height: 100%;
     max-width: 100%;
-    background: #fff;
+    background: var(--erupt-bg-container, #fff);
     border-radius: 8px;
     box-shadow: 0 2px 6px #0000000f, 0 10px 30px #00000014;
     overflow: hidden;
@@ -92,8 +96,60 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #ffffffb3;
+    background: color-mix(in srgb, var(--erupt-bg-container, #fff) 70%, transparent);
     z-index: 1;
+}
+
+/* Runtime errors relayed from the page, pinned over the top of the preview */
+.frame-errors {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    z-index: 2;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: var(--ant-warning-color-deprecated-bg, #fffbe6);
+    border: 1px solid var(--ant-warning-color-deprecated-border, #ffe58f);
+    color: var(--erupt-text-color, #333);
+    font-size: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+
+    .frame-errors-icon {
+        color: var(--ant-warning-color, #faad14);
+        font-size: 16px;
+        margin-top: 2px;
+    }
+
+    .frame-errors-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .frame-errors-title {
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .frame-error {
+        font-family: var(--erupt-code-font, monospace);
+        white-space: pre-wrap;
+        word-break: break-all;
+        opacity: .85;
+    }
+
+    .frame-errors-close {
+        cursor: pointer;
+        opacity: .6;
+        margin-top: 4px;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
 }
 
 .preview-frame {
@@ -109,7 +165,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #aab;
+    color: var(--erupt-text-tertiary, #aab);
 
     [nz-icon] {
         font-size: 42px;
@@ -132,7 +188,7 @@
     display: flex;
     flex-direction: column;
     border-left: 1px solid var(--ant-border-color-split);
-    background: #fafafa;
+    background: var(--erupt-bg-spotlight, #fafafa);
 }
 
 /* Slim context bar: the canvas's fixed data model, read-only */
@@ -143,10 +199,35 @@
     height: @bar-height;
     padding: 0 12px;
     border-bottom: 1px solid var(--ant-border-color-split);
-    background: #fff;
-    color: rgba(0, 0, 0, 0.65);
+    background: var(--erupt-bg-container, #fff);
+    color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
     font-size: 12px;
     flex-shrink: 0;
+
+    // Chips scroll sideways instead of wrapping so the bar keeps its fixed height
+    .chat-context-models {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-width: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .chat-context-model {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        max-width: 220px;
+        padding: 1px 8px;
+        border: 1px solid var(--ant-border-color-split);
+        background: var(--erupt-bg-layout, rgba(0, 0, 0, 0.02));
+        flex-shrink: 0;
+    }
 
     .chat-context-label {
         font-weight: 500;
@@ -156,7 +237,7 @@
     }
 
     .chat-context-type {
-        color: rgba(0, 0, 0, 0.35);
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.35));
         flex-shrink: 0;
     }
 }
@@ -176,17 +257,17 @@
 
 .chat-empty {
     text-align: center;
-    color: #999;
+    color: var(--erupt-text-tertiary, #999);
     padding-top: 60px;
 
     [nz-icon] {
         font-size: 36px;
-        color: #ccc;
+        color: var(--erupt-text-quaternary, #ccc);
     }
 
     h3 {
         margin: 12px 0 4px;
-        color: #666;
+        color: var(--erupt-text-secondary, #666);
     }
 }
 
@@ -210,7 +291,7 @@
         justify-content: flex-start;
 
         .bubble-body {
-            background: #fff;
+            background: var(--erupt-bg-container, #fff);
             border: 1px solid var(--ant-border-color-split);
             border-radius: @radius @radius @radius 2px;
         }
@@ -271,22 +352,23 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        color: #888;
+        color: var(--erupt-text-tertiary, #888);
     }
 
-    /* Live code stream: fixed-height scrolling tail as progress feedback */
-    .stream-code {
-        margin: 8px 0 0;
-        max-height: 200px;
-        overflow-y: auto;
-        background: #1e1e1e;
-        color: #9cdcfe;
-        border-radius: 6px;
-        padding: 8px 10px;
-        font-size: 11px;
+    .detached-note {
+        margin-top: 6px;
+        font-size: 12px;
         line-height: 1.5;
-        white-space: pre-wrap;
-        word-break: break-all;
+        color: var(--erupt-text-tertiary, #888);
+    }
+
+    .progress-step {
+        margin-left: 6px;
+        padding: 1px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        background: var(--ant-primary-1, #e6f7ff);
+        color: var(--ant-primary-color, #1890ff);
     }
 }
 
@@ -294,14 +376,14 @@
 .sender {
     padding: 10px 12px 8px;
     border-top: 1px solid var(--ant-border-color-split);
-    background: #fff;
+    background: var(--erupt-bg-container, #fff);
 
     /* Selected style hint: swatches + name on the first row, wrapping description below */
     .style-hint {
         margin-bottom: 8px;
         padding: 6px 10px;
         border-radius: 6px;
-        background: #f5f7fa;
+        background: var(--erupt-bg-spotlight, #f5f7fa);
         font-size: 12px;
 
         &.dark {
@@ -335,7 +417,7 @@
         }
 
         .style-hint-desc {
-            color: #999;
+            color: var(--erupt-text-tertiary, #999);
             margin-top: 3px;
             line-height: 1.6;
             word-break: break-word;
@@ -367,15 +449,15 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            color: #667;
+            color: var(--erupt-text-secondary, #667);
         }
 
         .picked-close {
             cursor: pointer;
-            color: #999;
+            color: var(--erupt-text-tertiary, #999);
 
             &:hover {
-                color: #666;
+                color: var(--erupt-text-secondary, #666);
             }
         }
     }
@@ -389,15 +471,15 @@
         font-size: 13px;
         line-height: 1.6;
         outline: none;
-        background: #fafafa;
+        background: var(--erupt-bg-spotlight, #fafafa);
 
         &:focus {
             border-color: var(--ant-primary-color, #1890ff);
-            background: #fff;
+            background: var(--erupt-bg-container, #fff);
         }
 
         &:disabled {
-            color: #aaa;
+            color: var(--erupt-text-quaternary, #aaa);
         }
     }
 

@@ -12,8 +12,9 @@ import {
     HttpUserEvent
 } from "@angular/common/http";
 import {Observable, of, throwError} from "rxjs";
-import {catchError, mergeMap} from "rxjs/operators";
+import {catchError, map, mergeMap} from "rxjs/operators";
 import {environment} from "@env/environment";
+import {safeJsonParse} from "./safe-json";
 import {EruptApiModel, PromptWay, Status} from "../../build/erupt/model/erupt-api.model";
 import {CacheService} from "@delon/cache";
 import {GlobalKeys} from "@shared/model/erupt-const";
@@ -259,11 +260,25 @@ export class DefaultInterceptor implements HttpInterceptor {
         //         }
         //     }
         // }
+        // Receive JSON responses as text and parse them ourselves, so 64-bit ids
+        // beyond Number.MAX_SAFE_INTEGER are kept as strings instead of losing precision
+        const expectJson = req.responseType === "json";
         const newReq = req.clone({
             url: url,
-            headers: req.headers.set("lang", this.i18n.currentLang || '')
+            headers: req.headers.set("lang", this.i18n.currentLang || ''),
+            ...(expectJson ? {responseType: "text" as const} : {})
         });
         return next.handle(newReq).pipe(
+            map((event: any) => {
+                if (expectJson && event instanceof HttpResponse && typeof event.body === "string") {
+                    try {
+                        return event.clone({body: safeJsonParse(event.body)});
+                    } catch (ignore) {
+                        // malformed JSON: keep the raw text body
+                    }
+                }
+                return event;
+            }),
             mergeMap((event: any) => {
                 // Allow unified request error handling — needed when a business error returns HTTP 200
                 if (event instanceof HttpResponse && event.status === 200)
@@ -272,6 +287,19 @@ export class DefaultInterceptor implements HttpInterceptor {
                 return of(event);
             }),
             catchError((err: HttpErrorResponse) => {
+                // The error body arrives as text now; restore it to an object for downstream handling
+                if (expectJson && err instanceof HttpErrorResponse && typeof err.error === "string") {
+                    try {
+                        err = new HttpErrorResponse({
+                            error: safeJsonParse(err.error),
+                            headers: err.headers,
+                            status: err.status,
+                            statusText: err.statusText,
+                            url: err.url || undefined
+                        });
+                    } catch (ignore) {
+                    }
+                }
                 // If it is a business error (EruptApiModel), throw it directly
                 if (err && typeof err === 'object' && 'status' in err && 'message' in err && 'promptWay' in err) {
                     return throwError(() => err);

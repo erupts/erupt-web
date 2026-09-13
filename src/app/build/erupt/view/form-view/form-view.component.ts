@@ -9,7 +9,7 @@ import {EditTypeComponent} from "../../components/edit-type/edit-type.component"
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {Status} from "../../model/erupt-api.model";
-import {AppViewService} from "@shared/service/app-view.service";
+import {PageDescMode} from "@shared/component/page-desc/page-desc.component";
 
 @Component({
     standalone: false,
@@ -24,6 +24,7 @@ export class FormViewComponent implements OnInit, OnDestroy {
     loading: boolean = false;
     saving: boolean = false;
     readonly Scene = Scene;
+    readonly PageDescMode = PageDescMode;
 
     @ViewChild("eruptEdit", {static: false}) eruptEditComponent: EditTypeComponent;
 
@@ -33,7 +34,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private dataService: DataService,
         private dataHandlerService: DataHandlerService,
-        private appViewService: AppViewService,
         private i18n: I18NService,
         @Inject(NzMessageService) private msg: NzMessageService
     ) {
@@ -45,7 +45,6 @@ export class FormViewComponent implements OnInit, OnDestroy {
             this.eruptName = params.name;
             this.loading = true;
             this.dataService.getEruptBuild(this.eruptName).subscribe(eb => {
-                this.appViewService.setRouterViewDesc(eb.eruptModel.eruptJson.desc);
                 this.dataHandlerService.initErupt(eb);
                 this.eruptBuildModel = eb;
                 this.loadFormData();

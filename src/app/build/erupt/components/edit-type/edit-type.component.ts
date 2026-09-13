@@ -25,6 +25,7 @@ import {NzImageService} from "ng-zorro-antd/image";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {BehaviorSubject, skip} from "rxjs";
 import {SignaturePadComponent} from "../signature-pad/signature-pad.component";
+import {AiAssistVariant} from "../ai-assist/ai-assist.component";
 
 @Component({
     standalone: false,
@@ -61,6 +62,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
 
     editType = EditType;
 
+    aiVariant = AiAssistVariant;
+
     htmlEditorType = HtmlEditTypeEnum;
 
     choiceEnum = ChoiceEnum;
@@ -74,8 +77,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     buttonLoading: { [key: string]: boolean } = {};
 
     supportCopy: boolean;
-
-    iframeHeight = IframeHeight;
 
     divideCollapsed: { [key: string]: boolean } = {};
 
@@ -102,6 +103,16 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         key: string,
         value: EruptBuildModel
     }[] = [];
+
+    // ---- TPL bridge ----
+    // A TPL field is an isolated iframe, so it cannot see the form around it.
+    // These fields carry a postMessage channel that hands the iframe the current
+    // form values (once on load, then on every change) and lets it write back.
+    private tplFrames: { el: HTMLIFrameElement, fieldName: string }[] = [];
+
+    private tplPushTimer: any;
+
+    private tplDirty: boolean = false;
 
     constructor(public dataService: DataService,
                 private i18n: I18NService,
@@ -194,6 +205,9 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 })
             }
         }
+        if (this.eruptModel.eruptFieldModels.some(m => m.eruptFieldJson.edit?.type === EditType.TPL)) {
+            window.addEventListener("message", this.onTplMessage);
+        }
     }
 
     //apply formData (populate values) and editExpr (edit config linkage) to the current form
@@ -217,6 +231,71 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 }
             }
         }
+    }
+
+    // A TPL iframe just finished loading: remember it and hand it the form values
+    tplFrameLoad(event: Event, field: EruptFieldModel) {
+        const el = event.target as HTMLIFrameElement;
+        // a re-render leaves detached frames behind, drop them before registering this one
+        this.tplFrames = this.tplFrames.filter(f => f.el.isConnected && f.el !== el);
+        const frame = {el: el, fieldName: field.fieldName};
+        this.tplFrames.push(frame);
+        IframeHeight(event);
+        this.postTplMessage(frame, "erupt-tpl:init");
+    }
+
+    private onTplMessage = (event: MessageEvent) => {
+        const data = event.data;
+        if (!data || typeof data.type !== "string" || !data.type.startsWith("erupt-tpl:")) {
+            return;
+        }
+        // only answer the TPL frames this form owns, never a nested form's or a stranger's
+        const frame = this.tplFrames.find(f => f.el.contentWindow === event.source);
+        if (!frame) {
+            return;
+        }
+        switch (data.type) {
+            case "erupt-tpl:get":
+                this.postTplMessage(frame, "erupt-tpl:init");
+                break;
+            case "erupt-tpl:set":
+                this.applyFormChange(data);
+                break;
+            case "erupt-tpl:height":
+                if (typeof data.height === "number" && data.height > 0) {
+                    frame.el.style.height = data.height + "px";
+                }
+                break;
+        }
+    };
+
+    private postTplMessage(frame: { el: HTMLIFrameElement, fieldName: string }, type: string) {
+        const win = frame.el.contentWindow;
+        if (!win) {
+            return;
+        }
+        win.postMessage({
+            type: type,
+            eruptName: this.eruptModel.eruptName,
+            fieldName: frame.fieldName,
+            mode: this.mode,
+            readonly: this.readonly,
+            formData: this.dataHandlerService.eruptValueToObject(this.eruptBuildModel)
+        }, "*");
+    }
+
+    // values changed somewhere in the form, tell the TPL frames once the burst settles
+    private scheduleTplPush() {
+        if (this.tplPushTimer || !this.tplFrames.length) {
+            return;
+        }
+        this.tplPushTimer = setTimeout(() => {
+            this.tplPushTimer = null;
+            this.tplFrames = this.tplFrames.filter(f => f.el.isConnected);
+            for (let frame of this.tplFrames) {
+                this.postTplMessage(frame, "erupt-tpl:change");
+            }
+        }, 100);
     }
 
     clickEruptButton(field: EruptFieldModel) {
@@ -261,7 +340,12 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         for (let eruptFieldModel of this.eruptModel.eruptFieldModels) {
             if (eruptFieldModel.eruptFieldJson.edit.$valueDiff?.diff(eruptFieldModel.eruptFieldJson.edit)) {
                 eruptFieldModel.eruptFieldJson.edit.$valueSubject.next(eruptFieldModel.eruptFieldJson.edit.$value);
+                this.tplDirty = true;
             }
+        }
+        if (this.tplDirty) {
+            this.tplDirty = false;
+            this.scheduleTplPush();
         }
         if (this.dynamicByFieldModels) {
             for (let model of this.dynamicByFieldModels) {
@@ -400,6 +484,10 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         if (edit.type === EditType.ATTACHMENT) {
             return !edit.$viewValue || edit.$viewValue.length === 0;
         }
+        // MULTI_FORM keeps its editable blocks in $tempValue; $value is the row list loaded at init
+        if (edit.type === EditType.MULTI_FORM) {
+            return !edit.$tempValue || edit.$tempValue.length === 0;
+        }
         let value = edit.$value;
         if (value === null || value === undefined || value === "") {
             return true;
@@ -408,7 +496,9 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     }
 
     ngOnDestroy(): void {
-
+        window.removeEventListener("message", this.onTplMessage);
+        clearTimeout(this.tplPushTimer);
+        this.tplFrames = [];
     }
 
     eruptEditValidate(): boolean {

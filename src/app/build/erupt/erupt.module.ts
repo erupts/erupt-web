@@ -4,6 +4,7 @@ import {SharedModule} from "@shared/shared.module";
 import {NzAffixModule} from "ng-zorro-antd/affix";
 import {HttpClientModule} from "@angular/common/http";
 import {DragDropModule} from "@angular/cdk/drag-drop";
+import {GanttHostComponent} from "./vis/gantt/gantt-host.component";
 import {DataHandlerService} from "./service/data-handler.service";
 import {EditTypeComponent} from "./components/edit-type/edit-type.component";
 import {PrintTypeComponent} from "./components/print-type/print-type";
@@ -28,9 +29,11 @@ import {CheckboxComponent} from './components/checkbox/checkbox.component';
 import {SafeTemplateComponent} from './components/safe-template/safe-template.component';
 import {DateComponent} from './components/date/date.component';
 import {MarkdownComponent} from './components/markdown/markdown.component';
+import {AiAssistComponent} from './components/ai-assist/ai-assist.component';
 import {UiBuildService} from "./service/ui-build.service";
 import {ChoiceComponent} from "./components/choice/choice.component";
 import {TagsComponent} from "./components/tags/tags.component";
+import {TextareaComponent} from "./components/textarea/textarea.component";
 import {CardComponent} from './vis/card/card.component';
 import {BoardComponent} from './vis/board/board.component';
 import {TagSelectModule} from "@delon/abc/tag-select";
@@ -49,9 +52,7 @@ import {MultiChoiceComponent} from './components/multi-choice/multi-choice.compo
 import {SignaturePadComponent} from './components/signature-pad/signature-pad.component';
 import {SmartSearchComponent} from './components/smart-search/smart-search.component';
 import {NzSegmentedModule} from "ng-zorro-antd/segmented";
-import {GanttComponent} from "./vis/gantt/gantt.component";
 import {CalendarComponent} from "./vis/calendar/calendar.component";
-import {NgxGanttModule} from "@worktile/gantt";
 import {NzCalendarModule} from "ng-zorro-antd/calendar";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzSpaceModule} from "ng-zorro-antd/space";
@@ -76,7 +77,6 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         NzRateModule,
         NzEmptyModule,
         NzSegmentedModule,
-        NgxGanttModule,
         NzCalendarModule,
         NzButtonModule,
         NzSpaceModule,
@@ -87,7 +87,8 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         AiChatComponent,
         NzMenuItemComponent,
         NzDropdownMenuComponent,
-        NzDropdownDirective
+        NzDropdownDirective,
+        GanttHostComponent
     ],
     providers: [
         DataHandlerService,
@@ -122,8 +123,10 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         SafeTemplateComponent,
         DateComponent,
         MarkdownComponent,
+        AiAssistComponent,
         ChoiceComponent,
         TagsComponent,
+        TextareaComponent,
         CardComponent,
         BoardComponent,
         SearchComponent,
@@ -141,11 +144,11 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         CodeEditorComponent,
         SafeTemplateComponent,
         MarkdownComponent,
+        AiAssistComponent,
         AttachmentSelectComponent,
         MultiChoiceComponent,
         SignaturePadComponent,
         SmartSearchComponent,
-        GanttComponent,
         CalendarComponent,
         FormViewComponent
     ]

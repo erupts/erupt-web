@@ -1,4 +1,5 @@
 import {Direction, Directionality} from '@angular/cdk/bidi';
+import {StatusService} from "@shared/service/status.service";
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {DOCUMENT} from '@angular/common';
 import {
@@ -24,7 +25,6 @@ import {Menu, MenuIcon, MenuInner, MenuService, SettingsService} from '@delon/th
 import {ZoneOutside} from '@delon/util/decorator';
 import {WINDOW} from '@delon/util/token';
 import type {NzSafeAny} from 'ng-zorro-antd/core/types';
-import {AppViewService} from "@shared/service/app-view.service";
 
 export interface Nav extends MenuInner {
     _needIcon?: boolean;
@@ -102,6 +102,10 @@ export class MenuComponent implements OnInit, OnDestroy {
         return !!this.settings.layout['splitMenu'];
     }
 
+    get dualMenu(): boolean {
+        return !!this.settings.layout['dualMenu'];
+    }
+
     private computeSplitItems(): void {
         this.splitTopItems = this.list.flatMap(g =>
             (g.children as Nav[] || []).filter((i: Nav) => !i['_hidden'])
@@ -109,7 +113,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     }
 
     private autoSelectTopItem(): void {
-        if (!this.splitMenu || !this.splitTopItems.length) return;
+        if ((!this.splitMenu && !this.dualMenu) || !this.splitTopItems.length) return;
         const active = this.splitTopItems.find(i => i['_open'] || i['_selected']);
         if (active) {
             const key = active.key || active.text;
@@ -130,7 +134,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         private cdr: ChangeDetectorRef,
         private ngZone: NgZone,
         private sanitizer: DomSanitizer,
-        private appViewService: AppViewService,
+        public statusService: StatusService,
         @Inject(DOCUMENT) private doc: NzSafeAny,
         @Inject(WINDOW) private win: NzSafeAny,
         @Optional() private directionality: Directionality
@@ -245,6 +249,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     to(item: Menu): void {
         this.select.emit(item);
         if (item.disabled) return;
+        this.statusService.pendingMenuLink = item.link || null;
 
         if (item.externalLink) {
             if (item.target === '_blank') {
@@ -254,7 +259,6 @@ export class MenuComponent implements OnInit, OnDestroy {
             }
             return;
         }
-        this.appViewService.setRouterViewDesc(null)
         if (this.isPad) {
             this.openAside(true);
         }
@@ -263,6 +267,16 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     toggleOpen(item: Nav): void {
         this.menuSrv.toggleOpen(item);
+    }
+
+    // Dual-column mode: click on a first-level rail item selects its category;
+    // a leaf item (no children) navigates directly.
+    selectTopItem(item: Nav): void {
+        this.settings.setLayout('splitMenuKey', item.key || item.text);
+        if (!item.children?.length) {
+            this.to(item);
+        }
+        this.cdr.detectChanges();
     }
 
     _click(): void {
@@ -321,7 +335,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         settings.notify
             .pipe(
                 takeUntil(destroy$),
-                filter(t => t.type === 'layout' && (t.name === 'collapsed' || t.name === 'splitMenu' || t.name === 'splitMenuKey'))
+                filter(t => t.type === 'layout' && (t.name === 'collapsed' || t.name === 'splitMenu' || t.name === 'dualMenu' || t.name === 'splitMenuKey'))
             )
             .subscribe(() => {
                 this.clearFloating();

@@ -1,11 +1,12 @@
 import {Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Location} from "@angular/common";
 import {Subscription} from "rxjs";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
-import {I18NService} from "@core";
+import {I18NService, leaveReuseTab, setReuseTabTitle} from "@core";
+import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, FormSize, PagingType, Scene} from "../erupt/model/erupt.enum";
 import {EruptBuildModel} from "../erupt/model/erupt-build.model";
 import {KV} from "../erupt/model/util.model";
@@ -105,7 +106,9 @@ export class DesignerComponent implements OnInit, OnDestroy {
                 private dataHandlerService: DataHandlerService,
                 private i18n: I18NService,
                 private msg: NzMessageService,
-                private modal: NzModalService) {
+                private modal: NzModalService,
+                private reuseTab: ReuseTabService,
+                private router: Router) {
     }
 
     ngOnInit(): void {
@@ -122,6 +125,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
                         this.form.erupt.name = res.data.name;
                     }
                     this.form.className = res.data.className;
+                    setReuseTabTitle(this.reuseTab, this.route, res.data.name || res.data.className);
                     this.keySeq = this.form.fields.length;
                     this.dirty = false;
                 });
@@ -168,7 +172,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
             tableName: "",
             erupt: {
                 name: "",
-                power: {add: true, edit: true, delete: true, query: true, viewDetails: true, export: true, importable: true, print: true},
+                power: {add: true, edit: true, delete: true, query: true, viewDetails: true, export: true, importable: true, print: true, cellEdit: true},
                 layout: {formSize: FormSize.DEFAULT, formSteps: false, pagingType: PagingType.BACKEND, pageSize: 10, tableLeftFixed: 0, tableRightFixed: 0},
                 vis: []
             },
@@ -290,6 +294,15 @@ export class DesignerComponent implements OnInit, OnDestroy {
         if (e.type === EditType.CHECKBOX) {
             e.checkboxType = e.checkboxType || {};
         }
+        if (e.type === EditType.TEXTAREA) {
+            e.textareaType = e.textareaType || {};
+        }
+        if (e.type === EditType.TPL) {
+            e.tplType = e.tplType || {path: "", engine: "Native", enable: true};
+        }
+        if (e.type === EditType.AUTO_COMPLETE) {
+            e.autoCompleteType = e.autoCompleteType || {values: [], triggerLength: 1};
+        }
     }
 
     deselect(): void {
@@ -297,7 +310,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
     }
 
     back(): void {
-        this.location.back();
+        leaveReuseTab(this.reuseTab, this.router, this.location, '/designer');
     }
 
     // Delete key removes selected field (no-op when an input is focused)
@@ -320,6 +333,9 @@ export class DesignerComponent implements OnInit, OnDestroy {
         event.stopPropagation();
         let copy: DesignerField = JSON.parse(JSON.stringify(field));
         copy.key = "f" + (++this.keySeq) + "_" + Date.now();
+        // a copy is a new field, not the source under another name; keeping the id would make
+        // publish treat it as a rename and move the source column's data onto the copy
+        delete copy.id;
         copy.fieldName = this.nextFieldName();
         this.form.fields.splice(this.form.fields.indexOf(field) + 1, 0, copy);
         this.select(copy);
@@ -424,7 +440,8 @@ export class DesignerComponent implements OnInit, OnDestroy {
     // fields available for vis selection: all form fields (by field name)
     visFieldOptions(): { name: string; label: string }[] {
         return this.form.fields
-            .filter(f => f.edit.type !== this.editType.DIVIDE && f.edit.type !== this.editType.GROUP)
+            .filter(f => f.edit.type !== this.editType.DIVIDE && f.edit.type !== this.editType.GROUP
+                && f.edit.type !== this.editType.EMPTY && f.edit.type !== this.editType.TPL)
             .map(f => ({name: f.fieldName, label: f.edit.title + " (" + f.fieldName + ")"}));
     }
 
@@ -567,7 +584,8 @@ export class DesignerComponent implements OnInit, OnDestroy {
     private static readonly FULL_LINE_TYPES = new Set<EditType>([
         EditType.DIVIDE, EditType.GROUP, EditType.CALLOUT, EditType.COMBINE, EditType.TEXTAREA, EditType.MARKDOWN,
         EditType.TAGS, EditType.CHECKBOX, EditType.ATTACHMENT, EditType.HTML_EDITOR, EditType.MAP,
-        EditType.CODE_EDITOR, EditType.SIGNATURE, EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE
+        EditType.CODE_EDITOR, EditType.SIGNATURE, EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE,
+        EditType.TPL, EditType.MULTI_FORM
     ]);
 
     // whether a canvas field occupies a full row: FULL_LINE form size, naturally full-width types, or INPUT with fullSpan
@@ -585,7 +603,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
     // only reference-type components require a linked model config
     private static readonly LINK_TYPES = new Set<EditType>([
         EditType.REFERENCE_TABLE, EditType.REFERENCE_TREE, EditType.CHECKBOX,
-        EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE, EditType.COMBINE
+        EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE, EditType.COMBINE, EditType.MULTI_FORM
     ]);
 
     needLink(type: EditType): boolean {
@@ -645,6 +663,11 @@ export class DesignerComponent implements OnInit, OnDestroy {
                 || e.type === EditType.CHECKBOX && (!e.checkboxType?.id || !e.checkboxType?.label);
             if (missingRefField) {
                 this.msg.warning(this.i18n.fanyi("designer.ref_field_required") + ": " + field.edit.title);
+                this.select(field);
+                return false;
+            }
+            if (e.type === EditType.TPL && !e.tplType?.path) {
+                this.msg.warning(this.i18n.fanyi("designer.tpl_path_required") + ": " + field.edit.title);
                 this.select(field);
                 return false;
             }

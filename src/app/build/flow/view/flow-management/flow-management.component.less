@@ -1,7 +1,7 @@
 :host {
     display: block;
     height: 100%;
-    background: #f5f7fa;
+    background: var(--erupt-bg-layout, #f5f7fa);
     overflow: auto;
     box-sizing: border-box;
 
@@ -9,7 +9,7 @@
         .flow-management-container {
             height: 100%;
             display: flex;
-            background: #f5f7fa;
+            background: var(--erupt-bg-layout, #f5f7fa);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             overflow: hidden;
             box-sizing: border-box;
@@ -18,7 +18,7 @@
             .sidebar {
                 width: 196px;
                 height: 100%;
-                background: #fff;
+                background: var(--erupt-bg-container, #fff);
                 border-right: 1px solid var(--ant-border-color-split);
                 display: flex;
                 flex-direction: column;
@@ -36,7 +36,7 @@
                     .sidebar-title {
                         font-size: 12px;
                         font-weight: 600;
-                        color: #595959;
+                        color: var(--erupt-text-secondary, #595959);
                         letter-spacing: 0.04em;
                         text-transform: uppercase;
                     }
@@ -60,7 +60,7 @@
                     border-radius: 4px;
 
                     &:hover {
-                        background: #f5f7fa;
+                        background: var(--erupt-fill-tertiary, #f5f7fa);
 
                         .menu-item-actions {
                             opacity: 1;
@@ -91,7 +91,7 @@
 
                     [nz-icon]:first-child {
                         font-size: 13px;
-                        color: #8c8c8c;
+                        color: var(--erupt-text-tertiary, #8c8c8c);
                         flex-shrink: 0;
                     }
 
@@ -118,14 +118,14 @@
                         opacity: 0;
                         pointer-events: none;
                         transition: opacity 0.15s;
-                        background: #fff;
+                        background: var(--erupt-bg-elevated, #fff);
                         padding: 2px 4px;
                         border-radius: 3px;
                         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 
                         [nz-icon] {
                             font-size: 12px;
-                            color: #8c8c8c;
+                            color: var(--erupt-text-tertiary, #8c8c8c);
                             cursor: pointer;
                             padding: 2px;
 
@@ -152,7 +152,7 @@
                 display: flex;
                 flex-direction: column;
                 overflow: hidden;
-                background: #fff;
+                background: var(--erupt-bg-container, #fff);
 
                 // ── Toolbar header ────────────────────────────────────
                 .list-header {
@@ -178,7 +178,7 @@
                         .stat-num {
                             font-size: 15px;
                             font-weight: 600;
-                            color: #262626;
+                            color: var(--erupt-text, #262626);
 
                             &.enabled {
                                 color: #52c41a;
@@ -191,12 +191,12 @@
 
                         .stat-label {
                             font-size: 12px;
-                            color: #8c8c8c;
+                            color: var(--erupt-text-tertiary, #8c8c8c);
                         }
                     }
 
                     .ant-input-affix-wrapper-borderless {
-                        background: #f5f7fa;
+                        background: var(--erupt-bg-spotlight, #f5f7fa);
                         border-radius: 4px;
                         padding: 0 10px;
                         height: 30px;
@@ -208,10 +208,10 @@
                     flex: 1;
                     overflow-y: auto;
                     padding: 14px;
-                    background: #f5f7fa;
+                    background: var(--erupt-bg-layout, #f5f7fa);
 
                     .flow-list-card {
-                        background: #fff;
+                        background: var(--erupt-bg-container, #fff);
                         border: 1px solid var(--ant-border-color-split);
                         border-radius: 6px;
                         overflow: hidden;
@@ -267,7 +267,7 @@
                     }
 
                     &:hover {
-                        background: #fafafa;
+                        background: var(--erupt-fill-tertiary, #fafafa);
 
                         &::before {
                             opacity: 1;
@@ -303,7 +303,7 @@
                         .flow-name {
                             font-size: 14px;
                             font-weight: 500;
-                            color: #262626;
+                            color: var(--erupt-text, #262626);
                             display: flex;
                             align-items: center;
                             gap: 6px;
@@ -318,7 +318,7 @@
 
                         .flow-desc {
                             font-size: 12px;
-                            color: #8c8c8c;
+                            color: var(--erupt-text-tertiary, #8c8c8c);
                             margin-top: 1px;
                             overflow: hidden;
                             text-overflow: ellipsis;
@@ -335,12 +335,12 @@
 
                         .drag-handle {
                             font-size: 14px;
-                            color: #d9d9d9;
+                            color: var(--erupt-text-quaternary, #d9d9d9);
                             cursor: grab;
                             padding: 6px;
 
                             &:hover {
-                                color: #8c8c8c;
+                                color: var(--erupt-text-tertiary, #8c8c8c);
                             }
                         }
 
@@ -364,7 +364,7 @@
         }
 
         .flow-item.cdk-drag-preview {
-            background: #fff;
+            background: var(--erupt-bg-elevated, #fff);
             border-radius: 6px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
         }

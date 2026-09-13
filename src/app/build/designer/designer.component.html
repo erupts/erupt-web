@@ -1,5 +1,5 @@
 <div class="designer-wrap">
-    <!-- 工具栏 -->
+    <!-- Toolbar -->
     <div class="designer-toolbar">
         <div class="header-left">
             @if (boundClassName) {
@@ -49,7 +49,7 @@
     </div>
 
     <div class="designer-body">
-        <!-- 组件面板 -->
+        <!-- Component panel -->
         <div class="designer-palette">
             <nz-input-group [nzPrefix]="paletteSearchIcon" nzSize="small" class="palette-search">
                 <input nz-input nzSize="small" [(ngModel)]="paletteKeyword"
@@ -84,7 +84,7 @@
             }
         </div>
 
-        <!-- 画布 -->
+        <!-- Canvas -->
         <div class="designer-canvas-wrap" (click)="deselect()">
             <div class="designer-canvas" id="designer-canvas" cdkDropList
                  [class.canvas-default-mode]="form.erupt.layout?.formSize !== formSize.FULL_LINE"
@@ -188,6 +188,11 @@
                                     @case (editType.TAGS) {
                                         <nz-select nzDisabled nzMode="tags" style="width: 100%"></nz-select>
                                     }
+                                    @case (editType.AUTO_COMPLETE) {
+                                        <nz-input-group nzSuffixIcon="search">
+                                            <input nz-input disabled [placeholder]="field.edit.placeHolder || ''"/>
+                                        </nz-input-group>
+                                    }
                                     @case (editType.GROUP) {
                                         <div class="mock-group">
                                             <span nz-icon nzType="block"></span>
@@ -207,6 +212,21 @@
                                             A</label>
                                         <label nz-checkbox nzDisabled>{{ 'designer.option_label' | translate }}
                                             B</label>
+                                    }
+                                    @case (editType.HIDDEN) {
+                                        <div class="mock-block">
+                                            <span nz-icon nzType="eye-invisible"></span>
+                                            <span>{{ 'designer.type.hidden' | translate }}</span>
+                                        </div>
+                                    }
+                                    @case (editType.EMPTY) {
+                                        <div class="mock-block" style="background: transparent"></div>
+                                    }
+                                    @case (editType.TPL) {
+                                        <div class="mock-block">
+                                            <span nz-icon nzType="layout"></span>
+                                            <span>{{ field.edit.tplType?.path || ('designer.tpl_path' | translate) }}</span>
+                                        </div>
                                     }
                                     @case (editType.ATTACHMENT) {
                                         <button nz-button nzType="dashed" disabled>
@@ -240,7 +260,7 @@
             </div>
         </div>
 
-        <!-- 属性面板：字段属性 -->
+        <!-- Property panel: field properties -->
         <div class="designer-props">
             <div class="props-header">{{ 'designer.tab.field' | translate }}</div>
             <div class="props-body">
@@ -302,13 +322,24 @@
                                 }
                             </div>
 
-                            <!-- 类型专属配置 -->
+                            <!-- Type-specific config -->
                             @switch (selected.edit.type) {
                                 @case (editType.INPUT) {
                                     <div class="prop-switch">
                                         <label>{{ 'designer.full_span' | translate }}</label>
                                         <nz-switch nzSize="small" [(ngModel)]="selected.edit.inputType!.fullSpan"
                                                    (ngModelChange)="saveDraft()"></nz-switch>
+                                    </div>
+                                }
+                                @case (editType.TEXTAREA) {
+                                    <nz-divider [nzText]="'designer.type_config' | translate"
+                                                nzOrientation="left" nzPlain></nz-divider>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.max_length' | translate }}</label>
+                                        <nz-input-number [(ngModel)]="selected.edit.textareaType!.length"
+                                                         [nzMin]="1" [nzPlaceHolder]="'designer.max_length_unlimited' | translate"
+                                                         (ngModelChange)="saveDraft()"
+                                                         style="width: 100%"></nz-input-number>
                                     </div>
                                 }
                                 @case (editType.NUMBER) {
@@ -413,6 +444,21 @@
                                         <label>{{ 'designer.tags_list' | translate }}</label>
                                         <nz-select [(ngModel)]="selected.edit.tagsType!.tags" nzMode="tags"
                                                    style="width: 100%" (ngModelChange)="saveDraft()"></nz-select>
+                                    </div>
+                                }
+                                @case (editType.AUTO_COMPLETE) {
+                                    <nz-divider [nzText]="'designer.type_config' | translate"
+                                                nzOrientation="left" nzPlain></nz-divider>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.auto_complete_values' | translate }}</label>
+                                        <nz-select [(ngModel)]="selected.edit.autoCompleteType!.values" nzMode="tags"
+                                                   style="width: 100%" (ngModelChange)="saveDraft()"></nz-select>
+                                    </div>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.trigger_length' | translate }}</label>
+                                        <nz-input-number [(ngModel)]="selected.edit.autoCompleteType!.triggerLength"
+                                                         [nzMin]="0" style="width: 100%"
+                                                         (ngModelChange)="saveDraft()"></nz-input-number>
                                     </div>
                                 }
                                 @case (editType.REFERENCE_TABLE) {
@@ -577,6 +623,24 @@
                                         </div>
                                     }
                                 }
+                                @case (editType.TPL) {
+                                    <nz-divider [nzText]="'designer.type_config' | translate"
+                                                nzOrientation="left" nzPlain></nz-divider>
+                                    <div class="prop-item">
+                                        <label><span style="color:#ff4d4f">*</span> {{ 'designer.tpl_path' | translate }}</label>
+                                        <input nz-input [(ngModel)]="selected.edit.tplType!.path" placeholder="/tpl/demo.html"
+                                               (ngModelChange)="saveDraft()"/>
+                                    </div>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.tpl_engine' | translate }}</label>
+                                        <nz-select style="width: 100%" [(ngModel)]="selected.edit.tplType!.engine"
+                                                   (ngModelChange)="saveDraft()">
+                                            @for (s of ['Native', 'FreeMarker', 'Thymeleaf', 'Velocity', 'Beetl', 'Enjoy']; track s) {
+                                                <nz-option [nzValue]="s" [nzLabel]="s"></nz-option>
+                                            }
+                                        </nz-select>
+                                    </div>
+                                }
                                 @case (editType.CODE_EDITOR) {
                                     <nz-divider [nzText]="'designer.type_config' | translate"
                                                 nzOrientation="left" nzPlain></nz-divider>
@@ -640,7 +704,7 @@
     </div>
 </div>
 
-<!-- 表单（类级）配置：工具栏右上角按钮打开 -->
+<!-- Form (class-level) config: opened from the toolbar's top-right button -->
 <nz-drawer [(nzVisible)]="formConfigVisible" [nzWidth]="380" nzPlacement="right"
            [nzTitle]="'designer.tab.form' | translate" (nzOnClose)="formConfigVisible = false">
     <ng-container *nzDrawerContent>
@@ -706,6 +770,12 @@
                                (ngModelChange)="saveDraft()"></nz-switch>
                 </div>
                 <div class="prop-switch">
+                    <label>{{ 'designer.power_cell_edit' | translate }}</label>
+                    <nz-switch nzSize="small" [(ngModel)]="form.erupt.power!.cellEdit"
+                               [nzDisabled]="!form.erupt.power!.edit"
+                               (ngModelChange)="saveDraft()"></nz-switch>
+                </div>
+                <div class="prop-switch">
                     <label>{{ 'designer.power_delete' | translate }}</label>
                     <nz-switch nzSize="small" [(ngModel)]="form.erupt.power!.delete"
                                (ngModelChange)="saveDraft()"></nz-switch>
@@ -740,7 +810,7 @@
     </ng-container>
 </nz-drawer>
 
-<!-- 多视图配置：工具栏按钮单独打开 -->
+<!-- Multi-view config: opened from its own toolbar button -->
 <nz-drawer [(nzVisible)]="visConfigVisible" [nzWidth]="380" nzPlacement="right"
            [nzTitle]="'designer.vis.title' | translate" (nzOnClose)="visConfigVisible = false">
     <ng-container *nzDrawerContent>
@@ -789,7 +859,7 @@
                         </nz-select>
                     </div>
 
-                    <!-- 看板：分组字段 -->
+                    <!-- Kanban: group field -->
                     @if (vis.type === visType.BOARD) {
                         <div class="prop-item">
                             <label>{{ 'designer.vis.group_field' | translate }}</label>
@@ -801,7 +871,7 @@
                             </nz-select>
                         </div>
                     }
-                    <!-- 卡片：封面字段 + 封面效果 -->
+                    <!-- Card: cover field + cover effect -->
                     @if (vis.type === visType.CARD) {
                         <div class="prop-item">
                             <label>{{ 'designer.vis.cover_field' | translate }}</label>
@@ -821,7 +891,7 @@
                             </nz-radio-group>
                         </div>
                     }
-                    <!-- 甘特：起止/分组/父级/进度/颜色字段 -->
+                    <!-- Gantt: start/end, group, parent, progress and color fields -->
                     @if (vis.type === visType.GANTT) {
                         <div class="prop-item">
                             <label>{{ 'designer.vis.start_date_field' | translate }}</label>
@@ -860,7 +930,7 @@
                             </nz-select>
                         </div>
                     }
-                    <!-- 日历：日期/结束日期/颜色字段 -->
+                    <!-- Calendar: date, end date and color fields -->
                     @if (vis.type === visType.CALENDAR) {
                         <div class="prop-item">
                             <label>{{ 'designer.vis.date_field' | translate }}</label>
@@ -900,7 +970,7 @@
     </ng-container>
 </nz-drawer>
 
-<!-- 选项编辑器 -->
+<!-- Options editor -->
 <ng-template #vlEditor let-vl>
     @for (item of vl; track $index) {
         <div class="vl-row">
@@ -915,7 +985,7 @@
     </button>
 </ng-template>
 
-<!-- 实时预览：伪装注解 → 真实 erupt 渲染管线 -->
+<!-- Live preview: disguised annotations -> the real erupt rendering pipeline -->
 <nz-drawer [(nzVisible)]="previewVisible" [nzWidth]="760" nzPlacement="right"
            [nzTitle]="(form.erupt.name || '') + ' · ' + ('designer.preview' | translate)"
            (nzOnClose)="previewVisible = false">
@@ -926,7 +996,7 @@
     </ng-container>
 </nz-drawer>
 
-<!-- 注解代码导出：通过 NzModalService 以服务方式打开（generateCode） -->
+<!-- Annotation code export: opened programmatically via NzModalService (generateCode) -->
 <ng-template #codeModalTpl>
     <nz-code-editor class="designer-code" [ngModel]="code"
                     [nzEditorOption]="codeEditorOption"></nz-code-editor>

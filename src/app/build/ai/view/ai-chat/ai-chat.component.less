@@ -9,6 +9,9 @@
 :host {
     height: 100%;
     overflow: auto;
+    // Same as ai-canvas: shrink to the space left by the reuse-tab bar in the layout column
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 /* Root layout: fills the host and sets a min-height fallback (ensures full-screen height even when ancestors have no height) */
@@ -16,7 +19,7 @@
     height: 100%;
     box-sizing: border-box;
     display: flex;
-    background: #f5f5f5;
+    background: var(--erupt-bg-spotlight, #f5f5f5);
 
     &.is-fullscreen {
         position: fixed;
@@ -59,7 +62,7 @@
     width: 220px; /* Default value; overridden at runtime via [style.width.px] */
     flex-shrink: 0;
     min-height: 0;
-    background: #fafafa;
+    background: var(--erupt-bg-spotlight, #fafafa);
     display: flex;
     flex-direction: column;
     transition: width 0.22s ease, border-color 0.22s ease;
@@ -100,7 +103,7 @@
     padding: 0 !important;
     border-radius: @radius-sm;
     border: 1px solid var(--ant-border-color-base, #e0e0e0) !important;
-    background: #fff !important;
+    background: var(--erupt-bg-container, #fff) !important;
     color: var(--ant-text-color-secondary, #888) !important;
     display: inline-flex;
     align-items: center;
@@ -131,7 +134,7 @@
     border-radius: @radius-sm;
 
     &:hover {
-        background: rgba(0, 0, 0, 0.06) !important;
+        background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06)) !important;
         color: var(--ant-text-color, #1a1a1a) !important;
     }
 }
@@ -146,7 +149,7 @@
     padding: 0 !important;
     border-radius: @radius-sm;
     border: 1px solid var(--ant-border-color-base, #e0e0e0) !important;
-    background: #fff !important;
+    background: var(--erupt-bg-elevated, #fff) !important;
     color: var(--ant-text-color-secondary, #888) !important;
     display: inline-flex;
     align-items: center;
@@ -241,7 +244,7 @@
 
             &:hover {
                 color: var(--ant-text-color, #1a1a1a);
-                background: rgba(0, 0, 0, 0.06);
+                background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
             }
         }
 
@@ -289,7 +292,7 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    background: #ffffff;
+    background: var(--erupt-bg-container, #ffffff);
     position: relative;
 }
 
@@ -382,20 +385,41 @@
 
 }
 
+/* Image attachments of a user message */
+.bubble-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 12px;
+
+    img {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: @radius-sm;
+        border: 1px solid var(--ant-border-color-split);
+        cursor: zoom-in;
+        object-fit: cover;
+    }
+}
+
+.bubble-wrap:not(.is-model) .bubble-images {
+    justify-content: flex-end;
+}
+
 /* Tool Call block: injected via innerHTML, requires ::ng-deep */
 ::ng-deep .call-block-inline {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     padding: 3px 10px 3px 8px;
-    background: #fff;
+    background: var(--erupt-bg-container, #fff);
     border: 1px solid var(--ant-border-color-split);
     border-radius: 3px;
     margin-bottom: 1em;
     margin-right: 4px;
     font-size: 12px;
     font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
-    color: #8c8c8c;
+    color: var(--erupt-text-tertiary, #8c8c8c);
     line-height: 1.7;
     vertical-align: middle;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
@@ -548,7 +572,7 @@
 
         &:hover {
             color: var(--ant-text-color, #1a1a1a);
-            background: rgba(0, 0, 0, 0.06);
+            background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
         }
 
         .anticon {
@@ -611,7 +635,7 @@
         height: 36px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         border-color: var(--ant-border-color-base, #e0e0e0);
-        background: #fff;
+        background: var(--erupt-bg-elevated, #fff);
         color: var(--ant-text-color-secondary, #666);
 
         &:hover {
@@ -678,7 +702,7 @@
         }
     }
 
-    background: #ffffff;
+    background: var(--erupt-bg-container, #ffffff);
     border-top: 1px solid var(--ant-border-color-split);
 
     &:not(.is-wide) .input-card {
@@ -688,6 +712,67 @@
 
     &:not(.is-wide) .hints-wrap {
         max-width: @content-max;
+    }
+
+    /* Preview strip of images attached to the next message */
+    .pending-images {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px 14px 4px;
+
+        .pending-image {
+            position: relative;
+            width: 64px;
+            height: 64px;
+
+            img {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border: 1px solid var(--ant-border-color-split);
+                border-radius: 6px;
+                cursor: zoom-in;
+                transition: opacity 0.15s;
+
+                &:hover {
+                    opacity: 0.85;
+                }
+            }
+
+            &.pending-image-loading {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--erupt-bg-spotlight, #fafafa);
+                border: 1px dashed var(--ant-border-color-split);
+                border-radius: 6px;
+            }
+
+            /* Round badge floating over the corner, like ant-design upload cards */
+            .pending-image-remove {
+                position: absolute;
+                top: -6px;
+                right: -6px;
+                width: 18px;
+                height: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(0, 0, 0, 0.65);
+                color: #fff;
+                font-size: 10px;
+                cursor: pointer;
+                border-radius: 50%;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+                transition: background 0.15s;
+
+                &:hover {
+                    background: #e53935;
+                }
+            }
+        }
     }
 
     .hints-wrap {
@@ -700,8 +785,8 @@
 
         .hint-tag {
             padding: 4px 12px;
-            background: #f0f0f0;
-            border: 1px solid #e0e0e0;
+            background: var(--erupt-fill-secondary, #f0f0f0);
+            border: 1px solid var(--erupt-border, #e0e0e0);
             border-radius: @radius-sm;
             font-size: 13px;
             color: var(--ant-text-color-secondary, #666);
@@ -719,7 +804,7 @@
 
 /* Input card: appearance - light grey border, rounded corners, top arrow, toolbar, bottom shortcut hints and send group */
 .input-card {
-    background: #fff;
+    background: var(--erupt-bg-container, #fff);
     //border: 1px solid #eee;
     //border-top: none;
     //border-bottom: none;
@@ -782,7 +867,7 @@
 
     &:hover {
         color: var(--ant-text-color, #1a1a1a);
-        background: rgba(0, 0, 0, 0.04);
+        background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.04));
     }
 
     .anticon {
@@ -878,9 +963,30 @@
     border-top: 1px solid var(--ant-border-color-split);
 }
 
+.footer-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    /* Attachment entry: bordered so it reads as a button, not a passive icon */
+    .attach-btn {
+        border: 1px solid var(--ant-border-color-split);
+
+        &:hover {
+            border-color: var(--ant-primary-color);
+            color: var(--ant-primary-color);
+            background: transparent;
+        }
+    }
+}
+
+/* Sits in the action group right before the buttons it describes */
 .shortcut-hint {
     font-size: 12px;
     color: var(--ant-text-color-secondary, #999);
+    margin-right: 6px;
+    white-space: nowrap;
+    user-select: none;
 }
 
 .btn-send {
@@ -914,7 +1020,7 @@
     width: 100%;
     height: 100%;
     border-radius: @radius-sm;
-    background: #f5f5f5;
+    background: var(--erupt-bg-spotlight, #f5f5f5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -932,7 +1038,7 @@
     margin: 8px 0;
     border-radius: @radius;
     overflow: hidden;
-    background: #f6f8fa;
+    background: var(--erupt-bg-spotlight, #f6f8fa);
     border: 1px solid var(--ant-border-color-split);
 
     .code-lang {
@@ -940,7 +1046,7 @@
         top: 8px;
         left: 12px;
         font-size: 11px;
-        color: rgba(0, 0, 0, 0.35);
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.35));
         font-family: monospace;
         pointer-events: none;
         user-select: none;
@@ -955,9 +1061,9 @@
         right: 8px;
         padding: 2px 8px;
         font-size: 11px;
-        background: #fff;
-        color: rgba(0, 0, 0, 0.45);
-        border: 1px solid #d0d7de;
+        background: var(--erupt-bg-container, #fff);
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+        border: 1px solid var(--erupt-border, #d0d7de);
         border-radius: @radius-sm;
         cursor: pointer;
         transition: all 0.15s;
@@ -965,8 +1071,8 @@
         z-index: 1;
 
         &:hover {
-            background: #f3f4f6;
-            color: rgba(0, 0, 0, 0.75);
+            background: var(--erupt-fill-tertiary, #f3f4f6);
+            color: var(--erupt-text, rgba(0, 0, 0, 0.75));
             border-color: #adb5bd;
         }
 
@@ -995,7 +1101,7 @@
         flex-direction: column;
         padding: 12px 10px 12px 12px;
         text-align: right;
-        color: rgba(0, 0, 0, 0.25);
+        color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
         font-size: 12px;
         line-height: 1.6;
         font-family: monospace;
@@ -1032,7 +1138,7 @@
         padding: 8px 14px;
         font-size: 13px;
         font-weight: 600;
-        background: rgba(0, 0, 0, 0.04);
+        background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.04));
     }
 
     .callout-body {

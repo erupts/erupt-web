@@ -20,6 +20,9 @@ let coreRouter: Routes = [
     {path: "", component: HomeComponent, data: {title: "Home"}},
     {path: "exception", loadChildren: () => import( "./exception/exception.module").then(m => m.ExceptionModule)},
     {path: "site/:url", component: SiteComponent},
+    // Same component, micro-frontend container instead of an iframe. Useful when the
+    // target refuses framing (X-Frame-Options) but allows cross-origin fetch.
+    {path: "msite/:url", component: SiteComponent, data: {micro: true}},
     {
         path: "flow",
         loadChildren: () => import( "../build/flow/flow.module").then(m => m.FlowModule)
@@ -52,6 +55,10 @@ let coreRouter: Routes = [
     {
         path: "terminal",
         loadChildren: () => import("../build/terminal/terminal.module").then(m => m.TerminalModule)
+    },
+    {
+        path: "remote/:id",
+        loadChildren: () => import("../build/remote/remote.module").then(m => m.RemoteModule)
     },
     {
         path: "tpl/:name",

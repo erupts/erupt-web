@@ -11,7 +11,7 @@
         width: 100vw;
         height: 100vh;
         z-index: 1000;
-        background: #f0f2f5;
+        background: var(--erupt-bg-layout, #f0f2f5);
     }
 
     .operation {
@@ -25,7 +25,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(255, 255, 255, 0.9);
+            background: color-mix(in srgb, var(--erupt-bg-elevated, #fff) 90%, transparent);
             border-radius: 6px;
             padding: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -61,7 +61,7 @@
         height: 100%;
 
         &.grid-bg {
-            background-image: radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px);
+            background-image: radial-gradient(var(--erupt-fill, rgba(0, 0, 0, 0.1)) 1px, transparent 1px);
             background-size: 20px 20px;
         }
 
@@ -92,7 +92,7 @@
                 text-align: center;
                 padding: 10px;
                 border-radius: 5px;
-                background: #e5e5e5;
+                background: var(--erupt-fill, #e5e5e5);
                 margin-top: 16px;
                 min-width: 100px;
             }

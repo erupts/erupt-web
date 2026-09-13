@@ -1,0 +1,118 @@
+<div class="remote-shell" #shell>
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <button class="tb-btn icon" title="Back to host list" (click)="back()">‹ Back</button>
+            <span class="divider"></span>
+            <span class="state-dot" [class]="'state-dot ' + state"></span>
+            <span class="host-name" [title]="desktopName || hostName">{{ hostName || 'Remote Desktop' }}</span>
+            @if (desktopName && desktopName !== hostName) {
+                <span class="desktop-name">{{ desktopName }}</span>
+            }
+        </div>
+        <div class="toolbar-right">
+            <span class="menu-wrap">
+                <button class="tb-btn" [class.on]="openMenu === 'keys'" title="Send special keys"
+                        [disabled]="state !== 'connected' || viewOnly" (click)="toggleMenu('keys', $event)">Keys ▾</button>
+                @if (openMenu === 'keys') {
+                    <div class="menu">
+                        <button (click)="sendKey('Escape')">Esc</button>
+                        <button (click)="sendKey('Tab')">Tab</button>
+                        <button (click)="sendKey('Super_L')">Win / Cmd</button>
+                        <button (click)="sendAltTab()">Alt + Tab</button>
+                        <button (click)="sendKey('F11')">F11</button>
+                        <button (click)="sendKey('Print')">Print Screen</button>
+                        <div class="menu-sep"></div>
+                        <button class="danger" (click)="sendCtrlAltDel()">Ctrl + Alt + Del</button>
+                    </div>
+                }
+            </span>
+            <button class="tb-btn" title="Send local clipboard text to the remote desktop"
+                    [disabled]="state !== 'connected' || viewOnly" (click)="sendClipboard()">Paste
+            </button>
+            <button class="tb-btn" title="Save a PNG of the current screen"
+                    [disabled]="state !== 'connected'" (click)="screenshot()">Shot
+            </button>
+            <span class="menu-wrap">
+                <button class="tb-btn" [class.on]="openMenu === 'quality'" title="Image quality vs bandwidth"
+                        (click)="toggleMenu('quality', $event)">Quality ▾</button>
+                @if (openMenu === 'quality') {
+                    <div class="menu">
+                        @for (p of qualityPresets; track p.key) {
+                            <button [class.active]="p.key === qualityKey" (click)="setQuality(p.key)">{{ p.label }}</button>
+                        }
+                    </div>
+                }
+            </span>
+            @if (powerSupported) {
+                <span class="menu-wrap">
+                    <button class="tb-btn" [class.on]="openMenu === 'power'" title="Power control"
+                            [disabled]="state !== 'connected' || viewOnly" (click)="toggleMenu('power', $event)">Power ▾</button>
+                    @if (openMenu === 'power') {
+                        <div class="menu">
+                            <button (click)="power('reboot')">Reboot</button>
+                            <button (click)="power('reset')">Reset</button>
+                            <div class="menu-sep"></div>
+                            <button class="danger" (click)="power('shutdown')">Shut down</button>
+                        </div>
+                    }
+                </span>
+            }
+            <span class="divider"></span>
+            <button class="tb-btn" [class.on]="viewOnly" title="Toggle view only" [disabled]="state !== 'connected'"
+                    (click)="toggleViewOnly()">View only
+            </button>
+            <button class="tb-btn" [class.on]="scaleToFit" title="Scale to fit window" [disabled]="state !== 'connected'"
+                    (click)="toggleScale()">Fit
+            </button>
+            <button class="tb-btn" [title]="fullscreen ? 'Exit fullscreen' : 'Fullscreen'" (click)="toggleFullscreen()">
+                {{ fullscreen ? 'Exit full' : 'Fullscreen' }}
+            </button>
+            @if (state === 'disconnected') {
+                <button class="tb-btn primary" (click)="connect()">Reconnect</button>
+            } @else {
+                <button class="tb-btn danger" [disabled]="state !== 'connected'" (click)="disconnect()">Disconnect</button>
+            }
+        </div>
+    </div>
+
+    <div class="screen" #screen></div>
+
+    @if (toast) {
+        <div class="toast">{{ toast }}</div>
+    }
+
+    @if (state !== 'connected') {
+        <div class="overlay">
+            <div class="overlay-card">
+                @if (state === 'connecting') {
+                    <div class="spinner"></div>
+                }
+                <div class="overlay-text" [class.error]="state === 'disconnected'">{{ statusText }}</div>
+                @if (state === 'disconnected') {
+                    <div class="overlay-actions">
+                        <button class="tb-btn" (click)="back()">Back</button>
+                        <button class="tb-btn primary" (click)="connect()">Reconnect</button>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    @if (credentials.visible) {
+        <div class="overlay">
+            <form class="overlay-card cred-form" (ngSubmit)="submitCredentials()">
+                <div class="cred-title">Authentication required</div>
+                @if (credentials.needUsername) {
+                    <input class="cred-input" type="text" name="username" placeholder="Username" autocomplete="username"
+                           [(ngModel)]="credentials.username" autofocus>
+                }
+                <input class="cred-input" type="password" name="password" placeholder="Password"
+                       autocomplete="current-password" [(ngModel)]="credentials.password" [autofocus]="!credentials.needUsername">
+                <div class="cred-actions">
+                    <button class="tb-btn" type="button" (click)="cancelCredentials()">Cancel</button>
+                    <button class="tb-btn primary" type="submit">Connect</button>
+                </div>
+            </form>
+        </div>
+    }
+</div>

@@ -1,0 +1,25 @@
+@if (desc) {
+    <!-- expanded: a slim info strip above the page toolbar -->
+    @if (mode === PageDescMode.STRIP && !collapsed) {
+        <div class="page-desc">
+            <i nz-icon nzType="info-circle" nzTheme="outline" class="page-desc__icon"></i>
+            <div class="page-desc__body" [innerHTML]="desc | safeHtml"></div>
+            <a class="page-desc__close" (click)="setCollapsed(true)"
+               nz-tooltip [nzTooltipTitle]="'global.collapse' | translate">
+                <i nz-icon nzType="close" nzTheme="outline"></i>
+            </a>
+        </div>
+    }
+    <!-- collapsed: an info button in the toolbar; hover reads, click re-expands -->
+    @if (mode === PageDescMode.ICON && collapsed) {
+        <button nz-button nzSize="small" class="page-desc__btn"
+                nz-popover [nzPopoverContent]="popTpl" nzPopoverPlacement="bottomRight"
+                nzPopoverOverlayClassName="page-desc-popover"
+                (click)="setCollapsed(false)">
+            <i nz-icon nzType="info-circle" nzTheme="outline"></i>
+        </button>
+        <ng-template #popTpl>
+            <div class="page-desc__pop" [innerHTML]="desc | safeHtml"></div>
+        </ng-template>
+    }
+}

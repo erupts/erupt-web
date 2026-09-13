@@ -7,6 +7,9 @@
 @if (bi) {
   <div class="bi-container" [id]="name">
 
+    <!-- ── BI remark, folds into the toolbar info button ── -->
+    <erupt-page-desc [desc]="bi.remark" [key]="'bi:' + name" [mode]="PageDescMode.STRIP"></erupt-page-desc>
+
     <!-- ── Toolbar ── -->
     <div class="bi-toolbar">
       <div class="bi-actions">
@@ -23,6 +26,7 @@
         }
       </div>
       <div class="bi-utils">
+        <erupt-page-desc [desc]="bi.remark" [key]="'bi:' + name" [mode]="PageDescMode.ICON"></erupt-page-desc>
         @if (bi.dimensions.length > 0) {
           <button nz-button nzSize="small" class="hidden-mobile"
                   (click)="toggleCondition()"

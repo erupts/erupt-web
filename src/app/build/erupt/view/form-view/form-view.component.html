@@ -5,6 +5,8 @@
         </div>
     }
     @if (eruptBuildModel != null) {
+        <erupt-page-desc [desc]="eruptBuildModel.eruptModel.eruptJson.desc" [key]="eruptName"
+                         [mode]="PageDescMode.STRIP"></erupt-page-desc>
         <nz-card [nzBordered]="false" [nzBodyStyle]="{padding:'16px'}">
             <nz-spin [nzSpinning]="loading">
                 <erupt-edit-type #eruptEdit [loading]="loading" [eruptBuildModel]="eruptBuildModel"
@@ -21,5 +23,7 @@
         <button nz-button [disabled]="loading || saving" (click)="reset()" style="margin-left: 8px">
             {{ 'global.reset' | translate }}
         </button>
+        <erupt-page-desc class="page-desc--end" [desc]="eruptBuildModel.eruptModel.eruptJson.desc" [key]="eruptName"
+                         [mode]="PageDescMode.ICON"></erupt-page-desc>
     </div>
 }

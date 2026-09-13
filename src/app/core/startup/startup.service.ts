@@ -4,6 +4,7 @@ import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 
 import {ICONS_AUTO} from "../../../style-icons-auto";
 import {WindowModel} from "@shared/model/window.model";
+import {MenuMode} from "@shared/model/erupt-menu";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {EruptAppData, EruptAppModel} from "@shared/model/erupt-app.model";
@@ -16,6 +17,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 
 
 import {NzConfigService} from "ng-zorro-antd/core/config";
+import {applyHeaderColor} from "../../shared/util/theme.util";
 
 
 @Injectable()
@@ -31,11 +33,25 @@ export class StartupService {
         iconSrv.addIcon(...ICONS_AUTO);
     }
 
+    // Site config supplies the default theme; a color the user picked in the
+    // settings drawer (localStorage "theme-color") wins over it.
+    private applyTheme(): void {
+        // only the color entries go to ng-zorro; the layout-ish defaults are read elsewhere
+        const {dark, compact, skin, menuMode, ...theme} = WindowModel.theme || {};
+        const savedColor = localStorage.getItem("theme-color");
+        if (savedColor) {
+            theme.primaryColor = savedColor;
+        }
+        if (Object.keys(theme).length > 0) {
+            this.nzConfigService.set('theme', theme);
+        }
+        // User choice first, then the site config default (theme.headerColor)
+        applyHeaderColor(localStorage.getItem("header-color") || theme.headerColor || null);
+    }
+
     async load(): Promise<any> {
         WindowModel.init();
-        if (WindowModel.theme && Object.keys(WindowModel.theme).length > 0) {
-            this.nzConfigService.set('theme', WindowModel.theme);
-        }
+        this.applyTheme();
         if (WindowModel.copyright) {
             console.group(WindowModel.title);
             console.log("%c" +
@@ -85,9 +101,7 @@ export class StartupService {
                                         }
                                     }
                                     WindowModel.init();
-                                    if (WindowModel.theme) {
-                                        this.nzConfigService.set('theme', WindowModel.theme);
-                                    }
+                                    this.applyTheme();
                                     EruptAppData.put(eruptAppProp);
                                 }
                                 resolve();
@@ -110,12 +124,32 @@ export class StartupService {
         if (WindowModel.eruptEvent) {
             WindowModel.eruptEvent.startup && WindowModel.eruptEvent.startup();
         }
-        // Route reuse
-        this.settingSrv.layout['reuse'] = !!this.settingSrv.layout['reuse'];
+        // Route reuse (multi-tab): a choice persisted from the settings drawer
+        // wins; otherwise fall back to the site-config default
+        // (eruptSiteConfig.tabReuse, off by default).
+        this.settingSrv.layout['reuse'] = 'reuse' in this.settingSrv.layout
+            ? !!this.settingSrv.layout['reuse']
+            : !!WindowModel.config['tabReuse'];
         // Table border
         this.settingSrv.layout['bordered'] = false !== this.settingSrv.layout['bordered'];
         // Breadcrumb navigation
         this.settingSrv.layout['breadcrumbs'] = false !== this.settingSrv.layout['breadcrumbs'];
+        // Menu layout mode: a choice persisted from the settings drawer wins; otherwise
+        // eruptSiteConfig.theme.menuMode ("normal" | "split" | "dual" | "top") seeds the
+        // flags. Not persisted here, so a later change of the config default still takes
+        // effect for users who never picked a mode themselves.
+        const layout = this.settingSrv.layout;
+        const menuModeChosen = 'splitMenu' in layout || 'dualMenu' in layout || 'topMenu' in layout;
+        const defaultMenuMode = WindowModel.theme?.menuMode as MenuMode;
+        if (!menuModeChosen && defaultMenuMode && defaultMenuMode !== MenuMode.NORMAL) {
+            layout['splitMenu'] = defaultMenuMode === MenuMode.SPLIT;
+            layout['dualMenu'] = defaultMenuMode === MenuMode.DUAL;
+            layout['topMenu'] = defaultMenuMode === MenuMode.TOP;
+            // the header-menu modes take the breadcrumb's place (same rule as setMenuMode)
+            if (defaultMenuMode === MenuMode.SPLIT || defaultMenuMode === MenuMode.TOP) {
+                layout['breadcrumbs'] = false;
+            }
+        }
 
         if (this.settingSrv.layout['reuse']) {
             this.reuseTabService.mode = 0;

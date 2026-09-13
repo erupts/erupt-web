@@ -1,4 +1,8 @@
-@import 'font-awesome/css/font-awesome.min.css';
+// Font Awesome 7 free. v4-shims maps the legacy `fa fa-xxx` class names that
+// Erupt menus and @Drill/@RowOperation defaults are written in (renames plus
+// the `-o` outline icons, which become the regular weight) onto FA7 glyphs.
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+@import '@fortawesome/fontawesome-free/css/v4-shims.min.css';
 
 @import "ng-zorro-antd/ng-zorro-antd.variable.min.css";
 @import "ng-zorro-antd/code-editor/style/entry.less";
@@ -9,15 +13,15 @@
 @import '@delon/theme/layout-default/style/index.less';
 @import '@delon/theme/layout-blank/style/index.less';
 
-@import 'vditor/src/assets/less/index.less';
-
 @import 'highlight.js/styles/github.min.css';
 @import 'katex/dist/katex.min.css';
 
 @import './styles/index.less';
+@import './styles/tokens.less';
 @import './styles/theme.less';
 @import './styles/erupt.less';
 @import './styles/custom.less';
 @import './styles/flow.less';
 @import './styles/ai.less';
-@import './styles/brutalist-theme.less';
+@import './styles/themes/brutalist.less';
+@import './styles/themes/liquid-glass.less';

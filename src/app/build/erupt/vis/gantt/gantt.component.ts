@@ -1,5 +1,17 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild} from '@angular/core';
-import {GanttDragEvent, GanttGroup, GanttItem, GanttItemType, GanttViewType, NgxGanttComponent} from "@worktile/gantt";
+import {
+    GANTT_GLOBAL_CONFIG,
+    GANTT_I18N_LOCALE_TOKEN,
+    GanttDragEvent,
+    GanttGroup,
+    GanttItem,
+    GanttItemType,
+    GanttViewType,
+    NgxGanttComponent,
+    NgxGanttModule,
+    zhHansLocale
+} from "@worktile/gantt";
+import {SharedModule} from "@shared/shared.module";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {FieldVisibility, Vis} from "../../model/erupt.model";
 import moment from 'moment';
@@ -10,9 +22,18 @@ import {DataService} from "@shared/service/data.service";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {EditType, SelectMode} from "../../model/erupt.enum";
 
+// Standalone and reached only through a dynamic import in GanttHostComponent, which
+// keeps @worktile/gantt (126 KB) out of the erupt CRUD chunk and fetches it the first
+// time someone opens a gantt view. The library ships a single entry point, so its
+// config tokens have to be provided here rather than in any eagerly loaded module.
 @Component({
-    standalone: false,
-    selector: 'vis-gantt',
+    standalone: true,
+    imports: [SharedModule, NgxGanttModule],
+    providers: [
+        {provide: GANTT_GLOBAL_CONFIG, useValue: {}},
+        {provide: GANTT_I18N_LOCALE_TOKEN, useValue: [zhHansLocale]}
+    ],
+    selector: 'vis-gantt-view',
     templateUrl: './gantt.component.html',
     styleUrls: ['./gantt.component.less']
 })

@@ -7,20 +7,101 @@
         padding: 0 12px;
         border-radius: 4px;
         font-size: 13px;
-        color: rgba(0, 0, 0, 0.65);
+        color: var(--erupt-header-text-secondary, rgba(0, 0, 0, 0.65));
         white-space: nowrap;
         cursor: pointer;
         transition: background 0.18s, color 0.18s;
 
         &:hover {
-            color: var(--ant-primary-color);
-            background: rgba(0, 0, 0, 0.04);
+            color: var(--erupt-header-active-text, var(--ant-primary-color));
+            background: var(--erupt-header-fill, rgba(0, 0, 0, 0.04));
         }
 
         &--active {
-            color: var(--ant-primary-color);
-            background: var(--ant-primary-1, #e6f4ff);
+            color: var(--erupt-header-active-text, var(--ant-primary-color));
+            background: var(--erupt-header-active-bg, var(--ant-primary-1, #e6f4ff));
             font-weight: 500;
+        }
+    }
+
+    // ── Top-menu mode: antd horizontal menu recolored to the header tokens ──
+    // The <ul>/<li> are in this template; ng-zorro renders the submenu title
+    // and the ::after underline, hence ::ng-deep for those parts.
+    ::ng-deep .top-nav-menu.ant-menu-horizontal {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        height: 44px;
+        line-height: 44px;
+        border-bottom: 0;
+        background: transparent;
+        color: var(--erupt-header-text-secondary, rgba(0, 0, 0, 0.65));
+        font-size: 13px;
+
+        > .ant-menu-item,
+        > .ant-menu-submenu {
+            top: 0;
+            margin: 0;
+            padding: 0 12px;
+            color: var(--erupt-header-text-secondary, rgba(0, 0, 0, 0.65));
+            white-space: nowrap;
+
+            // antd draws the underline with ::after, inset by the item padding
+            &::after {
+                right: 12px;
+                left: 12px;
+                border-bottom: 2px solid transparent;
+            }
+
+            &:hover,
+            &.ant-menu-item-active,
+            &.ant-menu-submenu-active,
+            &.ant-menu-item-selected,
+            &.ant-menu-submenu-selected {
+                color: var(--erupt-header-active-text, var(--ant-primary-color));
+
+                &::after {
+                    border-bottom-color: var(--erupt-header-active-text, var(--ant-primary-color));
+                }
+            }
+        }
+
+        > .ant-menu-item-selected,
+        > .ant-menu-submenu-selected {
+            font-weight: 500;
+        }
+
+        > .ant-menu-submenu > .ant-menu-submenu-title {
+            color: inherit;
+            padding: 0;
+        }
+
+        .top-nav-icon {
+            margin-right: 6px;
+        }
+    }
+
+    .top-nav-icon {
+        font-size: 14px;
+        line-height: 1;
+
+        &--img {
+            width: 14px;
+            height: 14px;
+            object-fit: contain;
+            vertical-align: -2px;
+        }
+
+        &--svg {
+            display: inline-flex;
+            width: 14px;
+            height: 14px;
+            vertical-align: -2px;
+
+            svg {
+                width: 100%;
+                height: 100%;
+            }
         }
     }
 
@@ -44,11 +125,11 @@
             cursor: pointer;
 
             &:hover {
-                background: rgba(0, 0, 0, 0.06);
+                background: var(--erupt-header-fill, rgba(0, 0, 0, 0.06));
             }
 
             &:active {
-                background: rgba(0, 0, 0, 0.11);
+                background: var(--erupt-header-fill-strong, rgba(0, 0, 0, 0.11));
                 transform: scale(0.92);
             }
 
@@ -82,10 +163,30 @@
     }
 
     ::ng-deep {
+        // Vertical divider between toolbar groups follows the header border color
+        .alain-default__nav .ant-divider-vertical {
+            border-left-color: var(--erupt-header-border, var(--ant-border-color-split));
+        }
+
         // Breadcrumb: when horizontal space runs out, truncate with an ellipsis instead of squeezing the header
         .header-breadcrumb {
             min-width: 0;
             overflow: hidden;
+
+            // Follow the configurable header foreground colors
+            .ant-breadcrumb a,
+            .ant-breadcrumb-separator,
+            .ant-breadcrumb > nz-breadcrumb-item:not(:last-child) .ant-breadcrumb-link {
+                color: var(--erupt-header-text-secondary, rgba(0, 0, 0, 0.45));
+            }
+
+            .ant-breadcrumb > nz-breadcrumb-item:last-child .ant-breadcrumb-link {
+                color: var(--erupt-header-text, rgba(0, 0, 0, 0.85));
+            }
+
+            .ant-breadcrumb a:hover {
+                color: var(--erupt-header-active-text, var(--ant-primary-color));
+            }
 
             erupt-nav {
                 display: block;
@@ -140,7 +241,7 @@
             text-align: center;
             width: auto;
             padding: 0 5px;
-            border-right: 1px solid var(--ant-border-color-split);
+            border-right: 1px solid var(--erupt-header-border, var(--ant-border-color-split));
         }
 
         .header-link {
@@ -152,7 +253,7 @@
         }
 
         .header-logo-text {
-            color: #000;
+            color: var(--erupt-header-text, #000);
             line-height: 44px;
             font-size: 1.8em;
             letter-spacing: 2px;
@@ -186,19 +287,55 @@
 }
 
 ::ng-deep {
+    // Top-menu mode: there is no sidebar edge for the logo block to line up with,
+    // so it shrinks to its content (the persisted `collapsed` flag must not hide
+    // the brand text or squeeze the logo on desktop either).
+    @media (min-width: 768px) {
+        .alain-default__top-menu {
+            .alain-default__header-logo,
+            &.alain-default__collapsed .alain-default__header-logo {
+                min-width: 0;
+                max-width: none;
+                padding: 0 10px;
+            }
+
+            &.alain-default__collapsed .header-logo-text {
+                display: inline;
+            }
+
+            &.alain-default__collapsed .alain-default__header-logo img {
+                width: auto;
+            }
+        }
+    }
+
+    // Popup panels of the top menu (cdk overlay, outside the header): icons sit
+    // inline with the label, same size as in the bar
+    .top-nav-dropdown .top-nav-icon {
+        margin-right: 8px;
+        font-size: 14px;
+    }
+
+    .top-nav-dropdown .top-nav-icon--img,
+    .top-nav-dropdown .top-nav-icon--svg {
+        width: 14px;
+        height: 14px;
+        vertical-align: -2px;
+    }
+
     .alain-default__collapsed {
         .header-logo-text {
             display: none;
         }
 
         .alain-default__aside {
-            width: 48px;
+            width: var(--collapsed-width, 48px);
         }
 
         .alain-default__header-logo {
-            min-width: 48px;
+            min-width: var(--collapsed-width, 48px);
             // Lock to the collapsed sidebar width so the logo never overflows the divider
-            max-width: 48px;
+            max-width: var(--collapsed-width, 48px);
             box-sizing: border-box;
             padding: 0;
             overflow: hidden;

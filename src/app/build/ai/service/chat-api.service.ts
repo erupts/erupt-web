@@ -3,7 +3,7 @@ import {_HttpClient} from '@delon/theme';
 import {Observable} from 'rxjs';
 import {R, SimplePage} from '@shared/model/api.model';
 import {RestPath} from '../../erupt/model/erupt.enum';
-import {Agent, Chat, ChatMessage, UserInfo} from '../model/chat.model';
+import {Agent, Chat, ChatMessage, Llm, UserInfo} from '../model/chat.model';
 
 @Injectable()
 export class ChatApiService {
@@ -23,6 +23,10 @@ export class ChatApiService {
         return this._http.get<R<Agent[]>>(RestPath.erupt + '/ai/agent/list');
     }
 
+    llms(): Observable<R<Llm[]>> {
+        return this._http.get<R<Llm[]>>(RestPath.erupt + '/ai/chat/llms');
+    }
+
     createChat(title: string): Observable<R<number>> {
         return this._http.post<R<number>>(RestPath.erupt + '/ai/chat/create-chat?title=' + title);
     }
@@ -37,6 +41,12 @@ export class ChatApiService {
 
     renameChat(chatId: number, title: string): Observable<R<void>> {
         return this._http.post<R<void>>(RestPath.erupt + '/ai/chat/rename-chat', null, {chatId, title});
+    }
+
+    uploadImage(file: File): Observable<R<string>> {
+        const form = new FormData();
+        form.append('file', file);
+        return this._http.post<R<string>>(RestPath.erupt + '/ai/chat/upload-image', form);
     }
 
     messages(chatId: number, size: number, index: number): Observable<R<ChatMessage[]>> {

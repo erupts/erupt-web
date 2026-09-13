@@ -1,5 +1,5 @@
 import {Component, Inject, Input, NgZone, OnDestroy, OnInit} from "@angular/core";
-import {Menu, MenuService, SettingsService} from "@delon/theme";
+import {Menu, MenuInner, MenuService, SettingsService} from "@delon/theme";
 import {Subject, takeUntil} from "rxjs";
 import screenfull from 'screenfull';
 import {CustomerTool, WindowModel} from "@shared/model/window.model";
@@ -7,13 +7,13 @@ import {Router} from "@angular/router";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {HeaderSearchComponent} from "./components/search.component";
 import {MenuVo} from "@shared/model/erupt-menu";
-import {AppViewService} from "@shared/service/app-view.service";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {EruptTenantInfoData} from "../../../build/erupt/model/erupt-tenant";
 import {DataService} from "@shared/service/data.service";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {NoticeComponent} from "../component/notice/notice.component";
+import {UtilsService} from "@shared/service/utils.service";
 import {NzNotificationService} from "ng-zorro-antd/notification";
 import {AnnouncementDetailComponent} from "../component/announcement-detail/announcement-detail.component";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
@@ -46,14 +46,29 @@ export class HeaderComponent implements OnInit, OnDestroy {
     selectSplitItem(item: Menu): void {
         this.settings.setLayout('splitMenuKey', item.key || item.text);
         if (!item.children?.length) {
-            if (item.externalLink) {
-                item.target === '_blank'
-                    ? window.open(item.externalLink)
-                    : (window.location.href = item.externalLink);
-            } else if (item.link) {
-                this.appViewService.setRouterViewDesc(null);
-                this.ngZone.run(() => this.router.navigateByUrl(item.link!));
-            }
+            this.navigateTopItem(item);
+        }
+    }
+
+    // ── Top-menu mode: the full menu tree rendered in the header ──────────
+    get topMenu(): boolean {
+        return !!this.settings.layout['topMenu'];
+    }
+
+    // MenuService.open() marks every item on the active trail as _selected, so a
+    // first-level item is active whenever the current route lives under it.
+    isActiveTopItem(item: Menu): boolean {
+        return !!(item as MenuInner)._selected;
+    }
+
+    navigateTopItem(item: Menu): void {
+        if (item.disabled) return;
+        if (item.externalLink) {
+            item.target === '_blank'
+                ? window.open(item.externalLink)
+                : (window.location.href = item.externalLink);
+        } else if (item.link) {
+            this.ngZone.run(() => this.router.navigateByUrl(item.link!));
         }
     }
 
@@ -84,7 +99,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     drawerVisible: boolean = false;
 
-    desc: string;
 
     showI18n: boolean = true;
 
@@ -98,8 +112,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
         return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");
     }
 
+    // Notices and announcements are keyed by platform user id; tenant sessions get no entry point
+    // (bell, unread polling, announcement popups all hang off this flag)
     get isEruptNotice(): boolean {
-        return EruptAppData.get().properties["erupt-notice"];
+        return EruptAppData.get().properties["erupt-notice"] && !this.utilsService.isTenantToken();
     }
 
     openDrawer() {
@@ -115,9 +131,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     constructor(public settings: SettingsService,
                 private router: Router,
                 private ngZone: NgZone,
-                private appViewService: AppViewService,
                 private dataService: DataService,
                 private menuSrv: MenuService,
+                private utilsService: UtilsService,
                 @Inject(NzDrawerService) private drawer: NzDrawerService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(NzModalService) private modal: NzModalService,
@@ -137,9 +153,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.r_tools.forEach(tool => {
             tool.load && tool.load();
         });
-        this.appViewService.routerViewDescSubject.subscribe(value => {
-            this.desc = value;
-        })
         if (EruptAppData.get().locales.length <= 1) {
             this.showI18n = false;
         }

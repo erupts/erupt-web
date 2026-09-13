@@ -11,6 +11,7 @@ import {
     ViewContainerRef
 } from "@angular/core";
 import {IframeManagerService} from "@shared/service/iframe-manager.service";
+import {StatusService} from "@shared/service/status.service";
 import {DOCUMENT} from "@angular/common";
 import {NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router} from "@angular/router";
 
@@ -36,6 +37,7 @@ import {
 } from "@ant-design/icons-angular/icons";
 import {DataService} from "@shared/service/data.service";
 import {generateMenuPath} from "@shared/util/erupt.util";
+import {RecentMenus} from "@shared/util/recent-menu.util";
 import {MenuTypeEnum, MenuVo} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
@@ -119,6 +121,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 private i18n: I18NService,
                 private utilsService: UtilsService,
                 private iframeManager: IframeManagerService,
+                private statusService: StatusService,
                 @Optional()
                 @Inject(ReuseTabService)
                 private reuseTabService: ReuseTabService,
@@ -135,11 +138,11 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         // ]
         router.events.subscribe(evt => {
             if (evt instanceof NavigationStart) {
-                fetchTimer = setTimeout(() => { this.isFetching = true; }, 300);
+                fetchTimer = setTimeout(() => this.setFetching(true), 300);
             }
             if (evt instanceof NavigationError || evt instanceof NavigationCancel) {
                 clearTimeout(fetchTimer);
-                this.isFetching = false;
+                this.setFetching(false);
                 if (evt instanceof NavigationError) {
                     _message.error(`Unable to load route ${evt.url}, please refresh the page or clear the cache and try again!`, {nzDuration: 1000 * 3});
                 }
@@ -149,6 +152,11 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 return;
             }
             const navUrl = (evt as NavigationEnd).urlAfterRedirects || (evt as NavigationEnd).url;
+            // remember the menu this navigation landed on (the welcome page lists them)
+            const hit = this.menuSrv.find({url: navUrl, recursive: true});
+            if (hit && hit.link && !hit.hide) {
+                RecentMenus.push(hit.link, hit.text || '');
+            }
             const isManagedRoute = navUrl.startsWith('/site/')
                 || navUrl.startsWith('/tpl/');
             if (!isManagedRoute) {
@@ -157,9 +165,17 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             clearTimeout(fetchTimer);
             setTimeout(() => {
                 scroll.scrollToTop();
-                this.isFetching = false;
+                this.setFetching(false);
             }, 200);
         });
+    }
+
+    /** Route-loading state: local flag, shared flag for the sidebar spinner, and a busy cursor on <html> */
+    private setFetching(on: boolean): void {
+        this.isFetching = on;
+        this.statusService.routeLoading = on;
+        if (!on) this.statusService.pendingMenuLink = null;
+        this.doc.documentElement.classList.toggle('erupt-route-loading', on);
     }
 
     private setClass() {
@@ -172,12 +188,17 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 ["alain-default"]: true,
                 [`alain-default__fixed`]: true,
                 [`alain-default__boxed`]: layout['boxed'],
-                [`alain-default__collapsed`]: layout.collapsed
+                [`alain-default__collapsed`]: layout.collapsed,
+                // top-menu mode: the whole menu lives in the header, the sidebar is
+                // hidden on desktop and the content takes the full width
+                [`alain-default__top-menu`]: layout['topMenu']
             },
             true
         );
         this.doc.documentElement.classList[layout["colorGray"] ? "add" : "remove"]("color-gray");
         this.doc.documentElement.classList[layout.colorWeak ? "add" : "remove"]("color-weak");
+        // show menu names under the icons when the sidebar is collapsed (off by default)
+        this.doc.documentElement.classList[layout["collapsedText"] ? "add" : "remove"]("aside-collapsed-text");
     }
 
     ngAfterViewInit(): void {
@@ -251,8 +272,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
     loadMenu(flush = false): Observable<MenuVo[]> {
         return this.data.getMenu(flush).pipe(tap(res => {
             this.menu = res;
-
-            // this.statusService.menus = res;
+            this.statusService.menus = res;
             const hiddenMenus: Menu[] = [];
             function generateTree(menus, pid): Menu[] {
                 let result: Menu[] = [];
@@ -267,7 +287,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                             key: menu.code,
                             i18n: menu.name,
                             linkExact: true,
-                            icon: menu.icon || (menu.pid ? null : 'fa fa-list-ul'),
+                            icon: menu.icon || null,
                             link: generateMenuPath(menu.type, menu.value),
                             children: generateTree(menus, menu.id)
                         };

@@ -422,14 +422,13 @@ export class DataHandlerService {
                                 if (!eruptBuildModel.tabErupts) {
                                     return;
                                 }
-                                let pk = eruptBuildModel.tabErupts[field.fieldName].eruptModel.eruptJson.primaryKeyCol
-                                for (let val of edit.$value) {
-                                    if (val[pk] < 0) {
-                                        val[pk] = null;
-                                    }
-                                }
+                                let pk = eruptBuildModel.tabErupts[field.fieldName].eruptModel.eruptJson.primaryKeyCol;
+                                // Strip temp negative ids on copies: rows in $value must keep their ids,
+                                // otherwise later row edits match every id-less row and overwrite them all
+                                eruptData[field.fieldName] = (<any[]>edit.$value).map(val => val[pk] < 0 ? {...val, [pk]: null} : val);
+                            } else {
+                                eruptData[field.fieldName] = edit.$value;
                             }
-                            eruptData[field.fieldName] = edit.$value;
                         }
                         break;
                     case EditType.MULTI_FORM:

@@ -177,7 +177,9 @@ export function PrintVarPlugin(editor: any): void {
     standalone: false,
     selector: "ckeditor",
     templateUrl: "./ckeditor.component.html",
-    styles: []
+    // A custom element defaults to inline, which collapses the height of anything
+    // wrapping it — the field assistant's tray measures its corner against this box.
+    styles: [`:host { display: block; }`]
 })
 export class CkeditorComponent implements AfterViewInit, OnChanges, OnDestroy {
 

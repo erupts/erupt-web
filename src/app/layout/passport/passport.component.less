@@ -11,7 +11,7 @@
             display: flex;
             min-height: 100vh;
             min-height: 100dvh;
-            background-color: #fff;
+            background-color: var(--erupt-bg-container, #fff);
             background-image: url('/assets/passport/passport-bg.svg');
             background-repeat: no-repeat;
             background-position: center center;
@@ -26,14 +26,14 @@
         }
 
         // ── Top nav ──────────────────────────────────────────────────
+        // Floats over the page background: no fill, no rule — the card is the only
+        // hard-edged surface on this page.
         .lp-side-nav {
-            height: 56px;
+            height: 64px;
             flex-shrink: 0;
             display: flex;
             align-items: center;
-            padding: 0 28px;
-            background: #fbfcfd;
-            border-bottom: 1px solid var(--ant-border-color-split);
+            padding: 0 32px;
         }
 
         .lp-side-brand {
@@ -45,7 +45,7 @@
         }
 
         .lp-side-brand-img {
-            height: 24px;
+            height: 26px;
             object-fit: contain;
         }
 
@@ -53,39 +53,39 @@
             font-size: 16px;
             font-weight: 600;
             letter-spacing: 0.2px;
-            color: rgba(0, 0, 0, 0.88);
+            color: var(--erupt-text, rgba(0, 0, 0, 0.88));
             line-height: 1;
         }
 
+        // Icon actions grouped in one translucent pill instead of a row of divided buttons
         .lp-side-nav-actions {
             display: flex;
             align-items: center;
             gap: 2px;
+            padding: 3px;
+            border-radius: 999px;
+            background: color-mix(in srgb, var(--erupt-bg-container, #fff) 72%, transparent);
+            box-shadow: inset 0 0 0 1px var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         .lp-nav-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 34px;
-            height: 34px;
-            border-radius: 7px;
-            font-size: 16px;
-            color: rgba(0, 0, 0, 0.50);
+            width: 32px;
+            height: 32px;
+            border-radius: 999px;
+            font-size: 15px;
+            color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.55));
             text-decoration: none;
             transition: color 0.18s, background 0.18s;
 
             &:hover {
-                color: rgba(0, 0, 0, 0.80);
-                background: rgba(0, 0, 0, 0.06);
+                color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+                background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
             }
-        }
-
-        .lp-nav-divider {
-            width: 1px;
-            height: 18px;
-            background: rgba(0, 0, 0, 0.10);
-            margin: 0 6px;
         }
 
         .lp-nav-lang {
@@ -94,19 +94,24 @@
 
             i18n-choice {
                 flex: none;
+                display: inline-flex;
             }
 
             i[nz-icon] {
-                font-size: 16px;
-                color: rgba(0, 0, 0, 0.50);
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 32px;
+                height: 32px;
+                font-size: 15px;
+                color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.55));
                 cursor: pointer;
-                padding: 9px;
-                border-radius: 7px;
+                border-radius: 999px;
                 transition: color 0.18s, background 0.18s;
 
                 &:hover {
-                    color: rgba(0, 0, 0, 0.80);
-                    background: rgba(0, 0, 0, 0.06);
+                    color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+                    background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
                 }
             }
         }
@@ -124,7 +129,7 @@
         .lp-card {
             width: 100%;
             max-width: 380px;
-            background: #fff;
+            background: var(--erupt-bg-container, #fff);
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05),
@@ -148,11 +153,11 @@
         .lp-copyright {
             padding-bottom: 20px;
             font-size: 12px;
-            color: rgba(0, 0, 0, 0.38);
+            color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.38));
             text-align: center;
 
             a {
-                color: rgba(0, 0, 0, 0.45);
+                color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
                 text-decoration: none;
 
                 &:hover {
@@ -164,18 +169,55 @@
     }
 }
 
+// ── Dark theme ────────────────────────────────────────────────────
+// Surfaces and text already follow the --erupt-* tokens; only the decorative
+// background image carries a baked-in light ground and needs a dark variant.
+:host-context(.dark) ::ng-deep {
+    // Page drops to the layout ground so the container-colored card reads as a
+    // raised surface (in light both are white and the shadows do that job, but
+    // black-based shadows vanish on a dark ground).
+    .lp-page {
+        background-color: var(--erupt-bg-layout, #000);
+        background-image: url('/assets/passport/passport-bg-dark.svg');
+    }
+
+    .lp-side-nav-actions {
+        box-shadow: inset 0 0 0 1px var(--erupt-fill-tertiary, rgba(255, 255, 255, 0.08));
+    }
+
+    // hairline ring instead of the invisible shadows
+    .lp-card {
+        box-shadow: 0 0 0 1px var(--erupt-fill-tertiary, rgba(255, 255, 255, 0.08)),
+        0 24px 56px rgba(0, 0, 0, 0.35);
+    }
+}
+
 // ── Brutalist skin ────────────────────────────────────────────────
-// Only active when <html> has the .brutalist-theme class.
+// Only active when <html> has the .brutalist-theme class. Colors come from
+// the global --raft-* tokens (styles/themes/brutalist.less), which swap
+// ink/paper under html.brutalist-theme.dark — so this skin follows the dark
+// theme for free; the fallbacks mirror the original light values.
 :host-context(.brutalist-theme) ::ng-deep {
 
     .lp-page {
-        background-color: #e3ebee;
+        background-color: var(--raft-cream, #e3ebee);
     }
 
     .lp-side-nav {
         height: 44px;
-        background: #fff;
-        border-bottom: 1.5px solid #0a0a0a;
+        padding: 0 28px;
+        background: var(--raft-paper, #fff);
+        border-bottom: 1.5px solid var(--raft-ink, #0a0a0a);
+    }
+
+    .lp-side-nav-actions {
+        padding: 0;
+        gap: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 
     .lp-side-brand {
@@ -191,32 +233,28 @@
         font-weight: 700;
         letter-spacing: 0.06em;
         text-transform: uppercase;
-        color: #0a0a0a;
+        color: var(--raft-ink, #0a0a0a);
     }
 
     .lp-nav-btn {
         border-radius: 0;
-        color: #0a0a0a;
+        color: var(--raft-ink, #0a0a0a);
         transition: background 0.15s;
 
         &:hover {
-            color: #0a0a0a;
-            background: rgba(10, 10, 10, 0.08);
+            color: var(--raft-ink, #0a0a0a);
+            background: var(--raft-muted, rgba(10, 10, 10, 0.08));
         }
     }
 
-    .lp-nav-divider {
-        background: rgba(10, 10, 10, 0.20);
-    }
-
     .lp-nav-lang i[nz-icon] {
-        color: #0a0a0a;
+        color: var(--raft-ink, #0a0a0a);
         border-radius: 0;
         transition: background 0.15s;
 
         &:hover {
-            color: #0a0a0a;
-            background: rgba(10, 10, 10, 0.08);
+            color: var(--raft-ink, #0a0a0a);
+            background: var(--raft-muted, rgba(10, 10, 10, 0.08));
         }
     }
 
@@ -226,9 +264,10 @@
 
     .lp-card {
         max-width: 400px;
-        border: 1.5px solid #0a0a0a;
+        background: var(--raft-paper, #fff);
+        border: 1.5px solid var(--raft-ink, #0a0a0a);
         border-radius: 0;
-        box-shadow: 8px 8px 0 #0a0a0a;
+        box-shadow: 8px 8px 0 var(--raft-ink, #0a0a0a);
         animation: lpCardInBrutalist 0.40s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
@@ -236,12 +275,12 @@
         from {
             opacity: 0;
             transform: translate(6px, 6px);
-            box-shadow: 0 0 0 #0a0a0a;
+            box-shadow: 0 0 0 var(--raft-ink, #0a0a0a);
         }
         to {
             opacity: 1;
             transform: translate(0, 0);
-            box-shadow: 8px 8px 0 #0a0a0a;
+            box-shadow: 8px 8px 0 var(--raft-ink, #0a0a0a);
         }
     }
 
@@ -250,18 +289,110 @@
         font-family: 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', Menlo, Consolas, monospace;
         font-size: 11px;
         letter-spacing: 0.05em;
-        color: rgba(10, 10, 10, 0.55);
+        color: var(--raft-text-2, rgba(10, 10, 10, 0.55));
         text-transform: uppercase;
 
         a {
-            color: #0a0a0a;
-            border-bottom: 1px solid rgba(10, 10, 10, 0.35);
+            color: var(--raft-ink, #0a0a0a);
+            border-bottom: 1px solid var(--raft-muted, rgba(10, 10, 10, 0.35));
             padding-bottom: 1px;
 
             &:hover {
-                color: #0a0a0a;
-                border-bottom-color: #0a0a0a;
+                color: var(--raft-ink, #0a0a0a);
+                border-bottom-color: var(--raft-ink, #0a0a0a);
             }
+        }
+    }
+}
+
+// ── Liquid Glass skin ─────────────────────────────────────────────
+// Only active when <html> has the .liquid-glass class. The ambient field is
+// painted on <body> and the --lg-* material tokens come from
+// styles/themes/liquid-glass.less, which swaps them under
+// html.liquid-glass.dark — so this skin follows the dark theme for free.
+// Scoped here rather than in the theme file because the component's own
+// :host-prefixed rules would otherwise win the specificity tie.
+:host-context(.liquid-glass) ::ng-deep {
+
+    // drop the stock artwork so the ambient field behind it shows through
+    .lp-page {
+        background-color: transparent;
+        background-image: none;
+    }
+
+    .lp-side-nav-actions {
+        background: var(--lg-tint, rgba(255, 255, 255, 0.46));
+        box-shadow: inset 0 0 0 1px var(--lg-hairline, rgba(255, 255, 255, 0.65));
+        backdrop-filter: var(--lg-blur, saturate(180%) blur(22px));
+        -webkit-backdrop-filter: var(--lg-blur, saturate(180%) blur(22px));
+    }
+
+    // The card holds the form, so it uses the denser utility-bar tint rather
+    // than the panel tint — inputs and labels must stay fully legible.
+    .lp-card {
+        border: 1px solid var(--lg-hairline, rgba(255, 255, 255, 0.65));
+        border-radius: var(--lg-radius, 6px);
+        background: var(--lg-sheen, none), var(--lg-fold-tint, rgba(255, 255, 255, 0.84));
+        backdrop-filter: var(--lg-blur, saturate(180%) blur(22px));
+        -webkit-backdrop-filter: var(--lg-blur, saturate(180%) blur(22px));
+        box-shadow: var(--lg-shadow, 0 12px 32px rgba(24, 32, 56, 0.1)), var(--lg-specular, none);
+    }
+}
+
+// ── Theme color panel ─────────────────────────────────────────────
+// Rendered into a cdk overlay, so it sits outside the host element and cannot
+// live inside the :host block above. Angular still stamps the component's
+// _ngcontent attribute on it, so the styles stay scoped to this component.
+.lp-color-panel {
+    display: grid;
+    grid-template-columns: repeat(10, 22px);
+    gap: 8px;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--erupt-bg-elevated, #fff);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12);
+}
+
+.lp-swatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+
+    &:hover {
+        transform: scale(1.15);
+    }
+
+    &--active {
+        box-shadow: 0 0 0 2px var(--erupt-bg-elevated, #fff), 0 0 0 4px var(--ant-primary-color);
+    }
+
+    // custom color: rainbow tile hiding a native color input
+    &--custom {
+        position: relative;
+        overflow: hidden;
+        background: conic-gradient(#f5222d, #faad14, #52c41a, #13c2c2, #1677ff, #722ed1, #f5222d);
+
+        input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+    }
+
+    &--reset {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+        border: 1px dashed var(--erupt-border, #d9d9d9);
+
+        &:hover {
+            transform: none;
+            color: var(--ant-primary-color);
+            border-color: var(--ant-primary-color);
         }
     }
 }

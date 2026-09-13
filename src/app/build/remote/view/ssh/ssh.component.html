@@ -1,0 +1,44 @@
+<div class="remote-shell" #shell>
+    <div class="toolbar">
+        <div class="toolbar-left">
+            <button class="tb-btn icon" title="Back to host list" (click)="back()">‹ Back</button>
+            <span class="divider"></span>
+            <span class="state-dot" [class]="'state-dot ' + state"></span>
+            <span class="host-name" [title]="hostName">{{ hostName || 'SSH' }}</span>
+            @if (statusText && state !== 'connected') {
+                <span class="desktop-name">{{ statusText }}</span>
+            }
+        </div>
+        <div class="toolbar-right">
+            <button class="tb-btn" title="Send Ctrl+C" [disabled]="state !== 'connected'" (click)="sendCtrlC()">Ctrl+C</button>
+            <button class="tb-btn" title="Paste local clipboard" [disabled]="state !== 'connected'" (click)="pasteClipboard()">Paste</button>
+            <button class="tb-btn" title="Clear screen" (click)="clear()">Clear</button>
+            <span class="divider"></span>
+            <button class="tb-btn" [title]="fullscreen ? 'Exit fullscreen' : 'Fullscreen'" (click)="toggleFullscreen()">
+                {{ fullscreen ? 'Exit full' : 'Fullscreen' }}
+            </button>
+            @if (state === 'disconnected') {
+                <button class="tb-btn primary" (click)="connect()">Reconnect</button>
+            } @else {
+                <button class="tb-btn danger" [disabled]="state !== 'connected'" (click)="disconnect()">Disconnect</button>
+            }
+        </div>
+    </div>
+
+    <div class="term-area">
+        <div class="term-wrap" #termEl></div>
+    </div>
+
+    @if (toast) {
+        <div class="toast">{{ toast }}</div>
+    }
+
+    @if (state === 'connecting') {
+        <div class="overlay light">
+            <div class="overlay-card">
+                <div class="spinner"></div>
+                <div class="overlay-text">{{ statusText }}</div>
+            </div>
+        </div>
+    }
+</div>

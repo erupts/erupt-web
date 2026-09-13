@@ -1,50 +1,50 @@
-.erupt-progress-bar {
+// Route / lazy-module loading indicator: a shimmer bar along the very top of the viewport.
+// Its color follows --erupt-header-progress, which applyHeaderColor() sets to the header
+// foreground whenever the header is colored, so the bar never blends into the header.
+@progress-color: var(--erupt-header-progress, var(--ant-primary-color, #1677ff));
+
+.erupt-route-loading {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 2px;
+    right: 0;
+    height: 3px;
     z-index: 99999;
     overflow: hidden;
+    pointer-events: none;
+    background: color-mix(in srgb, @progress-color 18%, transparent);
+    box-shadow: 0 1px 6px color-mix(in srgb, @progress-color 35%, transparent);
 
     &::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        background: var(--ant-primary-color, #1677ff);
-        animation: erupt-bar-1 2.1s cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
-    }
-
-    &::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        height: 100%;
-        background: var(--ant-primary-color, #1677ff);
-        animation: erupt-bar-2 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) infinite;
-        animation-delay: 1.15s;
+        inset: 0;
+        width: 40%;
+        border-radius: 3px;
+        background: linear-gradient(90deg, transparent 0%, @progress-color 40%, @progress-color 60%, transparent 100%);
+        animation: erupt-route-loading-sweep 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
 }
 
-@keyframes erupt-bar-1 {
-    0%   { left: -35%; width: 35%; }
-    60%  { left: 100%; width: 100%; }
-    100% { left: 100%; width: 100%; }
-}
-
-@keyframes erupt-bar-2 {
-    0%   { left: -200%; width: 35%; }
-    60%  { left: 107%; width: 60%; }
-    100% { left: 107%; width: 60%; }
+@keyframes erupt-route-loading-sweep {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(250%); }
 }
 
 ::ng-deep {
 
     @header-h: 44px;
     @tab-h: 38px;
+
+    // Collapsed sidebar width: 60px when collapsed text labels are enabled
+    // (html.aside-collapsed-text, toggled from the settings drawer), 48px icon-only otherwise
+    html {
+        --collapsed-width: 48px;
+    }
+
+    html.aside-collapsed-text {
+        --collapsed-width: 60px;
+    }
 
     .erupt-side:after {
         border-right: 1px solid var(--ant-border-color-split);
@@ -109,9 +109,9 @@
         }
     }
 
-    // Collapsed sidebar: set left to 48px
+    // Collapsed sidebar: follow the collapsed rail width
     .alain-default__collapsed .reuse-tab {
-        left: 48px;
+        left: var(--collapsed-width, 48px);
         margin-left: 0;
     }
 
@@ -126,7 +126,7 @@
         padding-top: 0;
         padding-left: 0;
         padding-right: 0;
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         border-bottom: 1px solid var(--ant-border-color-split);
 
         .ant-tabs-bar {
@@ -151,13 +151,13 @@
                 border: none !important;
                 border-radius: 1px !important;
                 background: transparent !important;
-                color: rgba(0, 0, 0, 0.65);
+                color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
                 font-size: 13px;
                 transition: color 0.2s, background 0.2s;
 
                 &:hover {
-                    background: rgba(0, 0, 0, 0.045) !important;
-                    color: rgba(0, 0, 0, 0.88);
+                    background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.045)) !important;
+                    color: var(--erupt-text, rgba(0, 0, 0, 0.88));
                 }
 
                 .ant-tabs-tab-remove {
@@ -205,6 +205,33 @@
         pointer-events: none;
     }
 
+    // ── Top-menu mode: no sidebar on desktop, content and tab bar span the full width.
+    //    Under 768px the sidebar stays as the off-canvas drawer (the header nav is
+    //    hidden-mobile), so nothing changes there.
+    @media (min-width: 768px) {
+        .alain-default__top-menu {
+            .alain-default__aside,
+            .erupt-side {
+                display: none;
+            }
+
+            .reuse-tab {
+                left: 0 !important;
+                right: 0 !important;
+            }
+        }
+
+        .ltr .alain-default__top-menu .erupt_content,
+        .ltr .alain-default__top-menu.alain-default__collapsed .erupt_content {
+            margin-left: 0;
+        }
+
+        .rtl .alain-default__top-menu .erupt_content,
+        .rtl .alain-default__top-menu.alain-default__collapsed .erupt_content {
+            margin-right: 0;
+        }
+    }
+
     .ltr {
         .erupt_content {
             margin-top: @header-h;
@@ -212,7 +239,7 @@
         }
 
         .alain-default__collapsed .erupt_content {
-            margin-left: 48px;
+            margin-left: var(--collapsed-width, 48px);
         }
 
         @media (max-width: 767px) {
@@ -237,7 +264,7 @@
         }
 
         .alain-default__collapsed .erupt_content {
-            margin-right: 48px;
+            margin-right: var(--collapsed-width, 48px);
         }
 
         .alain-default__fixed .reuse-tab {
@@ -246,7 +273,7 @@
         }
 
         .alain-default__collapsed .reuse-tab {
-            right: 48px;
+            right: var(--collapsed-width, 48px);
             left: 0;
         }
 
@@ -278,8 +305,8 @@
         width: 100%;
         height: 44px;
         padding: 0 16px;
-        background: #fff;
-        border-bottom: 1px solid var(--ant-border-color-split);
+        background: var(--erupt-header-bg, var(--erupt-bg-container, #fff));
+        border-bottom: 1px solid var(--erupt-header-border, var(--ant-border-color-split));
     }
 
     .erupt-header_fixed {
@@ -296,7 +323,7 @@
         padding-top: 3px;
         line-height: 25px;
         text-align: center;
-        color: #000;
+        color: var(--erupt-text, #000);
     }
 
     ::ng-deep {
@@ -312,12 +339,12 @@
         }
 
         .alain-default__nav-item, .alain-default__nav nz-badge {
-            color: #000;
+            color: var(--erupt-header-text, #000);
         }
 
         .alain-default__header {
             box-shadow: none;
-            border-bottom: 1px solid var(--ant-border-color-split);
+            border-bottom: 1px solid var(--erupt-header-border, var(--ant-border-color-split));
         }
 
         .ant-tabs-card.ant-tabs-top > .ant-tabs-nav .ant-tabs-tab + .ant-tabs-tab {

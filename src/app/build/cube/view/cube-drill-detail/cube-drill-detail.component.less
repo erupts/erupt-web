@@ -8,7 +8,7 @@
         justify-content: space-between;
         align-items: center;
         padding: 16px;
-        background: #fafafa;
+        background: var(--erupt-bg-spotlight, #fafafa);
         border-bottom: 1px solid var(--ant-border-color-split);
 
         .drill-info {
@@ -17,13 +17,13 @@
             flex: 1;
 
             .drill-label {
-                color: #666;
+                color: var(--erupt-text-secondary, #666);
                 font-size: 13px;
                 margin-right: 6px;
             }
 
             .drill-value {
-                color: #333;
+                color: var(--erupt-text, #333);
                 font-size: 14px;
                 font-weight: 500;
 
@@ -61,7 +61,7 @@
 
                     .ant-table-thead > tr > th {
                         font-weight: 600;
-                        background: #fafafa;
+                        background: var(--erupt-bg-spotlight, #fafafa);
                         padding: 8px;
                     }
 

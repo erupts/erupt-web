@@ -15,8 +15,8 @@
                      nz-tooltip nzTooltipPlacement="top" [nzTooltipTitle]="'menu.toggle_all' | translate">
                     <i nz-icon nzType="node-expand"></i>
                 </div>
-                <div class="fold__btn" [class.fold__btn--active]="splitMenu" (click)="toggleSplitMenu()"
-                     nz-tooltip nzTooltipPlacement="top" [nzTooltipTitle]="'menu.split_mode' | translate">
+                <div class="fold__btn"
+                     nz-dropdown [nzDropdownMenu]="menuModes" nzTrigger="click" nzPlacement="topCenter">
                     <i nz-icon nzType="layout"></i>
                 </div>
             }
@@ -26,6 +26,22 @@
                 <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}"></i>
             </div>
         </div>
+        <nz-dropdown-menu #menuModes="nzDropdownMenu">
+            <ul nz-menu nzSelectable="false">
+                <li nz-menu-item [nzSelected]="!splitMenu && !dualMenu && !topMenu" (click)="setMenuMode(MenuMode.NORMAL)">
+                    <i nz-icon nzType="unordered-list"></i> {{ 'menu.normal_mode' | translate }}
+                </li>
+                <li nz-menu-item [nzSelected]="splitMenu" (click)="setMenuMode(MenuMode.SPLIT)">
+                    <i nz-icon nzType="layout"></i> {{ 'menu.split_mode' | translate }}
+                </li>
+                <li nz-menu-item [nzSelected]="dualMenu" (click)="setMenuMode(MenuMode.DUAL)">
+                    <i nz-icon nzType="pic-left"></i> {{ 'menu.dual_mode' | translate }}
+                </li>
+                <li nz-menu-item [nzSelected]="topMenu" (click)="setMenuMode(MenuMode.TOP)">
+                    <i nz-icon nzType="border-top"></i> {{ 'menu.top_mode' | translate }}
+                </li>
+            </ul>
+        </nz-dropdown-menu>
     </div>
     @if (loading) {
         <div class="aside-loading-overlay">

@@ -87,13 +87,18 @@ export interface Edit {
     desc: string;
     type: EditType;
     show: boolean;
+    // whether the inline AI writing assistant is offered on this field; absent means yes
+    ai?: boolean;
     dynamic: { dependField: string, condition: string, noMatch: FormCtrl, match: FormCtrl };
     onchange: string;
     readOnly: Readonly;
+    // whether this field may be edited directly in the table, when the model allows it
+    cellEdit?: boolean;
     placeHolder: string;
     search: Search;
     tabType?: TabType;
     inputType?: InputType;
+    textareaType?: TextareaType;
     numberType?: NumberType;
     referenceTreeType?: ReferenceTreeType;
     referenceTableType?: ReferenceTableType;
@@ -130,6 +135,8 @@ export interface Edit {
 interface Readonly {
     add: boolean;
     edit: boolean;
+    // whether the API still accepts a value for this field while it is read-only in the form
+    allowChange?: boolean;
 }
 
 interface HtmlEditorType {
@@ -154,6 +161,14 @@ interface CodeEditType {
     language: string;
     height: number;
     hintHandler?: string[];
+}
+
+interface TextareaType {
+    length: number;
+    minRows: number;
+    maxRows: number;
+    mentionPrefix: string[];
+    mentionFetchHandler: string[];
 }
 
 //Edit Type

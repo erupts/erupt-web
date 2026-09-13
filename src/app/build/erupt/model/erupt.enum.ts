@@ -40,6 +40,7 @@ export enum EditType {
     DIVIDE = "DIVIDE",                         //divider
     CALLOUT = "CALLOUT",                       //static descriptive content callout
     BUTTON = "BUTTON",                         //button that passes all form values to backend handler
+    HIDDEN = "HIDDEN",                         //hidden field: stored but never rendered in the form
     SLIDER = "SLIDER",                         //numeric slider
     RATE = "RATE",
     CHECKBOX = "CHECKBOX",

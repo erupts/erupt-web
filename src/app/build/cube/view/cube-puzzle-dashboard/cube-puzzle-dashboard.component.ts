@@ -4,7 +4,8 @@ import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {I18NService} from '@core';
+import {I18NService, setReuseTabTitle} from '@core';
+import {ReuseTabService} from '@delon/abc/reuse-tab';
 import {MenuService} from "@delon/theme";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
@@ -87,7 +88,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 @Inject(NzModalService) private modal: NzModalService,
                 private drawerService: NzDrawerService,
                 private i18n: I18NService,
-                private menuSrv: MenuService
+                private menuSrv: MenuService,
+                private reuseTab: ReuseTabService
     ) {
 
     }
@@ -176,6 +178,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         }
         this.cubeApiService.dashboardDetail(this.code).subscribe(res => {
             this.dashboard = res.data;
+            // The designer (/cube/puzzle/:code) has no menu entry: show the dashboard name on the tab
+            setReuseTabTitle(this.reuseTab, this.route, res.data.name);
             if (this.editModel) {
                 this.dsl = res.data.draftDsl;
             } else {

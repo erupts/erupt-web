@@ -25,7 +25,6 @@ import {LayoutModule} from './layout/layout.module';
 import {RoutesModule} from './routes/routes.module';
 import {SharedModule} from '@shared/shared.module';
 import {AppRoutingModule} from "./app-routing.module";
-import {AppViewService} from "@shared/service/app-view.service";
 import {NzConfig, provideNzConfig} from 'ng-zorro-antd/core/config';
 import {WindowModel} from "@shared/model/window.model";
 
@@ -84,7 +83,7 @@ const APP_INIT_PROVIDES = [
         BidiModule,
         AppRoutingModule
     ],
-    providers: [provideZoneChangeDetection({eventCoalescing: true}), ...INTERCEPTOR_PROVIDES, ...APP_INIT_PROVIDES, I18NService, AppViewService, provideNzConfig(ngZorroConfig)],
+    providers: [provideZoneChangeDetection({eventCoalescing: true}), ...INTERCEPTOR_PROVIDES, ...APP_INIT_PROVIDES, I18NService, provideNzConfig(ngZorroConfig)],
     bootstrap: [AppComponent]
 })
 export class AppModule {

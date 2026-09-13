@@ -6,6 +6,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {I18NService} from "@core";
 import {LayoutEruptComponent} from "../erupt.component";
 import {MenuComponent} from "../menu/menu.component";
+import {MenuMode} from "@shared/model/erupt-menu";
 
 const SIDEBAR_WIDTH_KEY = 'erupt_sidebar_width';
 const DEFAULT_WIDTH = 200;
@@ -40,12 +41,20 @@ export class SidebarComponent implements OnInit, OnDestroy {
         return !!this.settings.layout['splitMenu'];
     }
 
+    get dualMenu(): boolean {
+        return !!this.settings.layout['dualMenu'];
+    }
+
+    get topMenu(): boolean {
+        return !!this.settings.layout['topMenu'];
+    }
+
     ngOnInit(): void {
         const saved = parseInt(localStorage.getItem(SIDEBAR_WIDTH_KEY), 10);
         if (saved >= MIN_WIDTH && saved <= MAX_WIDTH) {
             this.sidebarWidth = saved;
-            this.applyWidth(saved);
         }
+        this.applyWidth(this.sidebarWidth);
         this.menuSrv.change.pipe(
             skip(1),
             takeUntil(this.destroy$)
@@ -100,9 +109,22 @@ export class SidebarComponent implements OnInit, OnDestroy {
         this.menuSrv.openAll(this.allExpanded);
     }
 
-    // Switch between the normal single-column menu and the split (top-level tabs) menu
-    toggleSplitMenu() {
-        this.settings.setLayout("splitMenu", !this.splitMenu);
+    // Menu layout mode: normal single-column, split (top-level tabs in the header),
+    // dual-column (first-level rail inside the sidebar) or top (whole menu in the
+    // header, no sidebar). Modes are exclusive; split and top modes take the header
+    // space, so they replace the breadcrumbs.
+    readonly MenuMode = MenuMode;
+
+    setMenuMode(mode: MenuMode) {
+        if (mode === MenuMode.SPLIT || mode === MenuMode.TOP) {
+            this.settings.setLayout("breadcrumbs", false);
+        } else if (this.splitMenu || this.topMenu) {
+            // restore breadcrumbs only when leaving a header-menu mode
+            this.settings.setLayout("breadcrumbs", true);
+        }
+        this.settings.setLayout("splitMenu", mode === MenuMode.SPLIT);
+        this.settings.setLayout("dualMenu", mode === MenuMode.DUAL);
+        this.settings.setLayout("topMenu", mode === MenuMode.TOP);
     }
 
     onResizeStart(e: MouseEvent) {
@@ -128,6 +150,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
         document.addEventListener('mouseup', onUp);
     }
 
+    // --sidebar-width drives the aside width, content margin and tab-bar offset;
+    // in dual-column mode the first-level rail is carved out of the same width
     private applyWidth(width: number) {
         document.documentElement.style.setProperty('--sidebar-width', width + 'px');
     }

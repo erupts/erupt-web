@@ -1,7 +1,7 @@
 :host {
     display: block;
     height: 100%;
-    background: #f5f7fa;
+    background: var(--erupt-bg-layout, #f5f7fa);
     overflow: auto;
     box-sizing: border-box;
 
@@ -9,10 +9,10 @@
         display: flex;
         flex-direction: column;
         height: 100%;
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
 
         .sk-bar {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+            background: linear-gradient(90deg, var(--erupt-fill-secondary, #f0f0f0) 25%, var(--erupt-fill, #e8e8e8) 50%, var(--erupt-fill-secondary, #f0f0f0) 75%);
             background-size: 400% 100%;
             animation: sk-shimmer 1.4s ease infinite;
             border-radius: 3px;
@@ -32,21 +32,21 @@
             padding: 12px;
             flex: 1;
             overflow: hidden;
-            background: #f5f7fa;
+            background: var(--erupt-bg-layout, #f5f7fa);
         }
 
         .sk-table {
             border: 1px solid var(--ant-border-color-split);
             border-radius: 4px;
             overflow: hidden;
-            background: #fff;
+            background: var(--erupt-bg-container, #fff);
         }
 
         .sk-thead {
             display: flex;
             align-items: center;
             height: 38px;
-            background: #fafafa;
+            background: var(--erupt-bg-spotlight, #fafafa);
             border-bottom: 1px solid var(--ant-border-color-split);
             padding: 0 16px;
             gap: 16px;
@@ -155,7 +155,7 @@
         justify-content: space-between;
         padding: 7px 12px;
         border-bottom: 1px solid var(--ant-border-color-split);
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         font-size: 13px;
         font-weight: 500;
     }
@@ -198,7 +198,7 @@
         align-items: center;
         padding: 7px 15px;
         border-bottom: 1px solid var(--ant-border-color-split);
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         flex-shrink: 0;
         gap: 8px;
         flex-wrap: wrap;
@@ -210,6 +210,18 @@
         flex-wrap: wrap;
         flex: 1;
         gap: 8px;
+    }
+
+    // Inline wrappers (the <span> around the import pair, nz-badge around export) would
+    // otherwise lay their 24px buttons on a text line box and grow the bar by 1-2px, so
+    // it no longer lines up with the 39px tree / search headers beside it.
+    .tc-actions > span,
+    .tc-actions > nz-badge,
+    .tc-utils > span,
+    .tc-utils > nz-badge {
+        display: inline-flex;
+        align-items: center;
+        line-height: 1;
     }
 
     .tc-utils {
@@ -228,7 +240,7 @@
     // ── Search filter area ────────────────────────────────────────────
     .tc-search {
         padding: 6px 8px;
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         border: 1px solid var(--ant-border-color-split);
         flex-shrink: 0;
     }
@@ -260,7 +272,7 @@
         padding: 0;
         border: 1px solid var(--ant-border-color-split);
         border-top: none;
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         flex-shrink: 0;
     }
 
@@ -448,5 +460,114 @@
                 }
             }
         }
+    }
+}
+
+// ─── In-place cell editing ────────────────────────────────────────────────
+.erupt-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 22px;
+
+    .erupt-cell-text {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        // a tag brings its own right margin, which would push the pencil off centre
+        .ant-tag {
+            margin-right: 0;
+        }
+
+        &.erupt-cell-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            white-space: normal;
+        }
+    }
+
+    .erupt-cell-swatch {
+        font-size: 1.2rem;
+    }
+
+    // the affordance stays out of the way until the cell is pointed at, so a table of
+    // editable columns still reads as a table rather than a wall of icons
+    .erupt-cell-icon {
+        flex: none;
+        opacity: 0;
+        cursor: pointer;
+        font-size: 12px;
+        color: var(--erupt-text-secondary, #8c8c8c);
+        transition: opacity .15s ease-in-out, color .15s ease-in-out;
+
+        &:hover {
+            color: var(--erupt-primary, #1890ff);
+        }
+    }
+
+    // centred columns: the text stops stretching and the pencil leaves the flow, so the
+    // value sits in the middle whether or not the affordance is showing
+    &.erupt-cell-center {
+        position: relative;
+        justify-content: center;
+
+        .erupt-cell-text {
+            flex: none;
+        }
+
+        .erupt-cell-icon {
+            position: absolute;
+            right: 0;
+        }
+    }
+
+    &.erupt-cell-editable:hover .erupt-cell-icon {
+        opacity: .55;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+// Below the cdk overlay container (z-index 1000): a select, date or colour picker opened from
+// inside the editor renders in that container, and a mask stacked above it would swallow every
+// click on the dropdown.
+.erupt-cell-pop-mask {
+    position: fixed;
+    inset: 0;
+    z-index: 900;
+}
+
+// only placement and sizing here; the look comes from the theme's .ant-popover rules
+.erupt-cell-pop {
+    position: fixed;
+    z-index: 901;
+
+    ::ng-deep .ant-popover-inner-content {
+        width: 320px;
+        max-height: 60vh;
+        overflow: auto;
+    }
+
+    // the row form's label and bottom spacing have no place in a cell-sized panel
+    ::ng-deep .ant-form-item {
+        margin-bottom: 0;
+    }
+
+    ::ng-deep .ant-form-item-label,
+    ::ng-deep .ant-form-item-explain {
+        display: none;
+    }
+
+    .erupt-cell-editor-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 12px;
     }
 }

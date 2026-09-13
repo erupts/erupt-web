@@ -192,7 +192,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                 }
             },
             error: (error) => {
-                console.error('创建分组失败:', error);
+                console.error('Failed to create group:', error);
                 this.message.error(this.i18n.fanyi('flow.error.group_create_failed'));
             }
         });
@@ -236,7 +236,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                 }
             },
             error: (error) => {
-                console.error('编辑分组失败:', error);
+                console.error('Failed to edit group:', error);
                 this.message.error(this.i18n.fanyi('flow.error.group_edit_failed'));
             }
         });
@@ -292,7 +292,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                 }
             },
             error: (error) => {
-                console.error('分组排序失败:', error);
+                console.error('Failed to sort groups:', error);
                 this.message.error(this.i18n.fanyi('flow.error.group_sort_failed'));
             }
         });
@@ -425,7 +425,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                         }
                     },
                     error: (error) => {
-                        console.error('复制流程配置失败:', error);
+                        console.error('Failed to copy flow config:', error);
                         this.message.error(this.i18n.fanyi('flow.error.config_copy_failed'));
                     }
                 });
@@ -459,7 +459,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
             error: (error) => {
                 // Restore original state
                 config.enable = originalEnable;
-                console.error('切换流程配置状态失败:', error);
+                console.error('Failed to toggle flow config status:', error);
                 this.message.error(this.i18n.fanyi('flow.error.config_toggle_failed'));
             }
         });
@@ -488,7 +488,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
                         }
                     },
                     error: (error) => {
-                        console.error('删除流程配置失败:', error);
+                        console.error('Failed to delete flow config:', error);
                         this.message.error(this.i18n.fanyi('flow.error.config_delete_failed'));
                     }
                 });

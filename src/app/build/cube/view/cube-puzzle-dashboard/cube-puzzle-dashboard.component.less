@@ -16,7 +16,7 @@
     overflow: hidden;
 
     .sk-bar {
-        background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+        background: linear-gradient(90deg, var(--erupt-fill-secondary, #f0f0f0) 25%, var(--erupt-fill, #e8e8e8) 50%, var(--erupt-fill-secondary, #f0f0f0) 75%);
         background-size: 400% 100%;
         animation: sk-shimmer 1.4s ease infinite;
         border-radius: 3px;
@@ -29,7 +29,7 @@
         align-items: center;
         gap: 10px;
         padding: 7px 12px;
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         border-bottom: 1px solid var(--ant-border-color-split);
         flex-shrink: 0;
     }
@@ -38,7 +38,7 @@
         height: 26px;
         border-radius: 4px;
         flex-shrink: 0;
-        background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+        background: linear-gradient(90deg, var(--erupt-fill-secondary, #f0f0f0) 25%, var(--erupt-fill, #e8e8e8) 50%, var(--erupt-fill-secondary, #f0f0f0) 75%);
         background-size: 400% 100%;
         animation: sk-shimmer 1.4s ease infinite;
     }
@@ -47,7 +47,7 @@
     .sk-grid {
         flex: 1;
         padding: 12px;
-        background: #f5f7fa;
+        background: var(--erupt-bg-layout, #f5f7fa);
         display: flex;
         flex-direction: column;
         gap: 12px;
@@ -55,7 +55,7 @@
     }
 
     .sk-card {
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         border: 1px solid var(--ant-border-color-split);
         border-radius: 6px;
         padding: 14px 16px;
@@ -133,7 +133,7 @@
         padding: 0 4px;
 
         .sk-bar-col {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+            background: linear-gradient(90deg, var(--erupt-fill-secondary, #f0f0f0) 25%, var(--erupt-fill, #e8e8e8) 50%, var(--erupt-fill-secondary, #f0f0f0) 75%);
             background-size: 400% 100%;
             animation: sk-shimmer 1.4s ease infinite;
             flex: 1;
@@ -164,7 +164,7 @@
         height: 96px;
         border-radius: 50%;
         flex-shrink: 0;
-        background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+        background: linear-gradient(90deg, var(--erupt-fill-secondary, #f0f0f0) 25%, var(--erupt-fill, #e8e8e8) 50%, var(--erupt-fill-secondary, #f0f0f0) 75%);
         background-size: 400% 100%;
         animation: sk-shimmer 1.4s ease infinite;
     }
@@ -214,7 +214,7 @@
         border-left: 1px solid var(--ant-border-color-split);
         border-bottom: 1px solid var(--ant-border-color-split);
         background:
-            linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+            linear-gradient(90deg, var(--erupt-fill-secondary, #f0f0f0) 25%, var(--erupt-fill, #e8e8e8) 50%, var(--erupt-fill-secondary, #f0f0f0) 75%);
         background-size: 400% 100%;
         animation: sk-shimmer 1.4s ease infinite;
         border-radius: 2px 2px 0 0;
@@ -238,7 +238,7 @@
     //background-size: 20px 20px;
 
     &:fullscreen {
-        background-color: #fff;
+        background-color: var(--erupt-bg-container, #fff);
         background-image: inherit;
     }
 
@@ -250,7 +250,7 @@
     .puzzle-header {
         height: 50px;
         padding: 0 12px;
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -277,13 +277,13 @@
                 font-size: 18px;
                 font-weight: 600;
                 margin-right: 12px;
-                color: #262626;
+                color: var(--erupt-text, #262626);
                 transition: color 0.3s;
             }
 
             .dashboard-description-icon {
                 font-size: 16px;
-                color: #8c8c8c;
+                color: var(--erupt-text-tertiary, #8c8c8c);
                 margin-right: 12px;
                 cursor: pointer;
             }
@@ -341,7 +341,7 @@
         justify-content: space-between;
         padding: 7px 12px;
         border-bottom: 1px solid var(--ant-border-color-split);
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         font-size: 13px;
         font-weight: 500;
     }
@@ -367,7 +367,7 @@
 
     .puzzle-filter-row {
         padding: 7px 12px;
-        background: #fff;
+        background: var(--erupt-bg-container, #fff);
         border-bottom: 1px solid var(--ant-border-color-split);
         overflow-x: auto;
         transition: background 0.3s, border-color 0.3s;
@@ -382,7 +382,7 @@
                 display: flex;
                 align-items: center;
                 gap: 8px;
-                background: #f5f5f5;
+                background: var(--erupt-fill-tertiary, #f5f5f5);
                 padding: 4px 8px;
                 border-radius: 4px;
                 transition: background 0.3s;
@@ -404,17 +404,17 @@
                     cursor: move;
                     display: flex;
                     align-items: center;
-                    color: #8c8c8c;
+                    color: var(--erupt-text-tertiary, #8c8c8c);
                     padding: 2px;
 
                     &:hover {
-                        color: #262626;
+                        color: var(--erupt-text, #262626);
                     }
                 }
 
                 .filter-label {
                     font-size: 13px;
-                    color: #595959;
+                    color: var(--erupt-text-secondary, #595959);
                     white-space: nowrap;
                     font-weight: bold;
                     transition: color 0.3s;
@@ -485,7 +485,7 @@
         border-radius: 4px;
 
         &:hover {
-            background: #f0f0f0;
+            background: var(--erupt-fill-secondary, #f0f0f0);
             color: var(--ant-primary-color);
         }
 
@@ -523,7 +523,7 @@
             z-index: 100;
             display: flex;
             gap: 4px;
-            background: #fff;
+            background: var(--erupt-bg-elevated, #fff);
             border: 1px solid var(--ant-border-color-split);
             padding: 2px;
             border-radius: 6px;
@@ -589,7 +589,7 @@
 
     // Grid style
     .gridster-grid {
-        background: rgba(0, 0, 0, 0.02) !important;
+        background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.02)) !important;
     }
 
 }

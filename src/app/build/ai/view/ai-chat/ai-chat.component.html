@@ -108,6 +108,13 @@
                                     <nz-spin nzSimple></nz-spin>
                                 </div>
                             }
+                            @if (item.senderType === 'USER' && getImages(item).length) {
+                                <div class="bubble-images">
+                                    @for (img of getImages(item); track img; let imgIndex = $index) {
+                                        <img [src]="imageUrl(img)" (click)="openImage(item, imgIndex)" alt=""/>
+                                    }
+                                </div>
+                            }
                             @if (!item.loading && (item.content || item.contentHtml || item.frozenSegments?.length)) {
                                 @if (item.content || item.contentHtml) {
                                     <div class="markdown-body"
@@ -193,9 +200,24 @@
                 </div>
             }
             <div class="input-card">
-                @if (agents.length > 0 || !embedded) {
+                @if (agents.length > 0 || llms.length > 1 || !embedded) {
                 <div class="input-toolbar">
                     <div class="toolbar-left">
+                        @if (llms.length > 1) {
+                            <div class="agent-wrap">
+                                <span class="toolbar-label">{{ 'ai.chat.model' | translate }}</span>
+                                <nz-select
+                                    class="agent-select"
+                                    nzVariant="borderless"
+                                    [(ngModel)]="selectLlmId"
+                                    nzShowSearch
+                                    nzSize="small">
+                                    @for (llm of llms; track llm.id) {
+                                        <nz-option [nzValue]="llm.id" [nzLabel]="llm.name"></nz-option>
+                                    }
+                                </nz-select>
+                            </div>
+                        }
                         @if (agents.length > 0) {
                             <div class="agent-wrap">
                                 <span class="toolbar-label">{{ 'ai.chat.agent' | translate }}</span>
@@ -223,20 +245,47 @@
                     </div>
                 </div>
                 }
+                @if (pendingImages.length || uploadingImageCount > 0) {
+                    <div class="pending-images">
+                        @for (img of pendingImages; track img.path; let i = $index) {
+                            <div class="pending-image">
+                                <img [src]="img.url" (click)="previewPendingImage(i)" alt=""/>
+                                <span class="pending-image-remove" (click)="removePendingImage(i)">
+                                    <span nz-icon nzType="close" nzTheme="outline"></span>
+                                </span>
+                            </div>
+                        }
+                        @if (uploadingImageCount > 0) {
+                            <div class="pending-image pending-image-loading">
+                                <nz-spin nzSimple nzSize="small"></nz-spin>
+                            </div>
+                        }
+                    </div>
+                }
                 <div class="input-body">
                     <textarea
                         #textareaRef
                         nz-input
                         [(ngModel)]="content"
                         (keydown)="onInputKeydown($event)"
+                        (paste)="onPaste($event)"
                         [nzAutosize]="{ minRows: 2, maxRows: 6 }"
                         [placeholder]="selectedAgent?.desc || ('ai.chat.input_placeholder' | translate)"
                         rows="2">
                     </textarea>
                 </div>
                 <div class="input-footer">
-                    <span class="shortcut-hint">{{ 'ai.chat.shortcut_hint' | translate }}</span>
+                    <div class="footer-left">
+                        <button nz-button nzType="text" nzSize="small" class="toolbar-icon attach-btn"
+                                [title]="'ai.chat.upload_image' | translate"
+                                (click)="pickImages()">
+                            <span nz-icon nzType="paper-clip" nzTheme="outline"></span>
+                        </button>
+                        <input #imageInputRef type="file" accept="image/*" multiple hidden
+                               (change)="onImageFilesSelected($event)"/>
+                    </div>
                     <div class="footer-actions">
+                        <span class="shortcut-hint">{{ 'ai.chat.shortcut_hint' | translate }}</span>
                         @if (sending || streaming) {
                             <button nz-button nzType="text" nzSize="small" class="toolbar-icon toolbar-icon-stop"
                                     [title]="'ai.chat.stop_generation' | translate" (click)="stopGeneration()">
@@ -273,7 +322,7 @@
                             nzSize="small"
                             class="btn-send"
                             [nzLoading]="sending"
-                            [disabled]="sendDisabled || !content?.trim()"
+                            [disabled]="sendDisabled || (!content?.trim() && !pendingImages.length) || uploadingImageCount > 0"
                             (click)="send(content)">
                             {{ 'ai.chat.send' | translate }}
                         </button>

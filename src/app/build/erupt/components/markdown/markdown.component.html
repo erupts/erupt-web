@@ -1,5 +1,5 @@
 <nz-spin [nzSpinning]="loading">
-    <div class="markdown-editor-container" [hidden]="editorError">
+    <div class="markdown-editor-container" [class.is-readonly]="readonly" [hidden]="editorError">
         <div #vditorContainer class="vditor-container"></div>
     </div>
 </nz-spin>

@@ -7,6 +7,7 @@ import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
+import {UtilsService} from "@shared/service/utils.service";
 import {downloadFile} from "@shared/util/erupt.util";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {VL} from "../../build/erupt/model/erupt-field.model";
@@ -32,6 +33,7 @@ export class DataService {
 
     constructor(private _http: _HttpClient,
                 private i18n: I18NService,
+                private utilsService: UtilsService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         DataService.tokenService = this.tokenService;
     }
@@ -272,6 +274,16 @@ export class DataService {
         });
     }
 
+    findTextareaMention(eruptName: string, field: string, formData: { [key: string]: any }, eruptParentName?: string): Observable<string[]> {
+        return this._http.post<string[]>(RestPath.component + "/textarea-mention/" + eruptName + "/" + field, formData, null, {
+            observe: "body",
+            headers: {
+                erupt: eruptName,
+                eruptParent: eruptParentName || ''
+            }
+        });
+    }
+
 
     findTabTree(eruptName: string, tabFieldName: string, eruptParentName?: string): Observable<Tree[]> {
         return this._http.get<Tree[]>(RestPath.data + "/tab/tree/" + eruptName + "/" + tabFieldName, null, {
@@ -383,6 +395,19 @@ export class DataService {
     updateEruptData(eruptName: string, data: object): Observable<any> {
         return this._http.post<EruptApiModel>(RestPath.dataModify + "/" + eruptName + "/update", data, null, {
             observe: null,
+            headers: {
+                erupt: eruptName
+            }
+        });
+    }
+
+    //in-table cell edit: update a single field of one row
+    updateEruptCell(eruptName: string, id: any, field: string, value: any): Observable<EruptApiModel> {
+        return this._http.post(RestPath.dataModify + "/" + eruptName + "/update-cell", {
+            id: id,
+            field: field,
+            value: value
+        }, null, {
             headers: {
                 erupt: eruptName
             }
@@ -502,9 +527,11 @@ export class DataService {
         );
     }
 
-    //get menu, pass flush=true to rebuild the menu cache from the database
+    //get menu, pass flush=true to rebuild the menu cache from the database;
+    //tenant sessions use their own endpoint so the flush recomputes tenant menus, never platform ones
     getMenu(flush?: boolean): Observable<MenuVo[]> {
-        return this._http.get<MenuVo[]>(RestPath.erupt + "/menu", flush ? {flush: true} : null, {
+        let path = this.utilsService.isTenantToken() ? "/tenant/menu" : "/menu";
+        return this._http.get<MenuVo[]>(RestPath.erupt + path, flush ? {flush: true} : null, {
             observe: "body"
         });
     }

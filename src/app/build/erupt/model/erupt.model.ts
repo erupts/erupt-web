@@ -206,6 +206,7 @@ export interface Power {
     export: boolean;
     copy: boolean;
     ai: boolean;
+    cellEdit: boolean;      // in-place cell editing, on unless the model opts out
 }
 
 export interface Row {

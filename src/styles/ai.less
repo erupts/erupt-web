@@ -7,7 +7,7 @@
     pre.hljs {
         padding: 8px;
         margin: 0;
-        background-color: #f8f8f8;
+        background-color: var(--erupt-bg-spotlight, #f8f8f8);
         border-radius: 4px;
     }
 
@@ -35,23 +35,23 @@
         font-size: 14px;
         overflow: hidden;
         box-shadow: 0 0 0 1px #d1d5db;
-        border: 1px solid #d1d5db;
+        border: 1px solid var(--erupt-border, #d1d5db);
 
         th,
         td {
             padding: 10px 14px;
-            border: 1px solid #d1d5db;
+            border: 1px solid var(--erupt-border, #d1d5db);
         }
 
         th {
-            background: #f3f4f6;
+            background: var(--erupt-bg-spotlight, #f3f4f6);
             font-weight: 600;
-            color: #1a1a1a;
-            border-bottom: 2px solid #d1d5db;
+            color: var(--erupt-text, #1a1a1a);
+            border-bottom: 2px solid var(--erupt-border, #d1d5db);
         }
 
         tbody tr:hover {
-            background: rgba(0, 0, 0, 0.02);
+            background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.02));
         }
     }
 
@@ -61,7 +61,7 @@
         margin: 1em 0;
         border-radius: 4px;
         overflow: hidden;
-        border: 1px solid #e0e0e0;
+        border: 1px solid var(--erupt-border, #e0e0e0);
         font-family: monospace;
         font-size: 13px;
         line-height: 1.6;
@@ -109,7 +109,7 @@
         color: transparent !important;
         text-shadow: none;
         font-size: 0;
-        background: #f5f5f5;
+        background: var(--erupt-bg-spotlight, #f5f5f5);
 
         &::after {
             content: "Rendering...";

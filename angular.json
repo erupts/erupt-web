@@ -47,12 +47,12 @@
                             },
                             {
                                 "glob": "**/*",
-                                "input": "./node_modules/font-awesome/fonts/",
-                                "output": "/assets/font-awesome/fonts/"
+                                "input": "./node_modules/@fortawesome/fontawesome-free/webfonts/",
+                                "output": "/assets/font-awesome/webfonts/"
                             },
                             {
                                 "glob": "**/*",
-                                "input": "./node_modules/font-awesome/css/",
+                                "input": "./node_modules/@fortawesome/fontawesome-free/css/",
                                 "output": "/assets/font-awesome/css/"
                             },
                             {
@@ -69,11 +69,26 @@
                         "styles": [
                             "node_modules/@worktile/gantt/styles/index.scss",
                             "src/styles.less",
-                            "node_modules/vditor/src/assets/less/index.less",
-                            "node_modules/@xterm/xterm/css/xterm.css"
+                            "node_modules/@xterm/xterm/css/xterm.css",
+                            {
+                                "input": "src/styles/themes/dark.less",
+                                "bundleName": "style.dark",
+                                "inject": false
+                            },
+                            {
+                                "input": "src/styles/themes/compact.less",
+                                "bundleName": "style.compact",
+                                "inject": false
+                            },
+                            {
+                                "input": "src/styles/themes/compact-dark.less",
+                                "bundleName": "style.compact-dark",
+                                "inject": false
+                            }
                         ],
                         "scripts": [],
                         "allowedCommonJsDependencies": [
+                            "@novnc/novnc/lib/rfb.js",
                             "ajv",
                             "ajv-formats",
                             "mockjs",
@@ -81,7 +96,6 @@
                             "moment",
                             "print-js",
                             "lodash",
-                            "vditor",
                             "html2canvas",
                             "size-sensor",
                             "pdfast",

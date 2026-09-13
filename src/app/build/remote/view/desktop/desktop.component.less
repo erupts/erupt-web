@@ -1,0 +1,40 @@
+@import '../shared.less';
+
+.screen {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+
+    // noVNC injects its own wrapper and canvas; let the canvas keep focus outline off
+    canvas { outline: none; }
+}
+
+.cred-form {
+    align-items: stretch;
+}
+
+.cred-title {
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+}
+
+.cred-input {
+    height: 32px;
+    padding: 0 10px;
+    border: 1px solid #4b4c53;
+    border-radius: 6px;
+    background: #1c1d22;
+    color: #fff;
+    font: inherit;
+    outline: none;
+
+    &:focus { border-color: #6cb2ff; }
+}
+
+.cred-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}

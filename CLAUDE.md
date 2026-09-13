@@ -18,6 +18,7 @@ No test suite is present in this project.
 ## Code Style
 
 - All code comments must be written in **English**.
+- Prefer TypeScript `enum`s over string-literal union types for closed sets of values (menu types, modes, statuses, field types…). Put them next to the model they describe (e.g. `MenuMode` / `MenuTypeEnum` in `@shared/model/erupt-menu`), expose them to templates via a `readonly X = X` field, and never compare against raw string literals in `.ts` or `.html`.
 
 ## Architecture Overview
 
@@ -69,6 +70,15 @@ Hash-based routing. Feature modules are lazy-loaded:
 @core      → src/app/core/index
 @env/*     → src/environments/*
 ```
+
+### Dark Theme
+
+The app supports a runtime dark theme (settings drawer → 夜间模式, persisted as `localStorage["dark-theme"]`, default via `eruptSiteConfig.darkTheme` = `true` / `false` / `"auto"`). Appearance defaults live in `eruptSiteConfig.theme` (`src/app.js`): `primaryColor`, `headerColor`, `dark` (`true` / `false` / `"auto"`), `compact`, `skin` (`"default"` / `"brutalist"` / `"liquid-glass"`) and `menuMode` (`"normal"` / `"split"` / `"dual"` / `"top"`). They apply only while the user has no saved choice: `index.html` reads dark / compact / skin pre-bootstrap, `startup.service.ts` seeds the layout flags for `menuMode` without persisting them, and `WindowModel.init()` folds the legacy top-level keys (`darkTheme`, `compactTheme`, `skin`, `brutalistTheme`, `liquidGlass`, `menuMode`) into `WindowModel.theme` so the rest of the app reads one place.
+
+- Theme less lives in `src/styles/themes/` (`dark.less`, `compact.less`, `compact-dark.less`, plus `brutalist.less` and `liquid-glass.less`, the two optional skins, which ride the main bundle via styles.less). Three lazy theme bundles (angular.json `inject:false`, stable non-hashed names): `themes/dark.less` → `style.dark.css`, `themes/compact.less` → `style.compact.css`, and `themes/compact-dark.less` (dark + compact merged) → `style.compact-dark.css`. `index.html` owns the single `<link id="site-theme-style">` swapped between them via `window.eruptApplyDarkTheme(bool)` / `window.eruptApplyCompactTheme(bool)` (applied pre-bootstrap to avoid a flash; `dark-theme` localStorage supports `"auto"` = follow the OS scheme, with a live `matchMedia` listener). The `<link>` is created once pre-bootstrap and never removed (only href/disabled are swapped): it must stay BEFORE Angular's runtime-injected component `<style>` tags, otherwise a runtime theme toggle appends it last and the bundle's @delon defaults beat equal-specificity component overrides (broken reuse-tab bar, sidebar resize width, etc.) while a page refresh looks fine. **Changing angular.json bundles requires a dev-server restart** — a stale server answers the css URLs with the SPA-fallback HTML (empty stylesheet, no error).
+- `src/styles/tokens.less` defines semantic `--erupt-*` color tokens on `html` (light) and `html.dark` (dark), plus dark remaps of `--ant-primary-1..3` and a block (scoped `html.dark, html.compact`) re-anchoring high-visibility ant components to the runtime `--ant-primary-*` brand color (the compiled lazy theme css uses a fixed primary), and a dark-aside block (`html.dark`) holding the ONE copy of the dark sidebar's menu states. Low-specificity re-anchors (plain `a`) live at the END of `themes/dark.less` / `themes/compact.less` instead — never add a bare `html.dark a`-style rule in tokens.less: its extra specificity beats component link styles (this once turned every sidebar menu item brand-orange).
+- Theme color and header color are user-configurable in the settings drawer: `localStorage["theme-color"]` (primary palette via NzConfigService) and `localStorage["header-color"]` (`"primary"` or a literal color; `applyHeaderColor()` in `@shared/util/theme.util` sets `--erupt-header-*` inline on `<html>`, with luminance-based foreground). Header styles must use the `--erupt-header-*` tokens, not `--erupt-text`/`--erupt-bg-container`.
+- **Never hard-code light-theme colors in less files** (`#fff` surfaces, black-based text, light borders/fills). Use the tokens with the original value as fallback, e.g. `background: var(--erupt-bg-container, #fff)`. Colors on brand/colored/intentionally-dark surfaces (white text on primary buttons, node card headers, terminal) stay literal. Charts/editors follow `document.documentElement.classList.contains('dark')` (see bi chart, cube report, code-editor, markdown components).
 
 ### Icons
 

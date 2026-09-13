@@ -188,6 +188,7 @@ export class ChartComponent implements OnInit, OnDestroy {
             yField: y,
             slider: {},
             appendPadding: 16,
+            theme: document.documentElement.classList.contains("dark") ? "dark" : "light",
             legend: {
                 position: "bottom"
             }

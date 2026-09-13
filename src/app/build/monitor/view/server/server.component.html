@@ -16,7 +16,7 @@
         </div>
 
         <div class="monitor-body">
-        <!-- 概览：CPU / 内存 / JVM 使用率 -->
+        <!-- Overview: CPU / memory / JVM usage -->
         <div nz-row [nzGutter]="16">
             <div nz-col [nzXs]="24" [nzSm]="24" [nzMd]="8">
                 <nz-card [nzBordered]="false" class="overview-card" [nzTitle]="cpuTitle">
@@ -53,13 +53,13 @@
             </div>
         </div>
 
-        <!-- 使用率趋势 -->
+        <!-- Usage trend -->
         <nz-card [nzBordered]="false" [nzTitle]="trendTitle">
             <ng-template #trendTitle><i nz-icon nzType="fund"></i>{{'monitor.server.usage_trend' | translate}}</ng-template>
             <div #trend class="chart chart-trend"></div>
         </nz-card>
 
-        <!-- 网络 / 磁盘 IO 实时速率 -->
+        <!-- Network / disk IO real-time rate -->
         <nz-card [nzBordered]="false" [nzTitle]="ioTitle">
             <ng-template #ioTitle><i nz-icon nzType="swap"></i>{{'monitor.server.io_rate' | translate}}</ng-template>
             <div nz-row [nzGutter]="16" class="io-stats">
@@ -79,7 +79,7 @@
             <div #ioChart class="chart chart-line"></div>
         </nz-card>
 
-        <!-- 应用 + 服务器信息 -->
+        <!-- Application + server info -->
         <div nz-row [nzGutter]="16" class="equal-cards">
             <div nz-col [nzXs]="24" [nzMd]="12">
                 <nz-card [nzBordered]="false" [nzTitle]="appTitle" [nzExtra]="eruptVersion">
@@ -108,7 +108,7 @@
             </div>
         </div>
 
-        <!-- JVM 详情 -->
+        <!-- JVM details -->
         <nz-card [nzBordered]="false" [nzTitle]="jvmInfoTitle">
             <ng-template #jvmInfoTitle><i nz-icon nzType="thunderbolt"></i>{{'monitor.server.jvm_info' | translate}}</ng-template>
             <nz-descriptions nzBordered [nzColumn]="2" nzSize="small" class="desc-fixed">
@@ -151,7 +151,7 @@
             </nz-table>
         </nz-card>
 
-        <!-- 磁盘 -->
+        <!-- Disks -->
         <nz-card [nzBordered]="false" [nzTitle]="diskTitle">
             <ng-template #diskTitle><i nz-icon nzType="hdd"></i>{{'monitor.server.disk_info' | translate}}</ng-template>
             <nz-table #diskTable [nzData]="server.sysFiles" [nzShowPagination]="false" nzSize="small" [nzBordered]="true">

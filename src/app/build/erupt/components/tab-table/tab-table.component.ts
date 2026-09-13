@@ -53,6 +53,9 @@ export class TabTableComponent implements OnInit {
 
     loading = true;
 
+    // temp pk sequence for unsaved rows; random values collide and break pk-based row matching
+    private tempPkSeq: number = 0;
+
     constructor(private dataService: DataService,
                 private uiBuildService: UiBuildService,
                 private dataHandlerService: DataHandlerService,
@@ -73,7 +76,7 @@ export class TabTableComponent implements OnInit {
             this.loading = false;
         }, 300);
         if (this.onlyRead) {
-            this.column = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true);
+            this.column = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false);
         } else {
             const viewValue: STColumn[] = [];
             viewValue.push({
@@ -85,7 +88,7 @@ export class TabTableComponent implements OnInit {
                 index: this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol
             });
 
-            viewValue.push(...this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false, true));
+            viewValue.push(...this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false));
             let operators: STColumnButton[] = [];
             if (this.mode == "add") {
                 operators.push({
@@ -107,13 +110,14 @@ export class TabTableComponent implements OnInit {
                                 if (result.status == Status.SUCCESS) {
                                     obj = result.data;
                                     this.objToLine(obj);
+                                    let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+                                    // pk is not an editable field, so the round-tripped object may lose it
+                                    obj[tabPrimaryKeyCol] = record[tabPrimaryKeyCol];
                                     let $value = this.tabErupt.eruptFieldModel.eruptFieldJson.edit.$value;
-                                    $value.forEach((val, index) => {
-                                        let tabPrimaryKeyCol = this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
-                                        if (record[tabPrimaryKeyCol] == val[tabPrimaryKeyCol]) {
-                                            $value[index] = obj;
-                                        }
-                                    });
+                                    let index = $value.findIndex(val => record[tabPrimaryKeyCol] == val[tabPrimaryKeyCol]);
+                                    if (index > -1) {
+                                        $value[index] = obj;
+                                    }
                                     this.st.reload();
                                     return true;
                                 } else {
@@ -175,7 +179,7 @@ export class TabTableComponent implements OnInit {
                     let result = await this.dataService.eruptTabAdd(this.eruptBuildModel.eruptModel.eruptName, this.tabErupt.eruptFieldModel.fieldName, obj, this.eruptParentName).toPromise().then(resp => resp);
                     if (result.status == Status.SUCCESS) {
                         obj = result.data;
-                        obj[this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] = -Math.floor(Math.random() * 1000);
+                        obj[this.tabErupt.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol] = --this.tempPkSeq;
                         let edit = this.tabErupt.eruptFieldModel.eruptFieldJson.edit;
                         this.objToLine(obj);
                         if (!edit.$value) {
@@ -237,10 +241,15 @@ export class TabTableComponent implements OnInit {
                             let ed = eruptFieldModel.eruptFieldJson.edit;
                             switch (ed.type) {
                                 case EditType.BOOLEAN:
-                                    v[key] = v[key] === ed.boolType.trueText;
+                                    // the query returns the raw boolean; older payloads carried the wording
+                                    v[key] = typeof v[key] === "boolean" ? v[key] : v[key] === ed.boolType.trueText;
                                     break;
                                 case EditType.CHOICE:
+                                    // the query returns the stored value; older payloads carried the label
                                     for (let vl of eruptFieldModel.componentValue) {
+                                        if (vl.value == v[key]) {
+                                            break;
+                                        }
                                         if (vl.label == v[key]) {
                                             v[key] = vl.value;
                                             break;

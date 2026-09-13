@@ -12,15 +12,35 @@ export interface CanvasVersion {
     createTime: string;
 }
 
+/** One data model bound to the canvas, configured as a MULTI_FORM block on the record */
+export interface CanvasModel {
+    dataType: string;
+    model: string;
+    purpose: string | null;
+    /** Write operations the page may offer on this model (add / update / delete); empty = read-only */
+    writes: string[];
+}
+
+/**
+ * The running-round marker the backend keeps for a canvas. Alive while a round runs;
+ * gone once a version is filed; carries `error` when the round failed (reported once).
+ */
+export interface CanvasGenerating {
+    startedAt: number;
+    message: string;
+    error?: string | null;
+}
+
 export interface CanvasInfo {
     name: string;
-    dataType: string | null;
-    targetModel: string | null;
+    models: CanvasModel[];
     style: string | null;
     llmId: number | null;
     activeVersion: number | null;
     publishVersion: number | null;
     versions: CanvasVersion[];
+    /** Non-null when a round was already running when the designer was opened */
+    generating: CanvasGenerating | null;
 }
 
 export interface ModelGroup {
@@ -50,6 +70,11 @@ export class CanvasApiService {
     constructor(private _http: _HttpClient) {
     }
 
+    /** Polled while a round is in flight; resolves to null once it is done or gone */
+    generating(code: string): Observable<R<CanvasGenerating | null>> {
+        return this._http.get(`${this.base}/generating/${code}`);
+    }
+
     info(code: string): Observable<R<CanvasInfo>> {
         return this._http.get<R<CanvasInfo>>(`${this.base}/${code}`);
     }
@@ -76,21 +101,14 @@ export class CanvasApiService {
         return this._http.get<R<Llm[]>>(`${this.base}/llms`);
     }
 
+    /**
+     * Start a generation round; returns as soon as the round is opened. Progress and
+     * outcome are then read through `generating()`, the same poll used after a reload.
+     * Only the picked element's selector travels — the backend holds the page source.
+     */
     generate(code: string, message: string, style: string | null, llmId: number | null,
-             element: string | null): Observable<R<CanvasVersion>> {
-        return this._http.post<R<CanvasVersion>>(`${this.base}/generate/${code}`, {message, style, llmId, element});
-    }
-
-    /** SSE URL of the streaming generate endpoint (EventSource is GET-only, token travels as _token) */
-    generateSseUrl(code: string, message: string, style: string | null, llmId: number | null, token: string,
-                   element: string | null): string {
-        const params = new URLSearchParams({message, _token: token});
-        if (style) params.set('style', style);
-        if (llmId != null) params.set('llmId', String(llmId));
-        // Only the picked element's selector travels here — the backend already holds the
-        // full page source, so it resolves the element there without shipping its markup
-        if (element) params.set('element', element);
-        return `${this.base}/generate-sse/${code}?${params.toString()}`;
+             element: string | null): Observable<R<void>> {
+        return this._http.post<R<void>>(`${this.base}/generate/${code}`, {message, style, llmId, element});
     }
 
     active(code: string, versionId: number): Observable<R<void>> {
