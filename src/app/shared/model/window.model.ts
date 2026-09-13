@@ -30,11 +30,20 @@ export class WindowModel {
 
     public static copyrightTxt: any; //license text
 
+    // eruptSiteConfig.theme — appearance defaults. Every entry applies only while the
+    // user has no saved choice in the settings drawer.
     public static theme: {
         primaryColor?: string,
         // Header bar color: "primary" (follow the primary color) or a literal
         // CSS color; users can still override it in the settings drawer.
         headerColor?: string,
+        // false | true | "auto" (follow the OS color scheme)
+        dark?: boolean | "auto",
+        compact?: boolean,
+        // "default" | "brutalist" | "liquid-glass"
+        skin?: string,
+        // "normal" | "split" | "dual" | "top" (MenuMode)
+        menuMode?: string,
         [key: string]: any
     }
 
@@ -59,9 +68,19 @@ export class WindowModel {
         WindowModel.copyright = WindowModel.config["copyright"];
         WindowModel.copyrightTxt = WindowModel.config["copyrightTxt"]; //license text
         WindowModel.upload = WindowModel.config["upload"] || false;
-        WindowModel.theme = WindowModel.config["theme"] || {
+        // Legacy top-level switches (darkTheme / compactTheme / skin / brutalistTheme /
+        // liquidGlass / menuMode) are folded into theme so the rest of the app reads one place;
+        // an explicit theme.* value wins over them.
+        const cfg = WindowModel.config;
+        const legacySkin = cfg["skin"] || (cfg["brutalistTheme"] ? "brutalist" : cfg["liquidGlass"] ? "liquid-glass" : undefined);
+        WindowModel.theme = {
             primaryColor: "#3f51b5",
-        }
+            dark: cfg["darkTheme"],
+            compact: cfg["compactTheme"],
+            skin: legacySkin,
+            menuMode: cfg["menuMode"],
+            ...(cfg["theme"] || {})
+        };
     }
 
     public static eruptEvent: {

@@ -107,8 +107,7 @@ yarn start
 | `domain` / `fileDomain`       | 后端接口与附件的基础地址（留空表示同源）               |
 | `title` / `desc`              | 页面标题与登录页描述                                   |
 | `logoPath` / `logoFoldPath` / `loginLogoPath` / `logoText` | 品牌 Logo 与文字            |
-| `theme.primaryColor` / `theme.headerColor` | 默认主色与顶栏颜色                        |
-| `darkTheme` / `asideDark`     | 默认夜间模式 / 深色侧边栏（用户可在设置面板中覆盖）    |
+| `theme`                       | 外观默认值，用户在设置面板中做过选择后以用户选择为准：`primaryColor` 主色、`headerColor` 顶栏颜色（`"primary"` 跟随主色或任意 CSS 颜色）、`dark` 明暗模式（`true` / `false` / `"auto"` 跟随系统）、`compact` 紧凑模式、`skin` 主题风格（`"default"` / `"brutalist"` / `"liquid-glass"`）、`menuMode` 菜单模式（`"normal"` 侧栏 / `"split"` 顶部分类 / `"dual"` 双栏侧栏 / `"top"` 全部菜单在顶部）。旧的顶层 `darkTheme`、`compactTheme`、`brutalistTheme`、`liquidGlass` 仍然兼容。 |
 | `tabReuse`                    | 默认开启多页签路由复用                                 |
 | `registerPage`                | 登录页显示的自定义注册页地址                           |
 | `copyright` / `copyrightTxt`  | 是否显示版权信息 / 自定义版权文案                      |

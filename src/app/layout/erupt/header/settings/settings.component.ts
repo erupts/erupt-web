@@ -57,7 +57,8 @@ export class SettingsComponent implements OnInit {
         if (pref === "auto") return "auto";
         if (pref === "true") return "dark";
         if (pref === "false") return "light";
-        // no saved choice — reflect the site-config default already applied
+        // no saved choice — reflect the site-config default already applied by index.html
+        if (WindowModel.theme?.dark === "auto") return "auto";
         return document.documentElement.classList.contains("dark") ? "dark" : "light";
     })();
 

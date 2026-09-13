@@ -144,6 +144,9 @@ export function applyThemeColor(nzConfigService: NzConfigService, color: string 
         localStorage.removeItem("theme-color");
     }
     const primaryColor = color || WindowModel.theme?.primaryColor || DEFAULT_THEME_COLOR;
-    nzConfigService.set("theme", {...WindowModel.theme, primaryColor});
+    // only the color entries belong to ng-zorro; dark / compact / skin / menuMode are
+    // appearance defaults read elsewhere (index.html, startup.service)
+    const {dark, compact, skin, menuMode, ...colors} = WindowModel.theme || {};
+    nzConfigService.set("theme", {...colors, primaryColor});
     return primaryColor;
 }

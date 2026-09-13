@@ -107,8 +107,7 @@ Most customization needs no rebuild. `src/app.js` (served as `/app.js`) sets `wi
 | `domain` / `fileDomain`       | Backend API and attachment base URLs (empty = same origin)   |
 | `title` / `desc`              | Page title and login description                             |
 | `logoPath` / `logoFoldPath` / `loginLogoPath` / `logoText` | Branding assets                 |
-| `theme.primaryColor` / `theme.headerColor` | Default primary color and header bar color      |
-| `darkTheme` / `asideDark`     | Default dark mode / dark sidebar (users can override in settings) |
+| `theme`                       | Appearance defaults, each applying only until the user picks something in the settings drawer: `primaryColor`, `headerColor` (`"primary"` or a CSS color), `dark` (`true` / `false` / `"auto"` = follow the OS), `compact`, `skin` (`"default"` / `"brutalist"` / `"liquid-glass"`), `menuMode` (`"normal"` sidebar / `"split"` categories in the header / `"dual"` two-column sidebar / `"top"` whole menu in the header). The older top-level `darkTheme`, `compactTheme`, `brutalistTheme` and `liquidGlass` keys still work. |
 | `tabReuse`                    | Enable multi-tab route reuse by default                      |
 | `registerPage`                | URL of a custom registration page shown on the login screen  |
 | `copyright` / `copyrightTxt`  | Show the copyright footer / custom footer text               |
