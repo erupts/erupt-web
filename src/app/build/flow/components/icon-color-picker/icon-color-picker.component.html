@@ -27,17 +27,7 @@
     <!-- Icon selection -->
     <div class="icon-section">
       <h4>{{ 'flow.icon.select_icon' | translate }}</h4>
-      <div class="icon-grid">
-        @for (icon of icons; track icon) {
-          <div class="icon-item"
-            [class.selected]="previewIcon === icon"
-            (click)="selectIcon(icon, $event)">
-            <div class="icon-square" style="color:#000">
-              <i class="{{ icon }}"></i>
-            </div>
-          </div>
-        }
-      </div>
+      <erupt-icon-picker [ngModel]="previewIcon" (ngModelChange)="selectIcon($event)" name="flowIcon" [showColors]="false"></erupt-icon-picker>
     </div>
   </div>
 

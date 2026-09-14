@@ -39,48 +39,6 @@ export class IconColorPickerComponent implements OnInit {
         '#d48806'
     ];
 
-    icons: string[] = [
-        'fa fa-user',
-        'fa fa-credit-card',
-        'fa fa-bell',
-        'fa fa-folder',
-        'fa fa-calendar',
-        'fa fa-car',
-        'fa fa-yen',
-        'fa fa-legal',
-        'fa fa-clock-o',
-        'fa fa-file-text',
-        'fa fa-users',
-        'fa fa-exchange',
-        'fa fa-bolt',
-        'fa fa-map-marker',
-        'fa fa-user-circle',
-        'fa fa-user-times',
-        'fa fa-file-text-o',
-        'fa fa-plane',
-        'fa fa-lightbulb-o',
-        'fa fa-pie-chart',
-        'fa fa-bullseye',
-        'fa fa-sitemap',
-        'fa fa-building',
-        'fa fa-cog',
-        'fa fa-search',
-        'fa fa-trash',
-        'fa fa-save',
-        'fa fa-print',
-        'fa fa-download',
-        'fa fa-upload',
-        'fa fa-share',
-        'fa fa-check-circle',
-        'fa fa-exclamation-triangle',
-        'fa fa-times-circle',
-        'fa fa-info-circle',
-        'fa fa-question-circle',
-        'fa fa-lock',
-        'fa fa-unlock',
-        'fa fa-eye',
-        'fa fa-eye-slash'
-    ];
 
     ngOnInit(): void {
         this.initPreview();
@@ -92,9 +50,8 @@ export class IconColorPickerComponent implements OnInit {
         this.previewColor = this.selectedColor;
     }
 
-    // Select icon (preview)
-    selectIcon(icon: string, event: Event): void {
-        event.stopPropagation();
+    // Select icon (preview); the full Font Awesome catalogue comes from erupt-icon-picker
+    selectIcon(icon: string): void {
         this.previewIcon = icon;
     }
 

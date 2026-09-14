@@ -294,6 +294,20 @@
                         </se>
                     </div>
                 }
+                @case (editType.ICON) {
+                    <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                         [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
+                        <se [label]="field.eruptFieldJson.edit.title"
+                            [required]="field.eruptFieldJson.edit.notNull"
+                            [optionalHelp]="field.eruptFieldJson.edit.desc">
+                            <erupt-icon-picker [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [name]="field.fieldName"
+                                               [size]="size"
+                                               [placeholder]="field.eruptFieldJson.edit.placeHolder"
+                                               [disabled]="isReadonly(field)"></erupt-icon-picker>
+                        </se>
+                    </div>
+                }
                 @case (editType.COLOR) {
                     <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                          [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">

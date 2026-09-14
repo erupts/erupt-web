@@ -150,7 +150,7 @@ export class UiBuildService {
                     };
                     break;
                 case EditType.CHOICE:
-                    // the query returns the stored value; the label and its colour are looked up here
+                    // the query returns the stored value; the label and its color are looked up here
                     obj.format = (item: any) => {
                         if (item[view.column] == null) {
                             return "";
@@ -202,6 +202,15 @@ export class UiBuildService {
                         let percent = range > 0 ? Math.min(Math.max((num - progressMin) / range * 100, 0), 100) : 0;
                         let color = percent >= 100 ? "#52c41a" : "#1890ff";
                         return `<span class="e-progress"><span class="e-progress-outer"><span class="e-progress-inner" style="width:${percent}%;background:${color}"></span></span><span class="e-progress-text">${Math.round(percent)}%</span></span>`;
+                    };
+                    break;
+                case ViewType.ICON:
+                    obj.className = "text-center";
+                    obj.format = (item: any) => {
+                        const cls = item[view.column];
+                        // the stored value is a class list, never markup: keep it out of the attribute unescaped
+                        return cls && /^[\w\s-]+$/.test(cls)
+                            ? `<i class="${cls}" style="font-size: 1.2rem" aria-hidden="true" title="${cls}"></i>` : "";
                     };
                     break;
                 case ViewType.COLOR:
@@ -736,7 +745,7 @@ export class UiBuildService {
     // editing, so those columns keep their normal rendering and are edited through the row form.
     private static readonly CELL_EDIT_VIEW_TYPES: ViewType[] = [
         ViewType.TEXT, ViewType.SAFE_TEXT, ViewType.NUMBER, ViewType.PROGRESS,
-        ViewType.COLOR, ViewType.DATE, ViewType.DATE_TIME, ViewType.BOOLEAN
+        ViewType.COLOR, ViewType.ICON, ViewType.DATE, ViewType.DATE_TIME, ViewType.BOOLEAN
     ];
 
     // Types the cell can host. The two single-object references are picked in the very modal the
@@ -751,7 +760,7 @@ export class UiBuildService {
     private static readonly CELL_EDIT_TYPES: EditType[] = [
         EditType.INPUT, EditType.TEXTAREA, EditType.NUMBER, EditType.SLIDER,
         EditType.BOOLEAN, EditType.DATE, EditType.CHOICE,
-        EditType.COLOR, EditType.RATE, EditType.TAGS,
+        EditType.COLOR, EditType.ICON, EditType.RATE, EditType.TAGS,
         EditType.AUTO_COMPLETE, EditType.REFERENCE_TREE, EditType.REFERENCE_TABLE
     ];
 

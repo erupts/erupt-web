@@ -569,6 +569,7 @@ designer.type.date,日期,日期,Date,Date,日付,Date,Date,Date,Date,Date,Date,
 designer.type.slider,滑块,滑塊,Slider,Slider,スライダー,Slider,Slider,Slider,Slider,Slider,Slider,Slider
 designer.type.rate,评分,評分,Rate,Rate,評価,Rate,Rate,Rate,Rate,Rate,Rate,Rate
 designer.type.color,颜色,顏色,Color,Color,色,Color,Color,Color,Color,Color,Color,Color
+designer.type.icon,图标,圖示,Icon,Icône,アイコン,아이콘,Иконка,Icono,Symbol,Ícone,Ikon,أيقونة
 designer.type.choice,单选,單選,Choice,Choice,単一選択,Choice,Choice,Choice,Choice,Choice,Choice,Choice
 designer.type.multi_choice,多选,多選,Multi Choice,Multi Choice,複数選択,Multi Choice,Multi Choice,Multi Choice,Multi Choice,Multi Choice,Multi Choice,Multi Choice
 designer.type.tags,标签,標籤,Tags,Tags,タグ,Tags,Tags,Tags,Tags,Tags,Tags,Tags
@@ -1263,3 +1264,13 @@ micro_app.err_no_render,子应用已加载但没有渲染内容，可能不兼�
 micro_app.err_unknown,子应用加载失败,子應用載入失敗,Failed to load the sub-app,Échec du chargement de la sous-application,サブアプリの読み込みに失敗しました,하위 앱 로드 실패,Не удалось загрузить подприложение,Error al cargar la subaplicación,Laden der Sub-App fehlgeschlagen,Falha ao carregar a subaplicação,Gagal memuat sub-aplikasi,فشل تحميل التطبيق الفرعي
 ai_assist.done,内容已生成,內容已生成,Draft ready,Brouillon prêt,生成が完了しました,초안 생성 완료,Черновик готов,Borrador listo,Entwurf fertig,Rascunho pronto,Draf siap,المسودة جاهزة
 menu.top_mode,顶部菜单,頂部選單,Top menu,Menu supérieur,トップメニュー,상단 메뉴,Верхнее меню,Menú superior,Obere Menüleiste,Menu superior,Menu atas,القائمة العلوية
+icon_picker.search,搜索图标名称或关键词,搜尋圖示名稱或關鍵字,Search icons by name or keyword,Rechercher une icône par nom ou mot-clé,アイコン名やキーワードで検索,아이콘 이름 또는 키워드 검색,Поиск иконок по имени или ключевому слову,Buscar iconos por nombre o palabra clave,Symbole nach Name oder Stichwort suchen,Pesquisar ícones por nome ou palavra-chave,Cari ikon berdasarkan nama atau kata kunci,البحث عن الأيقونات بالاسم أو الكلمة المفتاحية
+icon_picker.all,全部,全部,All,Tous,すべて,전체,Все,Todos,Alle,Todos,Semua,الكل
+icon_picker.solid,实心,實心,Solid,Plein,ソリッド,솔리드,Сплошные,Sólido,Gefüllt,Sólido,Solid,مصمت
+icon_picker.regular,线性,線性,Regular,Contour,レギュラー,레귤러,Контурные,Regular,Umriss,Regular,Regular,عادي
+icon_picker.brands,品牌,品牌,Brands,Marques,ブランド,브랜드,Бренды,Marcas,Marken,Marcas,Merek,علامات تجارية
+icon_picker.empty,没有匹配的图标,沒有符合的圖示,No matching icons,Aucune icône correspondante,一致するアイコンがありません,일치하는 아이콘이 없습니다,Нет подходящих иконок,No hay iconos coincidentes,Keine passenden Symbole,Sem ícones correspondentes,Tidak ada ikon yang cocok,لا توجد أيقونات مطابقة
+icon_picker.missing,图标清单未生成，请执行 npm run fa-icons,圖示清單未產生，請執行 npm run fa-icons,"Icon catalogue not generated, run npm run fa-icons","Catalogue d'icônes non généré, exécutez npm run fa-icons",アイコン一覧が生成されていません。npm run fa-icons を実行してください,아이콘 목록이 생성되지 않았습니다. npm run fa-icons 를 실행하세요,"Каталог иконок не создан, выполните npm run fa-icons","Catálogo de iconos no generado, ejecute npm run fa-icons","Symbolkatalog nicht erzeugt, npm run fa-icons ausführen","Catálogo de ícones não gerado, execute npm run fa-icons","Katalog ikon belum dibuat, jalankan npm run fa-icons",لم يتم إنشاء فهرس الأيقونات، نفّذ npm run fa-icons
+icon_picker.color_default,跟随文字颜色,跟隨文字顏色,Inherit text colour,Couleur du texte,文字色に従う,텍스트 색상 따름,Цвет текста,Color del texto,Textfarbe,Cor do texto,Ikuti warna teks,لون النص
+icon_picker.color_primary,主题色（随主题变化）,主題色（隨主題變化）,Theme primary colour (follows the theme),Couleur principale du thème (suit le thème),テーマのプライマリカラー（テーマに追従）,테마 기본 색상(테마에 따라 변경),Основной цвет темы (меняется с темой),Color primario del tema (sigue al tema),Primärfarbe des Themes (folgt dem Theme),Cor primária do tema (segue o tema),Warna utama tema (mengikuti tema),اللون الأساسي للسمة (يتبع السمة)
+icon_picker.placeholder,选择图标,選擇圖示,Choose an icon,Choisir une icône,アイコンを選択,아이콘 선택,Выберите иконку,Elegir un icono,Symbol wählen,Escolher um ícone,Pilih ikon,اختر أيقونة

@@ -623,6 +623,14 @@
                     }
                 </span>
             }
+            @case ("icon") {
+                <span class="erupt-cell-text">
+                    @if (cellDisplay(item, col)) {
+                        <!-- a class binding, never markup: the stored value is a class list such as "fa fa-house icon-red" -->
+                        <i class="erupt-cell-fa" [class]="cellDisplay(item, col)" [title]="cellDisplay(item, col)" aria-hidden="true"></i>
+                    }
+                </span>
+            }
             @case ("progress") {
                 <span class="erupt-cell-text e-progress">
                     <span class="e-progress-outer">

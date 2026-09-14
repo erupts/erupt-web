@@ -22,6 +22,7 @@ export enum EditType {
     PASSWORD = "PASSWORD",
     NUMBER = "NUMBER",
     COLOR = "COLOR",
+    ICON = "ICON",                             //Font Awesome icon picker
     TEXTAREA = "TEXTAREA",                     //large text area
     CHOICE = "CHOICE",                         //single selection
     MULTI_CHOICE = "MULTI_CHOICE",             //multiple selection
@@ -74,6 +75,7 @@ export enum HtmlEditTypeEnum {
 export enum ViewType {
     TEXT = "TEXT",
     COLOR = "COLOR",
+    ICON = "ICON",
     SAFE_TEXT = "SAFE_TEXT",
     LINK = "LINK",
     TAB_VIEW = "TAB_VIEW",

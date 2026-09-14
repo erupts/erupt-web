@@ -37,6 +37,7 @@ export class SmartSearchComponent implements OnInit {
     searchTypeMapping: Partial<Record<EditType, OperatorType>> = {
         [EditType.INPUT]: OperatorType.STRING,
         [EditType.COLOR]: OperatorType.STRING,
+        [EditType.ICON]: OperatorType.STRING,
         [EditType.TEXTAREA]: OperatorType.STRING,
         [EditType.MARKDOWN]: OperatorType.STRING,
         [EditType.HTML_EDITOR]: OperatorType.STRING,

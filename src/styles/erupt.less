@@ -262,3 +262,19 @@ html.erupt-route-loading,
 html.erupt-route-loading * {
     cursor: progress !important;
 }
+
+// ---------------------------------------------------------------------------------------------
+// Icon color classes. The icon picker appends one of these to the Font Awesome class it stores,
+// e.g. "fa fa-house icon-red", so a stored icon stays a plain class list that every <i class>
+// renders as is; nothing parses it. icon-primary follows the runtime theme color.
+// ---------------------------------------------------------------------------------------------
+.icon-primary { color: var(--ant-primary-color, #1677ff); }
+.icon-blue { color: #1890ff; }
+.icon-cyan { color: #13c2c2; }
+.icon-green { color: #52c41a; }
+.icon-gold { color: #faad14; }
+.icon-orange { color: #fa8c16; }
+.icon-red { color: #f5222d; }
+.icon-magenta { color: #eb2f96; }
+.icon-purple { color: #722ed1; }
+.icon-grey { color: #8c8c8c; }

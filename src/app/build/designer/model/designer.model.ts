@@ -190,6 +190,7 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
             {type: EditType.SLIDER, label: "designer.type.slider", icon: "sliders", edit: {sliderType: {min: 0, max: 100, step: 1}}},
             {type: EditType.RATE, label: "designer.type.rate", icon: "star", edit: {rateType: {count: 5}}},
             {type: EditType.COLOR, label: "designer.type.color", icon: "bg-colors"},
+            {type: EditType.ICON, label: "designer.type.icon", icon: "smile"},
             {type: EditType.HIDDEN, label: "designer.type.hidden", icon: "eye-invisible"}
         ]
     },

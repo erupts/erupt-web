@@ -1741,6 +1741,9 @@ export class TableComponent implements OnInit, OnDestroy {
         if (viewType === ViewType.COLOR) {
             return "color";
         }
+        if (viewType === ViewType.ICON) {
+            return "icon";
+        }
         const editType = this.cellFieldModel(this.colIndexStr(col))?.eruptFieldJson.edit?.type;
         if (editType === EditType.BOOLEAN) {
             return "bool";

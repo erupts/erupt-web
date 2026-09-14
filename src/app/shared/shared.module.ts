@@ -19,6 +19,7 @@ import {NzAffixModule} from "ng-zorro-antd/affix";
 import {HeaderI18nComponent} from "@shared/component/i18n.component";
 import {EruptStorageService} from "@shared/service/erupt-storage.service";
 import {StProgressComponent} from "@shared/component/st-progress/st-progress.component";
+import {IconPickerComponent} from "@shared/component/icon-picker/icon-picker.component";
 import {STWidgetRegistry} from "@delon/abc/st";
 import {UEditorComponent} from "@shared/component/ueditor/ueditor.component";
 import {CkeditorComponent} from "../build/erupt/components/ckeditor/ckeditor.component";
@@ -39,7 +40,7 @@ import {LocalPipe} from "@shared/pipe/local.pipe";
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS: any[] = [EruptIframeComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent, CkeditorComponent, PageDescComponent];
+const COMPONENTS: any[] = [EruptIframeComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent, CkeditorComponent, PageDescComponent, IconPickerComponent];
 const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, EnumToArrayPipe, I18nPipe, LocalPipe, SyncVirtualScrollDirective, InjectorRefDirective, KeysPipe];
 
 // #endregion
