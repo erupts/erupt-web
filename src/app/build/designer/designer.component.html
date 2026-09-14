@@ -169,6 +169,12 @@
                                     @case (editType.COLOR) {
                                         <div class="mock-color-block"></div>
                                     }
+                                    @case (editType.ICON) {
+                                        <nz-input-group nzSuffixIcon="appstore">
+                                            <input nz-input disabled
+                                                   [placeholder]="field.edit.placeHolder || ('icon_picker.placeholder' | translate)"/>
+                                        </nz-input-group>
+                                    }
                                     @case (editType.CHOICE) {
                                         @if (field.edit.choiceType?.type === choiceEnum.RADIO) {
                                             <nz-radio-group [ngModel]="null" nzDisabled>

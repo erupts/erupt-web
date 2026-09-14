@@ -26,6 +26,7 @@ import {
     ReadOutline,
     SelectOutline,
     SlidersOutline,
+    SmileOutline,
     StarOutline,
     TagsOutline,
     UploadOutline
@@ -60,7 +61,7 @@ export class DesignerModule {
         iconService.addIcon(AppstoreOutline, BarChartOutline, BgColorsOutline, CalendarOutline, CheckCircleOutline,
             CheckSquareOutline, CloudUploadOutline, CodeOutline, DownCircleOutline, DragOutline, EditOutline,
             EnvironmentOutline, FieldNumberOutline, FontSizeOutline, HighlightOutline, LayoutOutline, LineOutline,
-            ProjectOutline, ReadOutline, SelectOutline, SlidersOutline, StarOutline, TagsOutline, UploadOutline);
+            ProjectOutline, ReadOutline, SelectOutline, SlidersOutline, SmileOutline, StarOutline, TagsOutline, UploadOutline);
     }
 
 }
