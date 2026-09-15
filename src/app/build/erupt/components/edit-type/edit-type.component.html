@@ -376,7 +376,7 @@
                     }
                 }
                 @case (editType.MULTI_CHOICE) {
-                    @if (field.eruptFieldJson.edit.multiChoiceType?.type === multiChoiceEnum.CHECKBOX) {
+                    @if (field.eruptFieldJson.edit.multiChoiceType?.type !== multiChoiceEnum.SELECT) {
                         <div nz-col [nzXs]="24">
                             <ng-container [ngTemplateOutlet]="multiChoiceSe"
                                           [ngTemplateOutletContext]="{$implicit: field}"></ng-container>
@@ -418,6 +418,17 @@
                             <erupt-checkbox [eruptBuildModel]="eruptBuildModel" [onlyRead]="isReadonly(field)"
                                             [eruptParentName]="parentEruptName"
                                             [eruptFieldModel]="field" style="max-height: 20px"></erupt-checkbox>
+                        </se>
+                    </div>
+                }
+                @case (editType.TRANSFER) {
+                    <div nz-col [nzSpan]="24">
+                        <se [label]="field.eruptFieldJson.edit.title"
+                            [required]="field.eruptFieldJson.edit.notNull"
+                            [optionalHelp]="field.eruptFieldJson.edit.desc">
+                            <erupt-transfer [eruptBuildModel]="eruptBuildModel" [eruptFieldModel]="field"
+                                            [eruptParentName]="parentEruptName"
+                                            [disabled]="isReadonly(field)"></erupt-transfer>
                         </se>
                     </div>
                 }

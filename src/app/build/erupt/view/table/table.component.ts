@@ -1831,6 +1831,21 @@ export class TableComponent implements OnInit, OnDestroy {
         return value === null || value === undefined || value === "";
     }
 
+    // grouped header view of `columns`, memoized on the array reference so the st input only
+    // changes when the column list itself is rebuilt; child entries are the same objects as
+    // in `columns`, so show / width / fixed edits made in place are picked up by resetColumns()
+    private stColumnsSrc: STColumn[];
+
+    private stColumnsCache: STColumn[];
+
+    get stColumns(): STColumn[] {
+        if (this.stColumnsSrc !== this.columns) {
+            this.stColumnsSrc = this.columns;
+            this.stColumnsCache = UiBuildService.groupColumns(this.columns);
+        }
+        return this.stColumnsCache;
+    }
+
     private colIndexStr(col: STColumn): string {
         return (Array.isArray(col.index) ? col.index[0] : col.index) as string;
     }

@@ -114,6 +114,7 @@ export interface DesignerView {
     column?: string;
     show?: boolean;
     sortable?: boolean;
+    group?: string;
 }
 
 export interface DesignerEdit {
@@ -142,6 +143,7 @@ export interface DesignerEdit {
     referenceTreeType?: { id?: string; label?: string; pid?: string };
     referenceTableType?: { id?: string; label?: string };
     checkboxType?: { id?: string; label?: string };
+    transferType?: { id?: string; label?: string };
     groupType?: { fields?: string[]; collapsed?: boolean };
     calloutType?: { value?: string; style?: string };
     tplType?: { path?: string; engine?: string; enable?: boolean };
@@ -308,6 +310,15 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
                 icon: "check-square",
                 needLink: true,
                 edit: {checkboxType: {}},
+                disabled: true,
+                disabledTip: "designer.reference.disabled_tip"
+            },
+            {
+                type: EditType.TRANSFER,
+                label: "designer.type.transfer",
+                icon: "swap",
+                needLink: true,
+                edit: {transferType: {}},
                 disabled: true,
                 disabledTip: "designer.reference.disabled_tip"
             },

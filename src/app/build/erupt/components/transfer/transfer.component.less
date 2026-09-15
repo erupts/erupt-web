@@ -1,0 +1,22 @@
+:host {
+    display: block;
+
+    ::ng-deep .ant-transfer {
+        .ant-transfer-list {
+            flex: 1 1 auto;
+        }
+
+        // edit-type styles every checkbox label for the checkbox-group layout (140px cap, 12px
+        // bottom margin); inside the transfer rows that turns 32px items into 43px, so undo it
+        label[nz-checkbox] {
+            max-width: none;
+            margin-bottom: 0;
+            line-height: 22px;
+            overflow: visible;
+        }
+
+        .ant-transfer-list-content-item > label {
+            width: 100%;
+        }
+    }
+}

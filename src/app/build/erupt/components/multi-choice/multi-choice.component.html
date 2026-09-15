@@ -23,6 +23,10 @@
       </nz-row>
     </div>
   }
+  @case (multiChoiceEnum.TRANSFER) {
+    <erupt-transfer [options]="transferOptions" [disabled]="readonly"
+      [(value)]="this.eruptField.eruptFieldJson.edit.$value"></erupt-transfer>
+  }
   @case (multiChoiceEnum.SELECT) {
     <nz-select [(ngModel)]="this.eruptField.eruptFieldJson.edit.$value" [nzSize]="size" nzMode="multiple"
       style="width:100%" [nzOptionOverflowSize]="8" [nzMaxMultipleCount]="999"

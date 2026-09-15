@@ -75,8 +75,9 @@ export class TabTableComponent implements OnInit {
         setTimeout(() => {
             this.loading = false;
         }, 300);
+        let flatColumns: STColumn[];
         if (this.onlyRead) {
-            this.column = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false);
+            flatColumns = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false);
         } else {
             const viewValue: STColumn[] = [];
             viewValue.push({
@@ -157,9 +158,11 @@ export class TabTableComponent implements OnInit {
                 className: "text-center",
                 buttons: operators
             });
-            this.column = viewValue;
+            flatColumns = viewValue;
         }
-        this.tableWidth = UiBuildService.calcTableWidth(this.column);
+        // width is summed over the leaf columns; the grouped list carries width-less parents
+        this.tableWidth = UiBuildService.calcTableWidth(flatColumns);
+        this.column = UiBuildService.groupColumns(flatColumns);
     }
 
     addData() {

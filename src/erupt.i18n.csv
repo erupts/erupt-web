@@ -52,6 +52,8 @@ global.copy,复制,複製,Copy,Copier,コピー,복사,Копировать,Copi
 global.download,下载,下載,Download,Télécharger,ダウンロード,다운로드,Скачать,Descargar,Herunterladen,Baixar,Unduh,تحميل
 global.refresh,刷新,刷新,Refresh,Actualiser,更新,새로고침,Обновить,Actualizar,Aktualisieren,Atualizar,Segarkan,تحديث
 global.select_all,全选,全選,Select All,Tout sélectionner,すべて選択,전체 선택,Выбрать все,Seleccionar todo,Alle auswählen,Selecionar tudo,Pilih semua,تحديد الكل
+global.transfer.source,可选,可選,Available,Disponibles,選択可能,선택 가능,Доступные,Disponibles,Verfügbar,Disponíveis,Tersedia,المتاح
+global.transfer.target,已选,已選,Selected,Sélectionnés,選択済み,선택됨,Выбранные,Seleccionados,Ausgewählt,Selecionados,Terpilih,المحدد
 board.unset,未设置,未設置,Unset,Non défini,未設定,미설정,Не задано,Sin definir,Nicht gesetzt,Não definido,Belum diatur,غير محدد
 
 
@@ -578,6 +580,7 @@ designer.type.auto_complete,自动完成,自動完成,Auto Complete,Auto Complet
 designer.type.reference_table,表格引用,表格引用,Ref Table,Ref Table,テーブル参照,Ref Table,Ref Table,Ref Table,Ref Table,Ref Table,Ref Table,Ref Table
 designer.type.reference_tree,树形引用,樹形引用,Ref Tree,Ref Tree,ツリー参照,Ref Tree,Ref Tree,Ref Tree,Ref Tree,Ref Tree,Ref Tree,Ref Tree
 designer.type.checkbox,复选框,複選框,Checkbox,Checkbox,チェックボックス,Checkbox,Checkbox,Checkbox,Checkbox,Checkbox,Checkbox,Checkbox
+designer.type.transfer,穿梭框,穿梭框,Transfer,Transfert,転送リスト,트랜스퍼,Перенос,Transferencia,Transfer,Transferência,Transfer,نقل
 designer.type.tab_table_add,子表,子表,Sub Table,Sub Table,サブテーブル,Sub Table,Sub Table,Sub Table,Sub Table,Sub Table,Sub Table,Sub Table
 designer.type.attachment,附件,附件,Attachment,Attachment,添付,Attachment,Attachment,Attachment,Attachment,Attachment,Attachment,Attachment
 designer.type.html_editor,富文本,富文本,Rich Text,Rich Text,リッチテキスト,Rich Text,Rich Text,Rich Text,Rich Text,Rich Text,Rich Text,Rich Text
@@ -633,6 +636,7 @@ designer.vis.end_date_field,结束日期字段,結束日期字段,End Date Field
 designer.vis.progress_field,进度字段,進度字段,Progress Field,Champ de progression,進捗フィールド,진행률 필드,Поле прогресса,Campo de progreso,Fortschrittsfeld,Campo de progresso,Bidang progres,حقل التقدم
 designer.vis.date_field,日期字段,日期字段,Date Field,Champ de date,日付フィールド,날짜 필드,Поле даты,Campo de fecha,Datumsfeld,Campo de data,Bidang tanggal,حقل التاريخ
 designer.vis.color_field,颜色字段,顏色字段,Color Field,Champ de couleur,色フィールド,색상 필드,Поле цвета,Campo de color,Farbfeld,Campo de cor,Bidang warna,حقل اللون
+designer.column_group,表头分组,表頭分組,Header Group,Groupe d'en-tête,ヘッダーグループ,헤더 그룹,Группа заголовков,Grupo de encabezado,Kopfzeilengruppe,Grupo de cabeçalho,Grup header,مجموعة الرأس
 designer.ref_config,关联配置,關聯配置,Ref Config,Config de référence,関連設定,관련 설정,Настройка связи,Config de referencia,Verknüpfungseinstellungen,Config de referência,Konfigurasi referensi,إعداد الارتباط
 designer.ref_id,主键字段,主鍵字段,ID Field,Champ ID,主キーフィールド,기본키 필드,Поле первичного ключа,Campo ID,ID-Feld,Campo de chave,Field kunci utama,حقل المفتاح الأساسي
 designer.ref_label,显示字段,顯示字段,Label Field,Champ d'affichage,表示フィールド,표시 필드,Поле отображения,Campo de etiqueta,Anzeigefeld,Campo de exibição,Field label,حقل العرض

@@ -95,6 +95,11 @@
               [eruptFieldModel]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)">
             </erupt-checkbox>
           }
+          @case (editType.TRANSFER) {
+            <erupt-transfer [eruptBuildModel]="eruptBuildModel" [disabled]="true"
+              [eruptFieldModel]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)">
+            </erupt-transfer>
+          }
           @case (editType.MULTI_CHOICE) {
             <erupt-multi-choice [eruptModel]="eruptBuildModel.eruptModel"
               [eruptField]="eruptBuildModel.eruptModel.eruptFieldModelMap.get(view.eruptFieldModel.fieldName)"

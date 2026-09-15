@@ -46,6 +46,7 @@ export enum EditType {
     SLIDER = "SLIDER",                         //numeric slider
     RATE = "RATE",
     CHECKBOX = "CHECKBOX",
+    TRANSFER = "TRANSFER",
     EMPTY = "EMPTY",
     TPL = "TPL",
     MARKDOWN = "MARKDOWN",
@@ -131,7 +132,8 @@ export enum ChoiceEnum {
 
 export enum MultiChoiceEnum {
     SELECT = "SELECT",
-    CHECKBOX = "CHECKBOX"
+    CHECKBOX = "CHECKBOX",
+    TRANSFER = "TRANSFER"
 }
 
 export enum SelectMode {

@@ -377,6 +377,7 @@ export class DataHandlerService {
                         }
                         break;
                     case EditType.CHECKBOX:
+                    case EditType.TRANSFER:
                         if (edit.$value) {
                             let ids = [];
                             (<any[]>edit.$value).forEach(val => {

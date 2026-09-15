@@ -26,6 +26,7 @@ import {CodeEditorComponent} from './components/code-editor/code-editor.componen
 import {EruptUeditorComponent} from './components/ueditor/erupt-ueditor.component';
 import {TabTreeComponent} from './components/tab-tree/tab-tree.component';
 import {CheckboxComponent} from './components/checkbox/checkbox.component';
+import {TransferComponent} from './components/transfer/transfer.component';
 import {SafeTemplateComponent} from './components/safe-template/safe-template.component';
 import {DateComponent} from './components/date/date.component';
 import {MarkdownComponent} from './components/markdown/markdown.component';
@@ -121,6 +122,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         EruptUeditorComponent,
         TabTreeComponent,
         CheckboxComponent,
+        TransferComponent,
         SafeTemplateComponent,
         DateComponent,
         MarkdownComponent,

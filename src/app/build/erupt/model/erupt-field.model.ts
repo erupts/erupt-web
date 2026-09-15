@@ -76,6 +76,8 @@ export interface View {
     type: ViewType;
     template: string;
     sortable: boolean;
+    // adjacent columns sharing a group render under one merged header cell
+    group: string;
     tpl: Tpl;
     //extra
     eruptFieldModel?: EruptFieldModel;

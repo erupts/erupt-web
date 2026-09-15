@@ -11,7 +11,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzImageService} from "ng-zorro-antd/image";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
-import {OpenWay, PageEmbedType, Tpl, View} from "../model/erupt-field.model";
+import {EruptFieldModel, OpenWay, PageEmbedType, Tpl, View} from "../model/erupt-field.model";
 import {AttachmentSelectComponent} from "../components/attachment-select/attachment-select.component";
 import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
@@ -125,14 +125,17 @@ export class UiBuildService {
                 };
             }
 
-            switch (view.eruptFieldModel.eruptFieldJson.edit.type) {
+            // the field whose edit config gives the cell its wording (a COMBINE column shows a field of
+            // the embedded model, so the outer field says nothing about how its value reads)
+            const labelField = UiBuildService.labelField(view, eruptBuildModel);
+            switch (labelField.eruptFieldJson.edit.type) {
                 case EditType.TAGS:
                     obj.className = "text-center";
                     obj.format = (item: any) => {
                         let value = item[view.column];
                         if (value) {
                             let result = "<div style='display: flex; flex-wrap: wrap; gap: 5px;'>";
-                            const sep = view.eruptFieldModel.eruptFieldJson.edit.tagsType.joinSeparator;
+                            const sep = labelField.eruptFieldJson.edit.tagsType.joinSeparator;
                             let tags: string[];
                             if (sep === '[]') {
                                 try { tags = JSON.parse(value); } catch { tags = [value]; }
@@ -155,7 +158,7 @@ export class UiBuildService {
                         if (item[view.column] == null) {
                             return "";
                         }
-                        const vl = view.eruptFieldModel.choiceMap.get(item[view.column] + "");
+                        const vl = labelField.choiceMap?.get(item[view.column] + "");
                         return "<span style='color:" + (vl?.color ?? "") + "'>"
                             + (vl?.label ?? item[view.column]) + "</span>";
                     };
@@ -673,9 +676,12 @@ export class UiBuildService {
                     break;
             }
             if (view.template) {
+                // `value` arrives as the wording a plain cell would show (choice label, boolean text), so a
+                // template can print it directly; `item` is the queried row and keeps the stored values,
+                // the same shape @RowOperation(ifExpr) sees
                 obj.format = (item: any) => {
                     try {
-                        let value = item[view.column];
+                        let value = UiBuildService.cellLabel(labelField, item[view.column]);
                         return new Function('value', 'item', "return " + view.template)(value, item);
                     } catch (e) {
                         console.error(e);
@@ -736,6 +742,9 @@ export class UiBuildService {
             if (null != obj.fixed && null == obj.width) {
                 obj.width = titleWidth + 50;
             }
+            if (view.group) {
+                obj[UiBuildService.GROUP_KEY] = view.group;
+            }
             if (cellEditRender && UiBuildService.cellEditable(view)) {
                 obj.render = cellEditRender;
                 // a render template bypasses format, so the cell has to rebuild the display
@@ -749,8 +758,70 @@ export class UiBuildService {
         return cols;
     }
 
+    // The field that decides how a column's value reads: the column's own field, or for a COMBINE
+    // column the field of the embedded model it displays.
+    private static labelField(view: View, eruptBuildModel: EruptBuildModel): EruptFieldModel {
+        const field = view.eruptFieldModel;
+        if (field.eruptFieldJson.edit.type !== EditType.COMBINE) {
+            return field;
+        }
+        return eruptBuildModel.combineErupts?.[field.fieldName]?.eruptFieldModelMap
+            ?.get(view.column.substring(field.fieldName.length + 1)) ?? field;
+    }
+
+    // A queried row carries stored values. This turns one into the wording a cell shows: a CHOICE
+    // reads through its option map (inline options and fetch handler results alike), a BOOLEAN
+    // through its trueText / falseText; anything else is returned as is.
+    static cellLabel(field: EruptFieldModel, value: any): any {
+        if (value == null) {
+            return value;
+        }
+        const edit = field.eruptFieldJson.edit;
+        switch (edit.type) {
+            case EditType.CHOICE:
+                return field.choiceMap?.get(value + "")?.label ?? value;
+            case EditType.BOOLEAN:
+                return edit.boolType ? (value ? edit.boolType.trueText : edit.boolType.falseText) : value;
+        }
+        return value;
+    }
+
     // key under which an editable column carries its erupt view type
     static readonly VIEW_TYPE_KEY = "__eruptViewType";
+
+    // key under which a column carries its header group title
+    static readonly GROUP_KEY = "__eruptGroup";
+
+    // Folds adjacent columns that share a group into one parent column so st renders a
+    // two-level header. The flat list stays the source of truth for column settings; the
+    // parent only references the very same column objects. Fixed columns are never grouped,
+    // st positions sticky cells per leaf and a spanning header would drift from them.
+    static groupColumns(columns: STColumn[]): STColumn[] {
+        const grouped: STColumn[] = [];
+        let parent: STColumn = null;
+        for (const col of columns) {
+            const group = col[UiBuildService.GROUP_KEY];
+            if (!group || col.fixed) {
+                parent = null;
+                grouped.push(col);
+                continue;
+            }
+            if (!parent || parent.title !== group) {
+                const children: STColumn[] = [];
+                parent = {
+                    title: group,
+                    className: "text-center",
+                    children,
+                    // a group with every child hidden must vanish, or st renders an empty header cell
+                    iif: () => children.some(c => !c.iif || c.iif(c))
+                };
+                grouped.push(parent);
+            }
+            parent.children.push(col);
+        }
+        // a lone member gains nothing from a group row, keep the flat header
+        return grouped.map(col => col.children?.length === 1 ? col.children[0] : col);
+    }
 
     // key under which an editable column carries the name of the erupt field it edits. A reference
     // column is indexed by its projection (eruptOrg_name) while the write targets the field itself
