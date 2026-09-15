@@ -585,7 +585,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
         EditType.DIVIDE, EditType.GROUP, EditType.CALLOUT, EditType.COMBINE, EditType.TEXTAREA, EditType.MARKDOWN,
         EditType.TAGS, EditType.CHECKBOX, EditType.ATTACHMENT, EditType.HTML_EDITOR, EditType.MAP,
         EditType.CODE_EDITOR, EditType.SIGNATURE, EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE,
-        EditType.TPL, EditType.MULTI_FORM
+        EditType.TPL, EditType.MULTI_FORM, EditType.KEY_VALUE
     ]);
 
     // whether a canvas field occupies a full row: FULL_LINE form size, naturally full-width types, or INPUT with fullSpan
