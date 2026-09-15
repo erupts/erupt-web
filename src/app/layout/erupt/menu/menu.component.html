@@ -181,8 +181,31 @@
   }
 }
 
+<!-- ── Group mode: first-level items become flat group titles, their children are
+     listed underneath (leaf first-level items stay regular entries). The collapsed
+     sidebar falls back to the normal tree so the icon rail keeps working. ── -->
+@if (groupMenu && !splitMenu && !dualMenu && !collapsed) {
+  <ul class="sidebar-nav sidebar-nav--group">
+    @if (loading) {
+      <nz-skeleton [nzParagraph]="{ rows: 12 }" [nzTitle]="false" [nzActive]="true" style="padding: 12px"></nz-skeleton>
+    }
+    @if (!loading) {
+      @for (item of splitTopItems; track item) {
+        @if (item.children.length > 0) {
+          <li class="sidebar-nav__item sidebar-nav__group-title">
+            <span [innerHTML]="item._text" [attr.title]="item.text"></span>
+          </li>
+          <ng-template [ngTemplateOutlet]="tree" [ngTemplateOutletContext]="{ $implicit: item.children }"></ng-template>
+        } @else {
+          <ng-template [ngTemplateOutlet]="tree" [ngTemplateOutletContext]="{ $implicit: [item] }"></ng-template>
+        }
+      }
+    }
+  </ul>
+}
+
 <!-- ── Normal menu mode ── -->
-@if (!splitMenu && (!dualMenu || collapsed)) {
+@if (!splitMenu && ((!dualMenu && !groupMenu) || collapsed)) {
   <ul class="sidebar-nav">
     @if (loading) {
       <nz-skeleton [nzParagraph]="{ rows: 12 }" [nzTitle]="false" [nzActive]="true" style="padding: 12px"></nz-skeleton>

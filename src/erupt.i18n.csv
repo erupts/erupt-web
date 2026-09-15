@@ -1269,6 +1269,7 @@ micro_app.err_no_render,子应用已加载但没有渲染内容，可能不兼�
 micro_app.err_unknown,子应用加载失败,子應用載入失敗,Failed to load the sub-app,Échec du chargement de la sous-application,サブアプリの読み込みに失敗しました,하위 앱 로드 실패,Не удалось загрузить подприложение,Error al cargar la subaplicación,Laden der Sub-App fehlgeschlagen,Falha ao carregar a subaplicação,Gagal memuat sub-aplikasi,فشل تحميل التطبيق الفرعي
 ai_assist.done,内容已生成,內容已生成,Draft ready,Brouillon prêt,生成が完了しました,초안 생성 완료,Черновик готов,Borrador listo,Entwurf fertig,Rascunho pronto,Draf siap,المسودة جاهزة
 menu.top_mode,顶部菜单,頂部選單,Top menu,Menu supérieur,トップメニュー,상단 메뉴,Верхнее меню,Menú superior,Obere Menüleiste,Menu superior,Menu atas,القائمة العلوية
+menu.group_mode,分组菜单,分組選單,Grouped menu,Menu groupé,グループメニュー,그룹 메뉴,Сгруппированное меню,Menú agrupado,Gruppiertes Menü,Menu agrupado,Menu berkelompok,قائمة مجمعة
 icon_picker.search,搜索图标名称或关键词,搜尋圖示名稱或關鍵字,Search icons by name or keyword,Rechercher une icône par nom ou mot-clé,アイコン名やキーワードで検索,아이콘 이름 또는 키워드 검색,Поиск иконок по имени или ключевому слову,Buscar iconos por nombre o palabra clave,Symbole nach Name oder Stichwort suchen,Pesquisar ícones por nome ou palavra-chave,Cari ikon berdasarkan nama atau kata kunci,البحث عن الأيقونات بالاسم أو الكلمة المفتاحية
 icon_picker.all,全部,全部,All,Tous,すべて,전체,Все,Todos,Alle,Todos,Semua,الكل
 icon_picker.solid,实心,實心,Solid,Plein,ソリッド,솔리드,Сплошные,Sólido,Gefüllt,Sólido,Solid,مصمت

@@ -106,6 +106,10 @@ export class MenuComponent implements OnInit, OnDestroy {
         return !!this.settings.layout['dualMenu'];
     }
 
+    get groupMenu(): boolean {
+        return !!this.settings.layout['groupMenu'];
+    }
+
     private computeSplitItems(): void {
         this.splitTopItems = this.list.flatMap(g =>
             (g.children as Nav[] || []).filter((i: Nav) => !i['_hidden'])

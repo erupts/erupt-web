@@ -42,7 +42,7 @@ export class WindowModel {
         compact?: boolean,
         // "default" | "brutalist" | "liquid-glass"
         skin?: string,
-        // "normal" | "split" | "dual" | "top" (MenuMode)
+        // "normal" | "split" | "dual" | "top" | "group" (MenuMode)
         menuMode?: string,
         [key: string]: any
     }

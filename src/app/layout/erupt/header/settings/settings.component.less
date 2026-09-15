@@ -106,11 +106,11 @@
 
         // Menu-mode radio tiles with a mini layout pictogram each
         .menu-mode-picker {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 8px;
 
             &__item {
-                flex: 1;
                 min-width: 0;
                 display: flex;
                 flex-direction: column;

@@ -21,7 +21,7 @@ window.eruptSiteConfig = {
         dark: false,        // false | true | "auto" (follow the OS color scheme)
         compact: false,     // denser spacing across the UI
         skin: "default",    // "default" | "brutalist" | "liquid-glass"
-        menuMode: "normal"  // "normal" (sidebar) | "split" (categories in the header) | "dual" (two-column sidebar) | "top" (whole menu in the header, no sidebar)
+        menuMode: "normal"  // "normal" (sidebar) | "split" (categories in the header) | "dual" (two-column sidebar) | "top" (whole menu in the header, no sidebar) | "group" (categories as flat group titles)
     },
     r_tools: [{
         mobileHidden: true,

@@ -7,7 +7,7 @@ import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {NzConfigService} from "ng-zorro-antd/core/config";
 import {TableSize} from "../../../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
-import {MenuMode} from "@shared/model/erupt-menu";
+import {isHeaderMenuMode, MenuMode, menuModeFlags, menuModeOf} from "@shared/model/erupt-menu";
 import {
     applyHeaderColor,
     applyThemeColor,
@@ -154,29 +154,24 @@ export class SettingsComponent implements OnInit {
         this.settingSrv.setLayout(name, value);
     }
 
-    // Menu layout mode radio: normal single-column, split (top-level tabs in the
-    // header), dual-column (first-level rail inside the sidebar) or top (whole
-    // menu in the header, no sidebar). Split and top modes take the header space,
-    // so they replace the breadcrumbs.
+    // Menu layout mode radio (see MenuMode). Split and top modes take the header
+    // space, so they replace the breadcrumbs.
     readonly MenuMode = MenuMode;
 
     get menuMode(): MenuMode {
-        if (this.layout['splitMenu']) return MenuMode.SPLIT;
-        if (this.layout['dualMenu']) return MenuMode.DUAL;
-        if (this.layout['topMenu']) return MenuMode.TOP;
-        return MenuMode.NORMAL;
+        return menuModeOf(this.layout);
     }
 
     setMenuMode(mode: MenuMode) {
-        if (mode === MenuMode.SPLIT || mode === MenuMode.TOP) {
+        if (isHeaderMenuMode(mode)) {
             this.settingSrv.setLayout('breadcrumbs', false);
-        } else if (this.layout['splitMenu'] || this.layout['topMenu']) {
+        } else if (isHeaderMenuMode(this.menuMode)) {
             // restore breadcrumbs only when leaving a header-menu mode
             this.settingSrv.setLayout('breadcrumbs', true);
         }
-        this.settingSrv.setLayout('splitMenu', mode === MenuMode.SPLIT);
-        this.settingSrv.setLayout('dualMenu', mode === MenuMode.DUAL);
-        this.settingSrv.setLayout('topMenu', mode === MenuMode.TOP);
+        for (const [flag, on] of Object.entries(menuModeFlags(mode))) {
+            this.settingSrv.setLayout(flag, on);
+        }
     }
 
     toggleBreadcrumbs(value: boolean) {

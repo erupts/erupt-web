@@ -167,3 +167,44 @@
     overflow-x: hidden;
 }
 
+
+// ── Group menu mode ───────────────────────────────────────────
+// First-level items are rendered as group titles, so their children sit at root
+// indentation and every deeper level moves up by one delon depth step
+// (depth2 → depth1 padding, depth3 → depth2 padding ...).
+.sidebar-nav--group {
+    .sidebar-nav__group-title {
+        margin-top: 12px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 12px;
+        line-height: 20px;
+        letter-spacing: .02em;
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, .45));
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:first-child {
+            margin-top: 4px;
+        }
+    }
+
+    // Children of a group mix items with and without an icon: reserve the icon
+    // column (14px icon + 8px gap) for the icon-less ones so the labels line up.
+    > div > .sidebar-nav__item > .sidebar-nav__item-link:not(:has(.sidebar-nav__item-icon)) {
+        padding-left: 38px;
+    }
+
+    .sidebar-nav__depth2 .sidebar-nav__item-link {
+        padding-left: 38px;
+    }
+
+    .sidebar-nav__depth3 .sidebar-nav__item-link {
+        padding-left: 46px;
+    }
+
+    .sidebar-nav__depth4 .sidebar-nav__item-link {
+        padding-left: 54px;
+    }
+}

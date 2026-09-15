@@ -6,7 +6,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {I18NService} from "@core";
 import {LayoutEruptComponent} from "../erupt.component";
 import {MenuComponent} from "../menu/menu.component";
-import {MenuMode} from "@shared/model/erupt-menu";
+import {isHeaderMenuMode, MenuMode, menuModeFlags, menuModeOf} from "@shared/model/erupt-menu";
 
 const SIDEBAR_WIDTH_KEY = 'erupt_sidebar_width';
 const DEFAULT_WIDTH = 200;
@@ -35,18 +35,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
                 private message: NzMessageService,
                 private modal: NzModalService,
                 private i18n: I18NService) {
-    }
-
-    get splitMenu(): boolean {
-        return !!this.settings.layout['splitMenu'];
-    }
-
-    get dualMenu(): boolean {
-        return !!this.settings.layout['dualMenu'];
-    }
-
-    get topMenu(): boolean {
-        return !!this.settings.layout['topMenu'];
     }
 
     ngOnInit(): void {
@@ -109,22 +97,24 @@ export class SidebarComponent implements OnInit, OnDestroy {
         this.menuSrv.openAll(this.allExpanded);
     }
 
-    // Menu layout mode: normal single-column, split (top-level tabs in the header),
-    // dual-column (first-level rail inside the sidebar) or top (whole menu in the
-    // header, no sidebar). Modes are exclusive; split and top modes take the header
-    // space, so they replace the breadcrumbs.
+    // Menu layout mode (see MenuMode). Modes are exclusive; split and top modes take
+    // the header space, so they replace the breadcrumbs.
     readonly MenuMode = MenuMode;
 
+    get menuMode(): MenuMode {
+        return menuModeOf(this.settings.layout);
+    }
+
     setMenuMode(mode: MenuMode) {
-        if (mode === MenuMode.SPLIT || mode === MenuMode.TOP) {
+        if (isHeaderMenuMode(mode)) {
             this.settings.setLayout("breadcrumbs", false);
-        } else if (this.splitMenu || this.topMenu) {
+        } else if (isHeaderMenuMode(this.menuMode)) {
             // restore breadcrumbs only when leaving a header-menu mode
             this.settings.setLayout("breadcrumbs", true);
         }
-        this.settings.setLayout("splitMenu", mode === MenuMode.SPLIT);
-        this.settings.setLayout("dualMenu", mode === MenuMode.DUAL);
-        this.settings.setLayout("topMenu", mode === MenuMode.TOP);
+        for (const [flag, on] of Object.entries(menuModeFlags(mode))) {
+            this.settings.setLayout(flag, on);
+        }
     }
 
     onResizeStart(e: MouseEvent) {

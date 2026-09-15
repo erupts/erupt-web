@@ -4,7 +4,7 @@ import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 
 import {ICONS_AUTO} from "../../../style-icons-auto";
 import {WindowModel} from "@shared/model/window.model";
-import {MenuMode} from "@shared/model/erupt-menu";
+import {hasMenuModeChoice, isHeaderMenuMode, MenuMode, menuModeFlags} from "@shared/model/erupt-menu";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {EruptAppData, EruptAppModel} from "@shared/model/erupt-app.model";
@@ -135,18 +135,15 @@ export class StartupService {
         // Breadcrumb navigation
         this.settingSrv.layout['breadcrumbs'] = false !== this.settingSrv.layout['breadcrumbs'];
         // Menu layout mode: a choice persisted from the settings drawer wins; otherwise
-        // eruptSiteConfig.theme.menuMode ("normal" | "split" | "dual" | "top") seeds the
-        // flags. Not persisted here, so a later change of the config default still takes
-        // effect for users who never picked a mode themselves.
+        // eruptSiteConfig.theme.menuMode (a MenuMode value) seeds the flags. Not persisted
+        // here, so a later change of the config default still takes effect for users who
+        // never picked a mode themselves.
         const layout = this.settingSrv.layout;
-        const menuModeChosen = 'splitMenu' in layout || 'dualMenu' in layout || 'topMenu' in layout;
         const defaultMenuMode = WindowModel.theme?.menuMode as MenuMode;
-        if (!menuModeChosen && defaultMenuMode && defaultMenuMode !== MenuMode.NORMAL) {
-            layout['splitMenu'] = defaultMenuMode === MenuMode.SPLIT;
-            layout['dualMenu'] = defaultMenuMode === MenuMode.DUAL;
-            layout['topMenu'] = defaultMenuMode === MenuMode.TOP;
+        if (!hasMenuModeChoice(layout) && defaultMenuMode && defaultMenuMode !== MenuMode.NORMAL) {
+            Object.assign(layout, menuModeFlags(defaultMenuMode));
             // the header-menu modes take the breadcrumb's place (same rule as setMenuMode)
-            if (defaultMenuMode === MenuMode.SPLIT || defaultMenuMode === MenuMode.TOP) {
+            if (isHeaderMenuMode(defaultMenuMode)) {
                 layout['breadcrumbs'] = false;
             }
         }
