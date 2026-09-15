@@ -83,6 +83,14 @@ export class UiBuildService {
         let cols: STColumn[] = [];
         const views = eruptBuildModel.eruptModel.tableColumns;
         let layout = eruptBuildModel.eruptModel.eruptJson.layout;
+        // column -> field that gives the cell its wording, so a view template reading a sibling
+        // column through `item.xxx` gets the label a plain cell shows rather than the stored value
+        const labelFields = new Map<string, EruptFieldModel>();
+        for (let view of views) {
+            const field = UiBuildService.labelField(view, eruptBuildModel);
+            labelFields.set(view.column, field);
+            labelFields.set(view.column.replace(/\./g, "_"), field);
+        }
         let i = 0;
         for (let view of views) {
             // measured text + horizontal cell padding (8px x 2 at small size) + slack
@@ -676,13 +684,14 @@ export class UiBuildService {
                     break;
             }
             if (view.template) {
-                // `value` arrives as the wording a plain cell would show (choice label, boolean text), so a
-                // template can print it directly; `item` is the queried row and keeps the stored values,
-                // the same shape @RowOperation(ifExpr) sees
+                // `value` and every column read through `item` arrive as the wording a plain cell would
+                // show (choice label, boolean text): the query returns stored values and the lookup
+                // happens here, so a template never has to map an option itself
                 obj.format = (item: any) => {
                     try {
                         let value = UiBuildService.cellLabel(labelField, item[view.column]);
-                        return new Function('value', 'item', "return " + view.template)(value, item);
+                        const row = UiBuildService.displayRow(item, labelFields);
+                        return new Function('value', 'item', "return " + view.template)(value, row);
                     } catch (e) {
                         console.error(e);
                         this.msg.error(e.toString());
@@ -784,6 +793,17 @@ export class UiBuildService {
                 return edit.boolType ? (value ? edit.boolType.trueText : edit.boolType.falseText) : value;
         }
         return value;
+    }
+
+    // A read-through view of a queried row whose column reads resolve to cell wording via cellLabel;
+    // keys without a column (primary key, hidden fields) fall through to the stored value.
+    static displayRow(item: any, labelFields: Map<string, EruptFieldModel>): any {
+        return new Proxy(item, {
+            get: (target, key) => {
+                const field = typeof key === "string" ? labelFields.get(key) : null;
+                return field ? UiBuildService.cellLabel(field, target[key]) : target[key];
+            }
+        });
     }
 
     // key under which an editable column carries its erupt view type
