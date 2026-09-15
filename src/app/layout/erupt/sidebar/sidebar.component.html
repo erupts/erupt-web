@@ -43,6 +43,9 @@
                 <li nz-menu-item [nzSelected]="menuMode === MenuMode.GROUP" (click)="setMenuMode(MenuMode.GROUP)">
                     <i nz-icon nzType="profile"></i> {{ 'menu.group_mode' | translate }}
                 </li>
+                <li nz-menu-item [nzSelected]="menuMode === MenuMode.TOP_SPLIT" (click)="setMenuMode(MenuMode.TOP_SPLIT)">
+                    <i nz-icon nzType="border-horizontal"></i> {{ 'menu.top_split_mode' | translate }}
+                </li>
             </ul>
         </nz-dropdown-menu>
     </div>

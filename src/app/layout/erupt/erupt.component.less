@@ -226,6 +226,22 @@
             margin-left: 0;
         }
 
+        // Top-split: content and the fixed tab bar start below the 40px sub-nav row
+        @subnav-h: 40px;
+
+        // (specific enough to beat the .ltr/.rtl defaults below, not the liquid-glass
+        // skin, which re-derives everything from its own --lg-header-h)
+        .ltr .alain-default__sub-nav .erupt_content,
+        .rtl .alain-default__sub-nav .erupt_content {
+            margin-top: @header-h + @subnav-h;
+            height: calc(100vh - @header-h - @subnav-h);
+        }
+
+        // !important — @delon/abc pins the fixed tab bar with `top: 44px !important`
+        .alain-default__sub-nav.alain-default__fixed .reuse-tab {
+            top: @header-h + @subnav-h !important;
+        }
+
         .rtl .alain-default__top-menu .erupt_content,
         .rtl .alain-default__top-menu.alain-default__collapsed .erupt_content {
             margin-right: 0;

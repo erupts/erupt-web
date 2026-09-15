@@ -14,14 +14,14 @@
 </div>
 
 <div class="alain-default__nav-wrap" style="display:grid;grid-template-columns:minmax(0,auto) 1fr auto;align-items:center;">
-  <ul class="alain-default__nav" style="min-width:0;" [style.margin-right]="((splitMenu || topMenu) && splitTopItems.length) ? '0' : null">
+  <ul class="alain-default__nav" style="min-width:0;" [style.margin-right]="((splitMenu || topSplitMenu || topMenu) && splitTopItems.length) ? '0' : null">
     <!-- mobile sidebar toggle -->
     <li class="hidden-pc">
       <div class="alain-default__nav-item" (click)="toggleCollapsedSidebar()">
         <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}"></i>
       </div>
     </li>
-    @if (!splitMenu && !topMenu && settings.layout['breadcrumbs']) {
+    @if (!splitMenu && !topSplitMenu && !topMenu && settings.layout['breadcrumbs']) {
       <li class="hidden-mobile header-breadcrumb" style="padding:0 10px 0 18px;">
         <erupt-nav></erupt-nav>
       </li>
@@ -44,60 +44,7 @@
       </ul>
     </div>
 
-    <!-- recursive subtree: categories become nz-submenu, leaves nz-menu-item -->
-    <ng-template #topTree let-items>
-      @for (c of items; track c) {
-        @if (!c._hidden) {
-          @if (c.children?.length) {
-            <!-- nz-submenu derives its selected state from content-queried items, which
-                 template-outlet children are not; bind the class from the menu model instead
-                 (MenuService.open marks the whole active trail as _selected) -->
-            <li nz-submenu [nzTitle]="subTitle" nzMenuClassName="top-nav-dropdown"
-                [class.ant-menu-submenu-selected]="isActiveTopItem(c)">
-              <ng-template #subTitle>
-                <ng-template [ngTemplateOutlet]="topIcon" [ngTemplateOutletContext]="{ $implicit: c.icon }"></ng-template>
-                <span>{{ c.text }}</span>
-              </ng-template>
-              <ul eruptInjector #subInj="eruptInjector">
-                <ng-template [ngTemplateOutlet]="topTree"
-                             [ngTemplateOutletContext]="{ $implicit: c.children }"
-                             [ngTemplateOutletInjector]="subInj.injector"></ng-template>
-              </ul>
-            </li>
-          } @else {
-            <li nz-menu-item [nzSelected]="isActiveTopItem(c)" [nzDisabled]="c.disabled" (click)="navigateTopItem(c)">
-              <ng-template [ngTemplateOutlet]="topIcon" [ngTemplateOutletContext]="{ $implicit: c.icon }"></ng-template>
-              <span>{{ c.text }}</span>
-            </li>
-          }
-        }
-      }
-    </ng-template>
-
-    <!-- menu icon (normalized by MenuService: ant icon, iconfont, image, svg or a css class) -->
-    <ng-template #topIcon let-i>
-      @if (i) {
-        @switch (i.type) {
-          @case ('icon') {
-            <i class="top-nav-icon" nz-icon [nzType]="i.value" [nzTheme]="i.theme" [nzSpin]="i.spin"
-               [nzTwotoneColor]="i.twoToneColor" [nzIconfont]="i.iconfont" [nzRotate]="i.rotate"></i>
-          }
-          @case ('iconfont') {
-            <i class="top-nav-icon" nz-icon [nzIconfont]="i.iconfont"></i>
-          }
-          @case ('img') {
-            <img [src]="i.value" class="top-nav-icon top-nav-icon--img" alt=""/>
-          }
-          @case ('svg') {
-            <span class="top-nav-icon top-nav-icon--svg" [innerHTML]="i.value"></span>
-          }
-          @default {
-            <i class="top-nav-icon {{ i.value }}"></i>
-          }
-        }
-      }
-    </ng-template>
-  } @else if (splitMenu && splitTopItems.length) {
+  } @else if ((splitMenu || topSplitMenu) && splitTopItems.length) {
     <div class="split-nav-wrap hidden-mobile" (wheel)="onSplitNavWheel($event)"
          style="min-width:0;display:flex;align-items:center;height:44px;padding:0 4px;gap:2px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;">
       @for (item of splitTopItems; track item) {
@@ -195,3 +142,75 @@
     </li>
   </ul>
 </div>
+
+<!-- Top-split mode: the selected category's children as a second nav row under the
+     header; deeper levels open as dropdowns. A first-level leaf has no row (the layout
+     drops the alain-default__sub-nav offset too). Shares the recursive subtree below. -->
+@if (topSplitMenu && selectedTopItem?.children?.length) {
+  <div class="erupt-subnav hidden-mobile" (wheel)="onSplitNavWheel($event)">
+    <ul nz-menu nzMode="horizontal" [nzSelectable]="false" class="subnav-menu"
+        eruptInjector #subnavInj="eruptInjector">
+      <ng-template [ngTemplateOutlet]="topTree"
+                   [ngTemplateOutletContext]="{ $implicit: selectedTopItem.children }"
+                   [ngTemplateOutletInjector]="subnavInj.injector"></ng-template>
+    </ul>
+  </div>
+}
+
+<!-- Shared by the top-menu bar and the top-split sub-nav row. The subtree template is
+     recursive and declared at top level, so each instance is created with the injector
+     of the <ul> it lands in — that is how nz-menu-item / nz-submenu find their
+     NzMenuService / NzSubmenuService (see InjectorRefDirective). -->
+<!-- recursive subtree: categories become nz-submenu, leaves nz-menu-item -->
+<ng-template #topTree let-items>
+  @for (c of items; track c) {
+    @if (!c._hidden) {
+      @if (c.children?.length) {
+        <!-- nz-submenu derives its selected state from content-queried items, which
+             template-outlet children are not; bind the class from the menu model instead
+             (MenuService.open marks the whole active trail as _selected) -->
+        <li nz-submenu [nzTitle]="subTitle" nzMenuClassName="top-nav-dropdown"
+            [class.ant-menu-submenu-selected]="isActiveTopItem(c)">
+          <ng-template #subTitle>
+            <ng-template [ngTemplateOutlet]="topIcon" [ngTemplateOutletContext]="{ $implicit: c.icon }"></ng-template>
+            <span>{{ c.text }}</span>
+          </ng-template>
+          <ul eruptInjector #subInj="eruptInjector">
+            <ng-template [ngTemplateOutlet]="topTree"
+                         [ngTemplateOutletContext]="{ $implicit: c.children }"
+                         [ngTemplateOutletInjector]="subInj.injector"></ng-template>
+          </ul>
+        </li>
+      } @else {
+        <li nz-menu-item [nzSelected]="isActiveTopItem(c)" [nzDisabled]="c.disabled" (click)="navigateTopItem(c)">
+          <ng-template [ngTemplateOutlet]="topIcon" [ngTemplateOutletContext]="{ $implicit: c.icon }"></ng-template>
+          <span>{{ c.text }}</span>
+        </li>
+      }
+    }
+  }
+</ng-template>
+
+<!-- menu icon (normalized by MenuService: ant icon, iconfont, image, svg or a css class) -->
+<ng-template #topIcon let-i>
+  @if (i) {
+    @switch (i.type) {
+      @case ('icon') {
+        <i class="top-nav-icon" nz-icon [nzType]="i.value" [nzTheme]="i.theme" [nzSpin]="i.spin"
+           [nzTwotoneColor]="i.twoToneColor" [nzIconfont]="i.iconfont" [nzRotate]="i.rotate"></i>
+      }
+      @case ('iconfont') {
+        <i class="top-nav-icon" nz-icon [nzIconfont]="i.iconfont"></i>
+      }
+      @case ('img') {
+        <img [src]="i.value" class="top-nav-icon top-nav-icon--img" alt=""/>
+      }
+      @case ('svg') {
+        <span class="top-nav-icon top-nav-icon--svg" [innerHTML]="i.value"></span>
+      }
+      @default {
+        <i class="top-nav-icon {{ i.value }}"></i>
+      }
+    }
+  }
+</ng-template>

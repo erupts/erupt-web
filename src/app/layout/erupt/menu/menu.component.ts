@@ -1,5 +1,6 @@
 import {Direction, Directionality} from '@angular/cdk/bidi';
 import {StatusService} from "@shared/service/status.service";
+import {selectedTopMenu, topLevelMenus} from "@shared/model/erupt-menu";
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {DOCUMENT} from '@angular/common';
 import {
@@ -68,11 +69,6 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     @Input() recursivePath = true;
 
-    @Input()
-    set openStrictly(value: boolean) {
-        this.menuSrv.openStrictly = value;
-    }
-
     @Input() maxLevelIcon = 3;
 
     @Output() readonly select = new EventEmitter<Menu>();
@@ -85,13 +81,7 @@ export class MenuComponent implements OnInit, OnDestroy {
     splitTopItems: Nav[] = [];
 
     get selectedTopItem(): Nav | null {
-        const key = this.settings.layout['splitMenuKey'];
-        if (!this.splitTopItems.length) return null;
-        if (key) {
-            const found = this.splitTopItems.find(i => (i.key === key || i.text === key) && !i['_hidden']);
-            if (found) return found;
-        }
-        return this.splitTopItems[0] ?? null;
+        return selectedTopMenu(this.splitTopItems, this.settings.layout) as Nav | null;
     }
 
     get collapsed(): boolean {
@@ -110,14 +100,16 @@ export class MenuComponent implements OnInit, OnDestroy {
         return !!this.settings.layout['groupMenu'];
     }
 
+    get topSplitMenu(): boolean {
+        return !!this.settings.layout['topSplitMenu'];
+    }
+
     private computeSplitItems(): void {
-        this.splitTopItems = this.list.flatMap(g =>
-            (g.children as Nav[] || []).filter((i: Nav) => !i['_hidden'])
-        );
+        this.splitTopItems = topLevelMenus(this.list) as Nav[];
     }
 
     private autoSelectTopItem(): void {
-        if ((!this.splitMenu && !this.dualMenu) || !this.splitTopItems.length) return;
+        if ((!this.splitMenu && !this.dualMenu && !this.topSplitMenu) || !this.splitTopItems.length) return;
         const active = this.splitTopItems.find(i => i['_open'] || i['_selected']);
         if (active) {
             const key = active.key || active.text;
@@ -298,7 +290,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     private openByUrl(url: string | null): void {
         const {menuSrv, recursivePath} = this;
-        this.menuSrv.open(menuSrv.find({url, recursive: recursivePath}));
+        menuSrv.open(menuSrv.find({url, recursive: recursivePath}));
     }
 
     ngOnInit(): void {
@@ -339,10 +331,13 @@ export class MenuComponent implements OnInit, OnDestroy {
         settings.notify
             .pipe(
                 takeUntil(destroy$),
-                filter(t => t.type === 'layout' && (t.name === 'collapsed' || t.name === 'splitMenu' || t.name === 'dualMenu' || t.name === 'splitMenuKey'))
+                filter(t => t.type === 'layout' && ['collapsed', 'splitMenu', 'dualMenu', 'groupMenu', 'topSplitMenu', 'splitMenuKey'].includes(t.name!))
             )
-            .subscribe(() => {
+            .subscribe(t => {
                 this.clearFloating();
+                // entering a category-tab mode: the header tab must show the active route
+                // (not on splitMenuKey itself, or a click on a header tab is undone at once)
+                if (t.name !== 'splitMenuKey') this.autoSelectTopItem();
                 cdr.detectChanges();
             });
         this.underPad();

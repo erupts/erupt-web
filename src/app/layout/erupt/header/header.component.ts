@@ -6,7 +6,7 @@ import {CustomerTool, WindowModel} from "@shared/model/window.model";
 import {Router} from "@angular/router";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {HeaderSearchComponent} from "./components/search.component";
-import {MenuVo} from "@shared/model/erupt-menu";
+import {MenuVo, selectedTopMenu, topLevelMenus} from "@shared/model/erupt-menu";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {EruptTenantInfoData} from "../../../build/erupt/model/erupt-tenant";
 import {DataService} from "@shared/service/data.service";
@@ -36,6 +36,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     get splitMenu(): boolean {
         return !!this.settings.layout['splitMenu'];
+    }
+
+    // ── Top-split mode: first-level tabs in the header (same tabs as split mode),
+    // the selected category's children in a sub-nav row under the header ──
+    get topSplitMenu(): boolean {
+        return !!this.settings.layout['topSplitMenu'];
+    }
+
+    // Category whose children fill the sidebar (split) or the sub-nav row (top-split):
+    // the persisted splitMenuKey, else the first one.
+    get selectedTopItem(): Menu | null {
+        return selectedTopMenu(this.splitTopItems, this.settings.layout);
     }
 
     isActiveSplitItem(item: Menu): boolean {
@@ -148,7 +160,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.menuSrv.change.pipe(takeUntil(this.destroy$)).subscribe(data => {
-            this.splitTopItems = data.flatMap(g => (g.children || []).filter(i => !i['_hidden']));
+            this.splitTopItems = topLevelMenus(data);
         });
         this.r_tools.forEach(tool => {
             tool.load && tool.load();

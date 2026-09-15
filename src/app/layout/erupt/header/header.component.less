@@ -24,6 +24,62 @@
         }
     }
 
+    // ── Top-split mode: second nav row hanging under the 44px header, on the
+    // content surface (not the header color) like a repository tab bar ──
+    .erupt-subnav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        height: 40px;
+        padding: 0 12px;
+        display: flex;
+        align-items: center;
+        background: var(--erupt-bg-container, #fff);
+        border-bottom: 1px solid var(--ant-border-color-split);
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        &::-webkit-scrollbar { display: none; }
+    }
+
+    ::ng-deep .subnav-menu.ant-menu-horizontal {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        height: 40px;
+        line-height: 40px;
+        border-bottom: 0;
+        background: transparent;
+        font-size: 13px;
+
+        > .ant-menu-item,
+        > .ant-menu-submenu {
+            top: 0;
+            margin: 0;
+            padding: 0 12px;
+            white-space: nowrap;
+
+            &::after {
+                right: 12px;
+                left: 12px;
+            }
+        }
+
+        > .ant-menu-item-selected,
+        > .ant-menu-submenu-selected {
+            font-weight: 500;
+        }
+
+        > .ant-menu-submenu > .ant-menu-submenu-title {
+            padding: 0;
+        }
+
+        .top-nav-icon {
+            margin-right: 6px;
+        }
+    }
+
     // ── Top-menu mode: antd horizontal menu recolored to the header tokens ──
     // The <ul>/<li> are in this template; ng-zorro renders the submenu title
     // and the ::after underline, hence ::ng-deep for those parts.
