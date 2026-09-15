@@ -28,6 +28,7 @@ import {
     SlidersOutline,
     SmileOutline,
     StarOutline,
+    TableOutline,
     TagsOutline,
     UploadOutline
 } from "@ant-design/icons-angular/icons";
@@ -61,7 +62,7 @@ export class DesignerModule {
         iconService.addIcon(AppstoreOutline, BarChartOutline, BgColorsOutline, CalendarOutline, CheckCircleOutline,
             CheckSquareOutline, CloudUploadOutline, CodeOutline, DownCircleOutline, DragOutline, EditOutline,
             EnvironmentOutline, FieldNumberOutline, FontSizeOutline, HighlightOutline, LayoutOutline, LineOutline,
-            ProjectOutline, ReadOutline, SelectOutline, SlidersOutline, SmileOutline, StarOutline, TagsOutline, UploadOutline);
+            ProjectOutline, ReadOutline, SelectOutline, SlidersOutline, SmileOutline, StarOutline, TableOutline, TagsOutline, UploadOutline);
     }
 
 }

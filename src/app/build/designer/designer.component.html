@@ -169,6 +169,13 @@
                                     @case (editType.COLOR) {
                                         <div class="mock-color-block"></div>
                                     }
+                                    @case (editType.KEY_VALUE) {
+                                        <div class="mock-kv">
+                                            <input nz-input disabled [placeholder]="'key_value.key' | translate"/>
+                                            <span>=</span>
+                                            <input nz-input disabled [placeholder]="'key_value.value' | translate"/>
+                                        </div>
+                                    }
                                     @case (editType.ICON) {
                                         <nz-input-group nzSuffixIcon="appstore">
                                             <input nz-input disabled

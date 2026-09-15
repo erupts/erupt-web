@@ -23,6 +23,7 @@ export enum EditType {
     NUMBER = "NUMBER",
     COLOR = "COLOR",
     ICON = "ICON",                             //Font Awesome icon picker
+    KEY_VALUE = "KEY_VALUE",                   //key-value pairs stored as a JSON object
     TEXTAREA = "TEXTAREA",                     //large text area
     CHOICE = "CHOICE",                         //single selection
     MULTI_CHOICE = "MULTI_CHOICE",             //multiple selection
@@ -76,6 +77,7 @@ export enum ViewType {
     TEXT = "TEXT",
     COLOR = "COLOR",
     ICON = "ICON",
+    KEY_VALUE = "KEY_VALUE",
     SAFE_TEXT = "SAFE_TEXT",
     LINK = "LINK",
     TAB_VIEW = "TAB_VIEW",

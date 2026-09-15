@@ -213,6 +213,24 @@ export class UiBuildService {
                             ? `<i class="${cls}" style="font-size: 1.2rem" aria-hidden="true" title="${cls}"></i>` : "";
                     };
                     break;
+                case ViewType.KEY_VALUE:
+                    obj.format = (item: any) => {
+                        let obj: any = item[view.column];
+                        if (typeof obj === "string") {
+                            try {
+                                obj = JSON.parse(obj);
+                            } catch {
+                                return UiBuildService.escapeHtml(obj);
+                            }
+                        }
+                        if (!obj || typeof obj !== "object") return "";
+                        return Object.keys(obj).map(k => {
+                            const v = obj[k];
+                            const text = typeof v === "string" ? v : JSON.stringify(v);
+                            return `<span class="e-tag">${UiBuildService.escapeHtml(k)}: ${UiBuildService.escapeHtml(text)}</span>`;
+                        }).join(" ");
+                    };
+                    break;
                 case ViewType.COLOR:
                     obj.className = "text-center";
                     obj.type = "link";
@@ -738,6 +756,13 @@ export class UiBuildService {
     // column is indexed by its projection (eruptOrg_name) while the write targets the field itself
     // (eruptOrg), so the two cannot be read off the same string.
     static readonly FIELD_NAME_KEY = "__eruptFieldName";
+
+    /** Escapes a value for interpolation into column HTML */
+    static escapeHtml(value: any): string {
+        if (value == null) return "";
+        return String(value).replace(/[&<>"']/g, c =>
+            ({"&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"})[c]);
+    }
 
     // View types the cell can reproduce once a render template takes over from the column format.
     // Everything else either paints custom markup (a progress bar is reproduced, an image grid is

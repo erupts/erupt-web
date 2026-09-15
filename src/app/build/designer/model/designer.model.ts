@@ -133,6 +133,7 @@ export interface DesignerEdit {
     dateType?: { type?: DateEnum; pickerMode?: PickerMode };
     boolType?: { trueText?: string; falseText?: string };
     choiceType?: { type?: ChoiceEnum; vl?: DesignerVL[] };
+    keyValueType?: { keyPlaceholder?: string; valuePlaceholder?: string; max?: number; keys?: string[] };
     multiChoiceType?: { vl?: DesignerVL[] };
     tagsType?: { tags?: string[]; joinSeparator?: string; maxTagCount?: number; allowExtension?: boolean };
     autoCompleteType?: { values?: string[]; triggerLength?: number };
@@ -191,6 +192,7 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
             {type: EditType.RATE, label: "designer.type.rate", icon: "star", edit: {rateType: {count: 5}}},
             {type: EditType.COLOR, label: "designer.type.color", icon: "bg-colors"},
             {type: EditType.ICON, label: "designer.type.icon", icon: "smile"},
+            {type: EditType.KEY_VALUE, label: "designer.type.key_value", icon: "table", edit: {keyValueType: {max: 0, keys: []}}},
             {type: EditType.HIDDEN, label: "designer.type.hidden", icon: "eye-invisible"}
         ]
     },

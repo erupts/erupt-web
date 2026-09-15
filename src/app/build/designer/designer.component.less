@@ -366,6 +366,20 @@
         border: 1px solid var(--erupt-border, #d9d9d9);
         background: linear-gradient(135deg, #1890ff 0%, #722ed1 100%);
     }
+
+    .mock-kv {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        input:first-child {
+            flex: 0 0 34%;
+        }
+
+        span {
+            color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
+        }
+    }
 }
 
 // Shared property form styles for field properties and form config (form config renders in a drawer overlay, must apply globally)

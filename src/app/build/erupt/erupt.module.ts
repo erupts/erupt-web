@@ -33,6 +33,7 @@ import {AiAssistComponent} from './components/ai-assist/ai-assist.component';
 import {UiBuildService} from "./service/ui-build.service";
 import {ChoiceComponent} from "./components/choice/choice.component";
 import {TagsComponent} from "./components/tags/tags.component";
+import {KeyValueComponent} from "./components/key-value/key-value.component";
 import {TextareaComponent} from "./components/textarea/textarea.component";
 import {CardComponent} from './vis/card/card.component';
 import {BoardComponent} from './vis/board/board.component';
@@ -126,6 +127,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         AiAssistComponent,
         ChoiceComponent,
         TagsComponent,
+        KeyValueComponent,
         TextareaComponent,
         CardComponent,
         BoardComponent,

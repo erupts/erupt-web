@@ -1,0 +1,48 @@
+.erupt-kv {
+    width: 100%;
+
+    .kv-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 6px;
+
+        &.dup .kv-key {
+            border-color: #faad14;
+        }
+    }
+
+    .kv-key {
+        flex: 0 0 34%;
+        min-width: 0;
+    }
+
+    .kv-value {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .kv-eq {
+        flex: none;
+        color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
+        font-family: monospace;
+    }
+
+    .kv-remove {
+        flex: none;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+
+        &:hover {
+            color: #ff4d4f;
+        }
+    }
+
+    .kv-add {
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+    }
+
+    .kv-empty {
+        color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
+        line-height: 32px;
+    }
+}

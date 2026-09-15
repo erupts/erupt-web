@@ -115,6 +115,7 @@ export interface Edit {
     codeEditType?: CodeEditType;
     mapType?: MapType;
     colorType?: ColorType;
+    keyValueType?: KeyValueType;
     groupType?: GroupType;
     calloutType?: CalloutType;
     buttonType?: ButtonType;
@@ -279,6 +280,13 @@ export interface ColorType {
     alpha: boolean;
     presets: string[];
     showText: boolean;
+}
+
+export interface KeyValueType {
+    keyPlaceholder: string;
+    valuePlaceholder: string;
+    max: number;
+    keys: string[];
 }
 
 interface GroupType {

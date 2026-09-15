@@ -1,0 +1,35 @@
+<div class="erupt-kv" [class.readonly]="readonly">
+    @for (row of rows; track row; let i = $index) {
+        <div class="kv-row" [class.dup]="isDuplicate(row)">
+            <input nz-input class="kv-key" [nzSize]="size" autocomplete="off" spellcheck="false"
+                   [(ngModel)]="row.key" (ngModelChange)="write()" [name]="eruptField.fieldName + '.k' + i"
+                   [disabled]="readonly" [nzAutocomplete]="keyAuto"
+                   [placeholder]="eruptField.eruptFieldJson.edit.keyValueType?.keyPlaceholder || ('key_value.key' | translate)"
+                   [nz-tooltip]="isDuplicate(row) ? ('key_value.duplicate' | translate) : null" nzTooltipPlacement="topLeft">
+            <span class="kv-eq">=</span>
+            <input nz-input class="kv-value" [nzSize]="size" autocomplete="off" spellcheck="false"
+                   [(ngModel)]="row.value" (ngModelChange)="write()" [name]="eruptField.fieldName + '.v' + i"
+                   [disabled]="readonly"
+                   [placeholder]="eruptField.eruptFieldJson.edit.keyValueType?.valuePlaceholder || ('key_value.value' | translate)">
+            @if (!readonly) {
+                <button type="button" class="kv-remove" nz-button nzType="text" [nzSize]="size" (click)="remove(i)"
+                        [title]="'global.delete' | translate">
+                    <span nz-icon nzType="minus-circle" nzTheme="outline"></span>
+                </button>
+            }
+        </div>
+    }
+    @if (canAdd) {
+        <button type="button" class="kv-add" nz-button nzType="dashed" [nzSize]="size" nzBlock (click)="add()">
+            <span nz-icon nzType="plus" nzTheme="outline"></span>{{ 'key_value.add' | translate }}
+        </button>
+    } @else if (rows.length === 0) {
+        <div class="kv-empty">-</div>
+    }
+    <!-- one autocomplete shared by every key input; with no suggestions the panel simply never opens -->
+    <nz-autocomplete #keyAuto nzBackfill>
+        @for (k of keySuggestions; track k) {
+            <nz-auto-option [nzValue]="k" [nzLabel]="k" [nzDisabled]="isKeyTaken(k)">{{ k }}</nz-auto-option>
+        }
+    </nz-autocomplete>
+</div>
