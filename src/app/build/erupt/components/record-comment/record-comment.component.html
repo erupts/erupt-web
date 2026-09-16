@@ -98,15 +98,12 @@
                 [placeholder]="'comment.placeholder' | translate" (ngModelChange)="onInput()"
                 (keydown)="onKeydown($event)" (blur)="closeMention()"></textarea>
       <div class="erupt-comments__bar">
+        <!-- Only the @mention hint stays on screen; the keyboard shortcuts live on the send button -->
         <span class="erupt-comments__hint">
-          <kbd>Enter</kbd> {{'comment.send' | translate}}
-          <i>·</i>
-          <kbd>Shift</kbd>+<kbd>Enter</kbd> {{'comment.newline' | translate}}
-          <i>·</i>
           <kbd>&#64;</kbd> {{'comment.mention_hint' | translate}}
         </span>
         <button nz-button nzType="primary" nzSize="small" [nzLoading]="sending" [disabled]="!draft.trim()"
-                (click)="send()">
+                nz-tooltip [nzTooltipTitle]="'comment.send_tip' | translate" (click)="send()">
           <i nz-icon nzType="send"></i>{{'comment.send' | translate}}
         </button>
       </div>
