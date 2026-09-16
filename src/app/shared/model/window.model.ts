@@ -44,6 +44,8 @@ export class WindowModel {
         skin?: string,
         // "normal" | "split" | "dual" | "top" | "group" | "top-split" (MenuMode)
         menuMode?: string,
+        // "center" | "side" | "full" (FormPanelMode): how record forms open
+        formPanelMode?: string,
         [key: string]: any
     }
 

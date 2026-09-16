@@ -7,7 +7,7 @@ import {I18NService} from "@core";
 import {NzFormatEmitEvent, NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
-import {EditComponent} from "../edit/edit.component";
+import {FormModalService} from "../../service/form-modal.service";
 import {Scene} from "../../model/erupt.enum";
 import {Status} from "../../model/erupt-api.model";
 import {EruptBuildModel} from "../../model/erupt-build.model";
@@ -27,7 +27,8 @@ export class LayoutTreeComponent implements OnInit {
                 private dataHandler: DataHandlerService,
                 private statusService: StatusService,
                 @Inject(NzMessageService) private msg: NzMessageService,
-                @Inject(NzModalService) private modal: NzModalService) {
+                @Inject(NzModalService) private modal: NzModalService,
+                private formModal: FormModalService) {
     }
 
     @Input() eruptModel: EruptModel;
@@ -122,16 +123,13 @@ export class LayoutTreeComponent implements OnInit {
     addNode() {
         const eb = this.treeBuildModel;
         this.dataHandler.initErupt(eb);
-        const modal = this.modal.create({
-            nzTitle: this.i18n.fanyi('global.new'),
-            nzContent: EditComponent,
-            nzOkText: this.i18n.fanyi('global.add'),
-            nzMaskClosable: false,
-            nzKeyboard: false,
-            nzStyle: {top: '60px'},
-            nzWrapClassName: 'modal-lg edit-modal-lg',
-            nzOnOk: async () => {
-                if (modal.getContentComponent().beforeSaveValidate()) {
+        this.formModal.open({
+            owner: this,
+            title: this.i18n.fanyi('global.new'),
+            okText: this.i18n.fanyi('global.add'),
+            params: {eruptBuildModel: eb, behavior: Scene.ADD},
+            onOk: async ref => {
+                if (ref.getContentComponent().beforeSaveValidate()) {
                     await this.data.addEruptData(eb.eruptModel.eruptName,
                         this.dataHandler.eruptValueToObject(eb)).toPromise();
                     this.msg.success(this.i18n.fanyi('global.add.success'));
@@ -141,24 +139,19 @@ export class LayoutTreeComponent implements OnInit {
                 return false;
             }
         });
-        modal.getContentComponent().eruptBuildModel = eb;
-        modal.getContentComponent().behavior = Scene.ADD;
     }
 
     editNode() {
         if (!this.selectedKey) return;
         const eb = this.treeBuildModel;
         this.dataHandler.initErupt(eb);
-        const modal = this.modal.create({
-            nzTitle: this.i18n.fanyi('global.editor'),
-            nzContent: EditComponent,
-            nzOkText: this.i18n.fanyi('global.update'),
-            nzMaskClosable: false,
-            nzKeyboard: false,
-            nzStyle: {top: '60px'},
-            nzWrapClassName: 'modal-lg edit-modal-lg',
-            nzOnOk: async () => {
-                if (modal.getContentComponent().beforeSaveValidate()) {
+        this.formModal.open({
+            owner: this,
+            title: this.i18n.fanyi('global.editor'),
+            okText: this.i18n.fanyi('global.update'),
+            params: {eruptBuildModel: eb, behavior: Scene.EDIT, id: this.selectedKey},
+            onOk: async ref => {
+                if (ref.getContentComponent().beforeSaveValidate()) {
                     const res = await this.data.updateEruptData(eb.eruptModel.eruptName,
                         this.dataHandler.eruptValueToObject(eb)).toPromise();
                     if (res.status === Status.SUCCESS) {
@@ -171,9 +164,6 @@ export class LayoutTreeComponent implements OnInit {
                 return false;
             }
         });
-        modal.getContentComponent().eruptBuildModel = eb;
-        modal.getContentComponent().behavior = Scene.EDIT;
-        modal.getContentComponent().id = this.selectedKey;
     }
 
     deleteNode() {

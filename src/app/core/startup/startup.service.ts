@@ -132,6 +132,8 @@ export class StartupService {
             : !!WindowModel.config['tabReuse'];
         // Table border
         this.settingSrv.layout['bordered'] = false !== this.settingSrv.layout['bordered'];
+        // Clicking a table row opens its detail panel
+        this.settingSrv.layout['rowClickView'] = false !== this.settingSrv.layout['rowClickView'];
         // Breadcrumb navigation
         this.settingSrv.layout['breadcrumbs'] = false !== this.settingSrv.layout['breadcrumbs'];
         // Menu layout mode: a choice persisted from the settings drawer wins; otherwise

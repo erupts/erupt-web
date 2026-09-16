@@ -6,3 +6,33 @@
     </nz-spin>
   </div>
 }
+
+<!-- Title bar: caption on the left, the three panel forms on the right. mousedown is stopped so
+     clicking a mode icon never starts the modal drag (the header is the cdk drag handle). -->
+<ng-template #titleTpl>
+  <div class="erupt-form-title">
+    <span class="erupt-form-title__text">{{title}}</span>
+    <span class="erupt-form-title__modes" (mousedown)="$event.stopPropagation()">
+      @for (m of panelModes; track m.mode) {
+        <span class="erupt-form-title__mode" [class.erupt-form-title__mode--active]="panelMode === m.mode"
+              nz-tooltip [nzTooltipTitle]="m.i18n | translate" (click)="panelModeChange.emit(m.mode)">
+          <!-- window pictogram: the frame is the page, the filled block is where the panel sits -->
+          <svg viewBox="0 0 16 12" width="16" height="12" aria-hidden="true">
+            <rect x=".5" y=".5" width="15" height="11" rx="1.5" fill="none" stroke="currentColor" opacity=".4"/>
+            @switch (m.mode) {
+              @case (FormPanelMode.SIDE) {
+                <rect x="9" y="2" width="5" height="8" rx="1" fill="currentColor"/>
+              }
+              @case (FormPanelMode.FULL) {
+                <rect x="2" y="2" width="12" height="8" rx="1" fill="currentColor"/>
+              }
+              @default {
+                <rect x="4.5" y="3" width="7" height="6" rx="1" fill="currentColor"/>
+              }
+            }
+          </svg>
+        </span>
+      }
+    </span>
+  </div>
+</ng-template>

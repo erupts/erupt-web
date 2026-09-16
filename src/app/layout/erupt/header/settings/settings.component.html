@@ -205,9 +205,18 @@
     </nz-select>
 </div>
 <div class="setting-item">
-    <span>{{'setting.detail-drawer' | translate}}</span>
-    <nz-switch nzSize="small" [(ngModel)]="layout['drawDraw']"
-               (ngModelChange)="setLayout('drawDraw', layout['drawDraw'])"></nz-switch>
+    <span>{{'setting.form-panel-mode' | translate}}</span>
+    <nz-radio-group [ngModel]="formPanelMode" (ngModelChange)="setFormPanelMode($event)"
+                    nzSize="small" nzButtonStyle="solid">
+        <label nz-radio-button [nzValue]="FormPanelMode.CENTER">{{'form.panel.center' | translate}}</label>
+        <label nz-radio-button [nzValue]="FormPanelMode.SIDE">{{'form.panel.side' | translate}}</label>
+        <label nz-radio-button [nzValue]="FormPanelMode.FULL">{{'global.fullscreen' | translate}}</label>
+    </nz-radio-group>
+</div>
+<div class="setting-item">
+    <span>{{'setting.row-click-view' | translate}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout['rowClickView']"
+               (ngModelChange)="setLayout('rowClickView', layout['rowClickView'])"></nz-switch>
 </div>
 
 <!-- ── Others ──────────────────────────────────────────────────── -->

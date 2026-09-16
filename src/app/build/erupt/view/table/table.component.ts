@@ -19,6 +19,7 @@ import {
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
+import {FormModalService} from "../../service/form-modal.service";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
 import {
@@ -87,6 +88,7 @@ export class TableComponent implements OnInit, OnDestroy {
         @Inject(NzDrawerService)
         private drawerService: NzDrawerService,
         private eruptLocalSettings: LocalSettingsService,
+        private formModal: FormModalService,
         private el: ElementRef,
         private menuSrv: MenuService,
         private router: Router
@@ -666,45 +668,29 @@ export class TableComponent implements OnInit, OnDestroy {
             if (layout && layout.formSize == FormSize.FULL_LINE) {
                 fullLine = true;
             }
-            const _viewClick = (record: any, modal: any) => {
-                let params = {
-                    readonly: true,
-                    eruptBuildModel: this.eruptBuildModel,
-                    behavior: Scene.EDIT,
-                    id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
-                };
-                if (this.settingSrv.layout['drawDraw']) {
-                    //open details in drawer mode
-                    this.drawerService.create({
-                        nzTitle: this.i18n.fanyi("global.view"),
-                        nzWidth: "75%",
-                        nzContent: EditComponent,
-                        nzContentParams: params
-                    });
-                } else {
-                    let ref = this.modal.create({
-                        nzDraggable: true,
-                        nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
-                        nzWidth: fullLine ? 550 : null,
-                        nzStyle: {top: "60px"},
-                        nzMaskClosable: true,
-                        nzKeyboard: true,
-                        nzTitle: this.i18n.fanyi("global.view"),
-                        nzContent: EditComponent,
-                        nzFooter: [
-                            ...getEditButtons(record),
-                            {
-                                label: this.i18n.fanyi("global.refresh"),
-                                onClick: () => ref.getContentComponent().reload()
-                            },
-                            {
-                                label: this.i18n.fanyi("global.close"),
-                                onClick: () => ref.close()
-                            }
-                        ]
-                    });
-                    Object.assign(ref.getContentComponent(), params)
-                }
+            const _viewClick = (record: any) => {
+                this.formModal.open({
+                    owner: this,
+                    title: this.i18n.fanyi("global.view"),
+                    fullLine,
+                    params: {
+                        readonly: true,
+                        eruptBuildModel: this.eruptBuildModel,
+                        behavior: Scene.EDIT,
+                        id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
+                    },
+                    footer: ref => [
+                        ...getEditButtons(record),
+                        {
+                            label: this.i18n.fanyi("global.refresh"),
+                            onClick: () => ref.getContentComponent().reload()
+                        },
+                        {
+                            label: this.i18n.fanyi("global.close"),
+                            onClick: () => ref.close()
+                        }
+                    ]
+                });
             };
             const _viewIif = (item) => {
                 if (item[TableStyle.power]) {
@@ -712,6 +698,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 }
                 return true;
             };
+            this.viewRecord = record => _viewIif(record) && _viewClick(record);
             if (collapseAction) {
                 collapsedStd.push({text: this.i18n.fanyi("global.view"), click: _viewClick, iif: _viewIif});
             } else {
@@ -978,14 +965,8 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     onEdit(pk: any, fullLine = false, buttons: ModalButtonOptions[] = []) {
-        let params = {
-            eruptBuildModel: this.eruptBuildModel,
-            id: pk,
-            behavior: Scene.EDIT
-        }
-        const doSave = async (): Promise<boolean> => {
-            let validateResult = model.getContentComponent().beforeSaveValidate();
-            if (!validateResult) return false;
+        const doSave = async (ref: NzModalRef<EditComponent>): Promise<boolean> => {
+            if (!ref.getContentComponent().beforeSaveValidate()) return false;
             let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
             let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise();
             if (res.status === Status.SUCCESS) {
@@ -995,23 +976,23 @@ export class TableComponent implements OnInit, OnDestroy {
             }
             return false;
         };
-        const model = this.modal.create({
-            nzDraggable: true,
-            nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
-            nzWidth: fullLine ? 550 : null,
-            nzStyle: {top: "60px"},
-            nzMaskClosable: false,
-            nzKeyboard: false,
-            nzTitle: this.i18n.fanyi("global.editor"),
-            nzContent: EditComponent,
-            nzFooter: [
+        this.formModal.open({
+            owner: this,
+            title: this.i18n.fanyi("global.editor"),
+            fullLine,
+            params: {
+                eruptBuildModel: this.eruptBuildModel,
+                id: pk,
+                behavior: Scene.EDIT
+            },
+            footer: ref => [
                 {
                     label: this.i18n.fanyi("global.cancel"),
-                    onClick: () => model.close()
+                    onClick: () => ref.close()
                 },
                 {
                     label: this.i18n.fanyi("global.refresh"),
-                    onClick: () => model.getContentComponent().reload()
+                    onClick: () => ref.getContentComponent().reload()
                 },
                 ...buttons,
                 {
@@ -1019,20 +1000,19 @@ export class TableComponent implements OnInit, OnDestroy {
                     onClick: async () => {
                         // reload after save: unsaved sub-table rows hold temp ids, the form
                         // must be rebuilt from backend data to pick up the persisted ids
-                        if (await doSave()) {
-                            model.getContentComponent().reload();
+                        if (await doSave(ref)) {
+                            ref.getContentComponent().reload();
                         }
                     }
                 },
                 {
                     label: this.i18n.fanyi("global.save_close"),
                     type: "primary",
-                    onClick: () => model.triggerOk()
+                    onClick: () => ref.triggerOk()
                 },
             ],
-            nzOnOk: async () => doSave()
+            onOk: ref => doSave(ref)
         });
-        Object.assign(model.getContentComponent(), params)
     }
 
 
@@ -1139,6 +1119,23 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
+    // Opens the detail panel of a record (set while building the view column); undefined when the
+    // model has no viewDetails power.
+    private viewRecord?: (record: any) => void;
+
+    private rowClickTimer: any;
+
+    // Clicking anywhere on a row opens its detail panel. Interactive cells and text selection are
+    // skipped, and the open is deferred so a double click (inline cell edit) can cancel it.
+    private rowClickView(click: { e?: Event; item?: any }) {
+        if (!this.viewRecord || this.editingCell || this.settingSrv.layout['rowClickView'] === false) return;
+        const target = click.e?.target as HTMLElement;
+        if (target?.closest("a, button, input, label, .ant-checkbox-wrapper, .ant-radio-wrapper")) return;
+        if (window.getSelection()?.toString()) return;
+        clearTimeout(this.rowClickTimer);
+        this.rowClickTimer = setTimeout(() => this.viewRecord(click.item), 250);
+    }
+
     //add new record
     addData() {
         let fullLine = false;
@@ -1146,23 +1143,23 @@ export class TableComponent implements OnInit, OnDestroy {
         if (layout && layout.formSize == FormSize.FULL_LINE) {
             fullLine = true;
         }
-        const modal = this.modal.create({
-            nzDraggable: true,
-            nzStyle: {top: "60px"},
-            nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
-            nzWidth: fullLine ? 550 : null,
-            nzMaskClosable: false,
-            nzKeyboard: false,
-            nzTitle: this.i18n.fanyi("global.new"),
-            nzContent: EditComponent,
-            nzOkText: this.i18n.fanyi("global.add"),
-            nzOnOk: async () => {
+        this.formModal.open({
+            owner: this,
+            title: this.i18n.fanyi("global.new"),
+            fullLine,
+            okText: this.i18n.fanyi("global.add"),
+            params: {
+                eruptBuildModel: this.eruptBuildModel,
+                behavior: Scene.ADD,
+                header: this._drill ? DataService.drillToHeader(this._drill) : {}
+            },
+            onOk: async ref => {
                 if (!this.adding) {
                     this.adding = true;
                     setTimeout(() => {
                         this.adding = false;
                     }, 500);
-                    if (modal.getContentComponent().beforeSaveValidate()) {
+                    if (ref.getContentComponent().beforeSaveValidate()) {
                         let header = {};
                         if (this.linkTree) {
                             let lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
@@ -1183,8 +1180,6 @@ export class TableComponent implements OnInit, OnDestroy {
                 return false;
             }
         });
-        modal.getContentComponent().eruptBuildModel = this.eruptBuildModel
-        modal.getContentComponent().header = this._drill ? DataService.drillToHeader(this._drill) : {};
     }
 
     pageIndexChange(index) {
@@ -1279,6 +1274,11 @@ export class TableComponent implements OnInit, OnDestroy {
         } else {
             if (event.type === "checkbox") {
                 this.selectedRows = event.checkbox;
+            } else if (event.type === "click") {
+                this.rowClickView(event.click);
+            } else if (event.type === "dblClick") {
+                // a double click (cell edit) must not open the panel
+                clearTimeout(this.rowClickTimer);
             }
         }
         if (event.type == "sort") {
@@ -1948,21 +1948,22 @@ export class TableComponent implements OnInit, OnDestroy {
             let fullLine = false;
             const layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
             if (layout && layout.formSize == FormSize.FULL_LINE) fullLine = true;
-            const modal = this.modal.create({
-                nzDraggable: true,
-                nzStyle: {top: "60px"},
-                nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
-                nzWidth: fullLine ? 550 : null,
-                nzMaskClosable: false,
-                nzKeyboard: false,
-                nzTitle: this.i18n.fanyi("global.copy"),
-                nzContent: EditComponent,
-                nzOkText: this.i18n.fanyi("global.add"),
-                nzOnOk: async () => {
+            this.formModal.open({
+                owner: this,
+                title: this.i18n.fanyi("global.copy"),
+                fullLine,
+                okText: this.i18n.fanyi("global.add"),
+                params: {
+                    eruptBuildModel: this.eruptBuildModel,
+                    behavior: Scene.ADD,
+                    prefillData: data,
+                    header: this._drill ? DataService.drillToHeader(this._drill) : {}
+                },
+                onOk: async ref => {
                     if (!this.adding) {
                         this.adding = true;
                         setTimeout(() => this.adding = false, 500);
-                        if (modal.getContentComponent().beforeSaveValidate()) {
+                        if (ref.getContentComponent().beforeSaveValidate()) {
                             let header: any = {};
                             if (this.linkTree) {
                                 const lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
@@ -1982,11 +1983,6 @@ export class TableComponent implements OnInit, OnDestroy {
                     return false;
                 }
             });
-            const editComp = modal.getContentComponent();
-            editComp.eruptBuildModel = this.eruptBuildModel;
-            editComp.behavior = Scene.ADD;
-            editComp.prefillData = data;
-            editComp.header = this._drill ? DataService.drillToHeader(this._drill) : {};
         });
     }
 

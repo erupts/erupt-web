@@ -19,6 +19,7 @@ import {EruptRoutingModule} from "./erupt-routing.module";
 import {TreeComponent} from "./view/tree/tree.component";
 import {TableViewComponent} from "./view/table-view/table-view.component";
 import {EditComponent} from "./view/edit/edit.component";
+import {FormModalService} from "./service/form-modal.service";
 import {TableComponent} from './view/table/table.component';
 import {LayoutTreeComponent} from './view/layout-tree/layout-tree.component';
 import {FormViewComponent} from './view/form-view/form-view.component';
@@ -94,7 +95,8 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
     ],
     providers: [
         DataHandlerService,
-        UiBuildService
+        UiBuildService,
+        FormModalService
     ],
     exports: [
         EditTypeComponent,
