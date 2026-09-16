@@ -1,7 +1,9 @@
 import {Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, TemplateRef, ViewChild} from "@angular/core";
 import {NzResizeEvent} from "ng-zorro-antd/resizable";
+import {ModalButtonOptions} from "ng-zorro-antd/modal";
 import {Scene} from "../../model/erupt.enum";
 import {FormPanelMode} from "@shared/model/form-panel";
+import type {FormNavigator, FormStep} from "../../service/form-modal.service";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -60,6 +62,45 @@ export class EditComponent implements OnInit {
 
     private resizeFrame = -1;
 
+    // ---- record workbench actions, all handled by FormModalService ----
+
+    navigator?: FormNavigator;
+
+    @Output() stepRecord = new EventEmitter<FormStep>();
+
+    canToggleEdit = false;
+
+    @Output() toggleEdit = new EventEmitter<void>();
+
+    link?: string;
+
+    @Output() copyLink = new EventEmitter<void>();
+
+    // serialized form values right after loading; compared on close to detect unsaved input
+    private snapshot?: string;
+
+    // ---- modal footer (installed as nzFooter by FormModalService) ----
+    // nz-modal's built-in footer snapshots its buttons once, so a recycled panel would keep
+    // acting on the previous record; this template re-renders with the panel instead.
+
+    @ViewChild("footerTpl", {static: true}) footerTpl: TemplateRef<{}>;
+
+    // custom buttons; undefined renders the default Cancel / OK pair
+    footerButtons?: ModalButtonOptions[];
+
+    okText?: string;
+
+    // nz-modal semantics: show / disabled / loading may be values or functions of the content
+    buttonProp(button: ModalButtonOptions, key: "show" | "disabled" | "loading"): boolean {
+        const value = button[key];
+        return typeof value === "function" ? (value as Function).call(button, this) : value;
+    }
+
+    clickButton(button: ModalButtonOptions) {
+        // nz-modal calls onClick as a method of the button object, with the content component
+        if (button.onClick) button.onClick.call(button, this);
+    }
+
     constructor(
         @Inject(NzMessageService)
         private msg: NzMessageService,
@@ -83,15 +124,18 @@ export class EditComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.snapshot = undefined;
         this.dataHandlerService.emptyEruptValue(this.eruptBuildModel);
         if (this.behavior == Scene.ADD) {
             if (this.prefillData) {
                 this.dataHandlerService.objectToEruptValue(this.prefillData, this.eruptBuildModel);
+                this.takeSnapshot();
             } else {
                 this.loading = true;
                 this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName, null, this.header).subscribe(data => {
                     this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
                     this.loading = false;
+                    this.takeSnapshot();
                 }, () => {
                     this.loading = false;
                 });
@@ -103,9 +147,28 @@ export class EditComponent implements OnInit {
                 // prevent @Onchange from being triggered during data loading in edit mode, which could inadvertently modify DB data (in ADD mode it must run due to data initialization requirements)
                 setTimeout(() => {
                     this.loading = false;
+                    this.takeSnapshot();
                 }, 50)
             });
         }
+    }
+
+    private serialize(): string | undefined {
+        try {
+            return JSON.stringify(this.dataHandlerService.eruptValueToObject(this.eruptBuildModel));
+        } catch {
+            return undefined;
+        }
+    }
+
+    private takeSnapshot() {
+        this.snapshot = this.serialize();
+    }
+
+    // Editable form whose values differ from what was loaded.
+    isDirty(): boolean {
+        if (this.readonly || this.snapshot === undefined) return false;
+        return this.serialize() !== this.snapshot;
     }
 
     reload(): void {

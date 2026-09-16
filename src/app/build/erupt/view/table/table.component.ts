@@ -1,5 +1,5 @@
 import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
 import {
@@ -19,7 +19,7 @@ import {
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
-import {FormModalService} from "../../service/form-modal.service";
+import {FormModalService, FormNavigator} from "../../service/form-modal.service";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
 import {
@@ -40,7 +40,7 @@ import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
 import {EruptFieldModel, View, VL} from "../../model/erupt-field.model";
-import {Observable} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 import {UiBuildService} from "../../service/ui-build.service";
 import {EruptColumnConfig, LocalSettingsService} from "../../service/local-settings.service";
 import {I18NService} from "@core";
@@ -92,7 +92,8 @@ export class TableComponent implements OnInit, OnDestroy {
         private formModal: FormModalService,
         private el: ElementRef,
         private menuSrv: MenuService,
-        private router: Router
+        private router: Router,
+        private route: ActivatedRoute
     ) {
         this.hideCondition = !!this.settingSrv.layout['searchCollapsed'];
     }
@@ -296,6 +297,15 @@ export class TableComponent implements OnInit, OnDestroy {
         document.addEventListener('fullscreenchange', this.fullscreenChange);
         // capture-phase filter so the CDK row drag (st has no drag handle support) only starts from the grip cell
         this.el.nativeElement.addEventListener('mousedown', this.dragHandleFilter, true);
+        // reuse-tab reattaches a cached table instead of recreating it, so a deep link arriving on an
+        // already open tab shows up here as a query-param change rather than through init()
+        this.deepLink$ = this.route.queryParamMap.subscribe(q => {
+            const id = q.get("id");
+            if (id !== this.deepLinkId) {
+                this.deepLinkId = id;
+                this.openDeepLink();
+            }
+        });
     }
 
     get isEruptPrint(): boolean {
@@ -307,6 +317,7 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.deepLink$?.unsubscribe();
         this.refreshTimeInterval && clearInterval(this.refreshTimeInterval);
         document.removeEventListener('fullscreenchange', this.fullscreenChange);
         this.el.nativeElement.removeEventListener('mousedown', this.dragHandleFilter, true);
@@ -550,6 +561,7 @@ export class TableComponent implements OnInit, OnDestroy {
                     }
                 }
                 this.query(1);
+                this.openDeepLink();
             }
         );
     }
@@ -593,12 +605,13 @@ export class TableComponent implements OnInit, OnDestroy {
         return body;
     }
 
-    query(page?: number, size?: number, sort?: Record<string, SortType>) {
+    // Resolves with the loaded rows so callers (record browsing) can wait for the page.
+    query(page?: number, size?: number, sort?: Record<string, SortType>): Promise<any[]> {
         if (!this.eruptBuildModel.power.query) {
-            return;
+            return Promise.resolve([]);
         }
         if (!this.vis.length && this.eruptBuildModel.eruptModel.eruptJson.visRawTable === false) {
-            return;
+            return Promise.resolve([]);
         }
         this.dataPage.pi = page || this.dataPage.pi;
         this.dataPage.ps = size || this.dataPage.ps;
@@ -606,18 +619,25 @@ export class TableComponent implements OnInit, OnDestroy {
         this.selectedRows = [];
         this.dataPage.querying = true;
         this.setVisTplData(null)
-        this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url,
-            this.buildQueryBody(), this.header).subscribe(page => {
-            this.dataPage.querying = false;
-            this.dataPage.data = page.list || [];
-            this.dataPage.total = page.total;
-            this.alert = page.alert;
-            this.extraContent = page.extraContent;
-            if (this.vis[this.selectedVisIndex]?.type == VisType.TPL) {
-                this.setVisTplData(this.dataPage.data);
-            }
-        })
+        const loaded = new Promise<any[]>(resolve => {
+            this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url,
+                this.buildQueryBody(), this.header).subscribe(page => {
+                this.dataPage.querying = false;
+                this.dataPage.data = page.list || [];
+                this.dataPage.total = page.total;
+                this.alert = page.alert;
+                this.extraContent = page.extraContent;
+                if (this.vis[this.selectedVisIndex]?.type == VisType.TPL) {
+                    this.setVisTplData(this.dataPage.data);
+                }
+                resolve(this.dataPage.data);
+            }, () => {
+                this.dataPage.querying = false;
+                resolve([]);
+            });
+        });
         this.extraRowFun(this.buildQueryBody());
+        return loaded;
     }
 
     setVisTplData(data: any[]) {
@@ -664,41 +684,14 @@ export class TableComponent implements OnInit, OnDestroy {
         const collapseAction = this.eruptBuildModel.eruptModel.eruptJson.layout?.collapseActionButton;
         const collapsedStd: STColumnButton[] = [];
         if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
-            let fullLine = false;
-            let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
-            if (layout && layout.formSize == FormSize.FULL_LINE) {
-                fullLine = true;
-            }
-            const _viewClick = (record: any) => {
-                this.formModal.open({
-                    owner: this,
-                    title: this.i18n.fanyi("global.view"),
-                    fullLine,
-                    params: {
-                        readonly: true,
-                        eruptBuildModel: this.eruptBuildModel,
-                        behavior: Scene.EDIT,
-                        id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
-                    },
-                    footer: ref => [
-                        ...getEditButtons(record),
-                        {
-                            label: this.i18n.fanyi("global.refresh"),
-                            onClick: () => ref.getContentComponent().reload()
-                        },
-                        {
-                            label: this.i18n.fanyi("global.close"),
-                            onClick: () => ref.close()
-                        }
-                    ]
-                });
-            };
+            const _viewClick = (record: any) => this.openView(record);
             const _viewIif = (item) => {
                 if (item[TableStyle.power]) {
                     return (<Power>item[TableStyle.power]).viewDetails !== false
                 }
                 return true;
             };
+            this.viewAllowed = _viewIif;
             this.viewRecord = record => _viewIif(record) && _viewClick(record);
             if (collapseAction) {
                 collapsedStd.push({text: this.i18n.fanyi("global.view"), click: _viewClick, iif: _viewIif});
@@ -821,22 +814,17 @@ export class TableComponent implements OnInit, OnDestroy {
                 });
             return [...roButtons, ...editButtons];
         }
+        this.recordButtons = getEditButtons;
 
         if (this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
-            let fullLine = false;
-            let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
-            if (layout && layout.formSize == FormSize.FULL_LINE) {
-                fullLine = true;
-            }
-            const _editClick = (record: any) => {
-                this.onEdit(record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol], fullLine, getEditButtons(record));
-            };
+            const _editClick = (record: any) => this.openEdit(record);
             const _editIif = (item) => {
                 if (item[TableStyle.power]) {
                     return (<Power>item[TableStyle.power]).edit !== false
                 }
                 return true;
             };
+            this.editAllowed = _editIif;
             if (collapseAction) {
                 collapsedStd.push({text: this.i18n.fanyi("global.editor"), click: _editClick, iif: _editIif});
             } else {
@@ -965,7 +953,61 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
-    onEdit(pk: any, fullLine = false, buttons: ModalButtonOptions[] = []) {
+    // ---------- record form panel (view / edit) ----------
+
+    // Row-level permission checks and the per-record footer buttons, set while building the
+    // table config; view / edit are absent when the model lacks the power.
+    private viewAllowed?: (record: any) => boolean;
+
+    private editAllowed?: (record: any) => boolean;
+
+    private recordButtons: (record: any) => ModalButtonOptions[] = () => [];
+
+    private get pkCol(): string {
+        return this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+    }
+
+    private get fullLineForm(): boolean {
+        return this.eruptBuildModel.eruptModel.eruptJson.layout?.formSize == FormSize.FULL_LINE;
+    }
+
+    // Vis components (card / board / calendar) only know the primary key.
+    onEdit(pk: any) {
+        this.openEdit(this.dataPage.data.find(r => r[this.pkCol] === pk) ?? {[this.pkCol]: pk});
+    }
+
+    // Read-only detail panel; `into` reloads an open panel (record browsing, leaving edit mode).
+    openView(record: any, into?: NzModalRef<EditComponent>) {
+        this.formModal.open({
+            owner: this,
+            into,
+            title: this.i18n.fanyi("global.view"),
+            fullLine: this.fullLineForm,
+            params: {
+                readonly: true,
+                eruptBuildModel: this.eruptBuildModel,
+                behavior: Scene.EDIT,
+                id: record[this.pkCol]
+            },
+            navigator: this.recordNavigator(record, (r, ref) => this.openView(r, ref)),
+            toggleEdit: this.editAllowed?.(record) ? ref => this.openEdit(record, ref) : undefined,
+            link: this.recordLink(record),
+            footer: ref => [
+                ...this.recordButtons(record),
+                {
+                    label: this.i18n.fanyi("global.refresh"),
+                    onClick: () => ref.getContentComponent().reload()
+                },
+                {
+                    label: this.i18n.fanyi("global.close"),
+                    onClick: () => ref.close()
+                }
+            ]
+        });
+    }
+
+    openEdit(record: any, into?: NzModalRef<EditComponent>) {
+        const pk = record[this.pkCol];
         const doSave = async (ref: NzModalRef<EditComponent>): Promise<boolean> => {
             if (!ref.getContentComponent().beforeSaveValidate()) return false;
             let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
@@ -979,23 +1021,28 @@ export class TableComponent implements OnInit, OnDestroy {
         };
         this.formModal.open({
             owner: this,
+            into,
             title: this.i18n.fanyi("global.editor"),
-            fullLine,
+            fullLine: this.fullLineForm,
             params: {
                 eruptBuildModel: this.eruptBuildModel,
                 id: pk,
                 behavior: Scene.EDIT
             },
+            navigator: this.recordNavigator(record, (r, ref) => this.openEdit(r, ref)),
+            toggleEdit: this.viewAllowed?.(record) ? ref => this.openView(record, ref) : undefined,
+            link: this.recordLink(record),
             footer: ref => [
                 {
                     label: this.i18n.fanyi("global.cancel"),
-                    onClick: () => ref.close()
+                    // through nzOnCancel, so unsaved input is confirmed first
+                    onClick: () => ref.triggerCancel()
                 },
                 {
                     label: this.i18n.fanyi("global.refresh"),
                     onClick: () => ref.getContentComponent().reload()
                 },
-                ...buttons,
+                ...this.recordButtons(record),
                 {
                     label: this.i18n.fanyi("global.save_only"),
                     onClick: async () => {
@@ -1014,6 +1061,52 @@ export class TableComponent implements OnInit, OnDestroy {
             ],
             onOk: ref => doSave(ref)
         });
+    }
+
+    // Previous / next within the current page; steps onto the neighbouring page at its edges.
+    private recordNavigator(record: any, reopen: (r: any, ref: NzModalRef<EditComponent>) => void): FormNavigator {
+        const indexOf = () => this.dataPage.data.findIndex(r => r[this.pkCol] === record[this.pkCol]);
+        const lastPage = () => Math.max(1, Math.ceil(this.dataPage.total / this.dataPage.ps));
+        return {
+            canStep: step => {
+                const i = indexOf();
+                if (i < 0) return false;
+                return step > 0
+                    ? i < this.dataPage.data.length - 1 || this.dataPage.pi < lastPage()
+                    : i > 0 || this.dataPage.pi > 1;
+            },
+            step: async step => {
+                const i = indexOf();
+                if (i < 0) return undefined;
+                const j = i + step;
+                if (j >= 0 && j < this.dataPage.data.length) return this.dataPage.data[j];
+                if (step > 0 ? this.dataPage.pi >= lastPage() : this.dataPage.pi <= 1) return undefined;
+                const list = await this.query(this.dataPage.pi + step);
+                return step > 0 ? list[0] : list[list.length - 1];
+            },
+            open: reopen
+        };
+    }
+
+    // Shareable url that opens this record's detail panel (only for the routed table itself).
+    private recordLink(record: any): string | undefined {
+        if (this._drill || this._reference) return undefined;
+        const path = this.router.url.split("?")[0];
+        return `${location.origin}${location.pathname}#${path}?id=${encodeURIComponent(record[this.pkCol])}`;
+    }
+
+    private deepLink$?: Subscription;
+
+    // last `?id=` handled, so re-emissions of the same query params do not reopen the panel
+    private deepLinkId: string | null = null;
+
+    // `?id=` in the route opens that record's detail panel; called once the table is ready
+    // (end of init) and whenever the query params change on an already open tab.
+    private openDeepLink() {
+        const id = this.deepLinkId;
+        if (!id || this._drill || this._reference || !this.eruptBuildModel || !this.viewRecord) return;
+        this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, id)
+            .subscribe(data => data && this.openView(data));
     }
 
 

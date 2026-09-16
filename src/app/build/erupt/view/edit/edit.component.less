@@ -7,11 +7,56 @@
     padding-right: 36px;
 
     &__text {
-        flex: 1;
+        flex: 0 1 auto;
         min-width: 0;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+    }
+
+    &__spacer {
+        flex: 1;
+    }
+
+    &__nav,
+    &__actions {
+        display: inline-flex;
+        gap: 2px;
+        flex-shrink: 0;
+    }
+
+    // divider between the record actions and the panel-mode switch
+    &__actions {
+        padding-right: 10px;
+        margin-right: -2px;
+        border-right: 1px solid var(--erupt-border, rgba(0, 0, 0, 0.06));
+    }
+
+    // plain icon button (prev / next, edit / view, copy link)
+    &__action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: normal;
+        cursor: pointer;
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+        transition: color 0.2s, background-color 0.2s;
+
+        &:hover {
+            color: var(--ant-primary-color);
+            background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.04));
+        }
+
+        &--disabled,
+        &--disabled:hover {
+            color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
+            background: none;
+            cursor: not-allowed;
+        }
     }
 
     // segmented control: gray track, the active item raised on a white pill
