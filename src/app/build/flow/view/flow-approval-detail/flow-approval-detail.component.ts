@@ -25,7 +25,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {EruptUser} from "../../../cube/model/dashboard.model";
 import {forkJoin} from "rxjs";
-import {getAvatarColor} from "@flow/util/flow.util";
+import {getAvatarColor, getStatusColor} from "@flow/util/flow.util";
 import {ActivatedRoute} from "@angular/router";
 import {FormAccessEnum, PrintSetting} from "@flow/model/flow.model";
 import {Scene} from "../../../erupt/model/erupt.enum";
@@ -705,6 +705,8 @@ export class FlowApprovalDetailComponent implements OnInit {
     protected readonly Object = Object;
 
     protected readonly getAvatarColor = getAvatarColor;
+
+    protected readonly getStatusColor = getStatusColor;
 
     protected readonly FormAccessEnum = FormAccessEnum;
 

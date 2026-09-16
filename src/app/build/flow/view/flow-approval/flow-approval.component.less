@@ -20,7 +20,7 @@
                 flex-shrink: 0;
 
                 .sidebar-header {
-                    height: 48px;
+                    height: 44px; // same as the page header / drawer header
                     padding: 0 14px;
                     border-bottom: 1px solid var(--ant-border-color-split);
                     display: flex;
@@ -117,33 +117,27 @@
                     flex-shrink: 0;
 
                     .list-header {
-                        height: 48px;
-                        padding: 0 10px;
+                        height: 44px; // same as the page header / drawer header
+                        // same left padding as .approval-list, so the field lines up with the cards
+                        padding: 0 8px;
                         border-bottom: 1px solid var(--ant-border-color-split);
                         display: flex;
                         align-items: center;
                         gap: 6px;
                         flex-shrink: 0;
 
-                        // Make the borderless filter look like a filled search field
-                        nz-select {
+                        // A plain ant select: same chrome as every other field in the app,
+                        // no custom fill to clash with the white list below.
+                        .flow-filter {
                             flex: 1;
                             min-width: 0;
 
-                            .ant-select-selector {
-                                background: var(--erupt-bg-spotlight, #f5f7fa) !important;
-                                border-radius: 6px !important;
-                                height: 32px !important;
-                                border-color: transparent !important;
-                                box-shadow: none !important;
-                            }
-
-                            .ant-select-selection-placeholder {
-                                line-height: 30px !important;
+                            .ant-select-arrow {
+                                color: var(--erupt-text-tertiary, #8c8c8c);
                             }
                         }
 
-                        // Compact, square reload button aligned with the field
+                        // Icon button matching the 32px control height next to it
                         > button {
                             flex-shrink: 0;
                             width: 32px;
@@ -152,7 +146,6 @@
                             display: flex;
                             align-items: center;
                             justify-content: center;
-                            border-radius: 6px;
                             color: var(--erupt-text-tertiary, #8c8c8c);
 
                             &:hover {
