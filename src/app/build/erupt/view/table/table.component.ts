@@ -921,6 +921,8 @@ export class TableComponent implements OnInit, OnDestroy {
             } else {
                 tableOperators.push({
                     icon: "message",
+                    // the count rides on the icon as a superscript, so the button stays one icon wide
+                    className: "erupt-comment-btn",
                     text: badge,
                     tooltip: this.i18n.fanyi("form.comments"),
                     click: commentClick
@@ -987,10 +989,10 @@ export class TableComponent implements OnInit, OnDestroy {
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
-                // 35px per icon button; the comment button also carries a count badge
+                // 35px per icon button
                 width: eruptJson.layout.tableOperatorWidth ? eruptJson.layout.tableOperatorWidth :
                     ((tableOperators.length + (this.eruptBuildModel.eruptModel.tags?.size || 0)) * 35 + 18
-                        + (isFoldButtons ? 60 : 0) + (this.isCommentEnabled && !collapseAction ? 30 : 0)),
+                        + (isFoldButtons ? 60 : 0)),
                 className: "text-center",
                 buttons: tableOperators,
                 resizable: false

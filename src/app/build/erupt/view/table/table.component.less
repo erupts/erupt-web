@@ -582,17 +582,30 @@
     }
 }
 
-// count badge on the row comment button (st renders the button html, so the rule is global)
-:host ::ng-deep .erupt-comment-badge {
-    display: inline-block;
-    min-width: 16px;
-    margin-left: 2px;
-    padding: 0 4px;
-    font-size: 11px;
-    line-height: 16px;
-    text-align: center;
-    border-radius: 8px;
-    color: var(--ant-primary-color);
-    background: var(--ant-primary-1, #e6f4ff);
-    vertical-align: 1px;
+// count badge on the row comment button (st renders the button html, so the rule is global).
+// It sits on top of the icon as a superscript so the button costs the same width as any other
+// icon action instead of widening the whole operation column.
+:host ::ng-deep .erupt-comment-btn {
+    position: relative;
+
+    // st always emits the text wrapper, padded when an icon is present; the badge is out of flow
+    .pl-xs {
+        padding-left: 0 !important;
+    }
+
+    .erupt-comment-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 14px;
+        height: 14px;
+        padding: 0 3px;
+        font-size: 10px;
+        line-height: 14px;
+        text-align: center;
+        border-radius: 7px;
+        color: #fff;
+        background: var(--ant-primary-color);
+        pointer-events: none;
+    }
 }
