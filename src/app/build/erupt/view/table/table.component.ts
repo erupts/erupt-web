@@ -51,6 +51,7 @@ import {STChange, STColumn, STColumnButton, STComponent, STDragOptions, STPage} 
 import {PageDescMode} from "@shared/component/page-desc/page-desc.component";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
+import {openResizableDrawer} from "../../components/resizable-drawer/resizable-drawer.component";
 import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
 import {TableStyle} from "../../model/erupt.vo";
 import {colRules} from "@shared/model/util.model";
@@ -893,7 +894,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 icon: "node-index",
                 tooltip: this.i18n.fanyi("VIEW_FLOW"),
                 click: (record: any, modal: any) => {
-                    this.drawerService.create({
+                    openResizableDrawer(this.drawerService, {
                         nzClosable: false,
                         nzKeyboard: true,
                         nzMaskClosable: true,
@@ -910,7 +911,7 @@ export class TableComponent implements OnInit, OnDestroy {
                             height: "100%",
                             width: '100%'
                         }
-                    })
+                    }, "flow-approval")
                 },
                 iif: (item) => {
                     return item["__flow_id__"];
