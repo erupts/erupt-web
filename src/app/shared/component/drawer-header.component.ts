@@ -33,11 +33,13 @@ import {NzDrawerRef} from "ng-zorro-antd/drawer";
             flex-shrink: 0;
         }
 
+        /* same height as the page header (@alain-default-header-hg, 44px) */
         .erupt-drawer-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px;
+            height: 44px;
+            padding: 0 12px 0 16px;
             border-bottom: 1px solid var(--ant-border-color-split);
             flex-shrink: 0;
         }
@@ -45,8 +47,8 @@ import {NzDrawerRef} from "ng-zorro-antd/drawer";
         .erupt-drawer-header__title {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 16px;
+            gap: 10px;
+            font-size: 15px;
             font-weight: 500;
             color: var(--erupt-text, #262626);
         }
