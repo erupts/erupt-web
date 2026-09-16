@@ -33,8 +33,10 @@
 <ng-template #titleTpl>
   <div class="erupt-form-title">
     <span class="erupt-form-title__text">{{title}}</span>
+    <span class="erupt-form-title__spacer"></span>
     @if (navigator) {
-      <!-- record pager next to the caption: ‹ n / total › within the list that opened the panel -->
+      <!-- record pager: ‹ n / total › within the list that opened the panel; first group on the right,
+           separated from the record actions -->
       <span class="erupt-form-title__group erupt-form-title__pager" (mousedown)="$event.stopPropagation()">
         <span class="erupt-form-title__btn erupt-form-title__btn--icon"
               [class.erupt-form-title__btn--disabled]="!navigator.canStep(-1)"
@@ -51,7 +53,6 @@
         </span>
       </span>
     }
-    <span class="erupt-form-title__spacer"></span>
     @if (canToggleEdit || aiAction || removeAction || menuActions.length) {
       <!-- record actions as small outlined buttons, ant style; the mode switch keeps its own pill -->
       <span class="erupt-form-title__actions" (mousedown)="$event.stopPropagation()">
