@@ -22,6 +22,7 @@ import {StartNode} from "@flow/model/flow-approval.model";
 import {KV} from "../../../../erupt/model/util.model";
 import {EruptUser} from "../../../../cube/model/dashboard.model";
 import {forkJoin} from "rxjs";
+import {finalize} from "rxjs/operators";
 import {I18NService} from "@core";
 
 @Component({
@@ -43,6 +44,8 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
     startNode: StartNode;
 
     loading: boolean = false;
+
+    submitting: boolean = false;
 
     eruptBuild: EruptBuildModel;
 
@@ -133,6 +136,9 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
     }
 
     onSubmit(): void {
+        if (this.submitting) {
+            return;
+        }
         for (let node of this.selfSelectNodes) {
             if (!this.selectedNodeUserIds[node.key] || this.selectedNodeUserIds[node.key].length == 0) {
                 this.msg.warning(this.i18n.fanyi('flow.warning.select_approver_prefix') + node.value + this.i18n.fanyi('flow.warning.select_approver_suffix'));
@@ -144,10 +150,14 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
             selfSelectNodeUsers[key] = this.selectedNodeUserIds[key];
         }
         let data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
+        this.submitting = true;
         this.flowInstanceApiService.create(this.flow.id, {
             data: data,
             selfSelectNodeUsers: selfSelectNodeUsers
-        }).subscribe(res => {
+        }).pipe(finalize(() => {
+            this.submitting = false;
+            this.cdr.markForCheck();
+        })).subscribe(res => {
             if (res.success) {
                 this.msg.success(this.i18n.fanyi('flow.success.start_approval'));
                 this.close.emit();

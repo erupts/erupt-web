@@ -22,9 +22,9 @@
             </erupt-flow-form>
         </div>
         <div style="text-align: right;position: sticky;bottom: 0;padding: 10px 16px;border-top:1px solid rgba(0,0,0,.06);z-index:999">
-            <button nz-button nzType="default" (click)="onCancel()">{{ 'global.cancel' | translate }}</button>
-            <button nz-button nzType="default" (click)="onViewFlow()" style="margin-left: 8px;">{{ 'flow.action.view_flow' | translate }}</button>
-            <button nz-button nzType="primary" (click)="onSubmit()" style="margin-left: 8px;">{{ 'flow.action.launch' | translate }}</button>
+            <button nz-button nzType="default" [disabled]="submitting" (click)="onCancel()">{{ 'global.cancel' | translate }}</button>
+            <button nz-button nzType="default" [disabled]="submitting" (click)="onViewFlow()" style="margin-left: 8px;">{{ 'flow.action.view_flow' | translate }}</button>
+            <button nz-button nzType="primary" [nzLoading]="submitting" (click)="onSubmit()" style="margin-left: 8px;">{{ 'flow.action.launch' | translate }}</button>
         </div>
     }
 </nz-spin>
