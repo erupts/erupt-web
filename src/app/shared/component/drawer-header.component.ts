@@ -5,58 +5,37 @@ import {NzDrawerRef} from "ng-zorro-antd/drawer";
  * Header of a drawer that draws its own chrome (opened with nzTitle: null, nzClosable: false):
  * an icon and a title on the left, projected actions and a close button on the right. Used by the
  * notice center and the header AI chat so the two top-bar drawers look alike.
+ *
+ * It emits the same DOM as nz-drawer's own header, so the one global rule in styles/custom.less
+ * (`.ant-drawer .ant-drawer-header`) sizes and colors both — no second copy of the chrome here.
  */
 @Component({
     standalone: false,
     selector: 'erupt-drawer-header',
     template: `
-        <div class="erupt-drawer-header">
-            <div class="erupt-drawer-header__title">
-                @if (icon) {
-                    <span nz-icon [nzType]="icon" nzTheme="outline"></span>
-                }
-                <span>{{ title }}</span>
+        <div class="ant-drawer-header">
+            <div class="ant-drawer-header-title">
+                <div class="ant-drawer-title">
+                    @if (icon) {
+                        <span nz-icon [nzType]="icon" nzTheme="outline"></span>
+                    }
+                    <span>{{ title }}</span>
+                </div>
             </div>
-            <div class="erupt-drawer-header__actions">
+            <div class="ant-drawer-extra">
                 <ng-content></ng-content>
-                @if (drawerRef) {
-                    <button nz-button nzType="text" nzSize="small" (click)="drawerRef.close()">
-                        <span nz-icon nzType="close"></span>
-                    </button>
-                }
             </div>
+            @if (drawerRef) {
+                <button class="ant-drawer-close" type="button" aria-label="Close" (click)="drawerRef.close()">
+                    <span nz-icon nzType="close"></span>
+                </button>
+            }
         </div>
     `,
     styles: [`
         :host {
             display: block;
             flex-shrink: 0;
-        }
-
-        /* same height as the page header (@alain-default-header-hg, 44px) */
-        .erupt-drawer-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 44px;
-            padding: 0 12px 0 16px;
-            border-bottom: 1px solid var(--ant-border-color-split);
-            flex-shrink: 0;
-        }
-
-        .erupt-drawer-header__title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 15px;
-            font-weight: 500;
-            color: var(--erupt-text, #262626);
-        }
-
-        .erupt-drawer-header__actions {
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
     `]
 })
