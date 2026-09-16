@@ -1,13 +1,13 @@
 <div>
   @if (!onlyRead) {
     <div class="tab-bar">
-      <button (click)="mode=='add'?addData():addDataByRefer()" nz-button nzGhost nzType="primary"
-        [nzSize]="'default'">
+      <button (click)="mode=='add'?addData():addDataByRefer()" nz-button nzType="primary"
+        [nzSize]="'small'">
         <i nz-icon nzType="plus" theme="outline"></i>{{'global.new'|translate}}
       </button>
       @if (checkedRow.length>0) {
         <button (click)="deleteData()" nz-button
-          nzType="default" nzDanger [nzSize]="'default'">
+          nzType="default" nzDanger [nzSize]="'small'">
           <i nz-icon nzType="delete" theme="outline"></i>{{'global.delete'|translate}}
         </button>
       }

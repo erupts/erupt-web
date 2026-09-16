@@ -730,7 +730,7 @@
     </form>
 
     @if (tabErupts.length && (!formSteps || currentStep === steps.length - 1)) {
-        <nz-tabs [nzType]="'card'" style="margin-top: 5px">
+        <nz-tabs class="erupt-tab-panel">
             @for (item of tabErupts; track item) {
                 @if (eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.show) {
                     <nz-tab [nzTitle]="tabTitle"
@@ -763,7 +763,7 @@
                 <ng-template #tabTitle>
                     {{ eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.title }}
                     @if (eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.desc) {
-                        <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip
+                        <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip class="erupt-tab-desc"
                            [nzTooltipTitle]="eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.desc"></i>
                     }
                 </ng-template>
