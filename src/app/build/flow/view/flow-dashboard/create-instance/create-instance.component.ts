@@ -1,17 +1,15 @@
-import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
 import {
     ChangeDetectorRef,
     Component,
-    ElementRef,
     EventEmitter,
     Inject,
     Input,
-    NgZone,
     OnDestroy,
     OnInit,
     Output
 } from '@angular/core';
-import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
+import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
 import {FormSize} from "../../../../erupt/model/erupt.enum";
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
@@ -54,47 +52,15 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
 
     selectedNodeUserIds: { [key: string]: number[] } = {};
 
-    private resizing = false;
-    private startX = 0;
-    private startWidth = 0;
-    private drawerElement: HTMLElement | null = null;
-
     constructor(private msg: NzMessageService,
                 private dataHandlerService: DataHandlerService,
                 private cdr: ChangeDetectorRef,
                 @Inject(NzDrawerService)
                 private drawerService: NzDrawerService,
-                private drawerRef: NzDrawerRef,
-                private el: ElementRef,
-                private ngZone: NgZone,
                 private flowApiService: FlowApiService,
                 private flowInstanceApiService: FlowInstanceApiService,
                 private i18n: I18NService) {
 
-    }
-
-    onMouseDown(event: MouseEvent): void {
-        this.resizing = true;
-        this.startX = event.clientX;
-        this.startWidth = parseInt(this.drawerRef.nzWidth as string) || 520;
-        this.drawerElement = this.drawerElement || this.el.nativeElement.closest('.ant-drawer-content-wrapper');
-
-        this.ngZone.runOutsideAngular(() => {
-            const moveHandler = (moveEvent: MouseEvent) => {
-                if (!this.resizing) return;
-                const newWidth = Math.max(300, Math.min(window.innerWidth * 0.9, this.startX - moveEvent.clientX + this.startWidth));
-                if (this.drawerElement) this.drawerElement.style.width = `${newWidth}px`;
-            };
-            const upHandler = (upEvent: MouseEvent) => {
-                this.resizing = false;
-                document.removeEventListener('mousemove', moveHandler);
-                document.removeEventListener('mouseup', upHandler);
-                this.ngZone.run(() => this.drawerRef.nzWidth = this.drawerElement?.style.width);
-            };
-            document.addEventListener('mousemove', moveHandler);
-            document.addEventListener('mouseup', upHandler);
-        });
-        event.preventDefault();
     }
 
     ngOnInit() {

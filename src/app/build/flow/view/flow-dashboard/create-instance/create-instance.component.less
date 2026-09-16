@@ -3,12 +3,6 @@
     overflow: auto;
 
     @media (max-width: 768px) {
-        // The resize handle is mouse-only; it has no purpose on touch and its
-        // parseInt('100%') start width would corrupt the full-width drawer.
-        .drawer-resize-handle {
-            display: none;
-        }
-
         // Stack the self-select approver label above its select on narrow drawers.
         .self-select-row {
             flex-direction: column;
