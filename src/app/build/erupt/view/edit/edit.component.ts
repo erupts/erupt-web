@@ -1,4 +1,5 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output, TemplateRef, ViewChild} from "@angular/core";
+import {Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, TemplateRef, ViewChild} from "@angular/core";
+import {NzResizeEvent} from "ng-zorro-antd/resizable";
 import {Scene} from "../../model/erupt.enum";
 import {FormPanelMode} from "@shared/model/form-panel";
 import {EruptBuildModel} from "../../model/erupt-build.model";
@@ -54,13 +55,31 @@ export class EditComponent implements OnInit {
         {mode: FormPanelMode.FULL, i18n: "global.fullscreen"}
     ];
 
+    // new panel (modal) width requested by dragging the side panel's edge
+    @Output() panelResize = new EventEmitter<number>();
+
+    private resizeFrame = -1;
+
     constructor(
         @Inject(NzMessageService)
         private msg: NzMessageService,
         private dataService: DataService,
         private i18n: I18NService,
-        private dataHandlerService: DataHandlerService) {
+        private dataHandlerService: DataHandlerService,
+        private elRef: ElementRef<HTMLElement>) {
 
+    }
+
+    onPanelResize({width}: NzResizeEvent) {
+        cancelAnimationFrame(this.resizeFrame);
+        this.resizeFrame = requestAnimationFrame(() => {
+            const host = this.elRef.nativeElement;
+            const modal = host.closest(".ant-modal");
+            if (!modal) return;
+            // the form fills the modal body, so a body delta is a panel delta
+            const delta = width - host.getBoundingClientRect().width;
+            this.panelResize.emit(Math.round(modal.getBoundingClientRect().width + delta));
+        });
     }
 
     ngOnInit() {

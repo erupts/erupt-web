@@ -1,11 +1,17 @@
-@if (eruptBuildModel!=null) {
-  <div>
+<!-- In side-panel mode the left edge is draggable (nz-resizable); the body delta is translated
+     to the modal width by FormModalService. -->
+<div class="erupt-form-body" nz-resizable nzBounds="window" [nzMinWidth]="320"
+     [nzDisabled]="panelMode !== FormPanelMode.SIDE" (nzResize)="onPanelResize($event)">
+  @if (panelMode === FormPanelMode.SIDE) {
+    <nz-resize-handles [nzDirections]="['left']"></nz-resize-handles>
+  }
+  @if (eruptBuildModel!=null) {
     <nz-spin [nzSpinning]="loading">
       <erupt-edit-type [loading]="loading" #eruptEdit [eruptBuildModel]="eruptBuildModel" [readonly]="readonly"
       [mode]="behavior" [size]="size"></erupt-edit-type>
     </nz-spin>
-  </div>
-}
+  }
+</div>
 
 <!-- Title bar: caption on the left, the three panel forms on the right. mousedown is stopped so
      clicking a mode icon never starts the modal drag (the header is the cdk drag handle). -->

@@ -6,6 +6,11 @@ import {Scene} from "../model/erupt.enum";
 import {EruptBuildModel} from "../model/erupt-build.model";
 import {FORM_PANEL_MODE_KEY, FormPanelMode, formPanelModeOf} from "@shared/model/form-panel";
 
+// localStorage key of the dragged side-panel width (one per form width class)
+const SIDE_WIDTH_KEY = "erupt-form-panel:side-width";
+
+const SIDE_MIN_WIDTH = 360;
+
 export interface FormParams {
     eruptBuildModel: EruptBuildModel;
     behavior: Scene;
@@ -64,6 +69,7 @@ export class FormModalService {
         this.panels.set(ref, {owner: opts.owner, fullLine: !!opts.fullLine});
         ref.afterClose.subscribe(() => this.panels.delete(ref));
         ref.getContentComponent().panelModeChange.subscribe(mode => this.switchMode(ref, mode));
+        ref.getContentComponent().panelResize.subscribe(width => this.resizeSide(ref, width));
         this.apply(ref, opts);
         return ref;
     }
@@ -100,6 +106,25 @@ export class FormModalService {
         ref.updateConfig(this.modeConfig(mode, this.panels.get(ref)?.fullLine, comp.readonly));
     }
 
+    // Dragged side-panel width: applied live and remembered for the next panel.
+    private resizeSide(ref: NzModalRef<EditComponent>, width: number) {
+        if (width < SIDE_MIN_WIDTH) return;
+        ref.updateConfig({nzWidth: width});
+        try {
+            localStorage.setItem(this.sideWidthKey(this.panels.get(ref)?.fullLine), String(width));
+        } catch {
+        }
+    }
+
+    private sideWidthKey(fullLine: boolean): string {
+        return fullLine ? SIDE_WIDTH_KEY + ":full-line" : SIDE_WIDTH_KEY;
+    }
+
+    private savedSideWidth(fullLine: boolean): number | undefined {
+        const saved = Number(localStorage.getItem(this.sideWidthKey(fullLine)));
+        return saved >= SIDE_MIN_WIDTH ? saved : undefined;
+    }
+
     // An open, read-only side panel of this owner that the next request can reuse.
     private recyclable(owner?: object): NzModalRef<EditComponent> | undefined {
         for (const [ref, entry] of this.panels) {
@@ -129,7 +154,7 @@ export class FormModalService {
                 return {
                     // view panels let the list behind stay clickable (see recyclable)
                     nzWrapClassName: wrap + (readonly ? " erupt-form-panel--passthrough" : ""),
-                    nzWidth: fullLine ? 560 : "min(75vw, 1080px)",
+                    nzWidth: this.savedSideWidth(fullLine) ?? (fullLine ? 560 : "min(75vw, 1080px)"),
                     nzStyle: {top: 0, margin: 0, marginInlineStart: "auto", paddingBottom: 0, maxWidth: "100vw"},
                     nzDraggable: false,
                     nzMaskStyle: readonly ? {pointerEvents: "none", background: "transparent"} : {}
