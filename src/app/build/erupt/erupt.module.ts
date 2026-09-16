@@ -28,6 +28,8 @@ import {EruptUeditorComponent} from './components/ueditor/erupt-ueditor.componen
 import {TabTreeComponent} from './components/tab-tree/tab-tree.component';
 import {CheckboxComponent} from './components/checkbox/checkbox.component';
 import {TransferComponent} from './components/transfer/transfer.component';
+import {ResizableDrawerComponent} from './components/resizable-drawer/resizable-drawer.component';
+import {NzResizableModule} from 'ng-zorro-antd/resizable';
 import {SafeTemplateComponent} from './components/safe-template/safe-template.component';
 import {DateComponent} from './components/date/date.component';
 import {MarkdownComponent} from './components/markdown/markdown.component';
@@ -67,6 +69,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
 
 @NgModule({
     imports: [
+        NzResizableModule,
         CommonModule,
         SharedModule,
         HttpClientModule,
@@ -125,6 +128,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         TabTreeComponent,
         CheckboxComponent,
         TransferComponent,
+        ResizableDrawerComponent,
         SafeTemplateComponent,
         DateComponent,
         MarkdownComponent,

@@ -15,6 +15,7 @@ import {EruptFieldModel, OpenWay, PageEmbedType, Tpl, View} from "../model/erupt
 import {AttachmentSelectComponent} from "../components/attachment-select/attachment-select.component";
 import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {openResizableDrawer} from "../components/resizable-drawer/resizable-drawer.component";
 import {Router} from "@angular/router";
 
 
@@ -1006,7 +1007,7 @@ export class UiBuildService {
             ref.getContentComponent().height = tpl.height;
         } else if (tpl.openWay == OpenWay.DRAWER) {
             let placement = tpl.drawerPlacement;
-            this.drawerService.create({
+            openResizableDrawer(this.drawerService, {
                 nzClosable: false,
                 nzKeyboard: true,
                 nzMaskClosable: true,
@@ -1024,7 +1025,7 @@ export class UiBuildService {
                     height: "100%",
                     width: '100%'
                 }
-            })
+            }, tpl.path)
         } else if (tpl.openWay == OpenWay.ROUTER) {
             let path = tpl.path;
             if (path.indexOf("{") !== -1 && path.indexOf("}") !== -1) {
