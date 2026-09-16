@@ -29,6 +29,8 @@ export interface NoticeScene {
 }
 
 export interface NoticeMessageDetail {
+    // one recipient's copy of a notice; the detail endpoint is keyed by this id
+    id: number;
     noticeLog: NoticeMessage;
     status: NoticeStatus;
     channel: string;

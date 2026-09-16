@@ -144,7 +144,6 @@ export class NoticeComponent implements OnInit, OnDestroy {
     // view message detail
     viewMessageDetail(message: NoticeMessageDetail): void {
         message.status = NoticeStatus.READ;
-        const messageId = (message as any).id || (message.noticeLog as any)?.id;
         let ref = this.modal.create({
             nzDraggable: true,
             nzTitle: message.noticeLog?.title,
@@ -154,7 +153,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
             nzFooter: null,
             nzContent: NoticeDetailComponent,
         });
-        ref.componentInstance.messageId = messageId;
+        ref.componentInstance.messageId = message.id;
     }
 
     viewAnnouncementDetail(announcement: Announcement): void {
