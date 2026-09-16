@@ -1355,6 +1355,11 @@ export class TableComponent implements OnInit, OnDestroy {
 
     private rowClickTimer: any;
 
+    // rows read as clickable (pointer cursor) only while a click actually opens the panel
+    get rowClickViewEnabled(): boolean {
+        return !!this.viewRecord && this.settingSrv.layout['rowClickView'] !== false;
+    }
+
     // Clicking anywhere on a row opens its detail panel. Interactive cells and text selection are
     // skipped, and the open is deferred so a double click (inline cell edit) can cancel it.
     private rowClickView(click: { e?: Event; item?: any }) {
