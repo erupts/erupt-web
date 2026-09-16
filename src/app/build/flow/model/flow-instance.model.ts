@@ -44,6 +44,15 @@ export enum InstanceSource {
     API = "API"
 }
 
+/** Task status, mirrors xyz.erupt.flow.constant.TaskStatus. */
+export enum TaskStatus {
+    PENDING = "PENDING",
+    AGREED = "AGREED",
+    REJECTED = "REJECTED",
+    SKIPPED = "SKIPPED"
+}
+
+/** Instance status, mirrors xyz.erupt.flow.constant.InstanceStatus. */
 export enum InstanceStatus {
     PENDING = "PENDING",
     FINISH = "FINISH",
@@ -75,8 +84,8 @@ export interface FlowInstanceTask {
     assigneeUser: User;
     createTime: string;
     completedAt: string;
-    taskType: string;
-    taskStatus: string;
+    taskType: TaskType;
+    taskStatus: TaskStatus;
     comment: string;
     flowInstance: FlowInstance;
     signature: string;

@@ -9,7 +9,7 @@
         height: 100%;
 
         .detail-header {
-            height: 48px; // align with sidebar-header / list-header
+            height: 44px; // align with sidebar-header / list-header
             box-sizing: border-box;
             padding: 0 16px;
             border-bottom: 1px solid var(--ant-border-color-split);
@@ -88,8 +88,9 @@
 
                 .submitter-details {
                     display: flex;
-                    align-items: center;
+                    align-items: baseline;
                     gap: 10px;
+                    min-width: 0;
 
                     .submitter-name-large {
                         font-size: 13px;
@@ -107,6 +108,15 @@
                         color: var(--erupt-text-tertiary, #8c8c8c);
                     }
                 }
+            }
+
+            .data-deleted {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 6px;
+                margin: 100px 0;
+                color: var(--ant-error-color, #ff4d4f);
             }
 
             .detail-tabs {
@@ -220,7 +230,7 @@
 
             .action-buttons {
                 display: flex;
-                gap: 6px;
+                gap: 8px;
                 flex-wrap: wrap;
 
                 .action-button {
@@ -301,10 +311,18 @@
                 .comment-content {
                     color: var(--erupt-text, #333);
                     line-height: 1.5;
-                    padding-left: 32px;
+                    padding-left: 32px; // 24px avatar + 8px gap
                 }
             }
         }
+    }
+
+    .empty-detail {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        background: var(--erupt-bg-container, #fff);
     }
 
     // ── Mobile (phones) ──────────────────────────────────────────
