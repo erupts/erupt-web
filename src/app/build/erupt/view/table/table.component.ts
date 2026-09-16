@@ -1068,6 +1068,16 @@ export class TableComponent implements OnInit, OnDestroy {
         const indexOf = () => this.dataPage.data.findIndex(r => r[this.pkCol] === record[this.pkCol]);
         const lastPage = () => Math.max(1, Math.ceil(this.dataPage.total / this.dataPage.ps));
         return {
+            position: () => {
+                const i = indexOf();
+                if (i < 0) return undefined;
+                // front / no paging keeps every row in data; backend paging offsets by the page
+                const paged = this.dataPage.total > this.dataPage.data.length;
+                return {
+                    index: (paged ? (this.dataPage.pi - 1) * this.dataPage.ps : 0) + i + 1,
+                    total: paged ? this.dataPage.total : this.dataPage.data.length
+                };
+            },
             canStep: step => {
                 const i = indexOf();
                 if (i < 0) return false;
