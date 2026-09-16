@@ -179,7 +179,27 @@ export function PrintVarPlugin(editor: any): void {
     templateUrl: "./ckeditor.component.html",
     // A custom element defaults to inline, which collapses the height of anything
     // wrapping it — the field assistant's tray measures its corner against this box.
-    styles: [`:host { display: block; }`]
+    styles: [`
+        :host { display: block; }
+
+        .erupt-ck { background: var(--erupt-fill-tertiary, #eee); }
+
+        #editor {
+            padding: 5px 10px;
+            overflow-y: auto;
+            background: var(--erupt-bg-container, #fff);
+            border: 1px solid var(--erupt-border, #c4c4c4);
+            border-top: none;
+        }
+
+        /* Read-only: no toolbar above, so the box closes itself off and takes the
+           muted surface every other disabled erupt field uses. */
+        .erupt-ck-readonly #editor {
+            border-top: 1px solid var(--erupt-border, #c4c4c4);
+            background: var(--erupt-fill-tertiary, #f5f5f5);
+            color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+        }
+    `]
 })
 export class CkeditorComponent implements AfterViewInit, OnChanges, OnDestroy {
 
@@ -218,6 +238,11 @@ export class CkeditorComponent implements AfterViewInit, OnChanges, OnDestroy {
             if (newVal !== this.instance.getData()) {
                 this.instance.setData(newVal);
             }
+        }
+        // Read-only can flip after the editor exists (edit -> view of the same form),
+        // so it has to be re-applied, not only seeded at creation time.
+        if (changes['readonly'] && this.instance) {
+            this.instance.isReadOnly = !!this.readonly;
         }
     }
 
@@ -262,7 +287,7 @@ export class CkeditorComponent implements AfterViewInit, OnChanges, OnDestroy {
                         return;
                     }
                     this.instance = editor;
-                    editor.isReadOnly = this.readonly;
+                    editor.isReadOnly = !!this.readonly;
                     this.loading = false;
                     const toolbarContainer = this.ref.nativeElement.querySelector("#toolbar-container");
                     toolbarContainer.appendChild(editor.ui.view.toolbar.element);
