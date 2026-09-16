@@ -1,3 +1,4 @@
+import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
 import {
     Component,
     ElementRef,
@@ -1214,7 +1215,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             }
         }
 
-        this.drawerService.create({
+        openResizableDrawer(this.drawerService, {
             nzTitle: 'Drill-down Analysis - ' + (activeMeta?.fieldTitleMap?.get(measure) || measure) + ': ' + record[measure],
             nzContent: CubeDrillDetailComponent,
             nzContentParams: {
@@ -1234,7 +1235,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 padding: 0,
                 height: '100%'
             }
-        });
+        }, "cube-drill");
     }
 
     ngOnDestroy(): void {

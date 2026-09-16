@@ -1,3 +1,4 @@
+import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FlowApiService} from '@flow/service/flow-api.service';
 import {FlowConfig, FlowGroup} from '@flow/model/flow.model';
@@ -243,7 +244,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
         if (flow.enable) {
             // On phones, the fixed 520px drawer overflows the viewport — go full width.
             const isMobile = window.innerWidth <= 768;
-            const drawer = this.drawerService.create({
+            const drawer = openResizableDrawer(this.drawerService, {
                 nzTitle: flow.name,
                 nzContent: CreateInstanceComponent,
                 nzContentParams: {
@@ -256,7 +257,7 @@ export class FlowDashboardComponent implements OnInit, OnDestroy {
                     padding: '0'
                 },
                 nzMaskClosable: false
-            });
+            }, "flow-launch");
         }
     }
 

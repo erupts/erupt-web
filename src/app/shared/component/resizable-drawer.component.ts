@@ -62,7 +62,7 @@ export class ResizableDrawerComponent implements OnInit, OnDestroy {
 
     private frame = -1;
 
-    private contentRef?: ComponentRef<any>;
+    contentRef?: ComponentRef<any>;
 
     constructor(private drawerRef: NzDrawerRef,
                 private cdr: ChangeDetectorRef,
@@ -123,6 +123,11 @@ export class ResizableDrawerComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
     }
 
+}
+
+/** The component hosted inside a drawer opened with {@link openResizableDrawer}. */
+export function resizableDrawerContent<T = any>(ref: NzDrawerRef): T {
+    return (ref.getContentComponent() as ResizableDrawerComponent)?.contentRef?.instance;
 }
 
 /**

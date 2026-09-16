@@ -1,3 +1,4 @@
+import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
 import {Component, Inject, Input, NgZone, OnDestroy, OnInit} from "@angular/core";
 import {Menu, MenuInner, MenuService, SettingsService} from "@delon/theme";
 import {Subject, takeUntil} from "rxjs";
@@ -232,7 +233,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         // otherwise every async operation inside the drawer misses change detection.
         this.ngZone.run(() => {
             this.aiLoading = false;
-            this.drawer.create({
+            openResizableDrawer(this.drawer, {
                 nzTitle: "AI Chat",
                 nzContent: AiChatComponent,
                 nzWidth: "520px",
@@ -247,12 +248,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 nzContentParams: {
                     embedded: true
                 }
-            });
+            }, "header-ai");
         });
     }
 
     openEruptNotice() {
-        this.drawer.create({
+        openResizableDrawer(this.drawer, {
             nzTitle: null,
             nzContent: NoticeComponent,
             nzWidth: "360px",
@@ -264,7 +265,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             nzBodyStyle: {
                 padding: "0"
             },
-        }).afterClose.subscribe(res => {
+        }, "notice").afterClose.subscribe(res => {
             this.getNoticeUnreadCount();
         });
     }
