@@ -34,7 +34,7 @@
   <div class="erupt-form-title">
     <span class="erupt-form-title__text">{{title}}</span>
     <span class="erupt-form-title__spacer"></span>
-    @if (navigator || canToggleEdit || link) {
+    @if (navigator || canToggleEdit || aiAction || removeAction || menuActions.length) {
       <!-- record actions as small outlined buttons, ant style; the mode switch keeps its own pill -->
       <span class="erupt-form-title__actions" (mousedown)="$event.stopPropagation()">
         @if (navigator) {
@@ -57,11 +57,31 @@
             {{(readonly ? 'global.editor' : 'global.view') | translate}}
           </span>
         }
-        @if (link) {
+        @if (aiAction) {
           <span class="erupt-form-title__btn erupt-form-title__btn--icon" nz-tooltip
-                [nzTooltipTitle]="'global.copy_link' | translate" (click)="copyLink.emit()">
-            <i nz-icon nzType="link"></i>
+                [nzTooltipTitle]="'form.ai_assistant' | translate" (click)="aiAction()">
+            <i nz-icon nzType="robot"></i>
           </span>
+        }
+        @if (removeAction) {
+          <span class="erupt-form-title__btn erupt-form-title__btn--icon erupt-form-title__btn--danger"
+                nz-popconfirm [nzPopconfirmTitle]="removeAction.confirm" nzPopconfirmPlacement="bottomRight"
+                nzOkDanger (nzOnConfirm)="removeAction.run()">
+            <i nz-icon nzType="delete"></i>
+          </span>
+        }
+        @if (menuActions.length) {
+          <span class="erupt-form-title__btn erupt-form-title__btn--icon" nz-dropdown [nzDropdownMenu]="moreMenu"
+                nzTrigger="click" nzPlacement="bottomRight">
+            <i nz-icon nzType="ellipsis"></i>
+          </span>
+          <nz-dropdown-menu #moreMenu="nzDropdownMenu">
+            <ul nz-menu>
+              @for (a of menuActions; track a.label) {
+                <li nz-menu-item (click)="a.run()"><i nz-icon [nzType]="a.icon"></i>&nbsp; {{a.label}}</li>
+              }
+            </ul>
+          </nz-dropdown-menu>
         }
       </span>
     }

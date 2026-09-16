@@ -72,9 +72,12 @@ export class EditComponent implements OnInit {
 
     @Output() toggleEdit = new EventEmitter<void>();
 
-    link?: string;
+    // record actions installed by FormModalService (already bound to the modal ref)
+    aiAction?: () => void;
 
-    @Output() copyLink = new EventEmitter<void>();
+    removeAction?: { confirm: string; run: () => void };
+
+    menuActions: { label: string; icon: string; run: () => void }[] = [];
 
     // serialized form values right after loading; compared on close to detect unsaved input
     private snapshot?: string;
