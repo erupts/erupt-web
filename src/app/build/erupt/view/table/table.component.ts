@@ -281,6 +281,9 @@ export class TableComponent implements OnInit, OnDestroy {
             erupt.power.edit = false;
             erupt.power.export = false;
             erupt.power.viewDetails = false;
+            // a picker has no comment column, and the referenced model usually has no menu of its own,
+            // so the counts request (sent under the referenced name, no parent header) would be a 403
+            erupt.power.comment = false;
         });
     }
 
