@@ -278,6 +278,11 @@
 
     // ── st table styles ───────────────────────────────────────────
     ::ng-deep {
+        // a click on the row opens its detail panel (rowClickView); interactive cells keep their own cursor
+        .erupt-row-click-view .ant-table-tbody > tr.ant-table-row > td {
+            cursor: pointer;
+        }
+
         // tc-actions and tc-utils use gap for spacing; reset the global auto margin-left
         // that ng-zorro injects between adjacent ant-btn siblings to avoid double spacing
         .tc-actions, .tc-utils {
