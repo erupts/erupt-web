@@ -8,6 +8,7 @@ import {NzConfigService} from "ng-zorro-antd/core/config";
 import {TableSize} from "../../../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
 import {isHeaderMenuMode, MenuMode, menuModeFlags, menuModeOf} from "@shared/model/erupt-menu";
+import {FORM_PANEL_MODE_KEY, FormPanelMode, formPanelModeOf} from "@shared/model/form-panel";
 import {
     applyHeaderColor,
     applyThemeColor,
@@ -152,6 +153,17 @@ export class SettingsComponent implements OnInit {
 
     setLayout(name: string, value: any) {
         this.settingSrv.setLayout(name, value);
+    }
+
+    // How record forms open (FormPanelMode); the modal title bar changes it too, so read live.
+    readonly FormPanelMode = FormPanelMode;
+
+    get formPanelMode(): FormPanelMode {
+        return formPanelModeOf(this.settingSrv.layout);
+    }
+
+    setFormPanelMode(mode: FormPanelMode) {
+        this.settingSrv.setLayout(FORM_PANEL_MODE_KEY, mode);
     }
 
     // Menu layout mode radio (see MenuMode). Split and top modes take the header

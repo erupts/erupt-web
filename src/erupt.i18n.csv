@@ -477,7 +477,6 @@ ai.chat.yesterday,昨天,昨天,Yesterday,Hier,昨日,어제,Вчера,Ayer,Ges
 ai.chat.just_now,刚刚,剛剛,Just now,À l'instant,たった今,방금,Только что,Ahora mismo,Gerade eben,Agora mesmo,Baru saja,الآن
 global.expand,展开,展開,Expand,Développer,展開,펼치기,Развернуть,Expandir,Erweitern,Expandir,Perluas,توسيع
 global.collapse,收起,收起,Collapse,Réduire,折りたたむ,접기,Свернуть,Contraer,Einklappen,Recolher,Ciutkan,طي
-setting.detail-drawer,抽屉查看详情,抽屜查看詳情,Drawer for Details,Tiroir pour détails,ドロワーで詳細表示,서랍으로 상세보기,Боковая панель,Cajón para detalles,Seitenleiste für Details,Gaveta para detalhes,Drawer untuk detail,درج للتفاصيل
 setting.search-collapsed,默认收起搜索,預設收起搜索,Collapse Search by Default,Recherche réduite par défaut,検索をデフォルトで折りたたむ,기본 검색 접기,Свернуть поиск по умолчанию,Contraer búsqueda por defecto,Suche standardmäßig einklappen,Recolher pesquisa por padrão,Ciutkan pencarian default,طي البحث افتراضيًا
 query.op.like,包含,包含,Contains,Contient,含む,포함,Содержит,Contiene,Enthält,Contém,Mengandung,يحتوي
 query.op.not_like,不包含,不包含,Not contains,Ne contient pas,含まない,미포함,Не содержит,No contiene,Enthält nicht,Não contém,Tidak mengandung,لا يحتوي
@@ -1285,3 +1284,7 @@ key_value.key,键,鍵,Key,Clé,キー,키,Ключ,Clave,Schlüssel,Chave,Kunci,
 key_value.value,值,值,Value,Valeur,値,값,Значение,Valor,Wert,Valor,Nilai,القيمة
 key_value.add,添加一行,新增一列,Add row,Ajouter une ligne,行を追加,행 추가,Добавить строку,Añadir fila,Zeile hinzufügen,Adicionar linha,Tambah baris,إضافة صف
 key_value.duplicate,键重复，保存时后者覆盖前者,鍵重複，儲存時後者覆蓋前者,"Duplicate key, the last one wins on save","Clé en double, la dernière l'emporte à l'enregistrement",キーが重複しています。保存時は後のものが優先されます,"중복된 키입니다. 저장 시 마지막 값이 적용됩니다","Дубликат ключа, при сохранении останется последний","Clave duplicada, al guardar prevalece la última","Doppelter Schlüssel, beim Speichern gilt der letzte","Chave duplicada, ao guardar prevalece a última","Kunci duplikat, yang terakhir dipakai saat menyimpan",مفتاح مكرر، الأخير هو المعتمد عند الحفظ
+setting.form-panel-mode,详情弹窗形态,詳情彈窗形態,Detail panel style,Style du panneau de détail,詳細パネルの形式,상세 패널 형태,Стиль панели деталей,Estilo del panel de detalle,Detailpanel-Stil,Estilo do painel de detalhe,Gaya panel detail,نمط لوحة التفاصيل
+form.panel.center,中间弹窗,中間彈窗,Centered dialog,Fenêtre centrée,中央ダイアログ,중앙 대화상자,Окно по центру,Diálogo centrado,Zentrierter Dialog,Diálogo centrado,Dialog tengah,نافذة في المنتصف
+form.panel.side,侧边面板,側邊面板,Side panel,Panneau latéral,サイドパネル,사이드 패널,Боковая панель,Panel lateral,Seitenpanel,Painel lateral,Panel samping,لوحة جانبية
+setting.row-click-view,点击行查看详情,點擊行查看詳情,Click row to view details,Cliquer sur la ligne pour voir les détails,行クリックで詳細表示,행 클릭으로 상세 보기,Клик по строке открывает детали,Clic en la fila para ver detalles,Zeile anklicken für Details,Clique na linha para ver detalhes,Klik baris untuk melihat detail,انقر على الصف لعرض التفاصيل

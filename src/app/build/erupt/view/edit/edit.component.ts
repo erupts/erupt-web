@@ -1,5 +1,6 @@
-import {Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild} from "@angular/core";
+import {Component, EventEmitter, Inject, Input, OnInit, Output, TemplateRef, ViewChild} from "@angular/core";
 import {Scene} from "../../model/erupt.enum";
+import {FormPanelMode} from "@shared/model/form-panel";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -34,6 +35,24 @@ export class EditComponent implements OnInit {
     @Input() prefillData?: object;
 
     @ViewChild("eruptEdit", {static: false}) eruptEditComponent: EditTypeComponent;
+
+    // ---- modal title with the panel-mode switch (installed as nzTitle by FormModalService) ----
+
+    @Input() title: string;
+
+    panelMode: FormPanelMode = FormPanelMode.CENTER;
+
+    @Output() panelModeChange = new EventEmitter<FormPanelMode>();
+
+    @ViewChild("titleTpl", {static: true}) titleTpl: TemplateRef<{}>;
+
+    readonly FormPanelMode = FormPanelMode;
+
+    readonly panelModes: { mode: FormPanelMode; i18n: string }[] = [
+        {mode: FormPanelMode.CENTER, i18n: "form.panel.center"},
+        {mode: FormPanelMode.SIDE, i18n: "form.panel.side"},
+        {mode: FormPanelMode.FULL, i18n: "global.fullscreen"}
+    ];
 
     constructor(
         @Inject(NzMessageService)

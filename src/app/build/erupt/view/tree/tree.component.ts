@@ -13,7 +13,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {PageDescMode} from "@shared/component/page-desc/page-desc.component";
 import {FormSize, Scene} from "../../model/erupt.enum";
-import {EditComponent} from "../edit/edit.component";
+import {FormModalService} from "../../service/form-modal.service";
 import {LocalSettingsService} from "../../service/local-settings.service";
 import {PrintTypeComponent} from "../../components/print-type/print-type";
 import {cloneDeep} from "lodash";
@@ -87,6 +87,7 @@ export class TreeComponent implements OnInit, OnDestroy {
 
                 @Inject(NzModalService)
                 private modal: NzModalService,
+                private formModal: FormModalService,
                 private dataHandler: DataHandlerService,
                 private localSettings: LocalSettingsService) {
     }
@@ -210,18 +211,14 @@ export class TreeComponent implements OnInit, OnDestroy {
             let fullLine = false;
             const layout = eruptJson.layout;
             if (layout && layout.formSize == FormSize.FULL_LINE) fullLine = true;
-            const modal = this.modal.create({
-                nzDraggable: true,
-                nzStyle: {top: "60px"},
-                nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
-                nzWidth: fullLine ? 550 : null,
-                nzMaskClosable: false,
-                nzKeyboard: false,
-                nzTitle: this.i18n.fanyi("global.copy"),
-                nzContent: EditComponent,
-                nzOkText: this.i18n.fanyi("global.add"),
-                nzOnOk: async () => {
-                    if (modal.getContentComponent().beforeSaveValidate()) {
+            this.formModal.open({
+                owner: this,
+                title: this.i18n.fanyi("global.copy"),
+                fullLine,
+                okText: this.i18n.fanyi("global.add"),
+                params: {eruptBuildModel: this.eruptBuildModel, behavior: Scene.ADD, prefillData: data},
+                onOk: async ref => {
+                    if (ref.getContentComponent().beforeSaveValidate()) {
                         await this.dataService.addEruptData(
                             eruptName,
                             this.dataHandler.eruptValueToObject(this.eruptBuildModel)
@@ -233,10 +230,6 @@ export class TreeComponent implements OnInit, OnDestroy {
                     return false;
                 }
             });
-            const editComp = modal.getContentComponent();
-            editComp.eruptBuildModel = this.eruptBuildModel;
-            editComp.behavior = Scene.ADD;
-            editComp.prefillData = data;
         }, () => {
             this.loading = false;
         });
