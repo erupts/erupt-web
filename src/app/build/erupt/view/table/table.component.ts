@@ -996,9 +996,7 @@ export class TableComponent implements OnInit, OnDestroy {
             toggleEdit: this.editAllowed?.(record) ? ref => this.openEdit(record, ref) : undefined,
             link: this.recordLink(record),
             ai: this.recordAi(),
-            remove: this.deleteAllowed?.(record)
-                ? {confirm: this.i18n.fanyi("table.delete.hint"), run: ref => this.deleteFromPanel(record, ref)}
-                : undefined,
+            remove: this.recordRemove(record, (r, ref) => this.openView(r, ref)),
             more: this.recordActions(record),
             footer: ref => [
                 ...this.recordButtons(record),
@@ -1041,6 +1039,7 @@ export class TableComponent implements OnInit, OnDestroy {
             toggleEdit: this.viewAllowed?.(record) ? ref => this.openView(record, ref) : undefined,
             link: this.recordLink(record),
             ai: this.recordAi(),
+            remove: this.recordRemove(record, (r, ref) => this.openEdit(r, ref)),
             more: this.recordActions(record),
             footer: ref => [
                 {
@@ -1139,8 +1138,16 @@ export class TableComponent implements OnInit, OnDestroy {
         };
     }
 
+    // Delete action of the panel, when the model and the row allow it; `reopen` keeps the
+    // panel's role (view / edit) for the neighbouring record.
+    private recordRemove(record: any, reopen: (r: any, ref: NzModalRef<EditComponent>) => void) {
+        if (!this.deleteAllowed?.(record)) return undefined;
+        return {confirm: this.i18n.fanyi("table.delete.hint"), run: ref => this.deleteFromPanel(record, ref, reopen)};
+    }
+
     // Delete the record shown in the panel, then move the panel to its neighbour (or close it).
-    private async deleteFromPanel(record: any, ref: NzModalRef<EditComponent>) {
+    private async deleteFromPanel(record: any, ref: NzModalRef<EditComponent>,
+                                  reopen: (r: any, ref: NzModalRef<EditComponent>) => void) {
         const pk = record[this.pkCol];
         const i = this.dataPage.data.findIndex(r => r[this.pkCol] === pk);
         const neighbour = i < 0 ? undefined : (this.dataPage.data[i + 1] ?? this.dataPage.data[i - 1]);
@@ -1151,7 +1158,7 @@ export class TableComponent implements OnInit, OnDestroy {
         const pi = this.dataPage.data.length <= 1 && this.dataPage.pi > 1 ? this.dataPage.pi - 1 : this.dataPage.pi;
         await this.query(pi);
         if (neighbour) {
-            this.openView(neighbour, ref);
+            reopen(neighbour, ref);
         } else {
             ref.close();
         }
