@@ -18,32 +18,46 @@
         flex: 1;
     }
 
-    &__nav,
-    &__actions {
+    // "‹ 2 / 27 ›" right after the caption: browsing belongs to the title, not to the toolbar
+    &__pager {
         display: inline-flex;
+        align-items: center;
         gap: 2px;
         flex-shrink: 0;
+        margin-left: -4px;
     }
 
-    // divider between the record actions and the panel-mode switch
+    &__pos {
+        margin: 0 4px;
+        font-size: 12px;
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+    }
+
     &__actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        flex-shrink: 0;
+        // divider between the record actions and the panel-mode switch
         padding-right: 10px;
         margin-right: -2px;
         border-right: 1px solid var(--erupt-border, rgba(0, 0, 0, 0.06));
     }
 
-    // plain icon button (prev / next, edit / view, copy link)
+    // plain icon button (prev / next, copy link)
     &__action {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 26px;
-        height: 26px;
+        width: 22px;
+        height: 22px;
         border-radius: 4px;
-        font-size: 14px;
+        font-size: 12px;
         font-weight: normal;
         cursor: pointer;
-        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
         transition: color 0.2s, background-color 0.2s;
 
         &:hover {
@@ -56,6 +70,46 @@
             color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
             background: none;
             cursor: not-allowed;
+        }
+    }
+
+    &__actions &__action {
+        width: 26px;
+        height: 26px;
+        font-size: 14px;
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+    }
+
+    // small outlined button for the view <-> edit switch; primary tint when it leads into editing
+    &__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 26px;
+        padding: 0 10px;
+        border: 1px solid var(--erupt-border, rgba(0, 0, 0, 0.15));
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: normal;
+        line-height: 1;
+        cursor: pointer;
+        color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+        background: var(--erupt-bg-container, #fff);
+        transition: color 0.2s, border-color 0.2s;
+
+        &:hover {
+            color: var(--ant-primary-color);
+            border-color: var(--ant-primary-color);
+        }
+
+        &--primary {
+            color: var(--ant-primary-color);
+            border-color: var(--ant-primary-3);
+
+            &:hover {
+                color: var(--ant-primary-color-hover);
+                border-color: var(--ant-primary-color-hover);
+            }
         }
     }
 

@@ -26,6 +26,8 @@ export interface FormParams {
 
 // Previous / next record browsing, implemented by the list that opened the panel.
 export interface FormNavigator {
+    // 1-based position of the record in the whole list, for the "n / total" readout
+    position(): { index: number; total: number } | undefined;
     canStep(step: FormStep): boolean;
     // resolves the adjacent record, paging the list when needed; undefined at either end
     step(step: FormStep): Promise<any | undefined>;

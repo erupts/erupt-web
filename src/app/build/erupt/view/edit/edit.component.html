@@ -34,12 +34,15 @@
   <div class="erupt-form-title">
     <span class="erupt-form-title__text">{{title}}</span>
     @if (navigator) {
-      <!-- previous / next record within the list that opened the panel -->
-      <span class="erupt-form-title__nav" (mousedown)="$event.stopPropagation()">
+      <!-- previous / next record within the list that opened the panel, with its position -->
+      <span class="erupt-form-title__pager" (mousedown)="$event.stopPropagation()">
         <span class="erupt-form-title__action" [class.erupt-form-title__action--disabled]="!navigator.canStep(-1)"
               nz-tooltip [nzTooltipTitle]="'form.prev_record' | translate" (click)="navigator.canStep(-1) && stepRecord.emit(-1)">
           <i nz-icon nzType="left"></i>
         </span>
+        @if (navigator.position(); as pos) {
+          <span class="erupt-form-title__pos">{{pos.index}} / {{pos.total}}</span>
+        }
         <span class="erupt-form-title__action" [class.erupt-form-title__action--disabled]="!navigator.canStep(1)"
               nz-tooltip [nzTooltipTitle]="'form.next_record' | translate" (click)="navigator.canStep(1) && stepRecord.emit(1)">
           <i nz-icon nzType="right"></i>
@@ -50,9 +53,10 @@
     @if (canToggleEdit || link) {
       <span class="erupt-form-title__actions" (mousedown)="$event.stopPropagation()">
         @if (canToggleEdit) {
-          <span class="erupt-form-title__action" nz-tooltip
-                [nzTooltipTitle]="(readonly ? 'global.editor' : 'global.view') | translate" (click)="toggleEdit.emit()">
+          <!-- entering edit is the primary action; going back to view is secondary -->
+          <span class="erupt-form-title__btn" [class.erupt-form-title__btn--primary]="readonly" (click)="toggleEdit.emit()">
             <i nz-icon [nzType]="readonly ? 'edit' : 'eye'"></i>
+            {{(readonly ? 'global.editor' : 'global.view') | translate}}
           </span>
         }
         @if (link) {
