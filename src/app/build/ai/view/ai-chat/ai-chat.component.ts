@@ -65,6 +65,9 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     @Input() embedded = false;
 
+    // when set, a drawer header (icon, title, close) is drawn above the chat, in place of the drawer's own
+    @Input() drawerTitle: string;
+
     @Input() context = '';
 
     @ViewChild('bubblesRef') bubblesRef!: ElementRef<HTMLDivElement>;

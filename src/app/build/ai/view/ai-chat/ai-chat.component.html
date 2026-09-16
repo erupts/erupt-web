@@ -1,4 +1,7 @@
-<div class="ai-chat-layout" [class.is-fullscreen]="fullscreen" [class.is-embedded]="embedded">
+@if (drawerTitle) {
+    <erupt-drawer-header icon="comment" [title]="drawerTitle"></erupt-drawer-header>
+}
+<div class="ai-chat-layout" [class.is-fullscreen]="fullscreen" [class.is-embedded]="embedded" [class.has-header]="drawerTitle">
     <div class="sidebar" [class.is-collapsed]="sidebarCollapsed"
          [style.width.px]="sidebarCollapsed ? null : sidebarWidth">
         <div class="sidebar-header">

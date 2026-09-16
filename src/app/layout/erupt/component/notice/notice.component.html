@@ -1,25 +1,11 @@
 <div class="notice-container">
-  <!-- Header -->
-  <div class="notice-header">
-    <div class="header-title">
-      <span nz-icon nzType="bell" nzTheme="outline"></span>
-      <span class="title-text">{{ 'notice.center' | translate }}</span>
-    </div>
-    <div class="header-actions">
-      @if (selectedChannelIndex === 0 && notices.length > 0) {
-          <button nz-button
-                  nzType="link"
-                  nzSize="small"
-                  (click)="markAllAsRead()"
-                  class="read-all-btn">
-              {{ 'notice.readAll' | translate }}
-          </button>
-      }
-      <button nz-button nzType="text" nzSize="small" (click)="close()" class="close-btn">
-        <span nz-icon nzType="close"></span>
+  <erupt-drawer-header icon="bell" [title]="'notice.center' | translate">
+    @if (selectedChannelIndex === 0 && notices.length > 0) {
+      <button nz-button nzType="link" nzSize="small" (click)="markAllAsRead()">
+        {{ 'notice.readAll' | translate }}
       </button>
-    </div>
-  </div>
+    }
+  </erupt-drawer-header>
 
   <!-- Message list view -->
   <div class="notice-content">
