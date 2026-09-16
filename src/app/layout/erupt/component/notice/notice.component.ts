@@ -5,10 +5,9 @@ import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 import {NzDrawerRef, NzDrawerService} from 'ng-zorro-antd/drawer';
 import {NzModalService} from "ng-zorro-antd/modal";
-import {NoticeDetailComponent} from "../notice-detail/notice-detail.component";
+import {NoticeDetailComponent, openNoticeUrl} from "../notice-detail/notice-detail.component";
 import {I18NService} from "@core";
 import {AnnouncementDetailComponent} from "../announcement-detail/announcement-detail.component";
-import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 // export enum for use in templates
 export {NoticeStatus};
@@ -178,23 +177,8 @@ export class NoticeComponent implements OnInit, OnDestroy {
         this.drawerRef.close();
     }
 
-    // open URL link
-    openUrl(url: string, title: string): void {
-        this.drawerService.create({
-            nzTitle: null,
-            nzClosable: false,
-            nzContent: EruptIframeComponent,
-            nzContentParams: {
-                url: url,
-                height: "100%",
-                width: '100%'
-            },
-            nzWidth: '45%',
-            nzBodyStyle: {
-                padding: 0
-            },
-            nzMaskClosable: true
-        });
+    openUrl(url: string): void {
+        openNoticeUrl(this.drawerService, url);
     }
 
     // mark all as read

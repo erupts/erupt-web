@@ -39,15 +39,77 @@
 
         .message-item {
             cursor: pointer;
+            padding: 10px 16px;
+            transition: background 0.2s;
 
-            .message-content {
-                max-height: 80px;
-                overflow: hidden;
-                white-space: pre-line;
-                margin-bottom: 0;
+            &:hover {
+                background: var(--erupt-fill-tertiary, #fafafa);
             }
         }
 
+        .message-body {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .message-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            .message-title {
+                flex: 1;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--erupt-text, #262626);
+            }
+
+            .message-time {
+                flex-shrink: 0;
+                font-size: 12px;
+                color: var(--erupt-text-tertiary, #8c8c8c);
+            }
+        }
+
+        .message-content {
+            margin: 4px 0 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--erupt-text-secondary, #595959);
+            white-space: pre-line;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+        }
+
+        .message-footer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+            font-size: 12px;
+
+            .message-scene {
+                flex: 1;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                color: var(--erupt-text-tertiary, #8c8c8c);
+            }
+
+            .message-link {
+                flex-shrink: 0;
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+            }
+        }
     }
 }
 

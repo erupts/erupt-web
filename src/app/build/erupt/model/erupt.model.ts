@@ -207,6 +207,7 @@ export interface Power {
     copy: boolean;
     ai: boolean;
     cellEdit: boolean;      // in-place cell editing, on unless the model opts out
+    comment: boolean;       // record comment stream (erupt-comment module), on unless the model opts out
 }
 
 export interface Row {

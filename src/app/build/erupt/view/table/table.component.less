@@ -576,3 +576,18 @@
         margin-top: 12px;
     }
 }
+
+// count badge on the row comment button (st renders the button html, so the rule is global)
+:host ::ng-deep .erupt-comment-badge {
+    display: inline-block;
+    min-width: 16px;
+    margin-left: 2px;
+    padding: 0 4px;
+    font-size: 11px;
+    line-height: 16px;
+    text-align: center;
+    border-radius: 8px;
+    color: var(--ant-primary-color);
+    background: var(--ant-primary-1, #e6f4ff);
+    vertical-align: 1px;
+}
