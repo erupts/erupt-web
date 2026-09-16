@@ -19,7 +19,7 @@ import {
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
-import {FormModalService, FormNavigator} from "../../service/form-modal.service";
+import {FormAction, FormModalService, FormNavigator} from "../../service/form-modal.service";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
 import {
@@ -857,6 +857,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 }
                 return true;
             };
+            this.deleteAllowed = _delIif;
             if (collapseAction) {
                 collapsedStd.push({
                     text: this.i18n.fanyi("global.delete"),
@@ -961,6 +962,8 @@ export class TableComponent implements OnInit, OnDestroy {
 
     private editAllowed?: (record: any) => boolean;
 
+    private deleteAllowed?: (record: any) => boolean;
+
     private recordButtons: (record: any) => ModalButtonOptions[] = () => [];
 
     private get pkCol(): string {
@@ -992,6 +995,11 @@ export class TableComponent implements OnInit, OnDestroy {
             navigator: this.recordNavigator(record, (r, ref) => this.openView(r, ref)),
             toggleEdit: this.editAllowed?.(record) ? ref => this.openEdit(record, ref) : undefined,
             link: this.recordLink(record),
+            ai: this.recordAi(),
+            remove: this.deleteAllowed?.(record)
+                ? {confirm: this.i18n.fanyi("table.delete.hint"), run: ref => this.deleteFromPanel(record, ref)}
+                : undefined,
+            more: this.recordActions(record),
             footer: ref => [
                 ...this.recordButtons(record),
                 {
@@ -1032,6 +1040,8 @@ export class TableComponent implements OnInit, OnDestroy {
             navigator: this.recordNavigator(record, (r, ref) => this.openEdit(r, ref)),
             toggleEdit: this.viewAllowed?.(record) ? ref => this.openView(record, ref) : undefined,
             link: this.recordLink(record),
+            ai: this.recordAi(),
+            more: this.recordActions(record),
             footer: ref => [
                 {
                     label: this.i18n.fanyi("global.cancel"),
@@ -1096,6 +1106,55 @@ export class TableComponent implements OnInit, OnDestroy {
             },
             open: reopen
         };
+    }
+
+    // "More" menu of the panel: printing when the print module is on.
+    private recordActions(record: any): FormAction[] {
+        const actions: FormAction[] = [];
+        if (this.isEruptPrint) {
+            actions.push({label: this.i18n.fanyi("global.print"), icon: "printer", run: () => this.printRecord(record[this.pkCol])});
+        }
+        return actions;
+    }
+
+    // AI chat in a drawer, primed with the module context plus the record currently in the panel.
+    private recordAi(): ((ref: NzModalRef<EditComponent>) => void) | undefined {
+        if (!this.isAiEnabled) return undefined;
+        return ref => {
+            const comp = ref.getContentComponent();
+            const data = this.dataHandler.eruptValueToObject(comp.eruptBuildModel);
+            const context = [
+                this.aiContext,
+                `The user has a single record open in the ${comp.readonly ? "detail view" : "edit form"}.`,
+                `Current record data (JSON): ${JSON.stringify(data)}`,
+                `Help with this record: summarize it, check the filled values for problems, or answer questions about it.`
+            ].join("\n");
+            openResizableDrawer(this.drawerService, {
+                nzContent: AiChatComponent,
+                nzContentParams: {collapseSidebar: true, embedded: true, context},
+                nzTitle: this.i18n.fanyi("form.ai_assistant"),
+                nzWidth: window.innerWidth <= 768 ? "100%" : 480,
+                nzBodyStyle: {padding: "0", height: "100%"}
+            }, "form-ai");
+        };
+    }
+
+    // Delete the record shown in the panel, then move the panel to its neighbour (or close it).
+    private async deleteFromPanel(record: any, ref: NzModalRef<EditComponent>) {
+        const pk = record[this.pkCol];
+        const i = this.dataPage.data.findIndex(r => r[this.pkCol] === pk);
+        const neighbour = i < 0 ? undefined : (this.dataPage.data[i + 1] ?? this.dataPage.data[i - 1]);
+        const res = await this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, pk).toPromise();
+        if (res.status !== Status.SUCCESS) return;
+        this.msg.success(this.i18n.fanyi("global.delete.success"));
+        // last row of a later page: fall back to the previous page
+        const pi = this.dataPage.data.length <= 1 && this.dataPage.pi > 1 ? this.dataPage.pi - 1 : this.dataPage.pi;
+        await this.query(pi);
+        if (neighbour) {
+            this.openView(neighbour, ref);
+        } else {
+            ref.close();
+        }
     }
 
     // Shareable url that opens this record's detail panel (only for the routed table itself).
@@ -2260,8 +2319,13 @@ export class TableComponent implements OnInit, OnDestroy {
     printConfigLoading: boolean = false;
 
     printSelectedRows() {
+        this.printRecord(this.selectedRows[0][this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]);
+    }
+
+    // Print one record: pick a layout when print templates exist, otherwise the built-in preview.
+    printRecord(pk: any) {
         const eruptName = this.eruptBuildModel.eruptModel.eruptName;
-        this._printPk = this.selectedRows[0][this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol];
+        this._printPk = pk;
         this.printLoading = true;
         this.dataService.printConfigList(eruptName).subscribe({
             next: res => {

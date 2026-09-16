@@ -35,6 +35,13 @@ export interface FormNavigator {
     open(record: any, ref: NzModalRef<EditComponent>): void;
 }
 
+// An extra record action offered in the title bar's "more" menu (print, export, ...).
+export interface FormAction {
+    label: string;
+    icon: string;
+    run: (ref: NzModalRef<EditComponent>) => void;
+}
+
 export interface FormModalOptions {
     title: string;
     params: FormParams;
@@ -47,8 +54,14 @@ export interface FormModalOptions {
     navigator?: FormNavigator;
     // switches the panel between view and edit in place; absent when not permitted
     toggleEdit?: (ref: NzModalRef<EditComponent>) => void;
-    // deep link to this record, offered as "copy link"
+    // deep link to this record, offered as "copy link" in the more menu
     link?: string;
+    // AI assistant scoped to this record
+    ai?: (ref: NzModalRef<EditComponent>) => void;
+    // delete this record; asked for confirmation first (text is the popconfirm title)
+    remove?: { confirm: string; run: (ref: NzModalRef<EditComponent>) => void };
+    // further actions in the "more" menu
+    more?: FormAction[];
     okText?: string;
     // custom footer; omit for the default OK / Cancel pair
     footer?: (ref: NzModalRef<EditComponent>) => ModalButtonOptions[];
@@ -99,7 +112,6 @@ export class FormModalService {
         comp.panelResize.subscribe(width => this.resizeSide(ref, width));
         comp.stepRecord.subscribe(step => this.step(ref, step));
         comp.toggleEdit.subscribe(() => this.toggleEdit(ref));
-        comp.copyLink.subscribe(() => this.copyLink(ref));
         this.apply(ref, opts);
         return ref;
     }
@@ -118,7 +130,12 @@ export class FormModalService {
         comp.panelMode = this.mode;
         comp.navigator = opts.navigator;
         comp.canToggleEdit = !!opts.toggleEdit;
-        comp.link = opts.link;
+        comp.aiAction = opts.ai ? () => opts.ai(ref) : undefined;
+        comp.removeAction = opts.remove ? {confirm: opts.remove.confirm, run: () => opts.remove.run(ref)} : undefined;
+        comp.menuActions = [
+            ...(opts.link ? [{label: this.i18n.fanyi("global.copy_link"), icon: "link", run: () => this.copyLink(ref)}] : []),
+            ...(opts.more || []).map(a => ({label: a.label, icon: a.icon, run: () => a.run(ref)}))
+        ];
         comp.footerButtons = opts.footer?.(ref);
         comp.okText = opts.okText;
         // editable forms must be dismissed explicitly
