@@ -16,7 +16,7 @@ import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {R, SimplePage} from "@shared/model/api.model";
-import {RecordComment} from "../../build/erupt/model/record-comment.model";
+import {MentionUser, RecordComment} from "../../build/erupt/model/record-comment.model";
 import {NoticeStatus} from "@shared/model/notice.model";
 
 @Injectable()
@@ -669,9 +669,26 @@ export class DataService {
         });
     }
 
-    commentAdd(eruptName: string, id: any, content: string, parentId?: number) {
+    commentAdd(eruptName: string, id: any, content: string, parentId?: number, mentions?: number[]) {
         return this._http.post<R<RecordComment>>(RestPath.comment + "/" + eruptName + "/" + encodeURIComponent(id),
-            {content, parentId}, null, {observe: "body", headers: {erupt: eruptName}});
+            {content, parentId, mentions}, null, {observe: "body", headers: {erupt: eruptName}});
+    }
+
+    // comment count per record id for the rows of one table page
+    commentCounts(eruptName: string, ids: any[]) {
+        return this._http.post<R<Record<string, number>>>(RestPath.comment + "/" + eruptName + "/counts",
+            ids.map(id => String(id)), null, {observe: "body", headers: {erupt: eruptName}});
+    }
+
+    commentMentionUsers(eruptName: string, keyword: string) {
+        return this._http.get<R<MentionUser[]>>(RestPath.comment + "/" + eruptName + "/mention-users", {keyword}, {
+            observe: "body", headers: {erupt: eruptName}
+        });
+    }
+
+    commentFlag(eruptName: string, id: any, commentId: number, flag: "resolved" | "pinned", value: boolean) {
+        return this._http.put(RestPath.comment + "/" + eruptName + "/" + encodeURIComponent(id)
+            + "/" + commentId + "/" + flag, null, {value}, {headers: {erupt: eruptName}}) as Observable<R<RecordComment>>;
     }
 
     commentDelete(eruptName: string, id: any, commentId: number) {

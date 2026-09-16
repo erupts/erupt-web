@@ -10,4 +10,16 @@ export interface RecordComment {
     userAvatar?: string;
     // written by the current user, so it may be deleted here
     mine: boolean;
+    // users named with @ in the content
+    mentions?: MentionUser[];
+    // thread heads only
+    resolved: boolean;
+    pinned: boolean;
+}
+
+// A user that can be, or was, named with @ in a comment.
+export interface MentionUser {
+    id: number;
+    name: string;
+    avatar?: string;
 }

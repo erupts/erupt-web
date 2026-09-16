@@ -1,6 +1,6 @@
 <div style="padding: 12px">
     <div class="message-content rich-content-html" [innerHTML]="announcement.content|safeHtml"></div>
 </div>
-<div style="padding: 12px;border: 1px solid #e8e8e8;text-align: right;">
-    <span>{{ announcement.createTime }}</span>
+<div style="padding: 10px 12px;border-top: 1px solid var(--erupt-border, #e8e8e8);text-align: right;color: var(--erupt-text-tertiary, #8c8c8c);font-size: 13px;">
+    <span>{{ announcement.createTime | date:'yyyy-MM-dd HH:mm:ss' }}</span>
 </div>

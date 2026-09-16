@@ -52,7 +52,7 @@ import {STChange, STColumn, STColumnButton, STComponent, STDragOptions, STPage} 
 import {PageDescMode} from "@shared/component/page-desc/page-desc.component";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
-import {openResizableDrawer} from "../../components/resizable-drawer/resizable-drawer.component";
+import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
 import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
 import {TableStyle} from "../../model/erupt.vo";
 import {colRules} from "@shared/model/util.model";
@@ -361,6 +361,26 @@ export class TableComponent implements OnInit, OnDestroy {
             && this.eruptBuildModel.eruptModel.eruptJson.power.ai !== false;
     }
 
+    // erupt-comment module present and the model has not opted out via @Power(comment = false)
+    get isCommentEnabled(): boolean {
+        return !!EruptAppData.get().properties["erupt-comment"]
+            && this.eruptBuildModel.eruptModel.eruptJson.power.comment !== false;
+    }
+
+    // comment count per record id of the current page, shown as a badge on the row button
+    commentCounts: Record<string, number> = {};
+
+    private loadCommentCounts() {
+        if (!this.isCommentEnabled || !this.dataPage.data.length) return;
+        const ids = this.dataPage.data.map(r => r[this.pkCol]).filter(id => id != null);
+        this.dataService.commentCounts(this.eruptBuildModel.eruptModel.eruptName, ids).subscribe(res => {
+            if (!res.success) return;
+            this.commentCounts = res.data || {};
+            // button texts are computed when st optimizes the rows, so rebuild them with the counts in
+            this.st?.resetColumns();
+        });
+    }
+
     private aiDrawerRef: NzDrawerRef | null = null;
 
     toggleAiPanel() {
@@ -631,6 +651,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 if (this.vis[this.selectedVisIndex]?.type == VisType.TPL) {
                     this.setVisTplData(this.dataPage.data);
                 }
+                this.loadCommentCounts();
                 resolve(this.dataPage.data);
             }, () => {
                 this.dataPage.querying = false;
@@ -879,6 +900,28 @@ export class TableComponent implements OnInit, OnDestroy {
             }
         }
         tableOperators.push(...tableButtons);
+        // comment stream of the row, in a drawer; same entry the record panel's title bar offers.
+        // The count badge tells which rows carry a discussion.
+        if (this.isCommentEnabled) {
+            const commentClick = (record: any) => this.recordComment(record)?.(null);
+            const badge = (record: any) => {
+                const n = this.commentCounts[String(record[this.pkCol])];
+                return n > 0 ? `<span class="erupt-comment-badge">${n > 99 ? "99+" : n}</span>` : "";
+            };
+            if (collapseAction) {
+                collapsedStd.push({
+                    text: record => this.i18n.fanyi("form.comments") + badge(record),
+                    click: commentClick
+                });
+            } else {
+                tableOperators.push({
+                    icon: "message",
+                    text: badge,
+                    tooltip: this.i18n.fanyi("form.comments"),
+                    click: commentClick
+                });
+            }
+        }
         if (this.eruptBuildModel.eruptModel.tags?.["EruptFlow"]) {
             tableOperators.push({
                 icon: "node-index",
@@ -939,8 +982,10 @@ export class TableComponent implements OnInit, OnDestroy {
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
+                // 35px per icon button; the comment button also carries a count badge
                 width: eruptJson.layout.tableOperatorWidth ? eruptJson.layout.tableOperatorWidth :
-                    ((tableOperators.length + (this.eruptBuildModel.eruptModel.tags?.size || 0)) * 35 + 18 + (isFoldButtons ? 60 : 0)),
+                    ((tableOperators.length + (this.eruptBuildModel.eruptModel.tags?.size || 0)) * 35 + 18
+                        + (isFoldButtons ? 60 : 0) + (this.isCommentEnabled && !collapseAction ? 30 : 0)),
                 className: "text-center",
                 buttons: tableOperators,
                 resizable: false
@@ -1121,14 +1166,14 @@ export class TableComponent implements OnInit, OnDestroy {
 
     // Comment stream of the record in a drawer; only when the erupt-comment module is present.
     private recordComment(record: any): ((ref: NzModalRef<EditComponent>) => void) | undefined {
-        if (!EruptAppData.get().properties["erupt-comment"]) return undefined;
+        if (!this.isCommentEnabled) return undefined;
         return () => openResizableDrawer(this.drawerService, {
             nzContent: RecordCommentComponent,
             nzContentParams: {eruptName: this.eruptBuildModel.eruptModel.eruptName, id: record[this.pkCol]},
             nzTitle: this.i18n.fanyi("form.comments"),
             nzWidth: window.innerWidth <= 768 ? "100%" : 420,
             nzBodyStyle: {padding: "0", height: "100%"}
-        }, "form-comment");
+        }, "form-comment").afterClose.subscribe(() => this.loadCommentCounts());
     }
 
     // AI chat in a drawer, primed with the module context plus the record currently in the panel.

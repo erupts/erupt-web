@@ -1,55 +1,154 @@
 <div class="erupt-comments">
-  <div class="erupt-comments__list">
-    <nz-spin [nzSpinning]="loading">
-      @if (!loading && !threads.length) {
-        <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="'comment.empty' | translate"></nz-empty>
-      }
+  <div #list class="erupt-comments__list">
+    @if (initializing) {
+      <div class="erupt-comments__skeleton">
+        @for (i of [1, 2, 3]; track i) {
+          <nz-skeleton nzActive [nzAvatar]="{size: 'small', shape: 'circle'}" [nzTitle]="{width: '30%'}"
+                       [nzParagraph]="{rows: 1, width: '80%'}"></nz-skeleton>
+        }
+      </div>
+    } @else if (!threads.length) {
+      <div class="erupt-comments__empty">
+        <i nz-icon nzType="message" nzTheme="outline"></i>
+        <div class="erupt-comments__empty-title">{{'comment.empty' | translate}}</div>
+        <div class="erupt-comments__empty-hint">{{'comment.empty_hint' | translate}}</div>
+      </div>
+    } @else {
       @for (t of threads; track t.head.id) {
-        <div class="erupt-comment">
-          <ng-container *ngTemplateOutlet="item; context: {$implicit: t.head}"></ng-container>
-          @for (r of t.replies; track r.id) {
-            <div class="erupt-comment erupt-comment--reply">
-              <ng-container *ngTemplateOutlet="item; context: {$implicit: r}"></ng-container>
+        <div class="erupt-thread" [class.erupt-thread--pinned]="t.head.pinned"
+             [class.erupt-thread--resolved]="t.head.resolved" [class.erupt-thread--collapsed]="!t.expanded">
+          @if (t.head.pinned || t.head.resolved) {
+            <div class="erupt-thread__flags">
+              @if (t.head.pinned) {
+                <span class="erupt-thread__flag erupt-thread__flag--pinned">
+                  <i nz-icon nzType="pushpin" nzTheme="fill"></i>{{'comment.pinned' | translate}}
+                </span>
+              }
+              @if (t.head.resolved) {
+                <span class="erupt-thread__flag erupt-thread__flag--resolved">
+                  <i nz-icon nzType="check-circle" nzTheme="fill"></i>{{'comment.resolved' | translate}}
+                </span>
+              }
+            </div>
+          }
+          @if (t.expanded) {
+            <ng-container *ngTemplateOutlet="item; context: {$implicit: t.head, head: t.head, thread: t}"></ng-container>
+            @if (t.replies.length) {
+              <div class="erupt-thread__replies">
+                @for (r of t.replies; track r.id) {
+                  <ng-container *ngTemplateOutlet="item; context: {$implicit: r, head: t.head, thread: t}"></ng-container>
+                }
+              </div>
+            }
+            @if (t.head.resolved) {
+              <a class="erupt-thread__toggle" (click)="toggleThread(t)">
+                <i nz-icon nzType="down" [nzRotate]="180"></i>
+              </a>
+            }
+          } @else {
+            <!-- resolved thread, folded to one line: author, a preview and the reply count -->
+            <div class="erupt-thread__summary" (click)="toggleThread(t)">
+              <nz-avatar nzSize="small" [nzSrc]="t.head.userAvatar" [nzText]="initial(t.head.userName)"
+                         [style.background-color]="t.head.userAvatar ? null : avatarColor(t.head.userName)"></nz-avatar>
+              <span class="erupt-thread__summary-name">{{t.head.userName}}</span>
+              <span class="erupt-thread__summary-text">{{t.head.content}}</span>
+              @if (t.replies.length) {
+                <span class="erupt-thread__summary-count">{{t.replies.length}} {{'comment.replies' | translate}}</span>
+              }
+              <i nz-icon nzType="down"></i>
             </div>
           }
         </div>
       }
-    </nz-spin>
+    }
   </div>
 
   <div class="erupt-comments__composer">
     @if (replyTo) {
       <div class="erupt-comments__replying">
-        {{'comment.reply_to' | translate}} <b>{{replyTo.userName}}</b>
-        <a (click)="replyTo = undefined"><i nz-icon nzType="close"></i></a>
+        <i nz-icon nzType="enter" class="erupt-comments__replying-icon"></i>
+        <span class="erupt-comments__replying-text">
+          {{'comment.reply_to' | translate}} <b>{{replyName}}</b>
+          <span class="erupt-comments__replying-quote">{{replyTo.content}}</span>
+        </span>
+        <a class="erupt-comments__replying-close" nz-tooltip [nzTooltipTitle]="'comment.cancel_reply' | translate"
+           (click)="cancelReply()"><i nz-icon nzType="close"></i></a>
       </div>
     }
-    <textarea nz-input rows="3" [(ngModel)]="draft" [placeholder]="'comment.placeholder' | translate"
-              (keydown)="onKeydown($event)"></textarea>
-    <div class="erupt-comments__bar">
-      <span class="erupt-comments__hint">⌘ / Ctrl + Enter</span>
-      <button nz-button nzType="primary" nzSize="small" [nzLoading]="sending" [disabled]="!draft.trim()"
-              (click)="send()">{{'comment.send' | translate}}</button>
+    <div class="erupt-comments__box">
+      @if (mentionOpen) {
+        <!-- @ completion, anchored above the textarea -->
+        <div class="erupt-mention">
+          @if (mentionLoading && !mentionOptions.length) {
+            <div class="erupt-mention__status"><i nz-icon nzType="loading"></i></div>
+          } @else if (!mentionOptions.length) {
+            <div class="erupt-mention__status">{{'comment.mention_empty' | translate}}</div>
+          }
+          @for (u of mentionOptions; track u.id; let i = $index) {
+            <div class="erupt-mention__item" [class.erupt-mention__item--active]="i === mentionIndex"
+                 (mousedown)="$event.preventDefault(); pickMention(u)" (mouseenter)="mentionIndex = i">
+              <nz-avatar nzSize="small" [nzSrc]="u.avatar" [nzText]="initial(u.name)"
+                         [style.background-color]="u.avatar ? null : avatarColor(u.name)"></nz-avatar>
+              <span class="erupt-mention__name">{{u.name}}</span>
+            </div>
+          }
+        </div>
+      }
+      <textarea #input nz-input nzBorderless [nzAutosize]="{minRows: 2, maxRows: 6}" [(ngModel)]="draft"
+                [placeholder]="'comment.placeholder' | translate" (ngModelChange)="onInput()"
+                (keydown)="onKeydown($event)" (blur)="closeMention()"></textarea>
+      <div class="erupt-comments__bar">
+        <span class="erupt-comments__hint">
+          <kbd>Enter</kbd> {{'comment.send' | translate}}
+          <i>·</i>
+          <kbd>Shift</kbd>+<kbd>Enter</kbd> {{'comment.newline' | translate}}
+          <i>·</i>
+          <kbd>&#64;</kbd> {{'comment.mention_hint' | translate}}
+        </span>
+        <button nz-button nzType="primary" nzSize="small" [nzLoading]="sending" [disabled]="!draft.trim()"
+                (click)="send()">
+          <i nz-icon nzType="send"></i>{{'comment.send' | translate}}
+        </button>
+      </div>
     </div>
   </div>
 </div>
 
-<ng-template #item let-c>
-  <div class="erupt-comment__row">
-    <nz-avatar nzSize="small" [nzSrc]="c.userAvatar" [nzText]="initial(c.userName)"></nz-avatar>
+<ng-template #item let-c let-head="head" let-thread="thread">
+  <div class="erupt-comment" [class.erupt-comment--mine]="c.mine">
+    <nz-avatar class="erupt-comment__avatar" nzSize="small" [nzSrc]="c.userAvatar" [nzText]="initial(c.userName)"
+               [style.background-color]="c.userAvatar ? null : avatarColor(c.userName)"></nz-avatar>
     <div class="erupt-comment__body">
       <div class="erupt-comment__meta">
         <span class="erupt-comment__name">{{c.userName}}</span>
-        <span class="erupt-comment__time">{{c.createTime | date:'yyyy-MM-dd HH:mm'}}</span>
+        @if (c.mine) {
+          <span class="erupt-comment__me">{{'comment.me' | translate}}</span>
+        }
+        <span class="erupt-comment__time" [title]="c.createTime | date:'yyyy-MM-dd HH:mm:ss'">{{timeText(c.createTime)}}</span>
         <span class="erupt-comment__ops">
-          <a (click)="reply(c)">{{'comment.reply' | translate}}</a>
+          <a nz-tooltip [nzTooltipTitle]="'comment.reply' | translate" (click)="reply(c, head)">
+            <i nz-icon nzType="enter"></i>
+          </a>
+          @if (c === head) {
+            <a nz-tooltip [nzTooltipTitle]="(c.pinned ? 'comment.unpin' : 'comment.pin') | translate"
+               [class.erupt-comment__op--on]="c.pinned" (click)="setFlag(thread, 'pinned', !c.pinned)">
+              <i nz-icon nzType="pushpin" [nzTheme]="c.pinned ? 'fill' : 'outline'"></i>
+            </a>
+            <a nz-tooltip [nzTooltipTitle]="(c.resolved ? 'comment.reopen' : 'comment.resolve') | translate"
+               [class.erupt-comment__op--on]="c.resolved" (click)="setFlag(thread, 'resolved', !c.resolved)">
+              <i nz-icon nzType="check-circle" [nzTheme]="c.resolved ? 'fill' : 'outline'"></i>
+            </a>
+          }
           @if (c.mine) {
-            <a class="erupt-comment__delete" nz-popconfirm [nzPopconfirmTitle]="'table.delete.hint' | translate"
-               nzOkDanger (nzOnConfirm)="remove(c)">{{'global.delete' | translate}}</a>
+            <a class="erupt-comment__delete" nz-tooltip [nzTooltipTitle]="'global.delete' | translate"
+               nz-popconfirm [nzPopconfirmTitle]="'table.delete.hint' | translate" nzOkDanger
+               nzPopconfirmPlacement="left" (nzOnConfirm)="remove(c)">
+              <i nz-icon nzType="delete"></i>
+            </a>
           }
         </span>
       </div>
-      <div class="erupt-comment__content">{{c.content}}</div>
+      <div class="erupt-comment__content">@for (p of parts(c); track $index) {@if (p.mention) {<span class="erupt-comment__mention">{{p.text}}</span>} @else {{{p.text}}}}</div>
     </div>
   </div>
 </ng-template>

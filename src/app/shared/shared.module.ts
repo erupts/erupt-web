@@ -9,6 +9,8 @@ import {SHARED_DELON_MODULES} from './shared-delon.module';
 import {SHARED_ZORRO_MODULES} from './shared-zorro.module';
 import {RipperDirective} from "@shared/directive/ripper.directive";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
+import {ResizableDrawerComponent} from "@shared/component/resizable-drawer.component";
+import {NzResizableModule} from "ng-zorro-antd/resizable";
 import {SafeHtmlPipe} from "@shared/pipe/safe-html.pipe";
 import {SafeScriptPipe} from "@shared/pipe/safe-script.pipe";
 import {SafeUrlPipe} from "@shared/pipe/safe-url.pipe";
@@ -40,7 +42,7 @@ import {LocalPipe} from "@shared/pipe/local.pipe";
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS: any[] = [EruptIframeComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent, CkeditorComponent, PageDescComponent, IconPickerComponent];
+const COMPONENTS: any[] = [EruptIframeComponent, ResizableDrawerComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent, CkeditorComponent, PageDescComponent, IconPickerComponent];
 const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, EnumToArrayPipe, I18nPipe, LocalPipe, SyncVirtualScrollDirective, InjectorRefDirective, KeysPipe];
 
 // #endregion
@@ -57,6 +59,7 @@ const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUr
         ...SHARED_ZORRO_MODULES,
         // third libs
         NzAffixModule,
+        NzResizableModule,
         DragDropModule
     ],
     providers: [

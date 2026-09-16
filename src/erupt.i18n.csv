@@ -1300,3 +1300,17 @@ comment.send,发送,傳送,Send,Envoyer,送信,보내기,Отправить,Envi
 comment.reply,回复,回覆,Reply,Répondre,返信,답글,Ответить,Responder,Antworten,Responder,Balas,رد
 comment.reply_to,回复,回覆,Replying to,En réponse à,返信先,답글 대상,Ответ,Respondiendo a,Antwort an,A responder a,Membalas,رد على
 comment.empty,还没有评论,還沒有評論,No comments yet,Aucun commentaire,コメントはまだありません,아직 댓글이 없습니다,Комментариев пока нет,Aún no hay comentarios,Noch keine Kommentare,Ainda sem comentários,Belum ada komentar,لا توجد تعليقات بعد
+comment.me,我,我,Me,Moi,自分,나,Я,Yo,Ich,Eu,Saya,أنا
+comment.empty_hint,在下方写下第一条评论,在下方寫下第一條評論,Be the first to leave a comment below,Soyez le premier à commenter ci-dessous,下に最初のコメントを書きましょう,아래에 첫 댓글을 남겨보세요,Оставьте первый комментарий ниже,Sé el primero en comentar abajo,Hinterlassen Sie unten den ersten Kommentar,Seja o primeiro a comentar abaixo,Jadilah yang pertama berkomentar di bawah,كن أول من يعلق أدناه
+comment.cancel_reply,取消回复,取消回覆,Cancel reply,Annuler la réponse,返信をキャンセル,답글 취소,Отменить ответ,Cancelar respuesta,Antwort abbrechen,Cancelar resposta,Batalkan balasan,إلغاء الرد
+comment.newline,换行,換行,New line,Nouvelle ligne,改行,줄바꿈,Новая строка,Nueva línea,Neue Zeile,Nova linha,Baris baru,سطر جديد
+comment.resolve,标记已解决,標記已解決,Mark as resolved,Marquer comme résolu,解決済みにする,해결됨으로 표시,Отметить решённым,Marcar como resuelto,Als gelöst markieren,Marcar como resolvido,Tandai terselesaikan,وضع علامة كمحلول
+comment.reopen,重新打开,重新打開,Reopen,Rouvrir,再開する,다시 열기,Открыть снова,Reabrir,Wieder öffnen,Reabrir,Buka kembali,إعادة الفتح
+comment.resolved,已解决,已解決,Resolved,Résolu,解決済み,해결됨,Решено,Resuelto,Gelöst,Resolvido,Terselesaikan,تم الحل
+comment.pin,置顶,置頂,Pin,Épingler,ピン留め,고정,Закрепить,Fijar,Anheften,Fixar,Sematkan,تثبيت
+comment.unpin,取消置顶,取消置頂,Unpin,Désépingler,ピン留め解除,고정 해제,Открепить,Desfijar,Lösen,Desafixar,Lepas sematan,إلغاء التثبيت
+comment.pinned,置顶,置頂,Pinned,Épinglé,ピン留め,고정됨,Закреплено,Fijado,Angeheftet,Fixado,Disematkan,مثبت
+comment.replies,条回复,條回覆,replies,réponses,件の返信,개의 답글,ответов,respuestas,Antworten,respostas,balasan,ردود
+comment.mention_hint,输入 @ 提及同事,輸入 @ 提及同事,Type @ to mention someone,Tapez @ pour mentionner quelqu'un,@ でメンション,@를 입력해 멘션,Введите @ для упоминания,Escribe @ para mencionar,@ eingeben zum Erwähnen,Digite @ para mencionar,Ketik @ untuk menyebut,اكتب @ للإشارة
+comment.mention_empty,没有匹配的用户,沒有匹配的用戶,No matching user,Aucun utilisateur trouvé,一致するユーザーがいません,일치하는 사용자가 없습니다,Пользователь не найден,Sin usuarios coincidentes,Kein passender Benutzer,Nenhum usuário correspondente,Tidak ada pengguna yang cocok,لا يوجد مستخدم مطابق
+notice.openLink,打开链接,打開連結,Open link,Ouvrir le lien,リンクを開く,링크 열기,Открыть ссылку,Abrir enlace,Link öffnen,Abrir link,Buka tautan,فتح الرابط

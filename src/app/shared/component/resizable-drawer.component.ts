@@ -1,4 +1,7 @@
-import {ChangeDetectorRef, Component, Input, OnInit, Type, ViewChild, ViewContainerRef} from '@angular/core';
+import {
+    ApplicationRef, ChangeDetectorRef, Component, ComponentRef, createComponent, ElementRef, EnvironmentInjector,
+    Injector, Input, OnDestroy, OnInit, Type, ViewChild
+} from '@angular/core';
 import {NzDrawerOptions, NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
 import {NzResizeDirection, NzResizeEvent} from "ng-zorro-antd/resizable";
 
@@ -25,7 +28,7 @@ const HANDLE_BY_PLACEMENT: Record<string, NzResizeDirection> = {
              [nzMinWidth]="minSize" [nzMinHeight]="minSize"
              (nzResize)="onResize($event)">
             <nz-resize-handles [nzDirections]="[direction]"></nz-resize-handles>
-            <ng-container #outlet></ng-container>
+            <div #outlet class="erupt-resizable-drawer__content"></div>
         </div>
     `,
     styles: [`
@@ -34,9 +37,13 @@ const HANDLE_BY_PLACEMENT: Record<string, NzResizeDirection> = {
             width: 100%;
             height: 100%;
         }
+
+        .erupt-resizable-drawer__content {
+            height: 100%;
+        }
     `]
 })
-export class ResizableDrawerComponent implements OnInit {
+export class ResizableDrawerComponent implements OnInit, OnDestroy {
 
     @Input() content: Type<any>;
 
@@ -45,7 +52,7 @@ export class ResizableDrawerComponent implements OnInit {
     // remembers the size per drawer in localStorage when set
     @Input() storageKey: string;
 
-    @ViewChild('outlet', {read: ViewContainerRef, static: true}) outlet: ViewContainerRef;
+    @ViewChild('outlet', {static: true}) outlet: ElementRef<HTMLElement>;
 
     readonly minSize = MIN_SIZE;
 
@@ -55,7 +62,13 @@ export class ResizableDrawerComponent implements OnInit {
 
     private frame = -1;
 
-    constructor(private drawerRef: NzDrawerRef, private cdr: ChangeDetectorRef) {
+    private contentRef?: ComponentRef<any>;
+
+    constructor(private drawerRef: NzDrawerRef,
+                private cdr: ChangeDetectorRef,
+                private appRef: ApplicationRef,
+                private injector: Injector,
+                private envInjector: EnvironmentInjector) {
     }
 
     ngOnInit() {
@@ -66,8 +79,24 @@ export class ResizableDrawerComponent implements OnInit {
             const saved = Number(localStorage.getItem(STORAGE_PREFIX + this.storageKey));
             if (saved >= MIN_SIZE) this.applySize(saved);
         }
-        const ref = this.outlet.createComponent(this.content);
-        Object.assign(ref.instance, this.params || {});
+        // nz-drawer is OnPush: a content view created inside its view container is skipped by the
+        // zone ticks that follow (data arriving over HTTP would only show up on the next click).
+        // The content is therefore attached to ApplicationRef as a root view, checked on every
+        // tick, while its element is placed inside the resizable box; the element injector keeps
+        // NzDrawerRef and the rest of the drawer's injector chain reachable for the content.
+        this.contentRef = createComponent(this.content, {
+            environmentInjector: this.envInjector,
+            elementInjector: this.injector
+        });
+        Object.assign(this.contentRef.instance, this.params || {});
+        this.outlet.nativeElement.appendChild(this.contentRef.location.nativeElement);
+        this.appRef.attachView(this.contentRef.hostView);
+    }
+
+    ngOnDestroy() {
+        cancelAnimationFrame(this.frame);
+        // destroying the ref also detaches its view from ApplicationRef
+        this.contentRef?.destroy();
     }
 
     onResize({width, height}: NzResizeEvent) {

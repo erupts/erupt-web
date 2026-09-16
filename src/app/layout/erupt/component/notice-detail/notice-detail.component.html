@@ -1,20 +1,19 @@
-<nz-spin [nzSpinning]="noticeMessageDetail === null">
+<nz-spin [nzSpinning]="!noticeMessageDetail">
   @if (noticeMessageDetail) {
-    <div style="padding: 12px">
-      <p class="message-content" [innerHTML]="noticeMessageDetail.noticeLog.content|safeHtml"></p>
+    <div class="detail-body">
+      <div class="message-content rich-content-html" [innerHTML]="noticeMessageDetail.noticeLog.content | safeHtml"></div>
     </div>
-    <div style="padding: 12px;border: 1px solid #e8e8e8;">
-      <nz-tag [nzColor]="'volcano'"> {{ noticeMessageDetail.noticeLog.noticeScene?.name }}</nz-tag>
-      @if (noticeMessageDetail.noticeLog?.url) {
-        <span nz-icon
-          nzType="link"
-          nzTheme="outline"
-          (click)="openUrlDrawer(noticeMessageDetail.noticeLog.url, noticeMessageDetail.noticeLog.title || '')"
-          style="margin-left: 8px; cursor: pointer; color: #1890ff;"
-          nz-tooltip>
-        </span>
+    <div class="detail-footer">
+      @if (noticeMessageDetail.noticeLog.noticeScene?.name) {
+        <nz-tag nzColor="volcano">{{ noticeMessageDetail.noticeLog.noticeScene.name }}</nz-tag>
       }
-      <span style="float: right">{{ noticeMessageDetail.noticeLog.createTime }}</span>
+      @if (noticeMessageDetail.noticeLog.url) {
+        <a class="detail-link" (click)="openUrlDrawer(noticeMessageDetail.noticeLog.url)">
+          <span nz-icon nzType="link" nzTheme="outline"></span>
+          {{ 'notice.openLink' | translate }}
+        </a>
+      }
+      <span class="detail-time">{{ noticeMessageDetail.noticeLog.createTime | date:'yyyy-MM-dd HH:mm:ss' }}</span>
     </div>
   }
 </nz-spin>

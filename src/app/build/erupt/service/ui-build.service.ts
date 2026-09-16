@@ -15,7 +15,7 @@ import {EruptFieldModel, OpenWay, PageEmbedType, Tpl, View} from "../model/erupt
 import {AttachmentSelectComponent} from "../components/attachment-select/attachment-select.component";
 import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
-import {openResizableDrawer} from "../components/resizable-drawer/resizable-drawer.component";
+import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
 import {Router} from "@angular/router";
 
 
