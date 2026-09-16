@@ -33,24 +33,28 @@
 <ng-template #titleTpl>
   <div class="erupt-form-title">
     <span class="erupt-form-title__text">{{title}}</span>
+    @if (navigator) {
+      <!-- record pager next to the caption: ‹ n / total › within the list that opened the panel -->
+      <span class="erupt-form-title__group erupt-form-title__pager" (mousedown)="$event.stopPropagation()">
+        <span class="erupt-form-title__btn erupt-form-title__btn--icon"
+              [class.erupt-form-title__btn--disabled]="!navigator.canStep(-1)"
+              nz-tooltip [nzTooltipTitle]="'form.prev_record' | translate" (click)="navigator.canStep(-1) && stepRecord.emit(-1)">
+          <i nz-icon nzType="left"></i>
+        </span>
+        @if (navigator.position(); as pos) {
+          <span class="erupt-form-title__btn erupt-form-title__btn--static">{{pos.index}} / {{pos.total}}</span>
+        }
+        <span class="erupt-form-title__btn erupt-form-title__btn--icon"
+              [class.erupt-form-title__btn--disabled]="!navigator.canStep(1)"
+              nz-tooltip [nzTooltipTitle]="'form.next_record' | translate" (click)="navigator.canStep(1) && stepRecord.emit(1)">
+          <i nz-icon nzType="right"></i>
+        </span>
+      </span>
+    }
     <span class="erupt-form-title__spacer"></span>
-    @if (navigator || canToggleEdit || aiAction || removeAction || menuActions.length) {
+    @if (canToggleEdit || aiAction || removeAction || menuActions.length) {
       <!-- record actions as small outlined buttons, ant style; the mode switch keeps its own pill -->
       <span class="erupt-form-title__actions" (mousedown)="$event.stopPropagation()">
-        @if (navigator) {
-          <span class="erupt-form-title__group">
-            <span class="erupt-form-title__btn erupt-form-title__btn--icon"
-                  [class.erupt-form-title__btn--disabled]="!navigator.canStep(-1)"
-                  nz-tooltip [nzTooltipTitle]="'form.prev_record' | translate" (click)="navigator.canStep(-1) && stepRecord.emit(-1)">
-              <i nz-icon nzType="left"></i>
-            </span>
-            <span class="erupt-form-title__btn erupt-form-title__btn--icon"
-                  [class.erupt-form-title__btn--disabled]="!navigator.canStep(1)"
-                  nz-tooltip [nzTooltipTitle]="'form.next_record' | translate" (click)="navigator.canStep(1) && stepRecord.emit(1)">
-              <i nz-icon nzType="right"></i>
-            </span>
-          </span>
-        }
         @if (canToggleEdit) {
           <span class="erupt-form-title__btn" (click)="toggleEdit.emit()">
             <i nz-icon [nzType]="readonly ? 'edit' : 'eye'"></i>
