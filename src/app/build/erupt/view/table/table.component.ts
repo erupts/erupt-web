@@ -405,7 +405,7 @@ export class TableComponent implements OnInit, OnDestroy {
         this.aiDrawerRef = this.drawerService.create<AiChatComponent>({
             nzContent: AiChatComponent,
             nzContentParams: {collapseSidebar: true, embedded: true, context: this.aiContext},
-            nzTitle: this.i18n.fanyi('AI'),
+            nzTitle: this.i18n.fanyi('ai.chat.title'),
             nzWidth: '100%',
             nzBodyStyle: {padding: '0', height: '100%'}
         });

@@ -18,6 +18,7 @@ import {UtilsService} from "@shared/service/utils.service";
 import {NzNotificationService} from "ng-zorro-antd/notification";
 import {AnnouncementDetailComponent} from "../component/announcement-detail/announcement-detail.component";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
+import {I18NService} from "@core";
 
 @Component({
     standalone: false,
@@ -147,6 +148,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 private dataService: DataService,
                 private menuSrv: MenuService,
                 private utilsService: UtilsService,
+                private i18n: I18NService,
                 @Inject(NzDrawerService) private drawer: NzDrawerService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(NzModalService) private modal: NzModalService,
@@ -247,7 +249,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 },
                 nzContentParams: {
                     embedded: true,
-                    drawerTitle: "AI Chat"
+                    drawerTitle: this.i18n.fanyi('ai.chat.title')
                 }
             }, "header-ai");
         });
