@@ -16,6 +16,7 @@ import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {R, SimplePage} from "@shared/model/api.model";
+import {RecordComment} from "../../build/erupt/model/record-comment.model";
 import {NoticeStatus} from "@shared/model/notice.model";
 
 @Injectable()
@@ -658,6 +659,25 @@ export class DataService {
 
     printVars() {
         return this._http.get<R<VL[]>>(RestPath.erupt + "/print/vars");
+    }
+
+    // ---------- record comments (erupt-comment module) ----------
+
+    commentList(eruptName: string, id: any) {
+        return this._http.get<R<RecordComment[]>>(RestPath.comment + "/" + eruptName + "/" + encodeURIComponent(id), null, {
+            observe: "body", headers: {erupt: eruptName}
+        });
+    }
+
+    commentAdd(eruptName: string, id: any, content: string, parentId?: number) {
+        return this._http.post<R<RecordComment>>(RestPath.comment + "/" + eruptName + "/" + encodeURIComponent(id),
+            {content, parentId}, null, {observe: "body", headers: {erupt: eruptName}});
+    }
+
+    commentDelete(eruptName: string, id: any, commentId: number) {
+        return this._http.delete<R<void>>(RestPath.comment + "/" + eruptName + "/" + encodeURIComponent(id) + "/" + commentId, null, {
+            observe: "body", headers: {erupt: eruptName}
+        });
     }
 
     printConfigList(eruptName: string) {

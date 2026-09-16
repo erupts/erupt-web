@@ -20,6 +20,7 @@ import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {FormAction, FormModalService, FormNavigator} from "../../service/form-modal.service";
+import {RecordCommentComponent} from "../../components/record-comment/record-comment.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
 import {
@@ -996,6 +997,7 @@ export class TableComponent implements OnInit, OnDestroy {
             toggleEdit: this.editAllowed?.(record) ? ref => this.openEdit(record, ref) : undefined,
             link: this.recordLink(record),
             ai: this.recordAi(),
+            comment: this.recordComment(record),
             remove: this.recordRemove(record, (r, ref) => this.openView(r, ref)),
             more: this.recordActions(record),
             footer: ref => [
@@ -1039,6 +1041,7 @@ export class TableComponent implements OnInit, OnDestroy {
             toggleEdit: this.viewAllowed?.(record) ? ref => this.openView(record, ref) : undefined,
             link: this.recordLink(record),
             ai: this.recordAi(),
+            comment: this.recordComment(record),
             remove: this.recordRemove(record, (r, ref) => this.openEdit(r, ref)),
             more: this.recordActions(record),
             footer: ref => [
@@ -1114,6 +1117,18 @@ export class TableComponent implements OnInit, OnDestroy {
             actions.push({label: this.i18n.fanyi("global.print"), icon: "printer", run: () => this.printRecord(record[this.pkCol])});
         }
         return actions;
+    }
+
+    // Comment stream of the record in a drawer; only when the erupt-comment module is present.
+    private recordComment(record: any): ((ref: NzModalRef<EditComponent>) => void) | undefined {
+        if (!EruptAppData.get().properties["erupt-comment"]) return undefined;
+        return () => openResizableDrawer(this.drawerService, {
+            nzContent: RecordCommentComponent,
+            nzContentParams: {eruptName: this.eruptBuildModel.eruptModel.eruptName, id: record[this.pkCol]},
+            nzTitle: this.i18n.fanyi("form.comments"),
+            nzWidth: window.innerWidth <= 768 ? "100%" : 420,
+            nzBodyStyle: {padding: "0", height: "100%"}
+        }, "form-comment");
     }
 
     // AI chat in a drawer, primed with the module context plus the record currently in the panel.

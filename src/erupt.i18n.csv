@@ -1294,3 +1294,9 @@ form.prev_record,上一条,上一筆,Previous record,Enregistrement précédent,
 form.next_record,下一条,下一筆,Next record,Enregistrement suivant,次のレコード,다음 항목,Следующая запись,Registro siguiente,Nächster Datensatz,Registo seguinte,Data berikutnya,السجل التالي
 global.copy_link,复制链接,複製連結,Copy link,Copier le lien,リンクをコピー,링크 복사,Копировать ссылку,Copiar enlace,Link kopieren,Copiar ligação,Salin tautan,نسخ الرابط
 form.ai_assistant,AI 助手,AI 助手,AI assistant,Assistant IA,AI アシスタント,AI 어시스턴트,ИИ-помощник,Asistente de IA,KI-Assistent,Assistente de IA,Asisten AI,مساعد الذكاء الاصطناعي
+form.comments,评论,評論,Comments,Commentaires,コメント,댓글,Комментарии,Comentarios,Kommentare,Comentários,Komentar,التعليقات
+comment.placeholder,写下评论…,寫下評論…,Write a comment…,Écrire un commentaire…,コメントを書く…,댓글을 입력하세요…,Напишите комментарий…,Escribe un comentario…,Kommentar schreiben…,Escreva um comentário…,Tulis komentar…,اكتب تعليقًا…
+comment.send,发送,傳送,Send,Envoyer,送信,보내기,Отправить,Enviar,Senden,Enviar,Kirim,إرسال
+comment.reply,回复,回覆,Reply,Répondre,返信,답글,Ответить,Responder,Antworten,Responder,Balas,رد
+comment.reply_to,回复,回覆,Replying to,En réponse à,返信先,답글 대상,Ответ,Respondiendo a,Antwort an,A responder a,Membalas,رد على
+comment.empty,还没有评论,還沒有評論,No comments yet,Aucun commentaire,コメントはまだありません,아직 댓글이 없습니다,Комментариев пока нет,Aún no hay comentarios,Noch keine Kommentare,Ainda sem comentários,Belum ada komentar,لا توجد تعليقات بعد

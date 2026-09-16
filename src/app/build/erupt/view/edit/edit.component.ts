@@ -75,6 +75,8 @@ export class EditComponent implements OnInit {
     // record actions installed by FormModalService (already bound to the modal ref)
     aiAction?: () => void;
 
+    commentAction?: () => void;
+
     removeAction?: { confirm: string; run: () => void };
 
     menuActions: { label: string; icon: string; run: () => void }[] = [];

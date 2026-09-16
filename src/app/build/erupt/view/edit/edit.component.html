@@ -53,13 +53,19 @@
         </span>
       </span>
     }
-    @if (canToggleEdit || aiAction || removeAction || menuActions.length) {
+    @if (canToggleEdit || commentAction || aiAction || removeAction || menuActions.length) {
       <!-- record actions as small outlined buttons, ant style; the mode switch keeps its own pill -->
       <span class="erupt-form-title__actions" (mousedown)="$event.stopPropagation()">
         @if (canToggleEdit) {
           <span class="erupt-form-title__btn" (click)="toggleEdit.emit()">
             <i nz-icon [nzType]="readonly ? 'edit' : 'eye'"></i>
             {{(readonly ? 'global.editor' : 'global.view') | translate}}
+          </span>
+        }
+        @if (commentAction) {
+          <span class="erupt-form-title__btn erupt-form-title__btn--icon" nz-tooltip
+                [nzTooltipTitle]="'form.comments' | translate" (click)="commentAction()">
+            <i nz-icon nzType="message"></i>
           </span>
         }
         @if (aiAction) {

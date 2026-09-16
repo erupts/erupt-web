@@ -58,6 +58,8 @@ export interface FormModalOptions {
     link?: string;
     // AI assistant scoped to this record
     ai?: (ref: NzModalRef<EditComponent>) => void;
+    // comment stream of this record (erupt-comment module)
+    comment?: (ref: NzModalRef<EditComponent>) => void;
     // delete this record; asked for confirmation first (text is the popconfirm title)
     remove?: { confirm: string; run: (ref: NzModalRef<EditComponent>) => void };
     // further actions in the "more" menu
@@ -131,6 +133,7 @@ export class FormModalService {
         comp.navigator = opts.navigator;
         comp.canToggleEdit = !!opts.toggleEdit;
         comp.aiAction = opts.ai ? () => opts.ai(ref) : undefined;
+        comp.commentAction = opts.comment ? () => opts.comment(ref) : undefined;
         comp.removeAction = opts.remove ? {confirm: opts.remove.confirm, run: () => opts.remove.run(ref)} : undefined;
         comp.menuActions = [
             ...(opts.link ? [{label: this.i18n.fanyi("global.copy_link"), icon: "link", run: () => this.copyLink(ref)}] : []),

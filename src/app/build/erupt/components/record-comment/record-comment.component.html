@@ -1,0 +1,55 @@
+<div class="erupt-comments">
+  <div class="erupt-comments__list">
+    <nz-spin [nzSpinning]="loading">
+      @if (!loading && !threads.length) {
+        <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="'comment.empty' | translate"></nz-empty>
+      }
+      @for (t of threads; track t.head.id) {
+        <div class="erupt-comment">
+          <ng-container *ngTemplateOutlet="item; context: {$implicit: t.head}"></ng-container>
+          @for (r of t.replies; track r.id) {
+            <div class="erupt-comment erupt-comment--reply">
+              <ng-container *ngTemplateOutlet="item; context: {$implicit: r}"></ng-container>
+            </div>
+          }
+        </div>
+      }
+    </nz-spin>
+  </div>
+
+  <div class="erupt-comments__composer">
+    @if (replyTo) {
+      <div class="erupt-comments__replying">
+        {{'comment.reply_to' | translate}} <b>{{replyTo.userName}}</b>
+        <a (click)="replyTo = undefined"><i nz-icon nzType="close"></i></a>
+      </div>
+    }
+    <textarea nz-input rows="3" [(ngModel)]="draft" [placeholder]="'comment.placeholder' | translate"
+              (keydown)="onKeydown($event)"></textarea>
+    <div class="erupt-comments__bar">
+      <span class="erupt-comments__hint">⌘ / Ctrl + Enter</span>
+      <button nz-button nzType="primary" nzSize="small" [nzLoading]="sending" [disabled]="!draft.trim()"
+              (click)="send()">{{'comment.send' | translate}}</button>
+    </div>
+  </div>
+</div>
+
+<ng-template #item let-c>
+  <div class="erupt-comment__row">
+    <nz-avatar nzSize="small" [nzSrc]="c.userAvatar" [nzText]="initial(c.userName)"></nz-avatar>
+    <div class="erupt-comment__body">
+      <div class="erupt-comment__meta">
+        <span class="erupt-comment__name">{{c.userName}}</span>
+        <span class="erupt-comment__time">{{c.createTime | date:'yyyy-MM-dd HH:mm'}}</span>
+        <span class="erupt-comment__ops">
+          <a (click)="reply(c)">{{'comment.reply' | translate}}</a>
+          @if (c.mine) {
+            <a class="erupt-comment__delete" nz-popconfirm [nzPopconfirmTitle]="'table.delete.hint' | translate"
+               nzOkDanger (nzOnConfirm)="remove(c)">{{'global.delete' | translate}}</a>
+          }
+        </span>
+      </div>
+      <div class="erupt-comment__content">{{c.content}}</div>
+    </div>
+  </div>
+</ng-template>
