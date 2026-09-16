@@ -18,15 +18,19 @@
         flex: 1;
     }
 
+    // right side reads as three groups: pager │ record actions │ mode switch
+    &__pager,
+    &__actions {
+        flex-shrink: 0;
+        padding-right: 12px;
+        margin-right: -2px;
+        border-right: 1px solid var(--erupt-border, rgba(0, 0, 0, 0.06));
+    }
+
     &__actions {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        flex-shrink: 0;
-        // divider between the record actions and the panel-mode switch
-        padding-right: 12px;
-        margin-right: -2px;
-        border-right: 1px solid var(--erupt-border, rgba(0, 0, 0, 0.06));
     }
 
     // small outlined button, ant "default" size small
@@ -81,9 +85,6 @@
         }
     }
 
-    &__pager {
-        margin-left: 4px;
-    }
 
     // compact button group for previous / next: shared edges, one radius
     &__group {
