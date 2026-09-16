@@ -214,3 +214,21 @@
     }
   }
 </ng-template>
+
+<!-- Websocket-pushed notice: a toast you can act on — open the full notice, or dismiss it -->
+<ng-template #noticeTpl let-notification let-data="data">
+  <div class="notice-push">
+    <div class="notice-push__title">
+      <i nz-icon nzType="bell" nzTheme="outline"></i>
+      <span>{{ data.title }}</span>
+    </div>
+    <div class="notice-push__content rich-content-html" [innerHTML]="data.content | safeHtml"></div>
+    <div class="notice-push__actions">
+      <!-- the notification's own close icon already dismisses it, so one action is enough -->
+      <button nz-button nzType="link" nzSize="small" (click)="viewPushedNotice(data, notification)">
+        {{ 'notice.view_detail' | translate }}
+        <i nz-icon nzType="arrow-right" nzTheme="outline"></i>
+      </button>
+    </div>
+  </div>
+</ng-template>

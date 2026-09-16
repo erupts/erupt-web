@@ -414,3 +414,45 @@
         }
     }
 }
+
+// ── Websocket-pushed notice toast ─────────────────────────────────────
+// Rendered in the notification overlay, so these rules sit outside :host
+// (the template is declared here, so it still carries this component's scope).
+.notice-push {
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--erupt-text, rgba(0, 0, 0, 0.88));
+
+        [nz-icon] {
+            color: var(--ant-primary-color);
+        }
+    }
+
+    &__content {
+        margin-top: 6px;
+        max-height: 120px;
+        overflow: auto;
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+        word-break: break-word;
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 4px;
+
+        button {
+            padding: 0;
+
+            [nz-icon] {
+                font-size: 11px;
+            }
+        }
+    }
+}
