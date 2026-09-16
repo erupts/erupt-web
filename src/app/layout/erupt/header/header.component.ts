@@ -1,5 +1,5 @@
 import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
-import {Component, Inject, Input, NgZone, OnDestroy, OnInit} from "@angular/core";
+import {Component, Inject, Input, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {Menu, MenuInner, MenuService, SettingsService} from "@delon/theme";
 import {Subject, takeUntil} from "rxjs";
 import screenfull from 'screenfull';
@@ -15,10 +15,18 @@ import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {NoticeComponent} from "../component/notice/notice.component";
 import {UtilsService} from "@shared/service/utils.service";
-import {NzNotificationService} from "ng-zorro-antd/notification";
+import {NzNotificationComponent, NzNotificationService} from "ng-zorro-antd/notification";
 import {AnnouncementDetailComponent} from "../component/announcement-detail/announcement-detail.component";
+import {NoticeDetailComponent} from "../component/notice-detail/notice-detail.component";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {I18NService} from "@core";
+
+/** Payload of a notice pushed over the websocket. */
+export interface NoticePush {
+    id: number;
+    title: string;
+    content: string;
+}
 
 @Component({
     standalone: false,
@@ -31,6 +39,8 @@ import {I18NService} from "@core";
 export class HeaderComponent implements OnInit, OnDestroy {
 
     @Input() menu: MenuVo[];
+
+    @ViewChild("noticeTpl", {static: true}) noticeTpl: TemplateRef<{ $implicit: NzNotificationComponent; data: NoticePush }>;
 
     private destroy$ = new Subject<void>();
 
@@ -207,15 +217,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
         })
     }
 
+    /** Pushed over the websocket by the backend notice channel (window.eruptNotice). */
     eruptNotice(id: number, title: string, content: string) {
         this.unreadCount++;
-        this.notification.create(
-            'blank',
-            title,
-            content, {
-                nzDuration: -1
-            }
-        );
+        this.notification.template(this.noticeTpl, {
+            nzDuration: -1,
+            nzData: {id, title, content}
+        });
+    }
+
+    /** Opens the pushed notice in the same detail modal the notice center uses; that read marks it read. */
+    viewPushedNotice(notice: NoticePush, toast: NzNotificationComponent) {
+        toast.close();
+        const ref = this.modal.create({
+            nzDraggable: true,
+            nzWrapClassName: "modal-lg",
+            nzTitle: notice.title,
+            nzBodyStyle: {padding: '0'},
+            nzFooter: null,
+            nzContent: NoticeDetailComponent
+        });
+        ref.componentInstance.messageId = notice.id;
+        ref.afterClose.subscribe(() => this.getNoticeUnreadCount());
     }
 
     renderTool(tool: CustomerTool): string {
