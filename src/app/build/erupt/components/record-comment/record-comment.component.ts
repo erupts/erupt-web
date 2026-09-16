@@ -1,6 +1,6 @@
 import {AfterViewChecked, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from "@angular/core";
-import {Subject, Subscription} from "rxjs";
-import {debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
+import {of, Subject, Subscription} from "rxjs";
+import {catchError, debounceTime, switchMap} from "rxjs/operators";
 import {DataService} from "@shared/service/data.service";
 import {MentionUser, RecordComment} from "../../model/record-comment.model";
 
@@ -89,20 +89,18 @@ export class RecordCommentComponent implements OnInit, AfterViewChecked, OnDestr
     }
 
     ngOnInit() {
+        // No distinctUntilChanged here: reopening the picker replays the same empty query, and
+        // dropping it would leave the panel stuck on an empty list. The failure is caught inside
+        // the switchMap so one bad response cannot terminate the stream for the rest of the session.
         this.mentionSub = this.mentionSearch$.pipe(
             debounceTime(150),
-            distinctUntilChanged(),
-            switchMap(q => {
-                this.mentionLoading = true;
-                return this.dataService.commentMentionUsers(this.eruptName, q);
-            })
-        ).subscribe({
-            next: res => {
-                this.mentionLoading = false;
-                this.mentionOptions = res.success ? (res.data || []) : [];
-                this.mentionIndex = 0;
-            },
-            error: () => this.mentionLoading = false
+            switchMap(q => this.dataService.commentMentionUsers(this.eruptName, q).pipe(
+                catchError(() => of(null))
+            ))
+        ).subscribe(res => {
+            this.mentionLoading = false;
+            this.mentionOptions = res?.success ? (res.data || []) : [];
+            this.mentionIndex = 0;
         });
         this.load(true);
     }
@@ -237,6 +235,9 @@ export class RecordCommentComponent implements OnInit, AfterViewChecked, OnDestr
             this.mentionOpen = true;
             this.mentionOptions = [];
         }
+        // Flagged before the debounce so a freshly opened picker shows the spinner instead of
+        // "no matching user"; while options are already on screen they stay put until the next result.
+        this.mentionLoading = true;
         this.mentionSearch$.next(query);
     }
 
@@ -258,6 +259,7 @@ export class RecordCommentComponent implements OnInit, AfterViewChecked, OnDestr
         this.mentionOpen = false;
         this.mentionOptions = [];
         this.mentionStart = -1;
+        this.mentionLoading = false;
     }
 
     send() {
