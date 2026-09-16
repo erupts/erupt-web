@@ -13,11 +13,56 @@
   }
 </div>
 
+<ng-template #footerTpl let-modalRef="modalRef">
+  @if (footerButtons) {
+    @for (b of footerButtons; track $index) {
+      <button nz-button [hidden]="buttonProp(b, 'show') === false" [nzLoading]="buttonProp(b, 'loading')"
+              [disabled]="buttonProp(b, 'disabled')" [nzType]="b.type || 'default'" [nzDanger]="b.danger"
+              (click)="clickButton(b)">{{b.label}}</button>
+    }
+  } @else {
+    <button nz-button (click)="modalRef.triggerCancel()"
+            [nzLoading]="modalRef.getConfig().nzCancelLoading">{{'global.cancel' | translate}}</button>
+    <button nz-button nzType="primary" (click)="modalRef.triggerOk()"
+            [nzLoading]="modalRef.getConfig().nzOkLoading">{{okText || ('global.ok' | translate)}}</button>
+  }
+</ng-template>
+
 <!-- Title bar: caption on the left, the three panel forms on the right. mousedown is stopped so
      clicking a mode icon never starts the modal drag (the header is the cdk drag handle). -->
 <ng-template #titleTpl>
   <div class="erupt-form-title">
     <span class="erupt-form-title__text">{{title}}</span>
+    @if (navigator) {
+      <!-- previous / next record within the list that opened the panel -->
+      <span class="erupt-form-title__nav" (mousedown)="$event.stopPropagation()">
+        <span class="erupt-form-title__action" [class.erupt-form-title__action--disabled]="!navigator.canStep(-1)"
+              nz-tooltip [nzTooltipTitle]="'form.prev_record' | translate" (click)="navigator.canStep(-1) && stepRecord.emit(-1)">
+          <i nz-icon nzType="left"></i>
+        </span>
+        <span class="erupt-form-title__action" [class.erupt-form-title__action--disabled]="!navigator.canStep(1)"
+              nz-tooltip [nzTooltipTitle]="'form.next_record' | translate" (click)="navigator.canStep(1) && stepRecord.emit(1)">
+          <i nz-icon nzType="right"></i>
+        </span>
+      </span>
+    }
+    <span class="erupt-form-title__spacer"></span>
+    @if (canToggleEdit || link) {
+      <span class="erupt-form-title__actions" (mousedown)="$event.stopPropagation()">
+        @if (canToggleEdit) {
+          <span class="erupt-form-title__action" nz-tooltip
+                [nzTooltipTitle]="(readonly ? 'global.editor' : 'global.view') | translate" (click)="toggleEdit.emit()">
+            <i nz-icon [nzType]="readonly ? 'edit' : 'eye'"></i>
+          </span>
+        }
+        @if (link) {
+          <span class="erupt-form-title__action" nz-tooltip [nzTooltipTitle]="'global.copy_link' | translate"
+                (click)="copyLink.emit()">
+            <i nz-icon nzType="link"></i>
+          </span>
+        }
+      </span>
+    }
     <span class="erupt-form-title__modes" (mousedown)="$event.stopPropagation()">
       @for (m of panelModes; track m.mode) {
         <span class="erupt-form-title__mode" [class.erupt-form-title__mode--active]="panelMode === m.mode"
