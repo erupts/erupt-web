@@ -234,11 +234,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.ngZone.run(() => {
             this.aiLoading = false;
             openResizableDrawer(this.drawer, {
-                nzTitle: "AI Chat",
+                nzTitle: null,
                 nzContent: AiChatComponent,
                 nzWidth: "520px",
                 nzMask: false,
-                nzClosable: true,
+                nzClosable: false,
                 nzKeyboard: true,
                 nzPlacement: "right",
                 nzBodyStyle: {
@@ -246,7 +246,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
                     overflow: "hidden"
                 },
                 nzContentParams: {
-                    embedded: true
+                    embedded: true,
+                    drawerTitle: "AI Chat"
                 }
             }, "header-ai");
         });

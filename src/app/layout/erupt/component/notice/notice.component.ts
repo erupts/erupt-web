@@ -3,7 +3,7 @@ import {DataService} from '@shared/service/data.service';
 import {Announcement, NoticeMessageDetail, NoticeScene, NoticeStatus} from '@shared/model/user.model';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {NzDrawerRef, NzDrawerService} from 'ng-zorro-antd/drawer';
+import {NzDrawerService} from 'ng-zorro-antd/drawer';
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NoticeDetailComponent, openNoticeUrl} from "../notice-detail/notice-detail.component";
 import {I18NService} from "@core";
@@ -39,7 +39,6 @@ export class NoticeComponent implements OnInit, OnDestroy {
 
     constructor(
         private dataService: DataService,
-        private drawerRef: NzDrawerRef,
         private i18nService: I18NService,
         private cdr: ChangeDetectorRef,
         @Inject(NzModalService) private modal: NzModalService,
@@ -170,11 +169,6 @@ export class NoticeComponent implements OnInit, OnDestroy {
             nzContent: AnnouncementDetailComponent,
         });
         ref.componentInstance.announcement = announcement;
-    }
-
-    // close drawer
-    close(): void {
-        this.drawerRef.close();
     }
 
     openUrl(url: string): void {
