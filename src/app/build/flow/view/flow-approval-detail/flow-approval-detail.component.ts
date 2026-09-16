@@ -1,3 +1,4 @@
+import {openResizableDrawer, resizableDrawerContent} from "@shared/component/resizable-drawer.component";
 import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {
     ApprovalView,
@@ -621,7 +622,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     // New method: view the flow diagram
     viewFlow() {
-        let ref = this.drawerService.create({
+        let ref = openResizableDrawer(this.drawerService, {
             nzTitle: this.i18n.fanyi('flow.action.view_flow'),
             nzContent: EruptFlowComponent,
             nzContentParams: {
@@ -636,9 +637,9 @@ export class FlowApprovalDetailComponent implements OnInit {
             nzPlacement: 'bottom',
             nzHeight: '85%',
             nzFooter: null
-        })
+        }, "flow-view")
         this.flowInstanceApiService.progress(this.selectedInstance.id).subscribe(res => {
-            ref.getContentComponent().progress = res.data;
+            resizableDrawerContent<EruptFlowComponent>(ref).progress = res.data;
         })
     }
 

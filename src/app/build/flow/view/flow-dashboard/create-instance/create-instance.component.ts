@@ -1,3 +1,4 @@
+import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
 import {
     ChangeDetectorRef,
     Component,
@@ -147,7 +148,7 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
     }
 
     onViewFlow() {
-        this.drawerService.create({
+        openResizableDrawer(this.drawerService, {
             nzTitle: this.i18n.fanyi('flow.action.view_flow'),
             nzContent: EruptFlowComponent,
             nzContentParams: {
@@ -162,7 +163,7 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
             nzPlacement: 'bottom',
             nzHeight: '85%',
             nzFooter: null
-        })
+        }, "flow-view")
     }
 
     onSubmit(): void {
