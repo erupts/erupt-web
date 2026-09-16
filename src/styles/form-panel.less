@@ -29,6 +29,40 @@
         box-shadow: -6px 0 16px rgba(0, 0, 0, 0.08);
     }
 
+    // Resize handle: the form body is nz-resizable, but the grip must span the whole panel
+    // edge, so the body stays static and the handle positions against .ant-modal-content.
+    &--side {
+        .ant-modal-body {
+            position: static;
+        }
+
+        .erupt-form-body {
+            position: static !important;
+        }
+
+        .nz-resizable-handle-left {
+            left: -5px;
+            z-index: 2;
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 4px;
+                width: 2px;
+                background: var(--ant-primary-color);
+                opacity: 0;
+                transition: opacity 0.2s;
+            }
+
+            &:hover::after,
+            .nz-resizable-resizing &::after {
+                opacity: 1;
+            }
+        }
+    }
+
     // read-only side panel: the list behind stays clickable so records can be switched
     &--passthrough {
         pointer-events: none;
