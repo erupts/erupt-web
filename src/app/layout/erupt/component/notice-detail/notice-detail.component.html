@@ -1,4 +1,4 @@
-<nz-spin [nzSpinning]="!noticeMessageDetail">
+<nz-spin [nzSpinning]="loading">
   @if (noticeMessageDetail) {
     <div class="detail-body">
       <div class="message-content rich-content-html" [innerHTML]="noticeMessageDetail.noticeLog.content | safeHtml"></div>

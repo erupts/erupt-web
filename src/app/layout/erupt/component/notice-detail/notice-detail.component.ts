@@ -36,6 +36,8 @@ export class NoticeDetailComponent implements OnInit {
 
     noticeMessageDetail: NoticeMessageDetail;
 
+    loading = true;
+
     constructor(
         private dataService: DataService,
         private drawerService: NzDrawerService
@@ -47,9 +49,11 @@ export class NoticeDetailComponent implements OnInit {
             .subscribe({
                 next: (result) => {
                     this.noticeMessageDetail = result.data;
+                    this.loading = false;
                 },
-                error: () => {
-                }
+                // a deleted notice, or one belonging to someone else, answers with an error the
+                // interceptor already reports; stop the spinner so the dialog is not stuck
+                error: () => this.loading = false
             });
     }
 
