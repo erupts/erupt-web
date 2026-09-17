@@ -319,7 +319,9 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     get hasPrintConfig(): boolean {
-        return this.isEruptPrint && null != this.menuSrv.getItem("PRINT_CONFIG");
+        // a model that withholds printing has no layout to configure either
+        return !!(this.eruptBuildModel?.eruptModel?.eruptJson?.power?.print
+            && this.isEruptPrint && null != this.menuSrv.getItem("PRINT_CONFIG"));
     }
 
     ngOnDestroy(): void {
@@ -1162,10 +1164,10 @@ export class TableComponent implements OnInit, OnDestroy {
         };
     }
 
-    // "More" menu of the panel: printing when the print module is on.
+    // "More" menu of the panel: printing when the print module is on and the model allows it.
     private recordActions(record: any): FormAction[] {
         const actions: FormAction[] = [];
-        if (this.isEruptPrint) {
+        if (this.isEruptPrint && this.eruptBuildModel?.eruptModel?.eruptJson?.power?.print) {
             actions.push({label: this.i18n.fanyi("global.print"), icon: "printer", run: () => this.printRecord(record[this.pkCol])});
         }
         return actions;
