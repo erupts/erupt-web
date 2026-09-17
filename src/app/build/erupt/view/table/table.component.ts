@@ -1636,6 +1636,32 @@ export class TableComponent implements OnInit, OnDestroy {
                 ref.getContentComponent().language = lang;
                 // @ts-ignore
                 ref.getContentComponent().edit = {$value: code}
+            },
+            // the same editor in a drawer: a long file gets the full height and the table stays in place
+            codeDrawer: (lang: string, code: any, title?: string) => {
+                openResizableDrawer(this.drawerService, {
+                    nzContent: CodeEditorComponent,
+                    nzContentParams: {
+                        readonly: true,
+                        language: lang,
+                        download: title,
+                        // the editor sizes itself in pixels, the drawer body is the viewport minus its header
+                        height: window.innerHeight - 55,
+                        edit: {$value: code}
+                    },
+                    nzTitle: title || this.i18n.fanyi("global.code"),
+                    nzWidth: window.innerWidth <= 768 ? "100%" : 820,
+                    nzBodyStyle: {padding: "0", height: "100%"}
+                }, "code-drawer");
+            },
+            // bytes the request was already authorised for, saved without asking for them again
+            downloadFile: (name: string, base64: string, type?: string) => {
+                const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(new Blob([bytes], {type: type || 'application/octet-stream'}));
+                link.download = name;
+                link.click();
+                URL.revokeObjectURL(link.href);
             }
         }
         try {
