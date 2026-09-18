@@ -48,7 +48,7 @@ import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ModalButtonOptions, NzModalRef, NzModalService} from "ng-zorro-antd/modal";
 import {TreeSelectComponent} from "../../components/tree-select/tree-select.component";
-import {STChange, STColumn, STColumnButton, STComponent, STDragOptions, STPage} from "@delon/abc/st";
+import {STChange, STColumn, STColumnButton, STComponent, STDragOptions, STPage, STWidthMode} from "@delon/abc/st";
 import {PageDescMode} from "@shared/component/page-desc/page-desc.component";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
@@ -71,6 +71,16 @@ import printJS from 'print-js';
     styleUrls: ["./table.component.less"]
 })
 export class TableComponent implements OnInit, OnDestroy {
+
+    // How many icon actions the operation column is sized for when cells wrap (@Layout
+    // tableTruncate = false); the rest flow onto further lines.
+    private static readonly ONE_LINE_OPERATORS = 5;
+
+    // @Layout(tableTruncate = false): cells wrap instead of being cut off with an ellipsis.
+    // Rows then vary in height, which rules out the fixed-height virtual scroller.
+    wrapCells: boolean = false;
+
+    widthMode: STWidthMode = {strictBehavior: "truncate"};
 
     readonly PageDescMode = PageDescMode;
 
@@ -678,6 +688,11 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     buildTableConfig() {
+        // @Layout(tableTruncate = false) trades st's ellipsis for wrapping, which is also what
+        // lets a crowded operation column show every action instead of hiding the tail behind "..."
+        const wrapCells = this.eruptBuildModel.eruptModel.eruptJson.layout?.tableTruncate === false;
+        this.wrapCells = wrapCells;
+        this.widthMode = {strictBehavior: wrapCells ? "wrap" : "truncate"};
         const _columns: STColumn[] = [];
         if (this._reference) {
             _columns.push({
@@ -988,14 +1003,19 @@ export class TableComponent implements OnInit, OnDestroy {
             });
         }
         if (tableOperators.length > 0) {
+            // 35px per icon button, 60px for the "more" dropdown
+            const foldWidth = isFoldButtons ? 60 : 0;
+            const btnCount = tableOperators.length + (this.eruptBuildModel.eruptModel.tags?.size || 0);
+            // when cells wrap the column only has to fit one line of icons, the rest flow down;
+            // truncating tables keep the full row width or they would lose actions to the ellipsis
+            const autoWidth = (wrapCells
+                ? Math.min(btnCount - (isFoldButtons ? 1 : 0), TableComponent.ONE_LINE_OPERATORS)
+                : btnCount) * 35 + 18 + foldWidth;
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
-                // 35px per icon button
-                width: eruptJson.layout.tableOperatorWidth ? eruptJson.layout.tableOperatorWidth :
-                    ((tableOperators.length + (this.eruptBuildModel.eruptModel.tags?.size || 0)) * 35 + 18
-                        + (isFoldButtons ? 60 : 0)),
-                className: "text-center",
+                width: eruptJson.layout.tableOperatorWidth || autoWidth,
+                className: wrapCells ? ["text-center", "erupt-op-col"] : "text-center",
                 buttons: tableOperators,
                 resizable: false
             });

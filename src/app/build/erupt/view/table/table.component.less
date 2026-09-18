@@ -495,6 +495,18 @@
         }
     }
 
+    // @Layout(tableTruncate = false): the cell shows everything over as many lines as it takes,
+    // the same deal the operation column gets
+    &.erupt-cell-wrap .erupt-cell-text {
+        // centred cells size themselves to their content (flex: 0 0 auto), so cap them to the
+        // column or a long value would run past it instead of wrapping inside it
+        max-width: 100%;
+        overflow: visible;
+        text-overflow: clip;
+        white-space: normal;
+        word-break: break-word;
+    }
+
     .erupt-cell-fa {
         font-size: 1.2rem;
         vertical-align: middle;
@@ -607,5 +619,19 @@
         color: #fff;
         background: var(--ant-primary-color);
         pointer-events: none;
+    }
+}
+
+// Operation column of a wrapping table (@Layout tableTruncate = false): the actions flow onto
+// further lines, and the looser line-height keeps the comment badge — which hangs above its
+// button — clear of the line above it.
+:host ::ng-deep td.erupt-op-col {
+    line-height: 2.2;
+
+    // only the space between two actions may break: a labelled action moves to the next line as a
+    // whole instead of splitting mid-label
+    .st__btn-text {
+        display: inline-block;
+        white-space: nowrap;
     }
 }
