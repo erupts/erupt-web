@@ -133,8 +133,11 @@ export class StartupService {
             : !!WindowModel.config['tabReuse'];
         // Table border
         this.settingSrv.layout['bordered'] = false !== this.settingSrv.layout['bordered'];
-        // Clicking a table row opens its detail panel
-        this.settingSrv.layout['rowClickView'] = false !== this.settingSrv.layout['rowClickView'];
+        // Clicking a table row opens its detail panel — off unless the user
+        // turned it on in the settings drawer. A whole row is a large target
+        // that also carries links, buttons and editable cells, so opening a
+        // panel from it is opt-in rather than something a first click does.
+        this.settingSrv.layout['rowClickView'] = !!this.settingSrv.layout['rowClickView'];
         // Breadcrumb navigation
         this.settingSrv.layout['breadcrumbs'] = false !== this.settingSrv.layout['breadcrumbs'];
         // Menu layout mode: a choice persisted from the settings drawer wins; otherwise
