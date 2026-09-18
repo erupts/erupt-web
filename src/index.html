@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="force-rendering" content="webkit">
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <link id="site-favicon" rel="icon" href="favicon.ico">
     <meta name="renderer" content="webkit">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="black">
@@ -353,6 +353,16 @@
             document.documentElement.classList.toggle("compact", compact);
             window.eruptSyncThemeBundles();
         };
+        // The browser tab icon. One <link> is swapped, so the built-in
+        // favicon.ico, an eruptSiteConfig.faviconPath and anything set later
+        // (tenant js, a custom theme) all go through the same node. No type
+        // attribute: an .ico, a .png and an .svg all work as written.
+        window.eruptApplyFavicon = function (path) {
+            var link = document.getElementById("site-favicon");
+            if (link && path) {
+                link.setAttribute("href", path);
+            }
+        };
         // dark-theme: "true" | "false" | "auto" (follow the OS color scheme). With no saved
         // choice the site config decides (eruptSiteConfig.darkTheme, same three values).
         var _darkPref = localStorage.getItem("dark-theme");
@@ -419,6 +429,9 @@
                 }
                 if (_brandEl) {
                     _brandEl.textContent = window.eruptSiteConfig.logoText || window.eruptSiteConfig.title || "Loading";
+                }
+                if (cfg.faviconPath) {
+                    window.eruptApplyFavicon(cfg.faviconPath);
                 }
             }
         }, 10);
