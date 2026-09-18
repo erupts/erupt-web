@@ -17,7 +17,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 
 
 import {NzConfigService} from "ng-zorro-antd/core/config";
-import {applyHeaderColor} from "../../shared/util/theme.util";
+import {applyHeaderColor, defaultHeaderColor} from "../../shared/util/theme.util";
 
 
 @Injectable()
@@ -45,8 +45,9 @@ export class StartupService {
         if (Object.keys(theme).length > 0) {
             this.nzConfigService.set('theme', theme);
         }
-        // User choice first, then the site config default (theme.headerColor)
-        applyHeaderColor(localStorage.getItem("header-color") || theme.headerColor || null);
+        // User choice first, then the site config default (theme.headerColor),
+        // then the skin's own default (the brutalist band follows the theme color)
+        applyHeaderColor(localStorage.getItem("header-color") || theme.headerColor || defaultHeaderColor());
     }
 
     async load(): Promise<any> {

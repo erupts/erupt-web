@@ -101,6 +101,8 @@
 // Height fills the viewport between the 44px header and the 38px fold bar,
 // so the rail and the submenu column scroll independently.
 @dual-rail-width: 60px;
+// Without labels the rail only has to hold a centred glyph
+@dual-rail-width-icon: 44px;
 
 .dual-menu {
     display: flex;
@@ -119,6 +121,14 @@
 
     &::-webkit-scrollbar {
         display: none;
+    }
+
+    &--icon-only {
+        width: @dual-rail-width-icon;
+
+        .dual-menu__rail-item {
+            padding: 8px 2px;
+        }
     }
 }
 

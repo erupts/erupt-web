@@ -140,16 +140,18 @@
 <!-- ── Dual-column mode: first-level rail on the left, selected category's children on the right ── -->
 @if (dualMenu && !collapsed) {
   <div class="dual-menu">
-    <div class="dual-menu__rail">
+    <div class="dual-menu__rail" [class.dual-menu__rail--icon-only]="!dualRailText">
       @for (item of splitTopItems; track item) {
         <a class="dual-menu__rail-item" [class.dual-menu__rail-item--active]="item === selectedTopItem"
-           (click)="selectTopItem(item)">
+           [attr.title]="dualRailText ? null : item.text" (click)="selectTopItem(item)">
           @if (item.icon) {
             <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: item.icon }"></ng-template>
           } @else {
             <i class="sidebar-nav__item-icon" nz-icon nzType="appstore" nzTheme="outline"></i>
           }
-          <span class="dual-menu__rail-text" [attr.title]="item.text">{{ item.text }}</span>
+          @if (dualRailText) {
+            <span class="dual-menu__rail-text" [attr.title]="item.text">{{ item.text }}</span>
+          }
         </a>
       }
     </div>

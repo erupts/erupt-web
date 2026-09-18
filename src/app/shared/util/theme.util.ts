@@ -22,7 +22,19 @@ const HEADER_TOKENS = [
     "--erupt-header-progress"
 ];
 
-export function applyHeaderColor(value: string | null): void {
+// The top bar color a skin falls back to when neither the user nor the site
+// config picked one. The brutalist band is a candy surface in that skin's own
+// language, so it tracks the theme color; every other skin keeps the neutral
+// bar defined in tokens.less.
+export function defaultHeaderColor(): string | null {
+    return document.documentElement.classList.contains("brutalist-theme") ? "primary" : null;
+}
+
+// `resolvedThemeColor` short-circuits reading --ant-primary-color off <html>.
+// Callers that change the theme color and the bar in the same tick need it:
+// ng-zorro writes the custom property asynchronously, so at that point the
+// computed value is still the previous color.
+export function applyHeaderColor(value: string | null, resolvedThemeColor?: string): void {
     const el = document.documentElement;
     HEADER_TOKENS.forEach(p => el.style.removeProperty(p));
     if (!value) {
@@ -30,7 +42,7 @@ export function applyHeaderColor(value: string | null): void {
     }
     const bg = value === "primary" ? "var(--ant-primary-color)" : value;
     const resolved = value === "primary"
-        ? getComputedStyle(el).getPropertyValue("--ant-primary-color").trim() || "#1677ff"
+        ? resolvedThemeColor || getComputedStyle(el).getPropertyValue("--ant-primary-color").trim() || DEFAULT_THEME_COLOR
         : value;
     el.style.setProperty("--erupt-header-bg", bg);
     if (isDarkColor(resolved)) {
@@ -110,18 +122,25 @@ export const THEME_PRESET_COLORS: string[] = [
     "#475569"  // graphite slate
 ];
 
-// Raft candy palette (400-level hues from raft.build) — offered while the
-// brutalist skin is on: pastel accents designed to pair with ink borders and
-// dark text rather than the white-text mid-tones above.
+// Raft's own skin palette, offered while the brutalist skin is on. These are
+// pastels meant to sit UNDER ink borders and near-black text — the opposite
+// brief from the white-text mid-tones above, which would go muddy behind a
+// 2px black frame. Ordered as raft.build lists them: the signal yellow first,
+// then warm → cool around the wheel, then the two neutrals.
 export const BRUTALIST_PRESET_COLORS: string[] = [
-    "#fe7da8", // raft pink (site default accent)
-    "#f97264", // raft red
-    "#f8a16f", // raft orange
-    "#ffd441", // raft yellow
-    "#a9d877", // raft lime
-    "#28ccf3", // raft cyan
-    "#bbafe6", // raft purple
-    "#c0b9b1"  // raft stone
+    "#ffd440", // signal
+    "#fce08c", // amber
+    "#fbcb9c", // peach
+    "#f9b4a0", // coral
+    "#f7bbcb", // blush
+    "#efa9c6", // rose
+    "#d6c4f0", // lilac
+    "#bfc4ef", // iris
+    "#a9d6f2", // sky
+    "#a6e0da", // aqua
+    "#c2e0ac", // sage
+    "#e9ddc4", // sand
+    "#d9e0e8"  // cloud
 ];
 
 export const DEFAULT_THEME_COLOR = "#1677ff";
