@@ -308,6 +308,23 @@
             padding: 0 6px;
         }
 
+        // Placeholder brand mark for the collapsed header, used when no logo
+        // was configured. The site's own initial in a framed square: it fills
+        // the slot without borrowing another product's mark.
+        .header-logo-mark {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border: 1.5px solid currentColor;
+            border-radius: 4px;
+            color: var(--erupt-header-text, #000);
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
         .header-logo-text {
             color: var(--erupt-header-text, #000);
             line-height: 44px;
