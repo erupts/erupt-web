@@ -111,6 +111,8 @@ interface Layout {
     refreshTime: number;
     tableWidth: string;
     tableOperatorWidth: string;
+    // false lets an overflowing cell wrap instead of being cut off with an ellipsis
+    tableTruncate: boolean;
     collapseActionButton: boolean;
 }
 
