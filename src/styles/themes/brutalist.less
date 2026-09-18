@@ -144,9 +144,14 @@ html.brutalist-theme {
     }
 
     /* -------------------------------------------------------------- *
-     * Buttons — Raft's `.btn-brutal`: 2px frame, 2px shadow at rest,
-     * lift to 4px on hover, sink to 1px on press. Transition is `all`
-     * at .1s, which is what makes the press feel mechanical.
+     * Buttons — a flat framed block. Raft's `.btn-brutal` carries the
+     * offset shadow and the lift/sink press, but an admin toolbar puts
+     * six of them in a row above every table, and six offset blocks read
+     * as clutter, so the 2px frame alone says "pressable".
+     * Without the shadow there is no depth to animate, so feedback moves
+     * to the fill: a candy wash on hover, the full accent on press. Same
+     * grammar the flat controls (segmented cells, filter chips) already
+     * use in this skin.
      * -------------------------------------------------------------- */
     .ant-btn {
         border: 2px solid var(--raft-line);
@@ -154,36 +159,62 @@ html.brutalist-theme {
         color: var(--raft-ink);
         font-family: var(--raft-font);
         font-weight: 700;
-        box-shadow: var(--raft-sh-press);
-        transition: all .1s ease;
+        box-shadow: none;
+        transition: background-color .1s ease, color .1s ease;
     }
     .ant-btn:not([disabled]):hover {
-        transform: translateY(-1px);
-        box-shadow: var(--raft-sh);
         color: var(--raft-ink);
         border-color: var(--raft-line);
-        background: var(--raft-paper);
+        background: color-mix(in srgb, var(--raft-accent) 30%, var(--raft-paper));
     }
     .ant-btn:not([disabled]):active {
-        transform: translate(2px, 2px);
-        box-shadow: var(--raft-sh-down);
+        background: var(--raft-accent);
     }
-    .ant-btn[disabled], .ant-btn[disabled]:hover {
-        box-shadow: var(--raft-sh-press);
+    /* Disabled — solid, never translucent. `opacity` faded the frame, the
+     * fill and the label at once, which in a language where the 2px ink
+     * frame IS the object left a ghost rather than an inert control. Each
+     * part gets its own flat value instead: muted frame, sunken fill,
+     * third-level text. All variants land on the same look on purpose — a
+     * disabled primary has nothing to shout about. */
+    .ant-btn[disabled],
+    .ant-btn[disabled]:hover,
+    .ant-btn[disabled]:active {
+        box-shadow: none;
         border-color: var(--raft-muted);
-        transform: none;
-        opacity: .55;
+        background: var(--raft-inset);
+        color: var(--raft-text-3);
+        cursor: not-allowed;
+    }
+    /* Link and text buttons have no box to disable — they only dim. */
+    .ant-btn-link[disabled], .ant-btn-link[disabled]:hover,
+    .ant-btn-text[disabled], .ant-btn-text[disabled]:hover {
+        background: transparent;
+        border-color: transparent;
+    }
+    /* A candy-filled button already wears the accent, so it answers by
+     * deepening its own fill rather than washing toward it. */
+    .ant-btn-primary:not([disabled]):hover,
+    .ant-btn-dangerous:not([disabled]):hover {
+        background: color-mix(in srgb, var(--raft-ink) 12%, var(--raft-accent));
+    }
+    .ant-btn-dangerous:not([disabled]):hover {
+        background: color-mix(in srgb, var(--raft-ink) 12%, var(--raft-orange));
+    }
+    .ant-btn-primary:not([disabled]):active,
+    .ant-btn-dangerous:not([disabled]):active {
+        background: color-mix(in srgb, var(--raft-ink) 22%, var(--raft-accent));
+    }
+    .ant-btn-dangerous:not([disabled]):active {
+        background: color-mix(in srgb, var(--raft-ink) 22%, var(--raft-orange));
     }
     /* Primary CTA — accent block, ink text */
-    .ant-btn-primary,
-    .ant-btn-primary:not([disabled]):hover {
+    .ant-btn-primary {
         background: var(--raft-accent);
         color: var(--raft-ink);
         border-color: var(--raft-line);
     }
     /* Danger — orange block */
-    .ant-btn-dangerous,
-    .ant-btn-dangerous:not([disabled]):hover {
+    .ant-btn-dangerous {
         background: var(--raft-orange);
         color: var(--raft-ink);
         border-color: var(--raft-line);
@@ -241,6 +272,33 @@ html.brutalist-theme {
         box-shadow: none !important;
         outline: none !important;
     }
+    /* Height. antd derives a field's height from padding + line-height, so
+     * this skin's extra 1px of border per edge pushed every input 2px past
+     * antd's 24 / 32 / 40 grid — a 34px input sitting beside a 32px button.
+     * box-sizing is already border-box, so an explicit height puts them
+     * back on the grid whatever the frame weighs. Buttons and selects were
+     * never affected: antd gives those an explicit height already.
+     * Textareas are excluded — they have to grow with their content. */
+    .ant-input:not(textarea),
+    .ant-input-affix-wrapper,
+    .ant-input-number,
+    .ant-picker { height: 32px; }
+
+    .ant-input-sm:not(textarea),
+    .ant-input-affix-wrapper-sm,
+    .ant-input-number-sm,
+    .ant-picker-small { height: 24px; }
+
+    .ant-input-lg:not(textarea),
+    .ant-input-affix-wrapper-lg,
+    .ant-input-number-lg,
+    .ant-picker-large { height: 40px; }
+
+    /* A field nested in an affix wrapper fills the wrapper it already sits
+     * in; giving it the outer height too would overflow it. */
+    .ant-input-affix-wrapper > .ant-input,
+    .ant-input-number-input { height: auto; }
+
     .ant-input::placeholder,
     .ant-input-number-input::placeholder { color: var(--raft-text-3); }
     /* Affix add-ons read as a cream slip (Raft's "/" slug prefix) */
@@ -1094,6 +1152,16 @@ html.brutalist-theme {
         border-left: 0 !important;
     }
 
+    /* Breathing room at both ends of the list. The first row only had its
+     * own 1px margin, so a selected first item put its 2px frame right
+     * against the header's 2px rule and the two read as one welded bar;
+     * the last row had the same problem against the fold bar. 5px + that
+     * margin matches the 6px the rows are already inset from the sides.
+     * Submenu lists keep hugging their parent. */
+    .sidebar-nav:not(.sidebar-nav__sub) {
+        padding-block: 5px;
+    }
+
     /* Rows follow the Slack / Raft channel list: a dense, quiet column where
      * the eye is meant to skim, not read. Every row is one compact line at a
      * plain weight, and the only thing that stands out is the current item —
@@ -1262,9 +1330,7 @@ html.brutalist-theme {
     }
 }
 
-/* Reduced motion — kill the press animation for users who ask */
+/* Reduced motion — buttons no longer move, but the fill still crossfades */
 @media (prefers-reduced-motion: reduce) {
     html.brutalist-theme .ant-btn { transition: none; }
-    html.brutalist-theme .ant-btn:hover,
-    html.brutalist-theme .ant-btn:active { transform: none; }
 }
