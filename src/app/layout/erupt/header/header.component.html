@@ -6,6 +6,9 @@
     @if (settings.layout.collapsed && logoFoldPath) {
       <img [src]="logoFoldPath" class="header-logo-img" alt=""/>
     }
+    @if (settings.layout.collapsed && !logoFoldPath && logoInitial) {
+      <span class="header-logo-mark" [title]="logoText">{{ logoInitial }}</span>
+    }
     @if (logoText) {
       <span class="header-logo-text hidden-mobile" [class.header-logo-text--long]="logoText.length > 8"
             [title]="logoText">{{ logoText }}</span>

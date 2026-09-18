@@ -119,6 +119,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     logoText: string = WindowModel.logoText;
 
+    // Stands in for the collapsed brand mark when no logo was configured:
+    // the site's own first character, which is never another product's mark.
+    get logoInitial(): string {
+        return (this.logoText || WindowModel.title || "").trim().charAt(0).toUpperCase();
+    }
+
     r_tools: CustomerTool[] = WindowModel.r_tools;
 
     drawerVisible: boolean = false;
