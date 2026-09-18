@@ -1,19 +1,28 @@
 <header class="lf-head">
   <div class="lf-eyebrow">
-    <span class="lf-eyebrow-mark">[ 01 ]</span>
+    <span class="lf-eyebrow-mark">[ {{ mfaTicket ? '02' : '01' }} ]</span>
     <span class="lf-eyebrow-rule"></span>
-    <span class="lf-eyebrow-tag">LOGIN</span>
+    <span class="lf-eyebrow-tag">{{ mfaTicket ? 'VERIFY' : 'LOGIN' }}</span>
   </div>
-  <h1 class="lf-title">{{'login.account_pwd_login'|translate}}</h1>
-  <p class="lf-subtitle">{{'login.subtitle'|translate}}</p>
+  <h1 class="lf-title">{{ (mfaTicket ? 'login.mfa.title' : 'login.account_pwd_login')|translate }}</h1>
+  <p class="lf-subtitle">
+    {{ (mfaTicket ? (recoveryMode ? 'login.mfa.recovery_subtitle' : 'login.mfa.subtitle') : 'login.subtitle')|translate }}
+  </p>
 </header>
 <div class="lf-body">
+  @if (ssoLoading) {
+    <div class="lf-sso-pending">
+      <i nz-icon nzType="loading" nzTheme="outline"></i>
+      <span>{{ 'login.sso.signing_in'|translate }}</span>
+    </div>
+  } @else {
   <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form"
     [class.login-shake]="shaking">
     @if (error) {
       <nz-alert [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true"
         style="margin-bottom:16px"></nz-alert>
     }
+    @if (!mfaTicket) {
     <nz-form-item>
       <nz-form-control [nzErrorTip]="accountTip">
         <nz-input-group nzSize="large" nzPrefixIcon="user">
@@ -81,17 +90,58 @@
         <a class="lf-link" [href]="registerPage">{{ 'login.register'|translate }}</a>
       </nz-form-item>
     }
+    } @else {
+      <div class="lf-mfa-account">
+        <i nz-icon nzType="user" nzTheme="outline"></i>
+        <span>{{ userName.value }}</span>
+        <a class="lf-link" (click)="exitMfaStep()">{{ 'login.mfa.switch_account'|translate }}</a>
+      </div>
+      <nz-form-item>
+        <nz-form-control>
+          <input #otpInput nz-input nzSize="large" formControlName="otp"
+            class="lf-otp" autocomplete="one-time-code"
+            [attr.inputmode]="recoveryMode ? 'text' : 'numeric'"
+            [maxlength]="recoveryMode ? 32 : 6"
+            [class.lf-otp-recovery]="recoveryMode"
+            [placeholder]="(recoveryMode ? 'login.mfa.recovery_placeholder' : 'login.mfa.placeholder')|translate"
+            [disabled]="loading"
+            (keydown.enter)="submit(); $event.preventDefault()">
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item style="margin-bottom:12px">
+        <a class="lf-link" (click)="switchRecovery()">
+          {{ (recoveryMode ? 'login.mfa.use_authenticator' : 'login.mfa.use_recovery')|translate }}
+        </a>
+      </nz-form-item>
+    }
     <nz-form-item style="margin-bottom:0">
       <button nz-button type="submit" nzType="primary" nzSize="large"
         [nzLoading]="loading" class="lf-submit">
-        <span>{{ 'login.button'|translate }}</span>
+        <span>{{ (mfaTicket ? 'login.mfa.button' : 'login.button')|translate }}</span>
         <span class="lf-submit-arrow" aria-hidden="true">&rarr;</span>
       </button>
     </nz-form-item>
-    @if (tenantLogin) {
+    @if (ssoProviders.length && !mfaTicket) {
+      <div class="lf-sso">
+        <div class="lf-sso-rule"><span>{{ 'login.sso.divider'|translate }}</span></div>
+        <div class="lf-sso-list">
+          @for (provider of ssoProviders; track provider.code) {
+            <button type="button" nz-button nzSize="large" class="lf-sso-btn"
+              [disabled]="loading" (click)="toSso(provider)">
+              @if (provider.icon) {
+                <i class="{{ provider.icon }}" aria-hidden="true"></i>
+              }
+              <span>{{ provider.name }}</span>
+            </button>
+          }
+        </div>
+      </div>
+    }
+    @if (tenantLogin && !mfaTicket) {
       <div class="lf-divider">
         <a class="lf-link" (click)="toTenant()">{{ 'tenant.login' | translate }}</a>
       </div>
     }
   </form>
+  }
 </div>

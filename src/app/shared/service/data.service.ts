@@ -2,7 +2,7 @@ import {Inject, Injectable} from "@angular/core";
 import {_HttpClient} from "@delon/theme";
 import {HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Announcement, LoginModel, NoticeChannel, NoticeMessageDetail, NoticeScene, Userinfo} from "../model/user.model";
+import {Announcement, LoginModel, MfaStatus, NoticeChannel, NoticeMessageDetail, NoticeScene, SsoProvider, Userinfo} from "../model/user.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
@@ -481,6 +481,49 @@ export class DataService {
                 verifyCodeMark: verifyCodeMark || null
             }
         );
+    }
+
+    //second step of a two factor login, exchanges the ticket for a session token
+    loginMfa(mfaTicket: string, code: string): Observable<LoginModel> {
+        return this._http.post(RestPath.erupt + "/login-mfa", {mfaTicket, code});
+    }
+
+    //single sign-on providers offered on the login page
+    ssoProviders(): Observable<SsoProvider[]> {
+        return this._http.get<SsoProvider[]>(RestPath.erupt + "/sso/providers");
+    }
+
+    //the callback redirect carries a one-time ticket, never the session token itself
+    ssoExchange(ssoTicket: string): Observable<LoginModel> {
+        return this._http.post(RestPath.erupt + "/sso/exchange", {ssoTicket});
+    }
+
+    //a full page navigation, the provider has to see the browser
+    static ssoAuthorizeUrl(code: string): string {
+        return RestPath.erupt + "/sso/authorize/" + encodeURIComponent(code);
+    }
+
+    mfaStatus(): Observable<MfaStatus> {
+        return this._http.get<MfaStatus>(RestPath.erupt + "/mfa/status");
+    }
+
+    mfaEnroll(): Observable<EruptApiModel> {
+        return this._http.post(RestPath.erupt + "/mfa/enroll", {});
+    }
+
+    mfaEnrollConfirm(code: string): Observable<EruptApiModel> {
+        return this._http.post(RestPath.erupt + "/mfa/enroll-confirm", {code});
+    }
+
+    mfaRecoveryCodes(code: string): Observable<EruptApiModel> {
+        return this._http.post(RestPath.erupt + "/mfa/recovery-codes", {code});
+    }
+
+    mfaUnbind(pwd: string, code: string): Observable<EruptApiModel> {
+        return this._http.post(RestPath.erupt + "/mfa/unbind", {
+            pwd: EruptAppData.get().pwdTransferEncrypt ? this.pwdEncode(pwd, 3) : pwd,
+            code
+        });
     }
 
     tenantLogin(tenantCode: string, account: string, pwd: string, verifyCode?: any, verifyCodeMark?: any): Observable<LoginModel> {
