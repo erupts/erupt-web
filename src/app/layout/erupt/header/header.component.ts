@@ -119,6 +119,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     logoText: string = WindowModel.logoText;
 
+    // Whether the brand block is actually standing over a collapsed sidebar.
+    // The header-menu layouts have no sidebar at all, so the persisted
+    // `collapsed` flag says nothing there and the block stays full width —
+    // mirrors the `alain-default__top-menu` condition in erupt.component.
+    get sidebarCollapsed(): boolean {
+        if (!this.settings.layout.collapsed) {
+            return false;
+        }
+        if (this.topMenu || this.topSplitMenu) {
+            return false;
+        }
+        return !(this.splitMenu && !this.selectedTopItem?.children?.length);
+    }
+
     // Stands in for the collapsed brand mark when no logo was configured:
     // the site's own first character, which is never another product's mark.
     get logoInitial(): string {
