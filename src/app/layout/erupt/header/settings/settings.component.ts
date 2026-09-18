@@ -14,6 +14,7 @@ import {
     applyThemeColor,
     BRUTALIST_PRESET_COLORS,
     DEFAULT_THEME_COLOR,
+    defaultHeaderColor,
     THEME_PRESET_COLORS,
     toHexColor
 } from "@shared/util/theme.util";
@@ -80,10 +81,23 @@ export class SettingsComponent implements OnInit {
 
     setThemeColor(color: string) {
         this.themeColor = applyThemeColor(this.nzConfigService, color);
+        this.refreshHeaderColor();
     }
 
     resetThemeColor() {
         this.themeColor = applyThemeColor(this.nzConfigService, null);
+        this.refreshHeaderColor();
+    }
+
+    // Re-resolve the top bar whenever what it follows can have changed: the
+    // theme color it may be tracking, or the skin that decides whether it
+    // tracks at all. The resolved theme color is passed explicitly because
+    // ng-zorro has not written --ant-primary-color yet at this point.
+    private refreshHeaderColor() {
+        applyHeaderColor(
+            this.headerColor || WindowModel.theme?.headerColor || defaultHeaderColor(),
+            toHexColor(this.themeColor)
+        );
     }
 
     // Header (top bar) color: "" = follow theme, "primary" = theme color, or a literal color.
@@ -108,8 +122,9 @@ export class SettingsComponent implements OnInit {
         } else {
             localStorage.removeItem("header-color");
         }
-        // Empty = back to the site default (theme.headerColor, or follow the theme)
-        applyHeaderColor(value || WindowModel.theme?.headerColor || null);
+        // Empty = back to the site default (theme.headerColor), then to whatever
+        // the active skin defaults to (the brutalist band follows the theme color)
+        this.refreshHeaderColor();
     }
 
     get themeColorHex(): string {
@@ -149,6 +164,9 @@ export class SettingsComponent implements OnInit {
         root.classList.toggle("liquid-glass", value === "liquid-glass");
         localStorage.setItem("brutalist-theme", String(value === "brutalist"));
         localStorage.setItem("liquid-glass", String(value === "liquid-glass"));
+        // The classes are already toggled, so defaultHeaderColor() now reports
+        // the skin being switched to.
+        this.refreshHeaderColor();
     }
 
     setLayout(name: string, value: any) {
@@ -172,6 +190,17 @@ export class SettingsComponent implements OnInit {
 
     get menuMode(): MenuMode {
         return menuModeOf(this.layout);
+    }
+
+    // Two-way bound by the dual-mode sub-switch. Stored as a layout flag, but
+    // the switch needs a real boolean: an unset flag means "never chosen", and
+    // the rail's labels have always been on, so it reads back as true.
+    get dualRailText(): boolean {
+        return this.layout['dualRailText'] !== false;
+    }
+
+    set dualRailText(value: boolean) {
+        this.layout['dualRailText'] = value;
     }
 
     setMenuMode(mode: MenuMode) {

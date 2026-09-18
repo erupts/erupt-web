@@ -1,64 +1,120 @@
 /**
- * Erupt Theme — a brutalist-theme "handmade paper" skin that overrides
- * ng-zorro-antd (Ant Design) components and the app layout shell.
+ * Erupt Theme — the "brutalist" skin, redrawn against the Raft app UI
+ * (app.raft.build). Everything below mirrors what that product actually
+ * renders, measured off its live stylesheet rather than eyeballed:
  *
- * Design language: Erupt Raft (neo-brutalism × handmade paper feel), applied with restraint:
- *   - Lines are solid   : 2px ink borders instead of soft dividers.
- *   - Corners are square : border-radius 0.
- *   - Shadows are hard, and RARE : a `Npx Npx 0` offset block is reserved for
- *     small interactive things (buttons, tags) and floating overlays (menus,
- *     modals). Inline surfaces — cards, inputs, tables — stay flat.
+ *   border        2px, pure black, never rounded (`border-radius: 0`)
+ *   shadow        hard offset blocks of `#141111`, no blur, on a fixed scale
+ *                   2px  interactive at rest (button, input, chip-with-frame)
+ *                   4px  panels, cards, popovers, and the hover state of a
+ *                        pressable control
+ *                   6px  modal / drawer — the only "floating" tier
+ *                   1px  the pressed state, paired with translate(2px, 2px)
+ *   press         hover  -> translateY(-1px) + shadow 4px
+ *                 active -> translate(2px,2px) + shadow 1px      (.1s, all)
+ *   flat controls filter chips / segmented items carry the 2px frame but NO
+ *                 shadow; they answer to hover with a candy tint, not a lift.
+ *   candy         solid blocks with an ink frame; text inside is always ink.
  *
  * OPTIONAL OVERRIDE
- *   Every rule is scoped under `html.brutalist-theme`. Without that class the app
- *   renders with stock Ant Design. Toggle at runtime via:
+ *   Every rule is scoped under `html.brutalist-theme`. Without that class the
+ *   app renders with stock Ant Design. Toggle at runtime via:
  *       document.documentElement.classList.toggle('brutalist-theme')
- *   (see `src/app.js` -> `eruptSiteConfig.brutalistTheme`). Add `dark` as well
- *   (`html.brutalist-theme.dark`) for the dark variant.
+ *   (see `src/app.js` -> `eruptSiteConfig.theme.skin`). Add `dark`
+ *   (`html.brutalist-theme.dark`) for the dark variant — Raft itself ships
+ *   light only, so dark follows this skin's own ink/paper inversion rule.
  */
 
 /* ------------------------------------------------------------------ *
  * Design tokens (scoped so they never leak into the default theme)
  * ------------------------------------------------------------------ */
 html.brutalist-theme {
-    /* Structure — light */
-    --raft-ink: #14120B;          /* borders, headings, primary text        */
+    /* Structure — light. Raft draws borders in pure black but casts shadows
+     * and sets type in a warmer near-black; keeping both keeps the frames
+     * crisp while the shadows read as printed ink. */
+    --raft-line: #000000;         /* every border                            */
+    --raft-ink: #141111;          /* shadows, headings, primary text         */
     --raft-paper: #FFFFFF;        /* content canvas, cards, floating panels  */
-    --raft-cream: #EEF4F6;        /* cyan wash — sidebar, headers, hovers, wells, affix */
-    --raft-text: #14120B;         /* body text                               */
-    --raft-text-2: #8A8577;       /* secondary text + kickers (warm gray)    */
-    --raft-muted: #E1E8EB;        /* hairlines, inactive fills               */
-    --raft-panel: #fff;           /* raised panels (sidebar) — brighter than paper */
+    --raft-card: #FCFCFA;         /* card fill, a hair off the canvas        */
+    --raft-cream: #FFFAEF;        /* sidebar, headers, hovers, wells, affix  */
+    --raft-inset: #F8F8F0;        /* sunken areas — canvases, code wells     */
+    --raft-text: #141111;         /* body text                               */
+    --raft-text-2: rgba(20, 17, 17, 0.6);  /* secondary text                 */
+    --raft-text-3: rgba(20, 17, 17, 0.42); /* placeholders, hints            */
+    --raft-muted: #C0B9B1;        /* inactive fills, closed-state chips      */
+    --raft-hairline: rgba(20, 17, 17, 0.15); /* in-card row dividers         */
+    /* The menu column is cream paper. The top bar's band stops at the top
+     * bar — except in dual mode, where the first-level RAIL picks it up (see
+     * .dual-menu__rail). Carrying the band down the whole column flattens a
+     * long list into a wall and, worse, hides the current item: the selection
+     * block IS the accent, so on an accent column it disappears. */
+    --raft-panel: var(--raft-cream);
 
-    /* Drive every split border (menu, header, tree, cards) off the ink color */
-    --ant-border-color-split: var(--raft-ink);
+    /* Drive every split border (menu, header, tree, cards) off the line color */
+    --ant-border-color-split: var(--raft-line);
 
     /* Candy accents — constant across light/dark. The accent follows the
-     * runtime theme color (settings drawer / site config); --raft-cyan is only
-     * the skin's suggested preset, not a lock. */
-    --raft-accent: var(--ant-primary-color, #F585B4);  /* follows the theme color — active / selected / primary CTA */
-    --raft-yellow: #FFC93E;       /* brand / logo tile                       */
-    --raft-green: #93D655;        /* success / switch-on                     */
-    --raft-orange: #F6935B;       /* danger / destructive                    */
-    --raft-cyan: #4FC8EC;         /* available accent (unused by default)    */
-    --raft-accent-soft: color-mix(in srgb, var(--raft-accent) 16%, transparent); /* faint accent wash — selected rows, date range */
+     * runtime theme color (settings drawer / site config), which under this
+     * skin is picked from Raft's pastel skin palette (BRUTALIST_PRESET_COLORS
+     * in theme.util). Signal yellow is that list's first entry and so the
+     * fallback here. Every one of those hues is a FILL: it is always paired
+     * with an ink frame and ink type, never used as a text color. */
+    --raft-accent: var(--ant-primary-color, #FFD440);  /* primary CTA, active nav, selection */
+    --raft-pink: #FE7DA8;
+    --raft-yellow: #FFD440;       /* brand rail, toggles, selected segment   */
+    --raft-cyan: #27CCF3;         /* in-progress / info                      */
+    --raft-green: #A9D877;        /* success / done                          */
+    --raft-purple: #BBAFE6;       /* pending / secondary state               */
+    --raft-orange: #F8A16F;       /* danger / todo                           */
+    --raft-accent-soft: color-mix(in srgb, var(--raft-accent) 16%, transparent); /* selected rows, date range */
+    --raft-header: #C2E0AC;       /* the app band behind the top bar          */
 
-    /* Hard shadows — small, and used sparingly */
-    --raft-sh: 3px 3px 0 var(--raft-ink);
-    --raft-sh-sm: 2px 2px 0 var(--raft-ink);
+    /* Hard shadows — one scale, used verbatim everywhere */
+    --raft-sh-press: 2px 2px 0 var(--raft-ink);   /* interactive, at rest    */
+    --raft-sh-down: 1px 1px 0 var(--raft-ink);    /* interactive, pressed    */
+    --raft-sh: 4px 4px 0 var(--raft-ink);         /* cards, popovers, hover  */
+    --raft-sh-lg: 6px 6px 0 var(--raft-ink);      /* modal / drawer          */
 
-    --raft-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --raft-font: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    --raft-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+    /* Re-point erupt's own semantic tokens so custom (non-antd) markup lands
+     * on the same paper without every component needing a rule here. */
+    --erupt-bg-layout: var(--raft-paper);
+    --erupt-bg-container: var(--raft-paper);
+    --erupt-bg-elevated: var(--raft-paper);
+    --erupt-bg-spotlight: var(--raft-cream);
+    --erupt-border: var(--raft-line);
+    --erupt-text: var(--raft-text);
+    --erupt-text-secondary: var(--raft-text-2);
+    --erupt-text-tertiary: var(--raft-text-3);
+
+    /* Header band. A plain declaration, so the inline style applyHeaderColor
+     * writes on <html> wins over it — and under this skin that is the normal
+     * case, because defaultHeaderColor() (theme.util) makes the band track the
+     * theme color. This value only shows when nothing resolved one, e.g. the
+     * class is toggled by hand outside the startup path. The band's
+     * FOREGROUND is pinned further down, on the header element itself. */
+    --erupt-header-bg: var(--raft-header);
 }
 
 /* Dark mode — ink and paper swap roles, candy stays put */
 html.brutalist-theme.dark {
+    --raft-line: #F0E8D6;
     --raft-ink: #F0E8D6;
-    --raft-paper: #201C12;
-    --raft-cream: #161B1D;
+    --raft-paper: #17140D;
+    --raft-card: #201C12;
+    --raft-cream: #211D14;
+    --raft-inset: #14120B;
     --raft-text: #F0E8D6;
-    --raft-text-2: #B0A78F;
-    --raft-muted: #3A3529;
-    --raft-panel: #14120B;        /* sidebar stays ink-black, darker than paper */
+    --raft-text-2: rgba(240, 232, 214, 0.62);
+    --raft-text-3: rgba(240, 232, 214, 0.42);
+    --raft-muted: #4A453A;
+    --raft-hairline: rgba(240, 232, 214, 0.18);
+    /* --raft-panel follows --raft-cream, so the menu column darkens with the
+     * rest of the paper here; only the dual rail's band stays candy-bright,
+     * which is the rule for candy everywhere in this skin. */
 
     /* re-anchor the light brand washes to the dark paper (mirrors the
      * html.dark remap in tokens.less, but on the raft ground) */
@@ -71,6 +127,9 @@ html.brutalist-theme.dark {
  * COMPONENT OVERRIDES
  * ================================================================== */
 html.brutalist-theme {
+
+    /* --- Type — Raft sets the whole product in one grotesk ---------- */
+    font-family: var(--raft-font);
 
     /* --- Square corners everywhere ------------------------------- */
     .ant-btn, .ant-input, .ant-input-affix-wrapper, .ant-input-number,
@@ -85,45 +144,49 @@ html.brutalist-theme {
     }
 
     /* -------------------------------------------------------------- *
-     * Buttons — the main home of the hard shadow + press interaction
+     * Buttons — Raft's `.btn-brutal`: 2px frame, 2px shadow at rest,
+     * lift to 4px on hover, sink to 1px on press. Transition is `all`
+     * at .1s, which is what makes the press feel mechanical.
      * -------------------------------------------------------------- */
     .ant-btn {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         background: var(--raft-paper);
         color: var(--raft-ink);
-        font-weight: 800;
-        box-shadow: var(--raft-sh-sm);
-        transition: transform .12s ease, box-shadow .12s ease;
+        font-family: var(--raft-font);
+        font-weight: 700;
+        box-shadow: var(--raft-sh-press);
+        transition: all .1s ease;
     }
     .ant-btn:not([disabled]):hover {
-        transform: translate(-1px, -1px);
+        transform: translateY(-1px);
         box-shadow: var(--raft-sh);
         color: var(--raft-ink);
-        border-color: var(--raft-ink);
+        border-color: var(--raft-line);
         background: var(--raft-paper);
     }
     .ant-btn:not([disabled]):active {
-        transform: translate(1px, 1px);
-        box-shadow: 0 0 0 var(--raft-ink);
+        transform: translate(2px, 2px);
+        box-shadow: var(--raft-sh-down);
     }
     .ant-btn[disabled], .ant-btn[disabled]:hover {
-        box-shadow: none;
+        box-shadow: var(--raft-sh-press);
+        border-color: var(--raft-muted);
         transform: none;
-        opacity: .5;
+        opacity: .55;
     }
-    /* Primary CTA — pink block, ink text */
+    /* Primary CTA — accent block, ink text */
     .ant-btn-primary,
     .ant-btn-primary:not([disabled]):hover {
         background: var(--raft-accent);
         color: var(--raft-ink);
-        border-color: var(--raft-ink);
+        border-color: var(--raft-line);
     }
     /* Danger — orange block */
     .ant-btn-dangerous,
     .ant-btn-dangerous:not([disabled]):hover {
         background: var(--raft-orange);
         color: var(--raft-ink);
-        border-color: var(--raft-ink);
+        border-color: var(--raft-line);
     }
     /* Link / text buttons stay flat */
     .ant-btn-link, .ant-btn-text {
@@ -136,20 +199,28 @@ html.brutalist-theme {
     .ant-btn-text:not([disabled]):hover {
         transform: none;
         box-shadow: none;
-        background: transparent;
+        background: var(--raft-cream);
     }
 
     /* -------------------------------------------------------------- *
-     * Inputs — flat 2px ink border, no shadow (focus = subtle pink)
+     * Inputs — flat, at rest and on focus. Raft's own `.input-brutal`
+     * carries a hard shadow that deepens when you focus it, but a form is
+     * dozens of fields deep and dozens of offset blocks turn into visual
+     * noise, so here the 2px frame alone marks a field and the shadow
+     * stays reserved for things you press.
+     * Focus adds nothing at all — the caret is the only signal, by the
+     * project owner's call. The global :focus-visible ring is switched
+     * off for fields below so it cannot put one back.
      * -------------------------------------------------------------- */
     .ant-input,
     .ant-input-affix-wrapper,
     .ant-input-number,
     .ant-picker,
     .ant-select:not(.ant-select-customize-input) .ant-select-selector {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         background: var(--raft-paper);
         color: var(--raft-text);
+        font-family: var(--raft-font);
         box-shadow: none;
     }
     .ant-input:hover,
@@ -157,7 +228,7 @@ html.brutalist-theme {
     .ant-input-number:hover,
     .ant-picker:hover,
     .ant-select:not(.ant-select-customize-input) .ant-select-selector:hover {
-        border-color: var(--raft-ink) !important;
+        border-color: var(--raft-line) !important;
     }
     .ant-input:focus,
     .ant-input-focused,
@@ -166,16 +237,18 @@ html.brutalist-theme {
     .ant-input-number-focused,
     .ant-picker-focused,
     .ant-select-focused:not(.ant-select-customize-input) .ant-select-selector {
-        border-color: var(--raft-ink) !important;
-        box-shadow: var(--raft-sh-sm) !important;
+        border-color: var(--raft-line) !important;
+        box-shadow: none !important;
+        outline: none !important;
     }
     .ant-input::placeholder,
-    .ant-input-number-input::placeholder { color: var(--raft-text-2); }
-    /* Affix add-ons read as a cream slip (see reference @-prefix) */
+    .ant-input-number-input::placeholder { color: var(--raft-text-3); }
+    /* Affix add-ons read as a cream slip (Raft's "/" slug prefix) */
     .ant-input-group-addon {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         background: var(--raft-cream);
         border-radius: 0;
+        font-family: var(--raft-mono);
         font-weight: 700;
     }
     .ant-input-affix-wrapper > .ant-input,
@@ -183,11 +256,10 @@ html.brutalist-theme {
 
     /* -------------------------------------------------------------- *
      * Input states — make editable / read-only / disabled unmistakable
-     *   editable  : white paper + SOLID ink border  (the default above)
-     *   read-only : warm cream  + SOLID ink border  (locked, still readable)
-     *   disabled  : muted fill  + DASHED faded border + not-allowed (inert)
+     *   editable  : white paper + frame + 2px shadow   (the default above)
+     *   read-only : cream fill, frame and shadow kept  (locked, readable)
+     *   disabled  : muted fill, shadow dropped         (inert, not pressable)
      * -------------------------------------------------------------- */
-    /* Read-only — cream tint, keep the solid ink frame */
     .ant-input[readonly]:not([disabled]),
     textarea.ant-input[readonly]:not([disabled]),
     .ant-input-affix-wrapper:has(input[readonly]):not(.ant-input-affix-wrapper-disabled) {
@@ -196,9 +268,8 @@ html.brutalist-theme {
     }
     .ant-input-affix-wrapper:has(input[readonly]) > .ant-input { background: transparent !important; }
 
-    /* Disabled — keep the normal solid ink frame, just swap in a muted fill so it
-     * lines up exactly with a normal field. For a copy-icon input-group, tint the
-     * addon + affix cells too; inner inputs go transparent to show the muted fill. */
+    /* Disabled — Raft greys the frame and removes the shadow, so the control
+     * visibly stops being something you can press. */
     .ant-input-disabled,
     .ant-input[disabled],
     textarea.ant-input[disabled],
@@ -208,7 +279,10 @@ html.brutalist-theme {
     .ant-select-disabled .ant-select-selector,
     .ant-input-group-wrapper.ant-input-disabled .ant-input-group-addon,
     .ant-input-group-wrapper.ant-input-disabled .ant-input-affix-wrapper {
-        background: var(--raft-muted) !important;
+        background: var(--raft-inset) !important;
+        border-color: var(--raft-muted) !important;
+        box-shadow: none !important;
+        color: var(--raft-text-3) !important;
         cursor: not-allowed;
     }
     .ant-input-affix-wrapper-disabled > .ant-input,
@@ -218,7 +292,7 @@ html.brutalist-theme {
     }
 
     /* -------------------------------------------------------------- *
-     * Floating panels — 2px ink border + small shadow so they lift
+     * Floating panels — panel tier: 2px frame + 4px shadow
      * -------------------------------------------------------------- */
     .ant-select-dropdown,
     .ant-cascader-menus,
@@ -226,7 +300,7 @@ html.brutalist-theme {
     .ant-dropdown-menu,
     .ant-mentions-dropdown,
     .ant-popover-inner {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         border-radius: 0;
         box-shadow: var(--raft-sh);
         background: var(--raft-paper);
@@ -234,123 +308,133 @@ html.brutalist-theme {
     .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
         background: var(--raft-accent);
         color: var(--raft-ink);
-        font-weight: 800;
+        font-weight: 700;
     }
     .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
         background: var(--raft-cream);
     }
 
     /* -------------------------------------------------------------- *
-     * Checkbox / Radio / Switch
+     * Checkbox / Radio / Switch — square, framed, candy when on
      * -------------------------------------------------------------- */
     .ant-checkbox-inner,
     .ant-radio-inner {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         background: var(--raft-paper);
     }
     .ant-checkbox-checked .ant-checkbox-inner {
         background: var(--raft-accent);
-        border-color: var(--raft-ink);
+        border-color: var(--raft-line);
     }
     .ant-checkbox-checked .ant-checkbox-inner::after { border-color: var(--raft-ink); }
     .ant-checkbox-checked::after { border: none; }
-    .ant-radio-checked .ant-radio-inner { border-color: var(--raft-ink); }
+    .ant-radio-checked .ant-radio-inner { border-color: var(--raft-line); }
     .ant-radio-checked .ant-radio-inner::after { background: var(--raft-accent); }
 
+    /* Raft's toggle is a rectangle split by a square ink knob: muted when
+     * off, yellow when on. No pill, no travel animation softening. */
     .ant-switch {
         background: var(--raft-muted);
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
+        box-shadow: var(--raft-sh-press);
     }
-    .ant-switch-checked { background: var(--raft-green); }
+    .ant-switch-checked { background: var(--raft-yellow); }
     .ant-switch .ant-switch-handle::before {
         border-radius: 0;
-        border: 2px solid var(--raft-ink);
+        background: var(--raft-ink);
+        border: none;
         box-shadow: none;
     }
+    .ant-switch-inner { color: var(--raft-ink); font-weight: 700; }
 
     /* -------------------------------------------------------------- *
-     * Tables — flat, cream mono header
+     * Tables — flat rows inside one framed block, cream mono header
      * -------------------------------------------------------------- */
     .ant-table { background: var(--raft-paper); color: var(--raft-text); }
     .ant-table-thead > tr > th {
         background: var(--raft-cream);
         color: var(--raft-ink);
-        font-weight: 800;
+        font-weight: 700;
         font-family: var(--raft-mono);
         text-transform: uppercase;
         letter-spacing: 0.04em;
-        border-bottom: 2px solid var(--raft-ink) !important;
+        border-bottom: 2px solid var(--raft-line) !important;
     }
-    .ant-table-tbody > tr > td { border-bottom: 1px solid var(--raft-ink); }
+    .ant-table-tbody > tr > td { border-bottom: 1px solid var(--raft-hairline); }
     .ant-table-tbody > tr.ant-table-row:hover > td { background: var(--raft-cream); }
     .ant-table.ant-table-bordered > .ant-table-container {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         border-radius: 0;
     }
-    /* Bordered table — ink column dividers on every header & body cell.
+    /* Bordered table — hairline column dividers on every header & body cell.
      * Kept shallow so it matches both normal and fixed-header/fixed-column
      * table structures (.ant-table-header vs .ant-table-content); the
      * !important beats antd's default light split color regardless. */
     .ant-table-bordered .ant-table-thead > tr > th,
     .ant-table-bordered .ant-table-tbody > tr > td {
-        border-inline-end: 1px solid var(--raft-ink) !important;
+        border-inline-end: 1px solid var(--raft-hairline) !important;
     }
 
     /* -------------------------------------------------------------- *
-     * Cards / Collapse — flat, no shadow (matches the reference)
+     * Cards / Collapse — Raft's `.card-brutal`: framed AND shadowed.
+     * Inside a card, rows are split by a hairline, never a second frame.
      * -------------------------------------------------------------- */
     .ant-card {
-        border: 2px solid var(--ant-border-color-split);
-        box-shadow: none;
-        background: var(--raft-paper);
-    }
-    .ant-card-head {
-        border-bottom: 2px solid var(--ant-border-color-split);
-        font-weight: 800;
-        color: var(--raft-ink);
-    }
-    .ant-collapse {
-        border: 2px solid var(--raft-ink);
-        background: var(--raft-paper);
-    }
-    .ant-collapse > .ant-collapse-item { border-bottom: 2px solid var(--raft-ink); }
-    .ant-collapse-item:last-child { border-bottom: none; }
-    .ant-collapse-content { border-top: 2px solid var(--raft-ink); }
-
-    /* -------------------------------------------------------------- *
-     * Modal / Drawer — floating, so a small shadow is allowed
-     * -------------------------------------------------------------- */
-    .ant-modal-content,
-    .ant-drawer-content {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         box-shadow: var(--raft-sh);
         background: var(--raft-paper);
     }
+    .ant-card-head {
+        border-bottom: 2px solid var(--raft-line);
+        font-weight: 700;
+        color: var(--raft-ink);
+    }
+    .ant-card-meta-description { color: var(--raft-text-2); }
+    .ant-collapse {
+        border: 2px solid var(--raft-line);
+        box-shadow: var(--raft-sh);
+        background: var(--raft-paper);
+    }
+    .ant-collapse > .ant-collapse-item { border-bottom: 2px solid var(--raft-line); }
+    .ant-collapse-item:last-child { border-bottom: none; }
+    .ant-collapse-content { border-top: 2px solid var(--raft-line); }
+
+    /* -------------------------------------------------------------- *
+     * Modal / Drawer — the floating tier, 6px shadow, ink-dim backdrop
+     * -------------------------------------------------------------- */
+    .ant-modal-content,
+    .ant-drawer-content {
+        border: 2px solid var(--raft-line);
+        box-shadow: var(--raft-sh-lg);
+        background: var(--raft-paper);
+    }
+    .ant-modal-mask, .ant-drawer-mask { background: rgba(0, 0, 0, 0.6); }
     .ant-modal-header,
     .ant-drawer-header {
-        border-bottom: 2px solid var(--raft-ink);
+        border-bottom: 2px solid var(--raft-line);
         background: var(--raft-paper);
     }
     .ant-modal-title,
-    .ant-drawer-title { font-weight: 800; color: var(--raft-ink); }
-    .ant-modal-footer { border-top: 2px solid var(--raft-ink); }
+    .ant-drawer-title { font-weight: 700; color: var(--raft-ink); }
+    .ant-modal-footer { border-top: 2px solid var(--raft-line); }
 
     /* -------------------------------------------------------------- *
-     * Tabs — active underlined in pink
+     * Tabs — Raft draws the active tab as a filled block sitting on the
+     * rule, not as an underline that floats under a tinted label.
      * -------------------------------------------------------------- */
-    .ant-tabs-tab { font-weight: 700; }
-    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn { color: var(--raft-ink); font-weight: 800; }
+    .ant-tabs-tab { font-weight: 700; color: var(--raft-text-2); }
+    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn { color: var(--raft-ink); font-weight: 700; }
     .ant-tabs-ink-bar { background: var(--raft-accent); height: 3px !important; }
-    .ant-tabs-top > .ant-tabs-nav::before { border-bottom: 2px solid var(--raft-ink); }
+    .ant-tabs-top > .ant-tabs-nav::before { border-bottom: 2px solid var(--raft-line); }
 
     /* -------------------------------------------------------------- *
-     * ng-zorro menu (not the app sidebar) — active = pink block
+     * ng-zorro menu (not the app sidebar) — active = accent block
      * -------------------------------------------------------------- */
     .ant-menu-item-selected,
     .ant-menu-light .ant-menu-item-selected {
         background: var(--raft-accent) !important;
         color: var(--raft-ink) !important;
-        font-weight: 800;
+        font-weight: 700;
     }
     .ant-menu-item-selected::after,
     .ant-menu-item::after { border-right: none !important; }
@@ -358,61 +442,83 @@ html.brutalist-theme {
     .ant-menu-submenu-title:hover { color: var(--raft-ink); }
 
     /* -------------------------------------------------------------- *
-     * Tags — candy sticker with ink border (keeps its small shadow)
+     * Tags — Raft has two kinds and they are not interchangeable:
+     *   status chip : candy fill, 1px frame, small bold caps, NO shadow
+     *   label tag   : paper fill, 2px frame, 2px shadow (the "LEGACY" pill)
+     * Colored antd tags map to the first, the default tag to the second.
      * -------------------------------------------------------------- */
     .ant-tag {
-        border: 2px solid var(--raft-ink);
+        border: 1px solid var(--raft-line);
         color: var(--raft-ink);
         font-weight: 700;
+        font-size: 11px;
+        line-height: 18px;
+        letter-spacing: 0.02em;
+        background: var(--raft-cream);
+        box-shadow: none;
+    }
+    .ant-tag:not([class*="ant-tag-"]),
+    .ant-tag-has-color.ant-tag-default {
+        border-width: 2px;
         background: var(--raft-paper);
-        box-shadow: var(--raft-sh-sm);
+        box-shadow: var(--raft-sh-press);
+        font-family: var(--raft-mono);
+        text-transform: uppercase;
     }
     .ant-tag-blue, .ant-tag-cyan, .ant-tag-geekblue { background: var(--raft-cyan); color: var(--raft-ink); }
-    .ant-tag-pink, .ant-tag-magenta { background: var(--raft-accent); color: var(--raft-ink); }
+    .ant-tag-pink, .ant-tag-magenta { background: var(--raft-pink); color: var(--raft-ink); }
     .ant-tag-green, .ant-tag-success, .ant-tag-lime { background: var(--raft-green); color: var(--raft-ink); }
     .ant-tag-red, .ant-tag-volcano, .ant-tag-error { background: var(--raft-orange); color: var(--raft-ink); }
-    .ant-tag-purple, .ant-tag-gold, .ant-tag-warning { background: var(--raft-yellow); color: var(--raft-ink); }
+    .ant-tag-purple { background: var(--raft-purple); color: var(--raft-ink); }
+    .ant-tag-gold, .ant-tag-warning, .ant-tag-orange { background: var(--raft-yellow); color: var(--raft-ink); }
 
     /* -------------------------------------------------------------- *
-     * Pagination
+     * Pagination — flat framed cells, accent block for the current page
      * -------------------------------------------------------------- */
     .ant-pagination-item,
     .ant-pagination-prev .ant-pagination-item-link,
     .ant-pagination-next .ant-pagination-item-link {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         border-radius: 0;
         background: var(--raft-paper);
         font-weight: 700;
+        transition: background-color .1s ease;
+    }
+    .ant-pagination-item:hover,
+    .ant-pagination-prev:hover .ant-pagination-item-link,
+    .ant-pagination-next:hover .ant-pagination-item-link {
+        background: var(--raft-cream);
     }
     .ant-pagination-item-active {
         background: var(--raft-accent);
-        border-color: var(--raft-ink);
+        border-color: var(--raft-line);
     }
-    .ant-pagination-item-active a { color: var(--raft-ink) !important; font-weight: 800; }
+    .ant-pagination-item-active a { color: var(--raft-ink) !important; font-weight: 700; }
 
     /* -------------------------------------------------------------- *
      * Tooltip / Alert / Message / Notification
      * -------------------------------------------------------------- */
     .ant-tooltip-inner {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         background: var(--raft-ink);
         color: var(--raft-paper);
         border-radius: 0;
         font-weight: 700;
     }
     .ant-alert {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         border-radius: 0;
         box-shadow: none;
     }
-    .ant-alert-success { background: fade(#93D655, 28%); }
-    .ant-alert-info { background: var(--raft-cream); }
-    .ant-alert-warning { background: fade(#FFC93E, 32%); }
-    .ant-alert-error { background: fade(#F6935B, 28%); }
+    .ant-alert-success { background: fade(#A9D877, 34%); }
+    .ant-alert-info { background: fade(#27CCF3, 26%); }
+    .ant-alert-warning { background: fade(#FFD440, 34%); }
+    .ant-alert-error { background: fade(#F8A16F, 32%); }
+    .ant-alert-message, .ant-alert-description { color: var(--raft-ink); }
 
     .ant-message-notice-content,
     .ant-notification-notice {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         border-radius: 0;
         box-shadow: var(--raft-sh);
         background: var(--raft-paper);
@@ -420,41 +526,52 @@ html.brutalist-theme {
 
     /* Badge / Slider / Progress / Segmented -------------------------- */
     .ant-badge-count {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         border-radius: 0;
         background: var(--raft-accent);
         color: var(--raft-ink);
-        font-weight: 800;
+        font-weight: 700;
         box-shadow: none;
     }
     .ant-slider-track { background: var(--raft-accent); }
     .ant-slider-handle {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         background: var(--raft-paper);
         box-shadow: none;
     }
-    .ant-progress-bg { background: #fff; }
-    .ant-progress-inner { background: transparent; border-radius: 0; }
-
-    .ant-segmented {
-        border: 2px solid var(--raft-ink);
-        background: var(--raft-paper);
+    .ant-progress-bg { background: var(--raft-accent); }
+    .ant-progress-inner {
+        background: var(--raft-inset);
+        border: 2px solid var(--raft-line);
         border-radius: 0;
     }
+
+    /* Segmented — framed strip; the selected cell is a yellow block, and
+     * unselected cells answer to hover with a candy tint, never a lift. */
+    .ant-segmented {
+        border: 2px solid var(--raft-line);
+        background: var(--raft-paper);
+        border-radius: 0;
+        padding: 0;
+    }
+    .ant-segmented-item { color: var(--raft-text-2); font-weight: 700; }
+    .ant-segmented-item:hover:not(.ant-segmented-item-selected) {
+        background: color-mix(in srgb, var(--raft-yellow) 30%, transparent);
+        color: var(--raft-ink);
+    }
     .ant-segmented-item-selected {
-        background: var(--raft-accent);
+        background: var(--raft-yellow);
         color: var(--raft-ink);
         border-radius: 0;
         box-shadow: none;
-        font-weight: 800;
+        font-weight: 700;
     }
 }
 
 /* ================================================================== *
  * EXTENDED COMPONENT COVERAGE
  *   Reuses the --raft-* tokens, so everything below adapts to dark mode
- *   automatically. Square corners, 2px ink borders, hard shadows only on
- *   floating / interactive surfaces.
+ *   automatically. Square corners, 2px frames, and the same shadow scale.
  * ================================================================== */
 html.brutalist-theme {
 
@@ -471,11 +588,20 @@ html.brutalist-theme {
     }
 
     /* --- Typography --------------------------------------------------- */
+    /* Candy is a fill in this language, never type: the skin's accents are
+     * pastels chosen to sit under ink, so an accent-colored label would be
+     * illegible. Links stay ink and gain an accent underline on hover. */
     a { color: var(--raft-ink); }
-    a:hover { color: var(--raft-accent); }
-    h1, h2, h3, h4, h5 { color: var(--raft-ink); }
+    a:hover {
+        color: var(--raft-ink);
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-decoration-color: var(--raft-accent);
+        text-underline-offset: 3px;
+    }
+    h1, h2, h3, h4, h5 { color: var(--raft-ink); font-weight: 700; }
     code, kbd {
-        border: 1.5px solid var(--raft-ink);
+        border: 1.5px solid var(--raft-line);
         border-radius: 0;
         background: var(--raft-cream);
         color: var(--raft-ink);
@@ -483,49 +609,56 @@ html.brutalist-theme {
     }
     mark { background: var(--raft-yellow); color: var(--raft-ink); }
 
-    /* --- Form — bold labels, ink required mark, orange error state ---- */
+    /* --- Form — bold labels, orange error state ----------------------- */
     .ant-form-item-label > label { font-weight: 700; color: var(--raft-ink); }
     .ant-form-item-required::before { color: var(--raft-orange) !important; }
-    .ant-form-item-explain-error { color: var(--raft-orange); font-weight: 600; }
+    .ant-form-item-explain-error { color: var(--raft-orange); font-weight: 700; }
     .ant-form-item-has-error .ant-input,
     .ant-form-item-has-error .ant-input-affix-wrapper,
     .ant-form-item-has-error .ant-input-number,
     .ant-form-item-has-error .ant-picker,
     .ant-form-item-has-error .ant-select .ant-select-selector {
         border-color: var(--raft-orange) !important;
+        box-shadow: none !important;
     }
     .ant-form-item-has-error .ant-input:focus,
     .ant-form-item-has-error .ant-input-affix-wrapper-focused {
-        box-shadow: 2px 2px 0 var(--raft-orange) !important;
+        box-shadow: none !important;
     }
 
     /* --- Radio buttons (segmented group) ------------------------------ */
     .ant-radio-button-wrapper {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         background: var(--raft-paper);
-        color: var(--raft-ink);
+        color: var(--raft-text-2);
         font-weight: 700;
+        transition: background-color .1s ease, color .1s ease;
     }
-    .ant-radio-button-wrapper:not(:first-child)::before { background: var(--raft-ink); }
+    .ant-radio-button-wrapper:hover:not(.ant-radio-button-wrapper-checked) {
+        background: color-mix(in srgb, var(--raft-yellow) 30%, transparent);
+        color: var(--raft-ink);
+    }
+    .ant-radio-button-wrapper:not(:first-child)::before { background: var(--raft-line); }
     .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
-        background: var(--raft-accent) !important;
+        background: var(--raft-yellow) !important;
         color: var(--raft-ink) !important;
-        border-color: var(--raft-ink) !important;
+        border-color: var(--raft-line) !important;
         box-shadow: none;
     }
     .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled)::before {
-        background: var(--raft-ink) !important;
+        background: var(--raft-line) !important;
     }
 
     /* --- Select: multiple tags, arrow, clear -------------------------- */
     .ant-select-multiple .ant-select-selection-item {
-        border: 1.5px solid var(--raft-ink);
+        border: 1px solid var(--raft-line);
         background: var(--raft-cream);
         color: var(--raft-ink);
-        font-weight: 600;
+        font-weight: 700;
     }
     .ant-select-arrow, .ant-select-clear, .ant-picker-suffix { color: var(--raft-ink); }
     .ant-select-clear { background: var(--raft-paper); }
+    .ant-select-selection-placeholder { color: var(--raft-text-3); }
 
     /* --- Tree / Tree-select ------------------------------------------- */
     .ant-tree .ant-tree-node-content-wrapper:hover,
@@ -534,26 +667,26 @@ html.brutalist-theme {
     .ant-select-tree .ant-select-tree-node-content-wrapper.ant-select-tree-node-selected {
         background: var(--raft-accent) !important;
         // !important — a scoped tree component (.layout-tree-body[_ngcontent]) sets the
-        // selected text to the primary color, which now equals the accent bg (cyan-on-cyan).
+        // selected text to the primary color, which now equals the accent bg.
         color: var(--raft-ink) !important;
         font-weight: 700;
     }
-    .ant-tree-checkbox-inner, .ant-select-tree-checkbox-inner { border: 2px solid var(--raft-ink); }
+    .ant-tree-checkbox-inner, .ant-select-tree-checkbox-inner { border: 2px solid var(--raft-line); }
     .ant-tree-checkbox-checked .ant-tree-checkbox-inner,
     .ant-select-tree-checkbox-checked .ant-select-tree-checkbox-inner {
         background: var(--raft-accent);
-        border-color: var(--raft-ink);
+        border-color: var(--raft-line);
     }
     .ant-tree-checkbox-checked .ant-tree-checkbox-inner::after { border-color: var(--raft-ink); }
 
     /* --- DatePicker / TimePicker panel -------------------------------- */
-    .ant-picker-header { border-bottom: 2px solid var(--raft-ink); }
+    .ant-picker-header { border-bottom: 2px solid var(--raft-line); }
     .ant-picker-header button { color: var(--raft-ink); font-weight: 700; }
     .ant-picker-content th { color: var(--raft-text-2); font-family: var(--raft-mono); }
     .ant-picker-cell-in-view .ant-picker-cell-inner { color: var(--raft-ink); }
     .ant-picker-cell .ant-picker-cell-inner:hover { background: var(--raft-cream) !important; }
     .ant-picker-cell-today .ant-picker-cell-inner::before {
-        border: 1.5px solid var(--raft-ink) !important;
+        border: 1.5px solid var(--raft-line) !important;
         border-radius: 0;
     }
     .ant-picker-cell-selected .ant-picker-cell-inner,
@@ -561,11 +694,11 @@ html.brutalist-theme {
     .ant-picker-cell-range-end .ant-picker-cell-inner {
         background: var(--raft-accent) !important;
         color: var(--raft-ink) !important;
-        font-weight: 800;
+        font-weight: 700;
     }
     .ant-picker-cell-in-range::before,
     .ant-picker-cell-range-hover::before { background: var(--raft-accent-soft) !important; }
-    .ant-picker-footer { border-top: 2px solid var(--raft-ink); }
+    .ant-picker-footer { border-top: 2px solid var(--raft-line); }
     .ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
         background: var(--raft-accent) !important;
         color: var(--raft-ink);
@@ -574,67 +707,67 @@ html.brutalist-theme {
 
     /* --- Steps -------------------------------------------------------- */
     .ant-steps-item-icon {
-        border: 2px solid var(--raft-ink) !important;
+        border: 2px solid var(--raft-line) !important;
         background: var(--raft-paper) !important;
     }
-    .ant-steps-item-icon > .ant-steps-icon { color: var(--raft-ink); font-weight: 800; }
+    .ant-steps-item-icon > .ant-steps-icon { color: var(--raft-ink); font-weight: 700; }
     .ant-steps-item-process > .ant-steps-item-container > .ant-steps-item-icon { background: var(--raft-accent) !important; }
     .ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-icon { background: var(--raft-green) !important; }
-    .ant-steps-item-tail::after { background: var(--raft-ink) !important; }
+    .ant-steps-item-tail::after { background: var(--raft-line) !important; }
     .ant-steps-item-title { font-weight: 700; color: var(--raft-ink); }
 
     /* --- Timeline ----------------------------------------------------- */
     .ant-timeline-item-head {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         background: var(--raft-paper);
         width: 12px;
         height: 12px;
     }
-    .ant-timeline-item-head-blue { background: var(--raft-accent); }
+    .ant-timeline-item-head-blue { background: var(--raft-cyan); }
     .ant-timeline-item-head-green { background: var(--raft-green); }
     .ant-timeline-item-head-red { background: var(--raft-orange); }
-    .ant-timeline-item-tail { border-left: 2px solid var(--raft-ink); }
+    .ant-timeline-item-tail { border-left: 2px solid var(--raft-line); }
 
     /* --- Descriptions ------------------------------------------------- */
-    .ant-descriptions-bordered .ant-descriptions-view { border: 2px solid var(--raft-ink); }
-    .ant-descriptions-bordered .ant-descriptions-row { border-bottom: 2px solid var(--raft-ink); }
+    .ant-descriptions-bordered .ant-descriptions-view { border: 2px solid var(--raft-line); }
+    .ant-descriptions-bordered .ant-descriptions-row { border-bottom: 1px solid var(--raft-hairline); }
     .ant-descriptions-bordered .ant-descriptions-item-label {
         background: var(--raft-cream);
         color: var(--raft-ink);
         font-weight: 700;
-        border-inline-end: 2px solid var(--raft-ink);
+        border-inline-end: 1px solid var(--raft-hairline);
     }
-    .ant-descriptions-bordered .ant-descriptions-item-content { border-inline-end: 1px solid var(--raft-muted); }
+    .ant-descriptions-bordered .ant-descriptions-item-content { border-inline-end: 1px solid var(--raft-hairline); }
 
     /* --- List --------------------------------------------------------- */
-    .ant-list-bordered { border: 2px solid var(--raft-ink); }
-    .ant-list-item { border-bottom: 1px solid var(--raft-muted); }
-    .ant-list-header, .ant-list-footer { border-color: var(--raft-ink); }
+    .ant-list-bordered { border: 2px solid var(--raft-line); }
+    .ant-list-item { border-bottom: 1px solid var(--raft-hairline); }
+    .ant-list-header, .ant-list-footer { border-color: var(--raft-line); }
 
     /* --- Divider ------------------------------------------------------ */
-    .ant-divider { border-color: var(--raft-ink); border-top-color: var(--raft-ink); }
-    .ant-divider-with-text { color: var(--raft-ink); font-weight: 700; }
-    .ant-divider-with-text::before, .ant-divider-with-text::after { border-block-start: 1.5px solid var(--raft-ink) !important; }
+    .ant-divider { border-color: var(--raft-hairline); border-top-color: var(--raft-hairline); }
+    .ant-divider-with-text { color: var(--raft-text-2); font-weight: 700; }
+    .ant-divider-with-text::before, .ant-divider-with-text::after { border-block-start: 1px solid var(--raft-hairline) !important; }
 
     /* --- Avatar ------------------------------------------------------- */
     .ant-avatar {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         background: var(--raft-cream);
         color: var(--raft-ink);
         font-weight: 700;
     }
 
     /* --- Breadcrumb --------------------------------------------------- */
-    .ant-breadcrumb a { color: var(--raft-text-2); font-weight: 600; }
-    .ant-breadcrumb a:hover { color: var(--raft-accent); background: transparent; }
+    .ant-breadcrumb a { color: var(--raft-text-2); font-weight: 700; }
+    .ant-breadcrumb a:hover { color: var(--raft-ink); background: transparent; }
     .ant-breadcrumb > span:last-child { color: var(--raft-ink); font-weight: 700; }
 
     /* --- Upload ------------------------------------------------------- */
     .ant-upload.ant-upload-drag {
-        border: 2px dashed var(--raft-ink);
-        background: var(--raft-cream);
+        border: 2px dashed var(--raft-line);
+        background: var(--raft-inset);
     }
-    .ant-upload-list-item { border: 1.5px solid var(--raft-ink) !important; }
+    .ant-upload-list-item { border: 1px solid var(--raft-hairline) !important; }
     .ant-upload-list-item-name { color: var(--raft-ink); }
 
     /* --- Rate --------------------------------------------------------- */
@@ -644,26 +777,28 @@ html.brutalist-theme {
 
     /* --- Spin --------------------------------------------------------- */
     .ant-spin-dot-item { background: var(--raft-accent); }
-    .ant-spin-text { color: var(--raft-accent); font-weight: 700; }
+    .ant-spin-text { color: var(--raft-ink); font-weight: 700; }
 
     /* --- Empty / Result / Statistic ----------------------------------- */
     .ant-empty-description { color: var(--raft-text-2); }
-    .ant-result-title { color: var(--raft-ink); font-weight: 800; }
+    .ant-result-title { color: var(--raft-ink); font-weight: 700; }
     .ant-result-subtitle { color: var(--raft-text-2); }
+    /* Raft's stat tile: mono uppercase kicker over a heavy figure */
     .ant-statistic-title {
         color: var(--raft-text-2);
         font-family: var(--raft-mono);
         text-transform: uppercase;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.06em;
+        font-size: 11px;
     }
-    .ant-statistic-content { color: var(--raft-ink); font-weight: 800; }
+    .ant-statistic-content { color: var(--raft-ink); font-weight: 700; font-family: var(--raft-mono); }
 
     /* --- Anchor ------------------------------------------------------- */
     .ant-anchor-ink-ball { border: 2px solid var(--raft-accent); background: var(--raft-paper); }
-    .ant-anchor-link-active > .ant-anchor-link-title { color: var(--raft-accent); font-weight: 700; }
+    .ant-anchor-link-active > .ant-anchor-link-title { color: var(--raft-ink); font-weight: 700; }
 
     /* --- Popover / Popconfirm title ----------------------------------- */
-    .ant-popover-title { border-bottom: 2px solid var(--raft-ink); font-weight: 800; color: var(--raft-ink); }
+    .ant-popover-title { border-bottom: 2px solid var(--raft-line); font-weight: 700; color: var(--raft-ink); }
     .ant-popover-message-title, .ant-popconfirm-message-title { color: var(--raft-ink); }
 
     /* --- Dropdown items ----------------------------------------------- */
@@ -674,26 +809,31 @@ html.brutalist-theme {
         color: var(--raft-ink);
         font-weight: 700;
     }
+    .ant-dropdown-menu-item-divider { background: var(--raft-hairline); }
 
     /* --- Table extras: sorter / filter / selection / summary ---------- */
+    /* Active sorter / filter: ink at full strength against the muted rest
+     * of the header, rather than a pastel that would read as disabled. */
     .ant-table-column-sorter-up.active,
-    .ant-table-column-sorter-down.active { color: var(--raft-accent); }
-    .ant-table-filter-trigger.active { color: var(--raft-accent); }
+    .ant-table-column-sorter-down.active { color: var(--raft-ink); }
+    .ant-table-filter-trigger.active { color: var(--raft-ink); }
     .ant-table-tbody > tr.ant-table-row-selected > td,
     .ant-table-tbody > tr.ant-table-row-selected:hover > td { background: var(--raft-accent-soft) !important; }
     .ant-table-cell-fix-left, .ant-table-cell-fix-right { background: var(--raft-paper); }
-    .ant-table-expanded-row > td { background: var(--raft-cream); }
+    .ant-table-expanded-row > td { background: var(--raft-inset); }
     .ant-table-summary {
-        border-top: 2px solid var(--raft-ink);
+        border-top: 2px solid var(--raft-line);
         background: var(--raft-cream);
         font-weight: 700;
     }
+    .ant-table-placeholder .ant-empty-description { color: var(--raft-text-2); }
 
     /* --- Pagination: jumper input / size select ----------------------- */
     .ant-pagination-options-quick-jumper input {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         border-radius: 0;
         background: var(--raft-paper);
+        box-shadow: none;
     }
     .ant-pagination-item-link,
     .ant-pagination-jump-prev, .ant-pagination-jump-next { color: var(--raft-ink); }
@@ -701,43 +841,43 @@ html.brutalist-theme {
 
     /* --- Tabs (card type) --------------------------------------------- */
     .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab {
-        border: 2px solid var(--raft-ink) !important;
-        background: var(--raft-cream);
+        border: 2px solid var(--raft-line) !important;
+        background: var(--raft-paper);
         margin-left: 0;
     }
     .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active {
-        background: var(--raft-paper);
-        border-bottom-color: var(--raft-paper) !important;
+        background: var(--raft-yellow);
+        border-bottom-color: var(--raft-yellow) !important;
     }
 
     /* --- Menu: submenu popup / horizontal / active -------------------- */
     .ant-menu-submenu-popup > .ant-menu {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         box-shadow: var(--raft-sh);
     }
-    .ant-menu-horizontal { border-bottom: 2px solid var(--raft-ink); }
+    .ant-menu-horizontal { border-bottom: 2px solid var(--raft-line); }
     .ant-menu-item-active,
-    .ant-menu-submenu-active > .ant-menu-submenu-title { color: var(--raft-accent) !important; }
+    .ant-menu-submenu-active > .ant-menu-submenu-title { color: var(--raft-ink) !important; }
 
     /* --- Progress circle ---------------------------------------------- */
-    .ant-progress-circle .ant-progress-inner { border: none; }
+    .ant-progress-circle .ant-progress-inner { border: none; background: transparent; }
     .ant-progress-circle-path { stroke: var(--raft-accent); }
     .ant-progress-circle-trail { stroke: var(--raft-muted); }
 
     /* --- Slider (rail / dots / marks) --------------------------------- */
     .ant-slider-rail { background: var(--raft-muted); border-radius: 0; }
-    .ant-slider-dot { border: 2px solid var(--raft-ink); background: var(--raft-paper); }
+    .ant-slider-dot { border: 2px solid var(--raft-line); background: var(--raft-paper); }
     .ant-slider-dot-active { border-color: var(--raft-accent); }
     .ant-slider-mark-text-active { color: var(--raft-ink); font-weight: 700; }
 
     /* --- Modal / Drawer close + confirm icon -------------------------- */
     .ant-modal-close, .ant-drawer-close { color: var(--raft-ink); }
-    .ant-modal-close:hover, .ant-drawer-close:hover { color: var(--raft-accent); }
+    .ant-modal-close:hover, .ant-drawer-close:hover { color: var(--raft-ink); }
     .ant-modal-confirm-body > .anticon { color: var(--raft-ink); }
 
     /* --- Float button / BackTop --------------------------------------- */
     .ant-float-btn .ant-float-btn-body, .ant-back-top {
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
         box-shadow: var(--raft-sh);
         background: var(--raft-paper);
     }
@@ -753,36 +893,191 @@ html.brutalist-theme {
      * only warm the gutter when Monaco is in its LIGHT (.vs) theme so it
      * never clashes with the editor's dark mode. */
     nz-code-editor, .code-editor-style {
-        border: 2px solid var(--raft-ink) !important;
+        border: 2px solid var(--raft-line) !important;
         border-radius: 0 !important;
     }
-    .monaco-editor.vs .margin { background-color: #EEF4F6 !important; }
-    .monaco-editor.vs .line-numbers { color: var(--raft-text-2) !important; }
-    .monaco-editor.vs .current-line { border-color: var(--raft-muted) !important; }
+    .monaco-editor.vs .margin { background-color: #FFFAEF !important; }
+    .monaco-editor.vs .line-numbers { color: rgba(20, 17, 17, 0.5) !important; }
+    .monaco-editor.vs .current-line { border-color: rgba(20, 17, 17, 0.15) !important; }
 
-    /* --- Keyboard focus ring (accessibility) -------------------------- */
-    :focus-visible { outline: 2px solid var(--raft-accent); outline-offset: 1px; }
+    /* --- Keyboard focus ring (accessibility) -------------------------- *
+     * Raft drops the outline on framed fields because the deepened shadow
+     * carries focus, but keyboard users still need a ring on everything
+     * else, so keep one for anything the shadow rule does not cover. */
+    :focus-visible { outline: 2px solid var(--raft-ink); outline-offset: 1px; }
+    /* …but not on form fields: those are deliberately unmarked on focus */
+    .ant-input:focus-visible,
+    .ant-input-number-input:focus-visible,
+    .ant-picker-input > input:focus-visible,
+    .ant-select-selection-search-input:focus-visible,
+    textarea.ant-input:focus-visible { outline: none; }
 
     /* --- Scrollbars — thin ink rail ----------------------------------- */
     ::-webkit-scrollbar { width: 12px; height: 12px; }
     ::-webkit-scrollbar-thumb {
         background: var(--raft-muted);
-        border: 2px solid var(--raft-ink);
+        border: 2px solid var(--raft-line);
     }
     ::-webkit-scrollbar-track { background: var(--raft-paper); }
 }
 
 /* ================================================================== *
- * LEFT MENU & SIDEBAR SHELL
- *   All menu-item styling lives here, scoped to the brutalist skin —
- *   the default theme keeps stock delon sidebar-nav styles.
+ * APP SHELL — TOP BAR
+ *   Raft frames the chrome rather than shading it: a flat candy band, a
+ *   2px rule under it (and beside the brand block) instead of a drop
+ *   shadow, and controls that only acquire a frame when you touch them.
+ *   Nothing here rounds, blurs, or fades.
  * ================================================================== */
 html.brutalist-theme {
 
-    /* Sidebar panel (white in light, ink-black in dark via --raft-panel) —
-     * the 2px ink right edge comes from --ant-border-color-split (= --raft-ink). */
+    /* Ink on the band, always.
+     *
+     * applyHeaderColor() runs a luminance test on the chosen header color and
+     * flips the bar to white text whenever the color reads dark. That is right
+     * for stock Ant Design and wrong here: in this language a colored surface
+     * always carries ink type, so the header icons, labels and logo stay
+     * near-black on any band.
+     *
+     * The override is declared ON THE HEADER rather than on <html>: those
+     * inline custom properties would otherwise win, and `!important` is not an
+     * option because the build's CSS pipeline drops it from custom-property
+     * declarations. A declaration on the element beats an inherited one, so
+     * redefining the tokens here settles it for every descendant — while
+     * --erupt-header-bg, deliberately not redeclared, keeps inheriting the
+     * user's chosen band color. */
+    .erupt-header,
+    .alain-default__header,
+    .erupt-route-loading {
+        --erupt-header-text: #141111;
+        --erupt-header-text-secondary: rgba(20, 17, 17, 0.62);
+        --erupt-header-fill: rgba(20, 17, 17, 0.08);
+        --erupt-header-fill-strong: rgba(20, 17, 17, 0.14);
+        --erupt-header-active-bg: #FFFFFF;
+        --erupt-header-active-text: #141111;
+        --erupt-header-border: #000000;
+        --erupt-header-progress: #141111;
+    }
+
+    /* The band's rule. `!important` beats the component-scoped 1px border in
+     * erupt.component.less / header.component.less. */
+    .erupt-header,
+    .alain-default__header {
+        border-bottom: 2px solid var(--raft-line) !important;
+        box-shadow: none !important;
+    }
+
+    /* Brand block — divided from the menu column by the same 2px rule, so
+     * the header seam lines up with the sidebar edge below it. */
+    .alain-default__header-logo {
+        border-right: 2px solid var(--raft-line) !important;
+    }
+    .header-logo-text {
+        font-family: var(--raft-font);
+        font-weight: 700;
+        letter-spacing: 0;
+        font-size: 1.5em;
+    }
+    /* The stock Erupt wordmark paints itself white for a colored bar
+     * (header.component.less). Same rule as the icons: ink on candy. */
+    #erupt_logo_svg path { fill: #141111 !important; }
+
+    /* Header icon buttons — flat on the band at rest, a framed paper tile
+     * under the pointer. The frame is an inset ring, not a border, so a
+     * 38x38 cell never grows and shifts the row. */
+    .alain-default__nav-item {
+        border-radius: 0 !important;
+        transition: background-color .1s ease, box-shadow .1s ease;
+    }
+    .alain-default__nav-item:not(.r_tool_item):hover {
+        background: var(--raft-paper);
+        box-shadow: inset 0 0 0 2px var(--raft-line);
+    }
+    .alain-default__nav-item:not(.r_tool_item):active {
+        background: var(--raft-paper);
+        box-shadow: inset 0 0 0 2px var(--raft-line);
+        transform: none;
+    }
+
+    /* Split / top menu category tabs — same grammar as a segmented cell:
+     * framed paper block when current, candy tint on hover, never a lift. */
+    .split-nav-item {
+        border-radius: 0;
+        font-weight: 700;
+        color: var(--erupt-header-text-secondary);
+        transition: background-color .1s ease, box-shadow .1s ease, color .1s ease;
+    }
+    .split-nav-item:hover {
+        background: var(--raft-paper);
+        box-shadow: inset 0 0 0 2px var(--raft-line);
+        color: var(--raft-ink);
+    }
+    .split-nav-item--active {
+        background: var(--raft-paper);
+        box-shadow: inset 0 0 0 2px var(--raft-line);
+        color: var(--raft-ink);
+    }
+
+    /* Second nav row (top-split mode) sits on paper, under its own rule */
+    .erupt-subnav {
+        background: var(--raft-paper);
+        border-bottom: 2px solid var(--raft-line);
+    }
+
+    /* Horizontal menus in the band (top-menu mode) */
+    .top-nav-menu.ant-menu-horizontal,
+    .subnav-menu.ant-menu-horizontal {
+        background: transparent;
+        border-bottom: none;
+    }
+    .top-nav-menu.ant-menu-horizontal > .ant-menu-item,
+    .top-nav-menu.ant-menu-horizontal > .ant-menu-submenu {
+        font-weight: 700;
+        border-radius: 0;
+    }
+    .top-nav-menu.ant-menu-horizontal > .ant-menu-item::after,
+    .top-nav-menu.ant-menu-horizontal > .ant-menu-submenu::after { border-bottom: none !important; }
+    .top-nav-menu.ant-menu-horizontal > .ant-menu-item-selected,
+    .top-nav-menu.ant-menu-horizontal > .ant-menu-submenu-selected {
+        background: var(--raft-paper);
+        box-shadow: inset 0 0 0 2px var(--raft-line);
+        color: var(--raft-ink) !important;
+    }
+}
+
+/* ================================================================== *
+ * APP SHELL — LEFT MENU & SIDEBAR
+ *   All menu-item styling lives here, scoped to the brutalist skin —
+ *   the default theme keeps stock delon sidebar-nav styles.
+ *   Raft's menu column: cream paper behind a 2px rule, group titles as
+ *   mono kickers, and the current item as a candy block with a frame.
+ * ================================================================== */
+html.brutalist-theme {
+
+    /* Menu column — the top bar's band, continued down the side */
     .alain-default__aside {
-        background: var(--raft-panel, #fff);
+        background: var(--raft-panel);
+    }
+
+    /* The column's own 2px edge. Both selectors carry the rule in
+     * erupt.component.less, and both are 1px there. */
+    .erupt-side::after,
+    .alain-default__aside::after {
+        border-right: 2px solid var(--raft-line);
+    }
+
+    /* Utility bar pinned to the bottom of the column. Scoped through the
+     * aside so it outranks the component's own `--erupt-bg-container` fill,
+     * which this skin points at plain white. */
+    .alain-default__aside .fold {
+        background: var(--raft-panel);
+        border-top: 2px solid var(--raft-line);
+        border-right: 2px solid var(--raft-line);
+        color: var(--raft-text-2);
+    }
+
+    .fold__btn:hover {
+        background: var(--raft-paper);
+        color: var(--raft-ink);
     }
 
     /* Group title — mono uppercase kicker */
@@ -790,38 +1085,90 @@ html.brutalist-theme {
         font-family: var(--raft-mono);
         text-transform: uppercase;
         letter-spacing: 0.06em;
+        font-size: 11px;
         color: var(--raft-text-2);
     }
 
-    /* Drop delon's classic left-bar indicator — selection is an ink-framed block */
+    /* Drop delon's classic left-bar indicator — selection is a framed block */
     .sidebar-nav__item {
         border-left: 0 !important;
     }
 
+    /* Rows follow the Slack / Raft channel list: a dense, quiet column where
+     * the eye is meant to skim, not read. Every row is one compact line at a
+     * plain weight, and the only thing that stands out is the current item —
+     * a candy block with an ink frame. Making the rows themselves loud (the
+     * 42px, 700-weight buttons delon ships) leaves nothing for the selection
+     * to contrast against. */
     .sidebar-nav__item-link {
         position: relative;
-        margin: 2px 6px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 30px;
+        /* right padding clears delon's absolutely positioned disclosure arrow */
+        padding: 4px 26px 4px 10px;
+        margin: 1px 6px;
         border: 2px solid transparent;   /* reserve space so the selected frame never shifts layout */
         border-radius: 0;
-        transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        color: var(--raft-text-2);
+        transition: background-color .1s ease, color .1s ease, border-color .1s ease;
 
         &:hover {
-            background: var(--raft-cream);
+            background: var(--raft-paper);
             color: var(--raft-ink);
 
             .sidebar-nav__item-icon { color: var(--raft-ink); }
         }
     }
 
-    /* Selected — flat accent block stamped with an ink frame */
+    /* Icon is a fixed-width slot so every label starts on the same column,
+     * the way a channel list lines up behind its # glyphs. */
+    .sidebar-nav__item-icon {
+        flex: none;
+        width: 16px;
+        margin-right: 0;
+        font-size: 14px;
+        text-align: center;
+        color: inherit;
+    }
+
+    /* A menu entry with no icon claims no icon slot: the label starts at the
+     * row's own indent. Rows at one level therefore only line up behind a
+     * common left edge when they all carry an icon — which is the intended
+     * trade, since an empty 16px column in front of every icon-less entry
+     * reads as a missing glyph rather than as alignment. */
+
+    /* Long names truncate rather than wrap the row to two lines */
+    .sidebar-nav__item-text {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    /* Nested levels step in by one icon slot per depth */
+    .sidebar-nav__depth1 .sidebar-nav__item-link { padding-left: 26px; }
+    .sidebar-nav__depth2 .sidebar-nav__item-link { padding-left: 42px; }
+    .sidebar-nav__depth3 .sidebar-nav__item-link { padding-left: 58px; }
+
+    /* Selected — a candy block stamped with an ink frame and the interactive
+     * shadow. It works on cream in every mode, dual's submenu column
+     * included; the rail is the only place that inverts it (paper block on
+     * the band), because there the band already is the accent. */
     .sidebar-nav__selected {
         background-color: transparent !important;
 
         > .sidebar-nav__item-link {
             background: var(--raft-accent);
-            border-color: var(--raft-ink);
+            border-color: var(--raft-line);
+            box-shadow: var(--raft-sh-press);
             color: var(--raft-ink);
-            font-weight: 800;
+            font-weight: 700;
 
             .sidebar-nav__item-icon { color: var(--raft-ink); }
 
@@ -833,10 +1180,57 @@ html.brutalist-theme {
         }
     }
 
-    /* Collapsed rail — compact centered square hugging the icon */
+    /* An open category keeps its label ink-dark so the trail to the current
+     * item stays readable without competing with the selected block. */
+    .sidebar-nav__open > .sidebar-nav__item-link { color: var(--raft-ink); }
+
+    /* Dual mode — the first-level rail. Same grammar as the collapsed rail:
+     * the tile is the target, the current one is a paper block with an ink
+     * frame, and the band shows through everywhere else. Works with the
+     * labels on or off (settings drawer -> 双栏菜单显示文字). */
+    /* The one surface that still wears the top bar's band: the first-level
+     * rail, which is the only nav column narrow enough to carry it. */
+    .dual-menu__rail {
+        border-right: 2px solid var(--raft-line);
+        background: var(--erupt-header-bg, var(--raft-header));
+    }
+
+    .dual-menu__rail-item {
+        margin: 2px 4px;
+        border: 2px solid transparent;   /* reserve the frame so nothing shifts */
+        border-radius: 0;
+        color: var(--raft-text-2);
+        font-weight: 500;
+        transition: background-color .1s ease, color .1s ease, border-color .1s ease;
+
+        &:hover {
+            background: color-mix(in srgb, var(--raft-paper) 55%, transparent);
+            color: var(--raft-ink);
+        }
+
+        &--active,
+        &--active:hover {
+            background: var(--raft-paper);
+            border-color: var(--raft-line);
+            box-shadow: var(--raft-sh-press);
+            color: var(--raft-ink);
+            font-weight: 700;
+        }
+    }
+
+    .dual-menu__rail-text {
+        font-size: 11px;
+        letter-spacing: 0.01em;
+    }
+
+    .dual-menu__main { background: var(--raft-panel); }
+
+    /* Collapsed rail — a centered 40px square per item, the way Raft draws
+     * its app rail: the tile is the target, the glyph sits small inside it. */
     .alain-default__collapsed .sidebar-nav__item .sidebar-nav__item-link {
         width: 40px;
         height: 40px;
+        min-height: 0;
         margin: 4px auto;
         padding: 0 !important;
         display: flex;
@@ -844,9 +1238,24 @@ html.brutalist-theme {
         justify-content: center;
     }
 
+    /* delon blows the glyph up to 24px once the rail collapses, which leaves
+     * no room inside a 40px tile and makes the column read as a strip of
+     * pictograms. Keep it at the size it has in the expanded list.
+     * `!important` because delon's own collapsed rule carries one. */
+    .alain-default__collapsed .sidebar-nav__item .sidebar-nav__item-icon {
+        font-size: 16px !important;
+        width: auto;
+        margin-right: 0;
+    }
+
+    /* No room for the disclosure chevron on a 40px tile */
+    .alain-default__collapsed .sidebar-nav__item > .sidebar-nav__item-link .sidebar-nav__sub-arrow {
+        display: none;
+    }
+
     /* Menu click ripple (span.ripple, added by erupt.component) — recolor to ink.
-     * The stock ripple uses --ant-primary-color (= cyan here), which vanishes on the
-     * cyan selected block; ink keeps it visible over every menu surface. */
+     * The stock ripple uses --ant-primary-color (= the accent here), which
+     * vanishes on the accent selected block; ink keeps it visible everywhere. */
     .sidebar-nav__item span.ripple {
         background: var(--raft-ink) !important;
         opacity: 0.12 !important;

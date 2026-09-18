@@ -96,6 +96,12 @@ export class MenuComponent implements OnInit, OnDestroy {
         return !!this.settings.layout['dualMenu'];
     }
 
+    // Labels under the dual-mode rail icons. The rail has always shown them,
+    // so an unset flag keeps them on and only an explicit false hides them.
+    get dualRailText(): boolean {
+        return this.settings.layout['dualRailText'] !== false;
+    }
+
     get groupMenu(): boolean {
         return !!this.settings.layout['groupMenu'];
     }
@@ -331,7 +337,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         settings.notify
             .pipe(
                 takeUntil(destroy$),
-                filter(t => t.type === 'layout' && ['collapsed', 'splitMenu', 'dualMenu', 'groupMenu', 'topSplitMenu', 'splitMenuKey'].includes(t.name!))
+                filter(t => t.type === 'layout' && ['collapsed', 'splitMenu', 'dualMenu', 'dualRailText', 'groupMenu', 'topSplitMenu', 'splitMenuKey'].includes(t.name!))
             )
             .subscribe(t => {
                 this.clearFloating();

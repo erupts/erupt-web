@@ -177,6 +177,14 @@
         <nz-switch nzSize="small" [(ngModel)]="layout['collapsedText']"
                    (ngModelChange)="setLayout('collapsedText', layout['collapsedText'])"></nz-switch>
     </div>
+    <!-- sub-option of the dual mode only: labels under the first-level rail icons -->
+    @if (menuMode === MenuMode.DUAL) {
+        <div class="menu-mode-sub">
+            <span>{{'setting.dual-rail-text' | translate}}</span>
+            <nz-switch nzSize="small" [(ngModel)]="dualRailText"
+                       (ngModelChange)="setLayout('dualRailText', dualRailText)"></nz-switch>
+        </div>
+    }
 </div>
 <div class="setting-item">
     <span>{{'setting.tab-reuse' | translate}}</span>
