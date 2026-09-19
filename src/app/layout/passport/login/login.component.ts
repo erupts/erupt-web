@@ -259,13 +259,19 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         }
         //erupt-sso is optional; without the module there is no endpoint to ask
         if (EruptAppData.get().properties && EruptAppData.get().properties["erupt-sso"]) {
-            this.data.ssoProviders().subscribe(providers => this.ssoProviders = providers || []);
+            // a provider list that cannot be fetched is an empty list, not a broken login page
+            this.data.ssoProviders().subscribe(providers => this.ssoProviders = providers || [], () => this.ssoProviders = []);
         }
     }
 
     //a spent ticket has no business surviving a refresh
     private clearSsoParams() {
         this.router.navigate([], {relativeTo: this.route, queryParams: {}, replaceUrl: true}).then();
+    }
+
+    //three named buttons still fit one row of the card; past that only the icons do
+    get ssoCompact(): boolean {
+        return this.ssoProviders.length > 3;
     }
 
     toSso(provider: SsoProvider) {
