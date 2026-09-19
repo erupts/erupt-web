@@ -15,6 +15,8 @@ yarn run theme        # Regenerate theme CSS
 
 No test suite is present in this project.
 
+**Do not run `yarn run build` / `ng build` to verify changes.** Every build (including `--configuration development`) writes into the sibling Java repo's `erupt-web/src/main/resources/public`, overwriting the committed production bundle. Verify with `npx tsc --noEmit -p tsconfig.app.json` and `npx lessc --js <file>.less` instead; the user builds themselves.
+
 ## Code Style
 
 - All code comments must be written in **English**.

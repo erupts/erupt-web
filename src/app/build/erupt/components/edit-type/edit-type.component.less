@@ -46,6 +46,12 @@
             line-height: 38px;
         }
 
+        // trueText / falseText ride inside the switch, so the wrapper only centres it on the row
+        .bool-switch {
+            display: flex;
+            align-items: center;
+        }
+
         .ant-slider-with-marks {
             margin-bottom: 0;
         }
@@ -72,7 +78,10 @@
             justify-content: normal !important;
         }
 
-        .erupt-form > div {
+        // Row spacing between fields. GROUP fields sit in a nested row inside the collapse
+        // panel, so the direct-child rule alone leaves them touching
+        .erupt-form > div,
+        .erupt-form .group-fields > div {
             margin-bottom: 8px;
         }
 

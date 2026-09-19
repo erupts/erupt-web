@@ -30,7 +30,7 @@
                                 <nz-collapse-panel [nzActive]="!divideCollapsed[field.fieldName]"
                                                    [nzHeader]="field.eruptFieldJson.edit.title"
                                                    (nzActiveChange)="divideCollapsed[field.fieldName] = !$event">
-                                    <div nz-row [nzGutter]="16">
+                                    <div nz-row [nzGutter]="16" class="group-fields">
                                         @for (gf of divideGroupFields.get(field.fieldName); track gf.fieldName) {
                                             @if (gf.eruptFieldJson.edit?.show && gf.eruptFieldJson.edit?.title) {
                                                 <ng-container [ngTemplateOutlet]="fieldRenderer"
@@ -509,25 +509,36 @@
                         <se [label]="field.eruptFieldJson.edit.title"
                             [required]="field.eruptFieldJson.edit.notNull"
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
-                            <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                            [name]="field.fieldName" [nzSize]="size"
-                                            [nzDisabled]="isReadonly(field)"
-                                            class="erupt-input">
-                                <div nz-row>
-                                    <div nz-col [nzSpan]="12">
-                                        <label nz-radio [nzValue]="true"
-                                               class="ellipsis-radio stander-line-height">
-                                            {{ field.eruptFieldJson.edit.boolType.trueText | translate }}
-                                        </label>
-                                    </div>
-                                    <div nz-col [nzSpan]="12">
-                                        <label nz-radio [nzValue]="false"
-                                               class="ellipsis-radio stander-line-height">
-                                            {{ field.eruptFieldJson.edit.boolType.falseText | translate }}
-                                        </label>
-                                    </div>
+                            @if (isBoolSwitch(field)) {
+                                <div class="bool-switch stander-line-height">
+                                    <nz-switch [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [name]="field.fieldName"
+                                               [nzSize]="size === 'small' ? 'small' : 'default'"
+                                               [nzDisabled]="isReadonly(field)"
+                                               [nzCheckedChildren]="field.eruptFieldJson.edit.boolType.trueText | translate"
+                                               [nzUnCheckedChildren]="field.eruptFieldJson.edit.boolType.falseText | translate"></nz-switch>
                                 </div>
-                            </nz-radio-group>
+                            } @else {
+                                <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                [name]="field.fieldName" [nzSize]="size"
+                                                [nzDisabled]="isReadonly(field)"
+                                                class="erupt-input">
+                                    <div nz-row>
+                                        <div nz-col [nzSpan]="12">
+                                            <label nz-radio [nzValue]="true"
+                                                   class="ellipsis-radio stander-line-height">
+                                                {{ field.eruptFieldJson.edit.boolType.trueText | translate }}
+                                            </label>
+                                        </div>
+                                        <div nz-col [nzSpan]="12">
+                                            <label nz-radio [nzValue]="false"
+                                                   class="ellipsis-radio stander-line-height">
+                                                {{ field.eruptFieldJson.edit.boolType.falseText | translate }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </nz-radio-group>
+                            }
                         </se>
                     </div>
                 }

@@ -439,6 +439,15 @@
                                         <label>{{ 'designer.false_text' | translate }}</label>
                                         <input nz-input [(ngModel)]="selected.edit.boolType!.falseText"/>
                                     </div>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.choice_style' | translate }}</label>
+                                        <nz-radio-group [(ngModel)]="selected.edit.boolType!.type"
+                                                        (ngModelChange)="saveDraft()" nzSize="small">
+                                            <label nz-radio-button [nzValue]="boolEnum.AUTO">AUTO</label>
+                                            <label nz-radio-button [nzValue]="boolEnum.RADIO">RADIO</label>
+                                            <label nz-radio-button [nzValue]="boolEnum.SWITCH">SWITCH</label>
+                                        </nz-radio-group>
+                                    </div>
                                 }
                                 @case (editType.CHOICE) {
                                     <nz-divider [nzText]="'designer.options' | translate"

@@ -324,6 +324,10 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         });
     }
 
+    isBoolSwitch(eruptFieldModel: EruptFieldModel): boolean {
+        return this.dataHandlerService.isBoolSwitch(eruptFieldModel.eruptFieldJson.edit);
+    }
+
     isReadonly(eruptFieldModel: EruptFieldModel): boolean {
         if (this.readonly) {
             return true;

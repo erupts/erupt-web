@@ -1,5 +1,6 @@
 import {
     AttachmentEnum,
+    BoolEnum,
     ChoiceEnum,
     DateEnum,
     EditType,
@@ -132,7 +133,7 @@ export interface DesignerEdit {
     sliderType?: { min?: number; max?: number; step?: number; dots?: boolean };
     rateType?: { count?: number; allowHalf?: boolean };
     dateType?: { type?: DateEnum; pickerMode?: PickerMode };
-    boolType?: { trueText?: string; falseText?: string };
+    boolType?: { trueText?: string; falseText?: string; type?: BoolEnum };
     choiceType?: { type?: ChoiceEnum; vl?: DesignerVL[] };
     keyValueType?: { keyPlaceholder?: string; valuePlaceholder?: string; max?: number; keys?: string[] };
     multiChoiceType?: { vl?: DesignerVL[] };
@@ -185,7 +186,8 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
                 edit: {
                     boolType: {
                         trueText: I18NService.instance?.fanyi('designer.bool.true'),
-                        falseText: I18NService.instance?.fanyi('designer.bool.false')
+                        falseText: I18NService.instance?.fanyi('designer.bool.false'),
+                        type: BoolEnum.AUTO
                     }
                 }
             },

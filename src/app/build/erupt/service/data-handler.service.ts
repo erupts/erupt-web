@@ -1,6 +1,6 @@
 import {Edit, EruptFieldModel, VL} from "../model/erupt-field.model";
 import {EruptModel, Tree} from "../model/erupt.model";
-import {DateEnum, EditType} from "../model/erupt.enum";
+import {BoolEnum, DateEnum, EditType} from "../model/erupt.enum";
 import {deepCopy} from "@delon/util";
 import {Injectable} from "@angular/core";
 import {EruptBuildModel} from "../model/erupt-build.model";
@@ -22,6 +22,12 @@ export class DataHandlerService {
         this.datePipe = i18n.datePipe;
     }
 
+
+    // BoolTypeProxy on the server has already resolved AUTO (notNull → SWITCH, else RADIO),
+    // so the schema only ever carries one of the two concrete widgets
+    isBoolSwitch(edit: Edit): boolean {
+        return edit.boolType?.type === BoolEnum.SWITCH;
+    }
 
     initErupt(em: EruptBuildModel) {
         this.buildErupt(em.eruptModel);
@@ -672,6 +678,12 @@ export class DataHandlerService {
                         edit.$value = object[field.fieldName] || [];
                         edit.$tempValue = null;
                         break;
+                    case EditType.BOOLEAN:
+                        // A switch cannot show null: legacy rows saved before the field became
+                        // required load as off and are submitted as false
+                        edit.$value = isNotNull(object[field.fieldName]) ? object[field.fieldName]
+                            : (this.isBoolSwitch(edit) ? false : null);
+                        break;
                     default:
                         edit.$value = object[field.fieldName];
                         break;
@@ -729,6 +741,12 @@ export class DataHandlerService {
                     break;
                 case EditType.ATTACHMENT:
                     ef.eruptFieldJson.edit.$viewValue = [];
+                    break;
+                case EditType.BOOLEAN:
+                    // An untouched switch must still submit a value, otherwise notNull rejects the form
+                    if (this.isBoolSwitch(ef.eruptFieldJson.edit)) {
+                        ef.eruptFieldJson.edit.$value = false;
+                    }
                     break;
                 case EditType.TAB_TABLE_REFER:
                 case EditType.TAB_TABLE_ADD:

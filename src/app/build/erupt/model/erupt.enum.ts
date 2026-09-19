@@ -131,6 +131,14 @@ export enum ChoiceEnum {
     SELECT = "SELECT",
 }
 
+// Mirrors BoolType.Type in erupt-annotation. AUTO exists for the designer, which edits the
+// annotation itself; the server resolves it before the schema reaches the form
+export enum BoolEnum {
+    AUTO = "AUTO",
+    RADIO = "RADIO",
+    SWITCH = "SWITCH",
+}
+
 export enum MultiChoiceEnum {
     SELECT = "SELECT",
     CHECKBOX = "CHECKBOX",

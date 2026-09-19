@@ -7,7 +7,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {I18NService, leaveReuseTab, setReuseTabTitle} from "@core";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
-import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, FormSize, PagingType, Scene} from "../erupt/model/erupt.enum";
+import {AttachmentEnum, BoolEnum, ChoiceEnum, DateEnum, EditType, FormSize, PagingType, Scene} from "../erupt/model/erupt.enum";
 import {EruptBuildModel} from "../erupt/model/erupt-build.model";
 import {KV} from "../erupt/model/util.model";
 import {DataHandlerService} from "../erupt/service/data-handler.service";
@@ -45,6 +45,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
     ];
     readonly dateEnum = DateEnum;
     readonly choiceEnum = ChoiceEnum;
+    readonly boolEnum = BoolEnum;
     readonly attachmentEnum = AttachmentEnum;
     readonly Scene = Scene;
     readonly formSize = FormSize;
