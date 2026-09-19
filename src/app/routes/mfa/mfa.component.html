@@ -1,0 +1,150 @@
+@if (error) {
+  <nz-alert [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
+}
+
+@if (!status) {
+  <div class="mfa-loading">
+    <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+  </div>
+} @else {
+  @if (status.bound && step !== 2) {
+    <!-- ── Already bound: show state, let the user rotate codes or remove the factor ── -->
+    <div class="mfa-bound">
+      <i nz-icon nzType="safety-certificate" nzTheme="fill"></i>
+      <div>
+        <div class="mfa-bound-title">{{ 'mfa.bound_title'|translate }}</div>
+        <div class="mfa-bound-desc">
+          {{ 'mfa.recovery_left'|translate }}: {{ status.recoveryCodeCount }}
+        </div>
+      </div>
+    </div>
+    @if (!unbinding) {
+      <form nz-form [formGroup]="form" (ngSubmit)="regenerate()">
+        <nz-form-item>
+          <nz-form-control>
+            <input nz-input nzSize="large" formControlName="code" class="mfa-otp"
+              maxlength="6" inputmode="numeric" autocomplete="one-time-code"
+              [placeholder]="'mfa.code_placeholder'|translate" [disabled]="loading">
+          </nz-form-control>
+        </nz-form-item>
+        <div class="mfa-actions">
+          <button nz-button nzType="primary" type="submit" [nzLoading]="loading">
+            {{ 'mfa.regenerate'|translate }}
+          </button>
+          <button nz-button nzDanger type="button" (click)="unbinding = true; error = ''">
+            {{ 'mfa.unbind'|translate }}
+          </button>
+        </div>
+      </form>
+    } @else {
+      <form nz-form [formGroup]="unbindForm" (ngSubmit)="unbind()">
+        <p class="mfa-tip">{{ 'mfa.unbind_tip'|translate }}</p>
+        <nz-form-item>
+          <nz-form-control>
+            <nz-input-group nzSize="large" nzPrefixIcon="lock">
+              <input nz-input type="password" formControlName="pwd"
+                [placeholder]="'change-pwd.original_password'|translate" [disabled]="loading">
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-control>
+            <input nz-input nzSize="large" formControlName="code" class="mfa-otp"
+              maxlength="32" autocomplete="one-time-code"
+              [placeholder]="'mfa.code_placeholder'|translate" [disabled]="loading">
+          </nz-form-control>
+        </nz-form-item>
+        <div class="mfa-actions">
+          <button nz-button nzDanger nzType="primary" type="submit" [nzLoading]="loading">
+            {{ 'mfa.unbind'|translate }}
+          </button>
+          <button nz-button type="button" (click)="unbinding = false; error = ''">
+            {{ 'global.cancel'|translate }}
+          </button>
+        </div>
+      </form>
+    }
+  } @else if (!status.bound && !enroll && step !== 2) {
+    <!-- ── Not bound yet ── -->
+    <div class="mfa-intro">
+      <p>{{ 'mfa.intro'|translate }}</p>
+    </div>
+    <button nz-button nzType="primary" nzSize="large" nzBlock
+      [nzLoading]="loading" (click)="startEnroll()">
+      {{ 'mfa.start'|translate }}
+    </button>
+  } @else {
+    <nz-steps [nzCurrent]="step" nzSize="small" class="mfa-steps">
+      <nz-step [nzTitle]="'mfa.step_scan'|translate"></nz-step>
+      <nz-step [nzTitle]="'mfa.step_verify'|translate"></nz-step>
+      <nz-step [nzTitle]="'mfa.step_recovery'|translate"></nz-step>
+    </nz-steps>
+
+    @switch (step) {
+      @case (0) {
+        <div class="mfa-qr">
+          <nz-qrcode [nzValue]="enroll.uri" [nzLevel]="'M'" [nzSize]="180"></nz-qrcode>
+        </div>
+        <p class="mfa-tip">{{ 'mfa.scan_tip'|translate }}</p>
+        <div class="mfa-secret">
+          <a class="mfa-link" (click)="secretVisible = !secretVisible">
+            {{ (secretVisible ? 'mfa.hide_secret' : 'mfa.show_secret')|translate }}
+          </a>
+          @if (secretVisible) {
+            <div class="mfa-secret-value">
+              <code>{{ enroll.secret }}</code>
+              <a class="mfa-link" (click)="copySecret()">{{ 'mfa.copy'|translate }}</a>
+            </div>
+          }
+        </div>
+        <button nz-button nzType="primary" nzSize="large" nzBlock (click)="step = 1">
+          {{ 'mfa.next'|translate }}
+        </button>
+      }
+      @case (1) {
+        <form nz-form [formGroup]="form" (ngSubmit)="confirmEnroll()">
+          <p class="mfa-tip">{{ 'mfa.verify_tip'|translate }}</p>
+          <nz-form-item>
+            <nz-form-control>
+              <input nz-input nzSize="large" formControlName="code" class="mfa-otp"
+                maxlength="6" inputmode="numeric" autocomplete="one-time-code"
+                [placeholder]="'mfa.code_placeholder'|translate" [disabled]="loading">
+            </nz-form-control>
+          </nz-form-item>
+          <div class="mfa-actions">
+            <button nz-button nzType="primary" type="submit" [nzLoading]="loading">
+              {{ 'mfa.enable'|translate }}
+            </button>
+            <button nz-button type="button" (click)="step = 0; error = ''">
+              {{ 'mfa.back'|translate }}
+            </button>
+          </div>
+        </form>
+      }
+      @case (2) {
+        <div class="mfa-done">
+          <i nz-icon nzType="check-circle" nzTheme="fill"></i>
+          <span>{{ 'mfa.recovery_title'|translate }}</span>
+        </div>
+        <p class="mfa-tip mfa-tip-warn">{{ 'mfa.recovery_warn'|translate }}</p>
+        <div class="mfa-codes">
+          @for (code of recoveryCodes; track code) {
+            <code>{{ code }}</code>
+          }
+        </div>
+        <div class="mfa-actions">
+          <button nz-button type="button" (click)="copyRecoveryCodes()">{{ 'mfa.copy_all'|translate }}</button>
+          <button nz-button type="button" (click)="downloadRecoveryCodes()">{{ 'mfa.download'|translate }}</button>
+        </div>
+        <label nz-checkbox [(ngModel)]="recoveryAcknowledged" [ngModelOptions]="{standalone: true}"
+          class="mfa-ack">
+          {{ 'mfa.recovery_ack'|translate }}
+        </label>
+        <button nz-button nzType="primary" nzSize="large" nzBlock
+          [disabled]="!recoveryAcknowledged" (click)="done()">
+          {{ 'mfa.finish'|translate }}
+        </button>
+      }
+    }
+  }
+}

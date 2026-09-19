@@ -6,6 +6,7 @@ import {DataService} from "@shared/service/data.service";
 import {I18NService} from "@core";
 import {UserTool, WindowModel} from "@shared/model/window.model";
 import {NzModalService} from "ng-zorro-antd/modal";
+import {MfaComponent} from "../../../../routes/mfa/mfa.component";
 import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.component";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {UtilsService} from "@shared/service/utils.service";
@@ -17,9 +18,9 @@ import {SocketService} from "@shared/service/socket.service";
     template: `
         <div class="alain-default__nav-item d-flex align-items-center px-sm" nz-dropdown nzPlacement="bottomRight"
           [nzDropdownMenu]="avatarMenu">
-          <nz-avatar [nzText]="settings.user.name&&settings.user.name.substring(0,1)"
+          <nz-avatar class="mr-sm" [nzText]="settings.user.name&&settings.user.name.substring(0,1)"
             [nzSrc]="settings.user.avatar||null"
-          nzSize="default" class="mr-sm"></nz-avatar>
+          nzSize="default"></nz-avatar>
           <span class="hidden-mobile">{{ settings.user.name }}</span>
         </div>
         <nz-dropdown-menu #avatarMenu>
@@ -44,6 +45,14 @@ import {SocketService} from "@shared/service/socket.service";
                 <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>{{ 'global.reset_pwd'|translate }}
               </div>
             }
+            @if (mfaEnable) {
+              <div nz-menu-item (click)="mfa()">
+                <i nz-icon nzType="safety-certificate" nzTheme="fill" class="mr-sm"></i>{{ 'global.mfa'|translate }}
+                @if (mfaUnprotected) {
+                  <nz-badge nzStatus="error" class="ml-sm"></nz-badge>
+                }
+              </div>
+            }
             <div nz-menu-item (click)="logout()">
               <i nz-icon nzType="logout" nzTheme="outline" class="mr-sm"></i>{{ 'global.logout'|translate }}
             </div>
@@ -54,6 +63,17 @@ import {SocketService} from "@shared/service/socket.service";
 export class HeaderUserComponent {
 
     resetPassword = EruptAppData.get().resetPwd;
+
+    //the switch is server side, a tenant session has no platform MFA binding of its own
+    mfaEnable = !!(EruptAppData.get().mfa && EruptAppData.get().mfa.enable);
+
+    //undefined until the status call answers, so the dot never flashes for a bound user
+    mfaBound: boolean;
+
+    //the server offers MFA and this account has not taken it up
+    get mfaUnprotected(): boolean {
+        return this.mfaEnable && this.mfaBound === false;
+    }
 
     userTools: UserTool[] = WindowModel.userTools;
 
@@ -68,6 +88,11 @@ export class HeaderUserComponent {
         private utilsService: UtilsService,
         private socketService: SocketService,
     ) {
+        if (this.mfaEnable && !this.utilsService.isTenantToken()) {
+            this.dataService.mfaStatus().subscribe(status => this.mfaBound = status.bound);
+        } else {
+            this.mfaEnable = false;
+        }
     }
 
     logout() {
@@ -91,6 +116,19 @@ export class HeaderUserComponent {
                     this.tokenService.clear();
                 });
             }
+        });
+    }
+
+    mfa() {
+        this.modal.create({
+            nzDraggable: true,
+            nzTitle: this.i18n.fanyi("global.mfa"),
+            nzMaskClosable: false,
+            nzContent: MfaComponent,
+            nzFooter: null,
+            nzWidth: 460
+        }).afterClose.subscribe(() => {
+            this.dataService.mfaStatus().subscribe(status => this.mfaBound = status.bound);
         });
     }
 

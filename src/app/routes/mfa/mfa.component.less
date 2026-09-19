@@ -1,0 +1,155 @@
+:host {
+    display: block;
+
+    // The modal body already supplies the outer padding; the last block inside must not
+    // add to it, otherwise the dialog looks bottom heavy on every step.
+    > *:last-child {
+        margin-bottom: 0;
+    }
+
+    .mfa-loading {
+        display: flex;
+        justify-content: center;
+        padding: 32px 0;
+    }
+
+    .mfa-intro,
+    .mfa-tip {
+        font-size: 13px;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.5));
+        line-height: 1.6;
+        margin-bottom: 16px;
+    }
+
+    // ng-zorro gives every form item a bottom margin; inside a dialog the last one
+    // would stack with the body padding
+    ::ng-deep form .ant-form-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .mfa-tip-warn {
+        color: var(--ant-warning-color, #faad14);
+    }
+
+    .mfa-steps {
+        margin-bottom: 22px;
+    }
+
+    // ── Enrolment ────────────────────────────────────────────────
+    .mfa-qr {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 16px;
+    }
+
+    .mfa-secret {
+        margin-bottom: 20px;
+    }
+
+    .mfa-secret-value {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+        padding: 8px 10px;
+        background: var(--erupt-bg-layout, #fafafa);
+        border-radius: 4px;
+
+        code {
+            flex: 1;
+            font-size: 13px;
+            letter-spacing: 0.06em;
+            word-break: break-all;
+        }
+    }
+
+    .mfa-otp {
+        text-align: center;
+        font-size: 20px;
+        letter-spacing: 0.5em;
+        text-indent: 0.5em; // offset the trailing letter-spacing so the text stays centred
+        font-variant-numeric: tabular-nums;
+    }
+
+    // ── Bound state ──────────────────────────────────────────────
+    .mfa-bound {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+
+        i {
+            font-size: 26px;
+            color: var(--ant-success-color, #52c41a);
+        }
+    }
+
+    .mfa-bound-title {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .mfa-bound-desc {
+        font-size: 12px;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+    }
+
+    // ── Recovery codes ───────────────────────────────────────────
+    .mfa-done {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 10px;
+
+        i {
+            color: var(--ant-success-color, #52c41a);
+        }
+    }
+
+    .mfa-codes {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-bottom: 16px;
+
+        code {
+            padding: 6px 8px;
+            text-align: center;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            background: var(--erupt-bg-layout, #fafafa);
+            border-radius: 4px;
+        }
+    }
+
+    // nz-checkbox is an inline-flex wrapper; forcing display:block drops the label
+    // onto its own line, so lay it out as a flex row instead
+    .mfa-ack {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+        font-size: 13px;
+    }
+
+    .mfa-actions {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .mfa-link {
+        font-size: 13px;
+        cursor: pointer;
+        color: var(--ant-primary-color, #3f51b5);
+
+        &:hover {
+            opacity: 0.75;
+        }
+    }
+}
