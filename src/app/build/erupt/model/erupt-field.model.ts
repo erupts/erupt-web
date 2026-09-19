@@ -1,5 +1,6 @@
 import {
     AttachmentEnum,
+    BoolEnum,
     ChoiceEnum,
     DateEnum,
     EditType,
@@ -217,6 +218,7 @@ export interface ReferenceTableType {
 interface BoolType {
     trueText: string;
     falseText: string;
+    type: BoolEnum;
 }
 
 interface ChoiceType {
