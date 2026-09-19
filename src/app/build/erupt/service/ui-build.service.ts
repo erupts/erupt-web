@@ -284,20 +284,27 @@ export class UiBuildService {
                         }
                     };
                     break;
-                case ViewType.BOOLEAN:
+                case ViewType.BOOLEAN: {
                     obj.className = "text-center";
                     obj.width = titleWidth + 18;
-                    obj.type = "tag";
-                    // the query returns the raw boolean, so the tag is always keyed by value;
+                    // the query returns the raw boolean, so the wording is keyed by value;
                     // a field with no edit config has no wording to use and falls back to Y / N
-                    obj.tag = edit && edit.title && edit.boolType ? {
-                        true: {text: edit.boolType.trueText, color: 'green'},
-                        false: {text: edit.boolType.falseText, color: 'red'},
-                    } : {
-                        true: {text: this.i18n.fanyi('Y'), color: 'green'},
-                        false: {text: this.i18n.fanyi('N'), color: 'red'},
+                    const wording = edit && edit.title && edit.boolType
+                        ? {true: edit.boolType.trueText, false: edit.boolType.falseText}
+                        : {true: this.i18n.fanyi('Y'), false: this.i18n.fanyi('N')};
+                    // Painted through format rather than ST's "tag" type: that type renders an
+                    // nz-tag even when the value is null, which shows as an empty bordered pill
+                    obj.format = (item: any) => {
+                        const value = item[view.column];
+                        if (value == null) {
+                            return "";
+                        }
+                        const truthy = value === true || value === "true";
+                        return `<span class="ant-tag ant-tag-${truthy ? "green" : "red"}">`
+                            + UiBuildService.escapeHtml(wording[truthy ? "true" : "false"]) + `</span>`;
                     };
                     break;
+                }
                 case ViewType.LINK:
                     obj.type = "link";
                     obj.className = "text-center";

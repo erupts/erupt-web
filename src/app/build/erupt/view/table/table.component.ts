@@ -2019,8 +2019,8 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * A column with a render template bypasses the column format, its "tag" type and its click
-     * handler, so an editable cell has to paint itself. This says which shape to paint; the
+     * A column with a render template bypasses the column format and its click handler, so an
+     * editable cell has to paint itself. This says which shape to paint; the
      * editable view types are limited to the ones covered here.
      */
     cellKind(col: STColumn): string {
