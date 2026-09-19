@@ -84,9 +84,15 @@
     }
 
     .lf-sso-list {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        display: grid; // the column count is set inline from the provider count
         gap: 10px;
+
+        &.lf-sso-compact {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
     }
 
     .lf-sso-btn {
@@ -95,6 +101,8 @@
         justify-content: center;
         gap: 8px;
         width: 100%;
+        min-width: 0;
+        margin: 0 !important; // ant adds a left margin between sibling buttons, the grid gap already spaces them
         overflow: hidden;
 
         span {
@@ -102,6 +110,21 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+    }
+
+    // three abreast leaves about 100px per button: trim the padding and type so a
+    // short name still fits, a long one gets an ellipsis and the tooltip
+    .lf-sso-list:not(.lf-sso-compact) .lf-sso-btn {
+        padding: 0 8px;
+        font-size: 14px;
+    }
+
+    .lf-sso-btn-round {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        font-size: 18px;
+        font-weight: 600;
     }
 
     // Shown while the ticket from the callback is being cashed in; the form is hidden

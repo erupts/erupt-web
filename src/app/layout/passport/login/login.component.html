@@ -124,15 +124,31 @@
     @if (ssoProviders.length && !mfaTicket) {
       <div class="lf-sso">
         <div class="lf-sso-rule"><span>{{ 'login.sso.divider'|translate }}</span></div>
-        <div class="lf-sso-list">
+        <!-- up to three providers share one row with their names; more than that
+             become a row of icon buttons, the name moving into a tooltip -->
+        <div class="lf-sso-list" [class.lf-sso-compact]="ssoCompact"
+          [style.grid-template-columns]="ssoCompact ? null : 'repeat(' + ssoProviders.length + ', minmax(0, 1fr))'">
           @for (provider of ssoProviders; track provider.code) {
-            <button type="button" nz-button nzSize="large" class="lf-sso-btn"
-              [disabled]="loading" (click)="toSso(provider)">
-              @if (provider.icon) {
-                <i class="{{ provider.icon }}" aria-hidden="true"></i>
-              }
-              <span>{{ provider.name }}</span>
-            </button>
+            @if (ssoCompact) {
+              <button type="button" nz-button nzSize="large" nzShape="circle" class="lf-sso-btn lf-sso-btn-round"
+                nz-tooltip [nzTooltipTitle]="provider.name" [attr.aria-label]="provider.name"
+                [disabled]="loading" (click)="toSso(provider)">
+                @if (provider.icon) {
+                  <i class="{{ provider.icon }}" aria-hidden="true"></i>
+                } @else {
+                  <span>{{ provider.name.charAt(0) }}</span>
+                }
+              </button>
+            } @else {
+              <button type="button" nz-button nzSize="large" class="lf-sso-btn"
+                nz-tooltip [nzTooltipTitle]="provider.name"
+                [disabled]="loading" (click)="toSso(provider)">
+                @if (provider.icon) {
+                  <i class="{{ provider.icon }}" aria-hidden="true"></i>
+                }
+                <span>{{ provider.name }}</span>
+              </button>
+            }
           }
         </div>
       </div>

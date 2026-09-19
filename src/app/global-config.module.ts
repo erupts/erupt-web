@@ -31,7 +31,9 @@ const alainConfig: AlainConfig = {
             /\/erupt-app$/,
             /\/tenant\/domain-info$/,
             /erupt-api\/login/,
-            /erupt-api\/tenant\/login/
+            /erupt-api\/tenant\/login/,
+            // sign-on happens before there is a token: the provider list, and the ticket exchange
+            /erupt-api\/sso\//
         ]
     }
 };
