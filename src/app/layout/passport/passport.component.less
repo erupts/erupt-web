@@ -204,19 +204,13 @@
         line-height: 1.7;
     }
 
-    // a column-shaped page: the card is not a floating box, the nav pill has no fill
+    // a column-shaped page: the card is not a floating box (the nav pill keeps
+    // the same look as in every other layout)
     .lp-page--cover {
         .lp-card {
             background: transparent;
             border-radius: 0;
             box-shadow: none;
-        }
-
-        .lp-side-nav-actions {
-            background: transparent;
-            box-shadow: none;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
         }
     }
 
@@ -269,7 +263,7 @@
     .lp-page--wide {
         .lp-card {
             display: flex;
-            max-width: 920px;
+            max-width: 800px;
             min-height: 540px;
             border-radius: 12px;
         }
@@ -633,6 +627,11 @@
         border-radius: 0;
         box-shadow: 8px 8px 0 var(--raft-ink, #0a0a0a);
         animation: lpCardInBrutalist 0.40s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    // the wide card: this skin's card rule would otherwise pin it to 400px
+    .lp-page--wide .lp-card {
+        max-width: 800px;
     }
 
     @keyframes lpCardInBrutalist {
