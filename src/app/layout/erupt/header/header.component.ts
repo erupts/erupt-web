@@ -184,9 +184,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzNotificationService) private notification: NzNotificationService,
                 @Inject(ReuseTabService) private reuseTabSrv: ReuseTabService) {
-        if (this.tenantDomainInfo) {
-            if (this.tenantDomainInfo.logo) {
-                this.logoPath = DataService.previewAttachment(this.tenantDomainInfo.logo)
+        if (this.tenantDomainInfo && this.tenantDomainInfo.logo) {
+            this.logoPath = DataService.previewAttachment(this.tenantDomainInfo.logo);
+            // The tenant's logo is its own brand, so it also stands in for the
+            // collapsed mark; only an explicitly configured fold logo beats it.
+            if (!WindowModel.config["logoFoldPath"]) {
+                this.logoFoldPath = this.logoPath;
             }
         }
     }
