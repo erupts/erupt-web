@@ -3,7 +3,26 @@
     overflow: hidden;
 }
 
-// Drag & Drop
+// One-shot pulse on the row the sidebar's "locate current" button scrolled to
+.sidebar-nav__item-link--located,
+.dual-menu__rail-item.sidebar-nav__item-link--located {
+    animation: erupt-menu-locate-pulse 1.2s ease-out;
+}
+
+@keyframes erupt-menu-locate-pulse {
+    0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ant-primary-color, #1677ff) 70%, transparent); }
+    100% { box-shadow: 0 0 0 8px transparent; }
+}
+
+// Keyword filter with nothing left to show
+.sidebar-nav__filter-empty {
+    padding: 24px 16px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+}
+
+// Drag & Drop — favorites section only (the tree itself is not sortable)
 .sidebar-nav__drag-placeholder {
     height: 36px;
     margin: 2px 8px;

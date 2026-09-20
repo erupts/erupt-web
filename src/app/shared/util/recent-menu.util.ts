@@ -40,6 +40,10 @@ export class RecentMenus {
         RecentMenus.save(RecentMenus.list().filter(i => i.link !== link));
     }
 
+    static clear(): void {
+        localStorage.removeItem(RecentMenus.KEY);
+    }
+
     private static save(items: RecentMenu[]): void {
         localStorage.setItem(RecentMenus.KEY, JSON.stringify(items));
     }

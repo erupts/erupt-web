@@ -43,6 +43,15 @@
             color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
         }
 
+        // Sub-option block under the skin radios (label above a swatch row)
+        .skin-sub {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+        }
+
         // Theme color swatch row
         .theme-color-picker {
             display: flex;
@@ -147,11 +156,24 @@
                     color: var(--ant-primary-color);
                 }
             }
+
+            // Skin tiles: same three-up grid as the menu modes; a two-word name
+            // may wrap under its tile
+            &--skins {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+
+                .menu-mode-picker__item span {
+                    white-space: normal;
+                    text-align: center;
+                    line-height: 1.2;
+                }
+            }
         }
     }
 }
 
-// Dim the light-canvas layout pictograms so they don't glare in dark mode
-:host-context(html.dark) ::ng-deep .menu-mode-picker__item svg {
+// Dim the light-canvas layout pictograms so they don't glare in dark mode.
+// The skin tiles are excluded: each one IS its skin's real colors.
+:host-context(html.dark) ::ng-deep .menu-mode-picker:not(.menu-mode-picker--skins) .menu-mode-picker__item svg {
     filter: invert(0.88) hue-rotate(180deg);
 }

@@ -17,7 +17,13 @@ import {NzMessageService} from "ng-zorro-antd/message";
 
 
 import {NzConfigService} from "ng-zorro-antd/core/config";
-import {applyHeaderColor, defaultHeaderColor} from "../../shared/util/theme.util";
+import {
+    applyHeaderColor,
+    applyWorkspaceFrame,
+    defaultHeaderColor,
+    resolveThemeColor,
+    savedWorkspaceFrame
+} from "../../shared/util/theme.util";
 
 
 @Injectable()
@@ -34,20 +40,20 @@ export class StartupService {
     }
 
     // Site config supplies the default theme; a color the user picked in the
-    // settings drawer (localStorage "theme-color") wins over it.
+    // settings drawer wins over it. The color comes from the active skin's own
+    // slot (index.html has already put the skin class on <html>), so a
+    // brutalist pastel never boots into another skin and vice versa.
     private applyTheme(): void {
         // only the color entries go to ng-zorro; the layout-ish defaults are read elsewhere
-        const {dark, compact, skin, menuMode, ...theme} = WindowModel.theme || {};
-        const savedColor = localStorage.getItem("theme-color");
-        if (savedColor) {
-            theme.primaryColor = savedColor;
-        }
-        if (Object.keys(theme).length > 0) {
-            this.nzConfigService.set('theme', theme);
-        }
+        const {dark, compact, skin, menuMode, workspaceFrame, customizable, ...theme} = WindowModel.theme || {};
+        theme.primaryColor = resolveThemeColor();
+        this.nzConfigService.set('theme', theme);
         // User choice first, then the site config default (theme.headerColor),
         // then the skin's own default (the brutalist band follows the theme color)
         applyHeaderColor(localStorage.getItem("header-color") || theme.headerColor || defaultHeaderColor());
+        // Workspace skin frame gradient: user choice first, then the site default;
+        // the default is applied without being recorded as a choice
+        applyWorkspaceFrame(savedWorkspaceFrame() || workspaceFrame || null, false);
     }
 
     async load(): Promise<any> {
@@ -143,10 +149,13 @@ export class StartupService {
         // Menu layout mode: a choice persisted from the settings drawer wins; otherwise
         // eruptSiteConfig.theme.menuMode (a MenuMode value) seeds the flags. Not persisted
         // here, so a later change of the config default still takes effect for users who
-        // never picked a mode themselves.
+        // never picked a mode themselves. With the appearance locked
+        // (theme.customizable = false) the site default is forced on every load, a
+        // saved choice included.
         const layout = this.settingSrv.layout;
-        const defaultMenuMode = WindowModel.theme?.menuMode as MenuMode;
-        if (!hasMenuModeChoice(layout) && defaultMenuMode && defaultMenuMode !== MenuMode.NORMAL) {
+        const defaultMenuMode = (WindowModel.theme?.menuMode as MenuMode) || MenuMode.NORMAL;
+        const locked = !WindowModel.appearanceCustomizable();
+        if (locked || (!hasMenuModeChoice(layout) && defaultMenuMode !== MenuMode.NORMAL)) {
             Object.assign(layout, menuModeFlags(defaultMenuMode));
             // the header-menu modes take the breadcrumb's place (same rule as setMenuMode)
             if (isHeaderMenuMode(defaultMenuMode)) {

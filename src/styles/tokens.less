@@ -84,9 +84,10 @@ html.dark {
 
 // ── Dark-aside menu language ─────────────────────────────────────
 // Sidebar menu states for the global dark theme. Scoped selectors out-specify
-// the compiled dark bundle. The brutalist skin owns its own menu rows; colors
-// here are dark-surface constants, so no --erupt-* tokens.
-html.dark:not(.brutalist-theme):not(.liquid-glass) {
+// the compiled dark bundle. The brutalist, liquid-glass, workspace and classic
+// skins own their own menu rows; colors here are dark-surface constants, so no
+// --erupt-* tokens.
+html.dark:not(.brutalist-theme):not(.liquid-glass):not(.workspace):not(.classic) {
     // never wash the selected <li> through the hook — it paints the <li>,
     // which CONTAINS the expanded submenu <ul>
     --alain-default-aside-nav-selected-bg: transparent;
@@ -257,8 +258,8 @@ html.compact {
 // sidebar states (hover text, selected guide bar, selected link) in the stock
 // blue literal. Re-anchor them to the runtime brand color. The dark sidebar is
 // excluded — its menu states come from the dark-aside block above — and the
-// brutalist skin owns its own sidebar look.
-html.compact:not(.dark):not(.brutalist-theme):not(.liquid-glass) {
+// brutalist, liquid-glass, workspace and classic skins own their own sidebar look.
+html.compact:not(.dark):not(.brutalist-theme):not(.liquid-glass):not(.workspace):not(.classic) {
     .alain-default__aside {
         .sidebar-nav__item-link:hover {
             color: var(--ant-primary-color);

@@ -15,10 +15,12 @@
            nz-tooltip [nzTooltipTitle]="'setting.dark' | translate" nzTooltipPlacement="bottom">
           <i nz-icon [nzType]="darkTheme ? 'sun' : 'moon'" nzTheme="outline"></i>
         </a>
+        <!-- skin and theme color are branding: hidden when the site config locks the appearance -->
+        @if (appearanceCustomizable) {
         <a class="lp-nav-btn" style="cursor:pointer"
            nz-dropdown [nzDropdownMenu]="skinMenu" nzTrigger="click" nzPlacement="bottomRight"
            nz-tooltip [nzTooltipTitle]="'setting.skin' | translate" nzTooltipPlacement="bottom">
-          <i nz-icon nzType="bulb" [nzTheme]="skin === 'default' ? 'outline' : 'fill'"></i>
+          <i nz-icon nzType="bulb" [nzTheme]="skin === Skin.DEFAULT ? 'outline' : 'fill'"></i>
         </a>
         <a class="lp-nav-btn" style="cursor:pointer"
            nz-dropdown [nzDropdownMenu]="colorMenu" nzTrigger="click" nzPlacement="bottomRight"
@@ -48,11 +50,12 @@
           <ul nz-menu nzSelectable>
             @for (item of skins; track item.value) {
               <li nz-menu-item [nzSelected]="skin === item.value" (click)="setSkin(item.value)">
-                {{ item.value === 'default' ? ('setting.skin-default' | translate) : item.label }}
+                {{ item.value === Skin.DEFAULT ? ('setting.skin-default' | translate) : item.label }}
               </li>
             }
           </ul>
         </nz-dropdown-menu>
+        }
         @if (copyright) {
           <a class="lp-nav-btn" href="https://github.com/erupts/erupt" target="_blank"
              nz-tooltip nzTooltipTitle="GitHub" nzTooltipPlacement="bottom">

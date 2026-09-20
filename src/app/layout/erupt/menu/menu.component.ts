@@ -30,6 +30,10 @@ import type {NzSafeAny} from 'ng-zorro-antd/core/types';
 export interface Nav extends MenuInner {
     _needIcon?: boolean;
     _text?: SafeHtml;
+    // sidebar keyword filter: true hides the row (neither it nor a descendant matches)
+    _filtered?: boolean;
+    // open state before the filter forced the trail open, restored when it clears
+    _openBeforeFilter?: boolean;
 }
 
 const SHOWCLS = 'sidebar-nav__floating-show';
@@ -73,12 +77,68 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     @Output() readonly select = new EventEmitter<Menu>();
 
-    static readonly MENU_ORDER_KEY = 'erupt_menu_order';
     static readonly FAVORITES_KEY = 'erupt_menu_favorites';
 
     favorites: Nav[] = [];
 
     splitTopItems: Nav[] = [];
+
+    // ── In-place keyword filter (sidebar utility bar) ─────────────────
+    // Rows that neither match nor contain a match are hidden; the trail above
+    // a match is opened so it is visible. A matching category keeps all of its
+    // children. Open states are snapshotted on the first keystroke and put back
+    // when the keyword is cleared, so filtering never rearranges the tree.
+    filterKeyword = '';
+
+    filterMatches = 0;
+
+    setFilter(keyword: string): void {
+        const kw = (keyword || '').trim().toLowerCase();
+        const wasFiltering = !!this.filterKeyword;
+        this.filterKeyword = kw;
+        if (!kw) {
+            this.menuSrv.visit(this.list, (i: Nav) => {
+                i._filtered = false;
+                if (wasFiltering && i._openBeforeFilter !== undefined) {
+                    i.open = i._openBeforeFilter;
+                    i._openBeforeFilter = undefined;
+                }
+            });
+            this.filterMatches = 0;
+            this.cdr.detectChanges();
+            return;
+        }
+        let matches = 0;
+        const showAll = (items: Nav[]) => this.menuSrv.visit(items, (i: Nav) => i._filtered = false);
+        const mark = (items: Nav[]): boolean => {
+            let any = false;
+            for (const i of items) {
+                if (!wasFiltering) {
+                    i._openBeforeFilter = i.open;
+                }
+                const self = (i.text || '').toLowerCase().includes(kw);
+                const children = (i.children || []) as Nav[];
+                const inChildren = children.length ? mark(children) : false;
+                if (self && children.length) {
+                    showAll(children);
+                }
+                i._filtered = !(self || inChildren);
+                if (inChildren) {
+                    i.open = true;
+                }
+                if (!i._filtered) {
+                    any = true;
+                }
+                if (self && !children.length) {
+                    matches++;
+                }
+            }
+            return any;
+        };
+        mark(this.list);
+        this.filterMatches = matches;
+        this.cdr.detectChanges();
+    }
 
     get selectedTopItem(): Nav | null {
         return selectedTopMenu(this.splitTopItems, this.settings.layout) as Nav | null;
@@ -96,10 +156,10 @@ export class MenuComponent implements OnInit, OnDestroy {
         return !!this.settings.layout['dualMenu'];
     }
 
-    // Labels under the dual-mode rail icons. The rail has always shown them,
-    // so an unset flag keeps them on and only an explicit false hides them.
+    // Labels under the dual-mode rail icons. Off by default (icon-only rail);
+    // only an explicit true shows them.
     get dualRailText(): boolean {
-        return this.settings.layout['dualRailText'] !== false;
+        return this.settings.layout['dualRailText'] === true;
     }
 
     get groupMenu(): boolean {
@@ -302,6 +362,9 @@ export class MenuComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         const {doc, router, destroy$, menuSrv, settings, cdr} = this;
         this.bodyEl = doc.querySelector('body');
+        // Whole-tree drag sorting was removed: the menu follows the server order
+        // again. Drop the per-browser order older builds saved.
+        localStorage.removeItem('erupt_menu_order');
         menuSrv.change.pipe(takeUntil(destroy$)).subscribe(data => {
             menuSrv.visit(data, (i: Nav, _p, depth) => {
                 i._text = this.sanitizer.bypassSecurityTrustHtml(i.text!);
@@ -321,7 +384,6 @@ export class MenuComponent implements OnInit, OnDestroy {
             this.fixHide(data);
             this.loading = false;
             this.list = data.filter((w: Nav) => w._hidden !== true);
-            this.restoreMenuOrder();
             this.loadFavorites();
             this.computeSplitItems();
             this.autoSelectTopItem();
@@ -411,56 +473,6 @@ export class MenuComponent implements OnInit, OnDestroy {
         moveItemInArray(this.favorites, event.previousIndex, event.currentIndex);
         this.saveFavorites();
         this.cdr.detectChanges();
-    }
-
-    // #endregion
-
-    // #region Drag & Drop
-
-    drop(event: CdkDragDrop<Nav[]>, siblings: Nav[]): void {
-        moveItemInArray(siblings, event.previousIndex, event.currentIndex);
-        this.saveMenuOrder();
-        this.cdr.detectChanges();
-    }
-
-    private saveMenuOrder(): void {
-        const order: Record<string, number> = {};
-        const collect = (items: Nav[], prefix: string) => {
-            items.forEach((item, idx) => {
-                const key = prefix + (item.text || item.link || idx);
-                order[key] = idx;
-                if (item.children?.length) {
-                    collect(item.children, key + '/');
-                }
-            });
-        };
-        collect(this.list, '');
-        localStorage.setItem(MenuComponent.MENU_ORDER_KEY, JSON.stringify(order));
-    }
-
-    private restoreMenuOrder(): void {
-        const raw = localStorage.getItem(MenuComponent.MENU_ORDER_KEY);
-        if (!raw) return;
-        try {
-            const order: Record<string, number> = JSON.parse(raw);
-            const sort = (items: Nav[], prefix: string) => {
-                items.sort((a, b) => {
-                    const ka = prefix + (a.text || a.link || '');
-                    const kb = prefix + (b.text || b.link || '');
-                    const oa = order[ka] ?? 999;
-                    const ob = order[kb] ?? 999;
-                    return oa - ob;
-                });
-                items.forEach((item, idx) => {
-                    const key = prefix + (item.text || item.link || idx);
-                    if (item.children?.length) {
-                        sort(item.children, key + '/');
-                    }
-                });
-            };
-            sort(this.list, '');
-        } catch {
-        }
     }
 
     // #endregion
