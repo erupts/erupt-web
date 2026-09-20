@@ -7,12 +7,13 @@ import {NzConfigService} from "ng-zorro-antd/core/config";
 import {
     applyThemeColor,
     BRUTALIST_PRESET_COLORS,
-    DEFAULT_THEME_COLOR,
+    currentSkin,
+    resolveThemeColor,
+    Skin,
+    switchSkin,
     THEME_PRESET_COLORS,
     toHexColor
 } from "@shared/util/theme.util";
-
-type PassportSkin = 'default' | 'brutalist' | 'liquid-glass';
 
 @Component({
     standalone: false,
@@ -36,6 +37,10 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     tenantDomainInfo = EruptTenantInfoData.get();
 
+    // Site config may lock the appearance (theme.customizable = false): the
+    // dark / skin / color buttons are then left out of the nav.
+    readonly appearanceCustomizable: boolean = WindowModel.appearanceCustomizable();
+
     // Dark theme — reflects the class index.html applied before bootstrap.
     darkTheme: boolean = document.documentElement.classList.contains("dark");
 
@@ -49,26 +54,27 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     // Visual skin — at most one is active, so it is a single choice rather than a
     // toggle. Reflects the class index.html applied before bootstrap. Kept in
-    // step with the settings drawer: same values, same two storage flags.
-    skins: { value: PassportSkin; label: string }[] = [
-        {value: "default", label: "Default"},
-        {value: "brutalist", label: "Brutalist"},
-        {value: "liquid-glass", label: "Liquid Glass"}
+    // step with the settings drawer: same enum, same apply path (theme.util).
+    readonly Skin = Skin;
+
+    skins: { value: Skin; label: string }[] = [
+        {value: Skin.DEFAULT, label: "Default"},
+        {value: Skin.CLASSIC, label: "Classic"},
+        {value: Skin.WORKSPACE, label: "Workspace"},
+        {value: Skin.LIQUID_GLASS, label: "Liquid Glass"},
+        {value: Skin.BRUTALIST, label: "Brutalist"}
     ];
 
-    skin: PassportSkin = document.documentElement.classList.contains("brutalist-theme")
-        ? "brutalist"
-        : document.documentElement.classList.contains("liquid-glass")
-            ? "liquid-glass"
-            : "default";
+    skin: Skin = currentSkin();
 
     // Theme color — same palettes, same storage and the same apply path as the
     // settings drawer (@shared/util/theme.util), so a color chosen here is the
     // one the app boots into after signing in.
-    themeColor: string = localStorage.getItem("theme-color") || WindowModel.theme?.primaryColor || DEFAULT_THEME_COLOR;
+    // The active skin's own color (the brutalist skin keeps a separate slot)
+    themeColor: string = resolveThemeColor();
 
     get activePresetColors(): string[] {
-        return this.skin === "brutalist" ? BRUTALIST_PRESET_COLORS : THEME_PRESET_COLORS;
+        return this.skin === Skin.BRUTALIST ? BRUTALIST_PRESET_COLORS : THEME_PRESET_COLORS;
     }
 
     get themeColorHex(): string {
@@ -83,14 +89,11 @@ export class LayoutPassportComponent implements AfterViewInit {
         this.themeColor = applyThemeColor(this.nzConfigService, null);
     }
 
-    setSkin(value: PassportSkin): void {
+    // Persists too, so the choice survives reload (honored by index.html on next
+    // load); the theme color follows the skin's own slot.
+    setSkin(value: Skin): void {
         this.skin = value;
-        const root = document.documentElement;
-        root.classList.toggle("brutalist-theme", value === "brutalist");
-        root.classList.toggle("liquid-glass", value === "liquid-glass");
-        // Persist so the choice survives reload (honored by index.html on next load).
-        localStorage.setItem("brutalist-theme", String(value === "brutalist"));
-        localStorage.setItem("liquid-glass", String(value === "liquid-glass"));
+        this.themeColor = switchSkin(this.nzConfigService, value);
     }
 
     constructor(private modalSrv: NzModalService,

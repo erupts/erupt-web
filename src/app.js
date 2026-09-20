@@ -17,11 +17,18 @@ window.eruptSiteConfig = {
     // Appearance defaults. Each one only applies until the user picks something in the
     // settings drawer; that choice is remembered in the browser and wins from then on.
     theme: {
+        // Let users change the branding side of the appearance themselves (theme color, header
+        // color, skin, navigation gradient, menu mode) in the settings drawer, the sidebar, the login
+        // page and the home page. false hides those controls and ignores choices users saved earlier,
+        // so everyone sees the appearance and menu mode configured here. Light/dark and compact stay
+        // switchable either way: they are per-user comfort settings, not branding.
+        customizable: true,
         // primaryColor: 'rgb(22, 119, 255)',
         // headerColor: 'primary',   // "primary" (follow the primary color) or any CSS color
         dark: false,        // false | true | "auto" (follow the OS color scheme)
         compact: false,     // denser spacing across the UI
-        skin: "default",    // "default" | "brutalist" | "liquid-glass"
+        skin: "default",    // "default" | "brutalist" | "liquid-glass" | "workspace" (chat-app frame: dark brand-tinted sidebar + header, content as a rounded card) | "classic" (Ant Design Pro: navy sidebar, white header)
+        // workspaceFrame: "aubergine", // workspace skin only — frame gradient preset: "aubergine" | "ocean" | "lagoon" | "dusk" | "ember" | "rose" | "forest" | "graphite" | "midnight" (unset = derived from primaryColor)
         menuMode: "normal", // "normal" (sidebar) | "split" (categories in the header) | "dual" (two-column sidebar) | "top" (whole menu in the header, no sidebar) | "group" (categories as flat group titles) | "top-split" (categories in the header, their children in a second row, no sidebar)
         // formPanelMode: "center"  // "center" (floating dialog) | "side" (right panel) | "full" (fullscreen) — how record forms open
     },

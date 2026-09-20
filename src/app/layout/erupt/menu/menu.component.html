@@ -28,17 +28,17 @@
     }
   }
 </ng-template>
+<!-- The menu tree keeps the order the server sends (the admin's sort field);
+     only the favorites section above it can be rearranged by the user. -->
 <ng-template #tree let-ls>
-  <div cdkDropList [cdkDropListDisabled]="isPad" (cdkDropListDropped)="drop($event, ls)">
+  <div>
     @for (i of ls; track i) {
-      @if (i._hidden !== true) {
+      @if (i._hidden !== true && !i._filtered) {
         <li
-          cdkDrag [cdkDragDisabled]="isPad"
           class="sidebar-nav__item"
           [class.sidebar-nav__selected]="i._selected"
           [class.sidebar-nav__open]="i.open"
           >
-          <div class="sidebar-nav__drag-placeholder" *cdkDragPlaceholder></div>
           <!-- link -->
           @if (i.children.length === 0) {
             <a
@@ -110,9 +110,9 @@
   </div>
 </ng-template>
 
-<!-- Favorites (shown in every mode) -->
+<!-- Favorites (shown in every mode, stepped aside while a keyword filter is on) -->
 <ng-template #favTpl>
-  @if (!collapsed && !isPad && favorites.length > 0) {
+  @if (!collapsed && !isPad && favorites.length > 0 && !filterKeyword) {
     <ul class="sidebar-nav sidebar-nav--pinned" cdkDropList (cdkDropListDropped)="dropFavorite($event)">
       @for (f of favorites; track f) {
         <li cdkDrag class="sidebar-nav__item sidebar-nav__item--fav" [class.sidebar-nav__selected]="f._selected">
@@ -135,6 +135,11 @@
 
 @if (!dualMenu || collapsed) {
   <ng-template [ngTemplateOutlet]="favTpl"></ng-template>
+}
+
+<!-- keyword filter with no hit -->
+@if (filterKeyword && filterMatches === 0 && !collapsed) {
+  <div class="sidebar-nav__filter-empty">{{ 'menu.filter_none' | translate }}</div>
 }
 
 <!-- ── Dual-column mode: first-level rail on the left, selected category's children on the right ── -->
@@ -193,7 +198,7 @@
     }
     @if (!loading) {
       @for (item of splitTopItems; track item) {
-        @if (item.children.length > 0) {
+        @if (item.children.length > 0 && !item._filtered) {
           <li class="sidebar-nav__item sidebar-nav__group-title">
             <span [innerHTML]="item._text" [attr.title]="item.text"></span>
           </li>

@@ -33,6 +33,11 @@ export class WindowModel {
     // eruptSiteConfig.theme — appearance defaults. Every entry applies only while the
     // user has no saved choice in the settings drawer.
     public static theme: {
+        // false locks the branding side of the appearance (colors, skin, navigation
+        // gradient, menu mode): the user-facing controls are hidden and saved user
+        // choices are ignored (index.html purges those keys on load, startup.service
+        // forces menuMode). Light/dark and compact stay per-user.
+        customizable?: boolean,
         primaryColor?: string,
         // Header bar color: "primary" (follow the primary color) or a literal
         // CSS color; users can still override it in the settings drawer.
@@ -40,13 +45,21 @@ export class WindowModel {
         // false | true | "auto" (follow the OS color scheme)
         dark?: boolean | "auto",
         compact?: boolean,
-        // "default" | "brutalist" | "liquid-glass"
+        // "default" | "brutalist" | "liquid-glass" | "workspace" | "classic" (Skin in @shared/util/theme.util)
         skin?: string,
+        // Workspace skin only: a frame gradient preset key (WORKSPACE_FRAME_PRESETS in
+        // @shared/util/theme.util); unset = the frame is derived from the primary color
+        workspaceFrame?: string,
         // "normal" | "split" | "dual" | "top" | "group" | "top-split" (MenuMode)
         menuMode?: string,
         // "center" | "side" | "full" (FormPanelMode): how record forms open
         formPanelMode?: string,
         [key: string]: any
+    }
+
+    // Whether users may change the appearance themselves (theme.customizable, default true)
+    public static appearanceCustomizable(): boolean {
+        return WindowModel.theme?.customizable !== false;
     }
 
     public static r_tools: CustomerTool[];

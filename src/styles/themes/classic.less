@@ -1,0 +1,233 @@
+/**
+ * Erupt Theme — "Classic": the Ant Design Pro shell.
+ *
+ * Design language
+ *   - A deep navy menu column running the full height of the window: the
+ *     brand block at the top of the header is painted the same navy, so the
+ *     column reads as one piece from the logo down to the utility bar.
+ *   - A white top bar beside it, the stock gray canvas, stock components.
+ *   - Menu rows in muted white; the active trail carries a brand guide bar,
+ *     the current leaf is a solid brand block (the dark-aside language from
+ *     tokens.less, made available in the LIGHT theme).
+ *
+ * This is the layout most enterprise back offices grew up with; the only
+ * thing it adds to the default skin is the dark column, so every other
+ * setting (theme color, header color, menu modes, compact) composes with it.
+ *
+ * OPTIONAL OVERRIDE
+ *   Every rule is scoped under `html.classic`. Toggle at runtime via
+ *       document.documentElement.classList.toggle('classic')
+ *   (see `src/app.js` -> `eruptSiteConfig.theme.skin = "classic"`). Add `dark`
+ *   as well (`html.classic.dark`) for the dark variant, where the column
+ *   simply becomes the dark container surface. Mutually exclusive with the
+ *   other skins — the settings drawer turns them off.
+ */
+
+/* ------------------------------------------------------------------ *
+ * Design tokens (scoped so they never leak into the default theme)
+ * ------------------------------------------------------------------ */
+html.classic {
+    /* The column — Ant Design Pro's menu navy — and its deeper utility shade */
+    --cp-aside: #001529;
+    --cp-aside-deep: #000c17;
+
+    /* Foreground on the column */
+    --cp-text: rgba(255, 255, 255, 0.85);
+    --cp-text-muted: rgba(255, 255, 255, 0.65);
+    --cp-text-faint: rgba(255, 255, 255, 0.45);
+    --cp-divider: rgba(255, 255, 255, 0.08);
+    --cp-hover: rgba(255, 255, 255, 0.08);
+
+    /* never wash the selected <li> — it CONTAINS the expanded submenu <ul> */
+    --alain-default-aside-nav-selected-bg: transparent;
+}
+
+/* Dark — the column is the dark container surface, one step below the canvas */
+html.classic.dark {
+    --cp-aside: #141414;
+    --cp-aside-deep: #0d0d0d;
+}
+
+/* ================================================================== *
+ * BRAND BLOCK — the top of the column, sitting in the white header
+ * ================================================================== */
+html.classic .alain-default__header-logo {
+    background: var(--cp-aside);
+    /* the column has no edge, so the logo/toolbar divider goes */
+    border-right-color: transparent;
+    /* a declaration on the element beats the inherited header tokens (and
+     * a user-picked header color set inline on <html>): the block is navy
+     * whatever the bar beside it is */
+    --erupt-header-text: var(--cp-text);
+    /* the bar's 1px bottom rule runs under this block too; paint it over so
+     * the column is unbroken from the logo down */
+    box-shadow: 0 1px 0 var(--cp-aside);
+}
+
+/* Top-menu and top-split modes (desktop): there is no column, so the navy
+ * moves into the bar itself — Ant Design Pro's "top" and "mix" layouts. The
+ * tokens are redeclared on the bar element, so a user-picked header color
+ * (inline on <html>) does not apply in these two modes for this skin. The
+ * top-split second row stays a white content surface, as in "mix". */
+@media (min-width: 768px) {
+    html.classic .alain-default__top-menu .erupt-header {
+        --erupt-header-bg: var(--cp-aside);
+        --erupt-header-text: var(--cp-text);
+        --erupt-header-text-secondary: var(--cp-text-muted);
+        --erupt-header-fill: var(--cp-hover);
+        --erupt-header-fill-strong: rgba(255, 255, 255, 0.15);
+        /* current category: a solid brand block, like the sidebar leaf */
+        --erupt-header-active-bg: var(--ant-primary-color);
+        --erupt-header-active-text: #fff;
+        --erupt-header-border: transparent;
+        --erupt-header-progress: #fff;
+    }
+
+    html.classic .alain-default__top-menu .alain-default__header-logo {
+        box-shadow: none;
+    }
+}
+
+/* ================================================================== *
+ * SIDEBAR — the navy column
+ * ================================================================== */
+html.classic .alain-default__aside {
+    background: var(--cp-aside);
+}
+
+/* the stock 1px right rule would draw a gray seam on the navy */
+html.classic .alain-default__aside::after,
+html.classic .erupt-side::after {
+    display: none;
+}
+
+/* delon styles the menu scrollbar itself: translucent white thumb, no track */
+html.classic .alain-default__aside .alain-default__aside-inner::-webkit-scrollbar-track {
+    box-shadow: none;
+}
+
+html.classic .alain-default__aside .alain-default__aside-inner::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+html.classic {
+
+    .alain-default__aside .sidebar-nav__item-link {
+        color: var(--cp-text-muted);
+        transition: background-color 0.15s ease, color 0.15s ease;
+
+        &:hover {
+            background-color: var(--cp-hover);
+            color: #fff;
+        }
+    }
+
+    /* disclosure chevron follows the row color */
+    .alain-default__aside .sidebar-nav__sub-arrow::before,
+    .alain-default__aside .sidebar-nav__sub-arrow::after {
+        background: currentColor;
+        background-image: none;
+    }
+
+    /* active-trail guide bar on the <li>, brand colored; never fill it */
+    .alain-default__aside .sidebar-nav__selected {
+        border-left-color: var(--ant-primary-color);
+        background-color: transparent;
+    }
+
+    /* active-trail parents only brighten their own title, never the subtree */
+    .alain-default__aside .sidebar-nav__selected > .sidebar-nav__item-link {
+        color: #fff;
+    }
+
+    /* solid brand block on the selected leaf row only (leaves carry href) */
+    .alain-default__aside .sidebar-nav__selected > .sidebar-nav__item-link[href] {
+        background-color: var(--ant-primary-color);
+        color: #fff;
+
+        &:hover {
+            background-color: var(--ant-primary-color);
+            color: #fff;
+        }
+    }
+
+    /* pin / inline spinner in the row's right slot */
+    .alain-default__aside .sidebar-nav__pin {
+        color: var(--cp-text-faint);
+
+        &:hover,
+        &--active {
+            color: #fff;
+        }
+    }
+
+    .alain-default__aside .sidebar-nav__loading {
+        color: var(--cp-text);
+    }
+
+    /* menu click ripple — white on navy and on the brand block alike */
+    .alain-default__aside .sidebar-nav__item span.ripple {
+        background: rgba(255, 255, 255, 0.35) !important;
+    }
+
+    .alain-default__aside .sidebar-nav__group-title {
+        color: var(--cp-text-faint);
+    }
+
+    .alain-default__aside .sidebar-nav--pinned {
+        border-bottom-color: var(--cp-divider);
+    }
+
+    .alain-default__aside .sidebar-nav__divider {
+        background-color: var(--cp-divider);
+    }
+
+    .alain-default__aside .sidebar-nav__drag-placeholder {
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Dual-column mode: the first-level rail is the deeper shade */
+    .alain-default__aside .dual-menu__rail {
+        background: var(--cp-aside-deep);
+        border-right-color: transparent;
+    }
+
+    .alain-default__aside .dual-menu__rail-item {
+        color: var(--cp-text-muted);
+
+        &:hover {
+            background: var(--cp-hover);
+            color: #fff;
+        }
+
+        &--active {
+            background: var(--ant-primary-color);
+            color: #fff;
+        }
+    }
+
+    /* Bottom utility bar — the deeper shade, no rules */
+    .alain-default__aside .fold {
+        background: var(--cp-aside-deep);
+        border-top: 1px solid var(--cp-divider);
+        border-right: 0;
+        color: var(--cp-text-muted);
+    }
+
+    .alain-default__aside .fold__btn:hover {
+        background: var(--cp-hover);
+        color: #fff;
+    }
+
+    .alain-default__aside .aside-loading-overlay {
+        background: color-mix(in srgb, var(--cp-aside) 75%, transparent);
+    }
+}
+
+/* Reduced motion — rows stop animating for users who ask */
+@media (prefers-reduced-motion: reduce) {
+    html.classic .alain-default__aside .sidebar-nav__item-link,
+    html.classic .alain-default__aside .dual-menu__rail-item {
+        transition: none;
+    }
+}

@@ -246,6 +246,32 @@
             background: #f5f5f0;
         }
 
+        /* ---- workspace skin (html.workspace) ---- */
+        /* The app's brand-tinted frame, built off --pl-accent so the splash
+           already carries the chrome color before Angular boots; the rings
+           and the wordmark go white on it. */
+        html.workspace .preloader {
+            background-color: color-mix(in srgb, var(--pl-accent) 42%, #151a26);
+            background-image: none;
+        }
+
+        html.workspace.dark .preloader {
+            background-color: color-mix(in srgb, var(--pl-accent) 18%, #0d0f14);
+        }
+
+        /* a declaration on the child beats the inline accent on .preloader */
+        html.workspace .pl-content {
+            --pl-accent: #fff;
+        }
+
+        html.workspace .pl-brand {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        html.workspace #preloader-tip {
+            color: rgba(255, 255, 255, 0.45);
+        }
+
         /* ---- liquid glass skin (html.liquid-glass) ---- */
         /* Same field as the app shell, built off --pl-accent so the splash
            already carries the user's brand color before Angular boots. */
@@ -314,6 +340,34 @@
         if (_lgPref === "true" && _nbPref !== "true") {
             document.documentElement.classList.add("liquid-glass");
         }
+        // Optional Workspace skin (chat-app frame) — same treatment; any other
+        // saved skin flag wins.
+        var _wsPref = localStorage.getItem("workspace");
+        if (_wsPref === "true" && _nbPref !== "true" && _lgPref !== "true") {
+            document.documentElement.classList.add("workspace");
+        }
+        // Optional Classic skin (Ant Design Pro navy column) — same treatment.
+        var _cpPref = localStorage.getItem("classic");
+        if (_cpPref === "true" && _nbPref !== "true" && _lgPref !== "true" && _wsPref !== "true") {
+            document.documentElement.classList.add("classic");
+        }
+        // A saved workspace frame gradient (settings drawer stores the whole
+        // preset) tints the preloader the same way the app shell will be.
+        var _paintWorkspacePreloader = function () {
+            if (!document.documentElement.classList.contains("workspace")) {
+                return;
+            }
+            var frame = null;
+            try {
+                frame = JSON.parse(localStorage.getItem("workspace-frame") || "null");
+            } catch (e) {
+            }
+            if (frame && frame.frame) {
+                _preloaderEl.style.backgroundImage = frame.frame;
+                _preloaderEl.style.backgroundColor = frame.solid || "";
+            }
+        };
+        _paintWorkspacePreloader();
         // Theme bundles: dark and compact are compiled as separate lazy
         // stylesheets; using both loads the merged compact-dark bundle.
         // One <link> is swapped between the three — shared with the settings
@@ -378,7 +432,9 @@
             return {
                 dark: th.dark !== undefined ? th.dark : cfg.darkTheme,
                 compact: th.compact !== undefined ? th.compact : cfg.compactTheme,
-                skin: th.skin || cfg.skin || (cfg.brutalistTheme ? "brutalist" : cfg.liquidGlass ? "liquid-glass" : null)
+                skin: th.skin || cfg.skin || (cfg.brutalistTheme ? "brutalist" : cfg.liquidGlass ? "liquid-glass" : null),
+                // theme.customizable === false locks the appearance to the site config
+                customizable: th.customizable !== false
             };
         };
         var _darkIsAuto = function () {
@@ -405,12 +461,32 @@
                 clearInterval(_colorCheckTimer);
                 var cfg = window.eruptSiteConfig;
                 var look = _appearance();
-                // No saved skin choice — theme.skin ("default" | "brutalist" | "liquid-glass")
-                if (_nbPref === null && _lgPref === null) {
+                // Locked appearance: drop the branding choices the user saved earlier
+                // (skin, colors, navigation gradient — and the classes / accent applied
+                // from them above), so the site defaults below apply as if nothing had
+                // been chosen. Light/dark and compact stay per-user comfort settings.
+                // startup.service reads the same keys afterwards and finds them gone too.
+                if (!look.customizable) {
+                    ["brutalist-theme", "liquid-glass", "workspace", "classic",
+                        "theme-color", "theme-color-brutalist", "header-color", "workspace-frame"]
+                        .forEach(function (k) { localStorage.removeItem(k); });
+                    document.documentElement.classList.remove("brutalist-theme", "liquid-glass", "workspace", "classic");
+                    _preloaderEl.style.removeProperty("--pl-accent");
+                    _preloaderEl.style.removeProperty("background-image");
+                    _preloaderEl.style.removeProperty("background-color");
+                    _nbPref = _lgPref = _wsPref = _cpPref = _tcPref = null;
+                }
+                // No saved skin choice — theme.skin ("default" | "brutalist" | "liquid-glass" | "workspace" | "classic")
+                if (_nbPref === null && _lgPref === null && _wsPref === null && _cpPref === null) {
                     if (look.skin === "brutalist") {
                         document.documentElement.classList.add("brutalist-theme");
                     } else if (look.skin === "liquid-glass") {
                         document.documentElement.classList.add("liquid-glass");
+                    } else if (look.skin === "workspace") {
+                        document.documentElement.classList.add("workspace");
+                        _paintWorkspacePreloader();
+                    } else if (look.skin === "classic") {
+                        document.documentElement.classList.add("classic");
                     }
                 }
                 // theme.dark: true | false | "auto"

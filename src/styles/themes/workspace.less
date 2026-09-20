@@ -1,0 +1,447 @@
+/**
+ * Erupt Theme — "Workspace": the chat-app shell (Slack / Feishu / DingTalk).
+ *
+ * Design language
+ *   - One deep, brand-tinted FRAME holds the whole window: the top bar and the
+ *     left menu are the same surface with no seam between them, so the brand
+ *     block, the toolbar and the menu read as a single navigation chrome.
+ *   - The content is a light, rounded CARD floating inside that frame with a
+ *     thin gutter on every side — the frame shows through around it.
+ *   - Menu rows are quiet pills in translucent white; the current row is a
+ *     solid brand block. Nothing inside the card changes.
+ *
+ * The frame color is derived from the runtime brand color (--ant-primary-color),
+ * so picking a theme color in the settings drawer recolors the chrome: blue
+ * gives a DingTalk navy, violet gives the Slack aubergine. A frame gradient
+ * preset (settings drawer, WORKSPACE_FRAME_PRESETS in theme.util) replaces it:
+ * applyWorkspaceFrame() sets --ws-frame-image / --ws-frame / --ws-selected-bg
+ * inline on <html>. Every frame surface paints the gradient with
+ * `background-attachment: fixed`, so the pieces line up into one sheet.
+ *
+ * OPTIONAL OVERRIDE
+ *   Every rule is scoped under `html.workspace`. Toggle at runtime via
+ *       document.documentElement.classList.toggle('workspace')
+ *   (see `src/app.js` -> `eruptSiteConfig.theme.skin = "workspace"`). Add `dark`
+ *   as well (`html.workspace.dark`) for the dark variant. Mutually exclusive
+ *   with the other skins — the settings drawer turns them off.
+ */
+
+/* ------------------------------------------------------------------ *
+ * Design tokens (scoped so they never leak into the default theme)
+ * ------------------------------------------------------------------ */
+html.workspace {
+    /* Shell geometry — the gutter that separates the card from the frame */
+    --ws-gap: 6px;
+    --ws-radius: 8px;
+    --ws-row-radius: 6px;
+    --ws-header-h: 44px;
+
+    /* The frame: the brand hue pulled most of the way into a cool ink, deep
+     * enough for white text at any preset color. */
+    --ws-hue: var(--ant-primary-color, #1677ff);
+    --ws-frame: color-mix(in srgb, var(--ws-hue) 42%, #151a26);
+    /* Gradient laid over --ws-frame; a preset sets it, otherwise flat */
+    --ws-frame-image: none;
+    /* Utility bar and rails: a translucent ink wash over the frame, so a
+     * gradient shows through them too */
+    --ws-frame-deep: rgba(0, 0, 0, 0.18);
+
+    /* Foreground on the frame */
+    --ws-text: rgba(255, 255, 255, 0.92);
+    --ws-text-muted: rgba(255, 255, 255, 0.68);
+    --ws-text-faint: rgba(255, 255, 255, 0.45);
+    --ws-divider: rgba(255, 255, 255, 0.10);
+    --ws-hover: rgba(255, 255, 255, 0.10);
+    --ws-active: rgba(255, 255, 255, 0.18);
+
+    /* The current menu leaf: a solid brand block, brighter than the frame */
+    --ws-selected-bg: var(--ws-hue);
+    --ws-selected-text: #fff;
+
+    /* Card */
+    --ws-card-bg: var(--erupt-bg-layout, #f0f2f5);
+    --ws-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+
+    /* never wash the selected <li> — it CONTAINS the expanded submenu <ul> */
+    --alain-default-aside-nav-selected-bg: transparent;
+
+    /* Top bar is transparent over the frame painted on <body>, so a gradient
+     * runs through it and the sidebar in one piece (a user-picked header color
+     * still wins: applyHeaderColor() sets these inline on <html>) */
+    --erupt-header-bg: transparent;
+    --erupt-header-text: var(--ws-text);
+    --erupt-header-text-secondary: var(--ws-text-muted);
+    --erupt-header-fill: var(--ws-hover);
+    --erupt-header-fill-strong: var(--ws-active);
+    --erupt-header-active-bg: var(--ws-active);
+    --erupt-header-active-text: #fff;
+    --erupt-header-border: transparent;
+    --erupt-header-progress: #fff;
+}
+
+/* Dark — the frame sinks toward black and keeps a hint of the hue; the card
+ * is the dark canvas, lifted off the frame by a hairline instead of a shadow */
+html.workspace.dark {
+    --ws-frame: color-mix(in srgb, var(--ws-hue) 18%, #0d0f14);
+    --ws-frame-deep: rgba(0, 0, 0, 0.30);
+    --ws-selected-bg: color-mix(in srgb, var(--ws-hue) 78%, #000);
+    --ws-card-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+/* ================================================================== *
+ * FRAME — painted on <body> so the gutter around the card is the frame.
+ *   Fixed attachment: the gradient is laid out against the viewport, and
+ *   every other frame surface repeats the same declaration, so they all
+ *   sample the same sheet and no seam shows where one element ends.
+ * ================================================================== */
+.ws-frame-paint() {
+    background-color: var(--ws-frame);
+    background-image: var(--ws-frame-image);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+}
+
+html.workspace body {
+    .ws-frame-paint();
+}
+
+/* ================================================================== *
+ * TOP BAR — flat on the frame, no rule, no seam to the sidebar
+ * ================================================================== */
+html.workspace .erupt-header,
+html.workspace .alain-default__header {
+    border-bottom-color: transparent;
+    box-shadow: none;
+}
+
+/* The brand block used to be divided from the toolbar by the sidebar edge;
+ * the frame has no edge, so the divider goes. */
+html.workspace .alain-default__header-logo {
+    border-right-color: transparent;
+}
+
+html.workspace .alain-default__nav-item {
+    border-radius: var(--ws-row-radius);
+}
+
+/* Header search / settings icons sit on the frame in the muted white */
+html.workspace .alain-default__nav-item,
+html.workspace .alain-default__nav nz-badge {
+    color: var(--ws-text-muted);
+
+    &:hover {
+        color: var(--ws-text);
+    }
+}
+
+/* Top-split mode: the second nav row hangs under the bar and is part of the
+ * frame too — recolored from the content surface to the header language.
+ * Scoped through .erupt-header to out-specify the component's own
+ * `:host .erupt-subnav` rule (host attr + class + content attr), which
+ * paints it as a white content surface. */
+html.workspace .erupt-header .erupt-subnav {
+    background: transparent;
+    border-bottom: 0;
+    /* hairline between the two rows, so they read as rows and not one slab */
+    box-shadow: inset 0 1px 0 var(--ws-divider);
+}
+
+html.workspace .subnav-menu.ant-menu-horizontal {
+    color: var(--ws-text-muted);
+
+    > .ant-menu-item,
+    > .ant-menu-submenu {
+        color: var(--ws-text-muted);
+
+        &::after {
+            border-bottom: 2px solid transparent;
+        }
+
+        &:hover,
+        &.ant-menu-item-active,
+        &.ant-menu-submenu-active,
+        &.ant-menu-item-selected,
+        &.ant-menu-submenu-selected {
+            color: #fff;
+
+            &::after {
+                border-bottom-color: #fff;
+            }
+        }
+    }
+
+    > .ant-menu-submenu > .ant-menu-submenu-title {
+        color: inherit;
+    }
+}
+
+/* ================================================================== *
+ * SIDEBAR — lives directly on the frame
+ * ================================================================== */
+html.workspace .alain-default__aside {
+    /* opaque (not transparent over body): under pad it slides OVER the card */
+    .ws-frame-paint();
+}
+
+/* delon styles the menu scrollbar itself (not via the --erupt-scrollbar tokens):
+ * a translucent white thumb on the frame, no track */
+html.workspace .alain-default__aside .alain-default__aside-inner::-webkit-scrollbar-track {
+    box-shadow: none;
+}
+
+html.workspace .alain-default__aside .alain-default__aside-inner::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.22);
+}
+
+/* the stock 1px right rule would draw a seam through the frame */
+html.workspace .alain-default__aside::after,
+html.workspace .erupt-side::after {
+    display: none;
+}
+
+html.workspace {
+
+    /* Breathing room above the first row. On the scroll container, not the
+     * menu: erupt-menu carries an inline `padding-top: 0 !important`. */
+    .alain-default__aside .alain-default__aside-inner {
+        padding-top: var(--ws-gap);
+    }
+
+    /* drop delon's 3px guide bar; the pill carries the selection */
+    .alain-default__aside .sidebar-nav__item {
+        border-left: 0 !important;
+    }
+
+    .alain-default__aside .sidebar-nav__item-link {
+        margin: 1px 8px;
+        border-radius: var(--ws-row-radius);
+        color: var(--ws-text-muted);
+        transition: background-color 0.15s ease, color 0.15s ease;
+
+        &:hover {
+            background-color: var(--ws-hover);
+            color: var(--ws-text);
+        }
+    }
+
+    /* disclosure chevron follows the row color */
+    .alain-default__aside .sidebar-nav__sub-arrow::before,
+    .alain-default__aside .sidebar-nav__sub-arrow::after {
+        background: currentColor;
+        background-image: none;
+    }
+
+    /* active-trail parents only brighten their own title, never the subtree */
+    .alain-default__aside .sidebar-nav__selected {
+        background-color: transparent;
+    }
+
+    .alain-default__aside .sidebar-nav__selected > .sidebar-nav__item-link {
+        color: var(--ws-text);
+        font-weight: 500;
+    }
+
+    /* selected leaf (leaves carry href) — solid brand block */
+    .alain-default__aside .sidebar-nav__selected > .sidebar-nav__item-link[href] {
+        background-color: var(--ws-selected-bg);
+        color: var(--ws-selected-text);
+
+        &:hover {
+            background-color: var(--ws-selected-bg);
+            color: var(--ws-selected-text);
+        }
+    }
+
+    /* pin / inline spinner in the row's right slot */
+    .alain-default__aside .sidebar-nav__pin {
+        color: var(--ws-text-faint);
+
+        &:hover,
+        &--active {
+            color: #fff;
+        }
+    }
+
+    .alain-default__aside .sidebar-nav__loading {
+        color: var(--ws-text);
+    }
+
+    /* menu click ripple — white on the frame and on the brand block alike */
+    .alain-default__aside .sidebar-nav__item span.ripple {
+        background: rgba(255, 255, 255, 0.35) !important;
+    }
+
+    .alain-default__aside .sidebar-nav__group-title {
+        color: var(--ws-text-faint);
+        font-size: 12px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .alain-default__aside .sidebar-nav--pinned {
+        border-bottom-color: var(--ws-divider);
+    }
+
+    .alain-default__aside .sidebar-nav__divider {
+        background-color: var(--ws-divider);
+    }
+
+    .alain-default__aside .sidebar-nav__drag-placeholder {
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* Collapsed rail — the pill hugs the icon */
+    .alain-default__collapsed .alain-default__aside .sidebar-nav__item-link {
+        margin: 2px 6px;
+    }
+
+    /* Dual-column mode fills the column exactly (menu.component sizes it to the
+     * viewport); take the top gap off, or the 6px overflow makes the whole
+     * two-column block scrollable by that much */
+    .alain-default__aside .dual-menu {
+        height: calc(100vh - 44px - 38px - var(--ws-gap));
+    }
+
+    /* Dual-column mode: the first-level rail is a wash deeper than the column */
+    .alain-default__aside .dual-menu__rail {
+        background: var(--ws-frame-deep);
+        border-right-color: transparent;
+    }
+
+    .alain-default__aside .dual-menu__rail-item {
+        color: var(--ws-text-muted);
+
+        &:hover {
+            background: var(--ws-hover);
+            color: var(--ws-text);
+        }
+
+        &--active {
+            background: var(--ws-active);
+            color: #fff;
+        }
+    }
+
+    /* Bottom utility bar — the deeper wash; the blur is what hides the menu
+     * rows scrolling underneath, the wash alone would let them read through */
+    .alain-default__aside .fold {
+        background: var(--ws-frame-deep);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-top: 1px solid var(--ws-divider);
+        border-right: 0;
+        color: var(--ws-text-muted);
+    }
+
+    .alain-default__aside .fold__btn:hover {
+        background: var(--ws-hover);
+        color: var(--ws-text);
+    }
+
+    .alain-default__aside .aside-loading-overlay {
+        background: color-mix(in srgb, var(--ws-frame) 75%, transparent);
+    }
+}
+
+/* ================================================================== *
+ * CONTENT CARD — a rounded light sheet inset by the gutter. Components
+ * inside are untouched; only the area itself changes.
+ * ================================================================== */
+html.workspace.ltr .erupt_content,
+html.workspace.rtl .erupt_content {
+    height: calc(100vh - var(--ws-header-h) - var(--ws-gap) * 2);
+    overflow: hidden;
+    border-radius: var(--ws-radius);
+    /* short pages never leave a frame-colored hole under them */
+    background: var(--ws-card-bg);
+    box-shadow: var(--ws-card-shadow);
+}
+
+html.workspace.ltr .erupt_content {
+    margin: calc(var(--ws-header-h) + var(--ws-gap)) var(--ws-gap) var(--ws-gap)
+        calc(var(--sidebar-width, 200px) + var(--ws-gap));
+}
+
+html.workspace.ltr .alain-default__collapsed .erupt_content {
+    margin-left: calc(var(--collapsed-width, 48px) + var(--ws-gap));
+}
+
+html.workspace.rtl .erupt_content {
+    margin: calc(var(--ws-header-h) + var(--ws-gap))
+        calc(var(--sidebar-width, 200px) + var(--ws-gap)) var(--ws-gap) var(--ws-gap);
+}
+
+html.workspace.rtl .alain-default__collapsed .erupt_content {
+    margin-right: calc(var(--collapsed-width, 48px) + var(--ws-gap));
+}
+
+/* Under pad the sidebar slides over the content, which keeps only the gutter */
+@media (max-width: 767px) {
+    html.workspace.ltr .erupt_content,
+    html.workspace.rtl .erupt_content {
+        margin-left: var(--ws-gap);
+        margin-right: var(--ws-gap);
+    }
+}
+
+/* Top-split menu mode: the 40px sub-nav row under the header is part of the
+ * frame the card hangs from. */
+html.workspace .alain-default__sub-nav {
+    --ws-header-h: 84px;
+}
+
+/* --- Multi-tab bar: fixed, so it floats ON the card. Round its top to match
+ *     and keep it on the card surface. ------------------------------------- */
+html.workspace .alain-default__fixed .reuse-tab {
+    /* !important — @delon/abc pins the fixed tab bar with `top: 44px !important` */
+    top: calc(var(--ws-header-h) + var(--ws-gap)) !important;
+    left: calc(var(--sidebar-width, 200px) + var(--ws-gap));
+    right: var(--ws-gap);
+    margin-left: 0;
+    margin-right: 0;
+    overflow: hidden;
+    border-radius: var(--ws-radius) var(--ws-radius) 0 0;
+}
+
+html.workspace .alain-default__collapsed .reuse-tab {
+    left: calc(var(--collapsed-width, 48px) + var(--ws-gap));
+}
+
+html.workspace.rtl .alain-default__fixed .reuse-tab {
+    right: calc(var(--sidebar-width, 200px) + var(--ws-gap));
+    left: var(--ws-gap);
+}
+
+html.workspace.rtl .alain-default__collapsed .reuse-tab {
+    right: calc(var(--collapsed-width, 48px) + var(--ws-gap));
+    left: var(--ws-gap);
+}
+
+/* Top-menu mode (no sidebar): the card and the tab bar start at the gutter.
+ * Out-specifies the sidebar-width rules above and the layout's own
+ * `left/right: 0 !important` for the tab bar. Mobile keeps the drawer. */
+@media (min-width: 768px) {
+    html.workspace.ltr .alain-default__top-menu .erupt_content,
+    html.workspace.ltr .alain-default__top-menu.alain-default__collapsed .erupt_content {
+        margin-left: var(--ws-gap);
+    }
+
+    html.workspace.rtl .alain-default__top-menu .erupt_content,
+    html.workspace.rtl .alain-default__top-menu.alain-default__collapsed .erupt_content {
+        margin-right: var(--ws-gap);
+    }
+
+    html.workspace .alain-default__top-menu .reuse-tab,
+    html.workspace .alain-default__top-menu.alain-default__collapsed .reuse-tab {
+        left: var(--ws-gap) !important;
+        right: var(--ws-gap) !important;
+    }
+}
+
+/* Reduced motion — rows stop animating for users who ask */
+@media (prefers-reduced-motion: reduce) {
+    html.workspace .alain-default__aside .sidebar-nav__item-link,
+    html.workspace .alain-default__aside .dual-menu__rail-item {
+        transition: none;
+    }
+}
