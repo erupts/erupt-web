@@ -54,6 +54,10 @@ export class WindowModel {
         menuMode?: string,
         // "center" | "side" | "full" (FormPanelMode): how record forms open
         formPanelMode?: string,
+        // "center" | "cover" | "wide" | "wallpaper" | "poster" (LoginLayout): the login page layout
+        loginLayout?: string,
+        // login page picture URL: replaces the stock artwork in every layout
+        loginBackground?: string,
         [key: string]: any
     }
 

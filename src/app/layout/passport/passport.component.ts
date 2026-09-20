@@ -4,6 +4,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {EruptTenantInfoData} from "../../build/erupt/model/erupt-tenant";
 import {DataService} from "@shared/service/data.service";
 import {NzConfigService} from "ng-zorro-antd/core/config";
+import {LOGIN_LAYOUT_KEY, LoginLayout, loginLayoutOf} from "@shared/model/login-layout";
 import {
     applyThemeColor,
     BRUTALIST_PRESET_COLORS,
@@ -38,8 +39,51 @@ export class LayoutPassportComponent implements AfterViewInit {
     tenantDomainInfo = EruptTenantInfoData.get();
 
     // Site config may lock the appearance (theme.customizable = false): the
-    // dark / skin / color buttons are then left out of the nav.
+    // dark / skin / color / layout buttons are then left out of the nav.
     readonly appearanceCustomizable: boolean = WindowModel.appearanceCustomizable();
+
+    // Page layout (LoginLayout): the visitor's own choice first, then the site
+    // default, then the centered card.
+    readonly LoginLayout = LoginLayout;
+
+    layouts: { value: LoginLayout; icon: string; label: string }[] = [
+        {value: LoginLayout.CENTER, icon: "border", label: "login.layout-center"},
+        {value: LoginLayout.COVER, icon: "layout", label: "login.layout-cover"},
+        {value: LoginLayout.WIDE, icon: "idcard", label: "login.layout-wide"},
+        {value: LoginLayout.WALLPAPER, icon: "picture", label: "login.layout-wallpaper"},
+        {value: LoginLayout.POSTER, icon: "font-size", label: "login.layout-poster"}
+    ];
+
+    // Layouts that show the brand panel (.lp-hero) beside / behind the form
+    get heroLayout(): boolean {
+        return this.layout === LoginLayout.COVER || this.layout === LoginLayout.POSTER;
+    }
+
+    // Site-configured picture (theme.loginBackground): the page artwork in every
+    // layout. The wallpaper layout adds the frosted card and falls back to the
+    // stock artwork when no picture is configured. The picture is used only once
+    // it has actually loaded (see loadWallpaper): a URL that fails — hotlink
+    // protection, a typo — would otherwise leave the page with just the vignette.
+    wallpaper: string | null = null;
+
+    private loadWallpaper(): void {
+        const url = WindowModel.theme?.loginBackground;
+        if (!url) {
+            return;
+        }
+        const img = new Image();
+        img.onload = () => this.wallpaper = url;
+        img.src = url;
+    }
+
+    layout: LoginLayout = loginLayoutOf(localStorage.getItem(LOGIN_LAYOUT_KEY))
+        || loginLayoutOf(WindowModel.theme?.loginLayout)
+        || LoginLayout.CENTER;
+
+    setLayout(value: LoginLayout): void {
+        this.layout = value;
+        localStorage.setItem(LOGIN_LAYOUT_KEY, value);
+    }
 
     // Dark theme — reflects the class index.html applied before bootstrap.
     darkTheme: boolean = document.documentElement.classList.contains("dark");
@@ -99,6 +143,7 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     constructor(private modalSrv: NzModalService,
                 private nzConfigService: NzConfigService) {
+        this.loadWallpaper();
         if (WindowModel.copyrightTxt) {
             if (typeof (WindowModel.copyrightTxt) === 'function') {
                 this.copyrightTxt = WindowModel.copyrightTxt();

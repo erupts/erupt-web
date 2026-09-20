@@ -325,20 +325,22 @@
             line-height: 1;
         }
 
+        // Brand wordmark: the app's own sans, set bold and slightly tracked —
+        // no display face, so it sits with the rest of the bar and any script
         .header-logo-text {
             color: var(--erupt-header-text, #000);
             line-height: 44px;
-            font-size: 1.8em;
-            letter-spacing: 2px;
-            margin-left: 6px;
-            font-family: 'Courier New', Arial, Helvetica, sans-serif;
+            font-size: 19px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            margin-left: 8px;
             min-width: 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
 
             &--long {
-                font-size: 1.15em;
+                font-size: 15px;
                 letter-spacing: 0;
             }
         }

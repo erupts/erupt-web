@@ -354,7 +354,7 @@ export function applyThemeColor(nzConfigService: NzConfigService, color: string 
 function pushThemeColor(nzConfigService: NzConfigService, primaryColor: string): string {
     // only the color entries belong to ng-zorro; dark / compact / skin / menuMode /
     // workspaceFrame are appearance defaults read elsewhere (index.html, startup.service)
-    const {dark, compact, skin, menuMode, workspaceFrame, customizable, ...colors} = WindowModel.theme || {};
+    const {dark, compact, skin, menuMode, workspaceFrame, customizable, loginLayout, loginBackground, ...colors} = WindowModel.theme || {};
     nzConfigService.set("theme", {...colors, primaryColor});
     return primaryColor;
 }

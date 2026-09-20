@@ -1,4 +1,21 @@
-<div class="lp-page">
+<!-- a configured picture (theme.loginBackground) is the page artwork in every layout -->
+<div class="lp-page" [ngClass]="'lp-page--' + layout" [class.lp-page--has-wallpaper]="!!wallpaper"
+     [style.--lp-wallpaper]="wallpaper ? 'url(' + wallpaper + ')' : null">
+
+  <!-- Brand panel: cover (beside) and poster (behind); hidden under 992px -->
+  @if (heroLayout) {
+    <aside class="lp-hero">
+      <div class="lp-hero__inner">
+        @if (logoPath) {
+          <img class="lp-hero__logo" [src]="logoPath" alt="logo">
+        }
+        <h1 class="lp-hero__title">{{ title }}</h1>
+        @if (desc) {
+          <p class="lp-hero__desc">{{ desc }}</p>
+        }
+      </div>
+    </aside>
+  }
 
   <!-- Main area -->
   <div class="lp-side">
@@ -27,6 +44,20 @@
            nz-tooltip [nzTooltipTitle]="'setting.theme-color' | translate" nzTooltipPlacement="bottom">
           <i nz-icon nzType="bg-colors" nzTheme="outline"></i>
         </a>
+        <a class="lp-nav-btn" style="cursor:pointer"
+           nz-dropdown [nzDropdownMenu]="layoutMenu" nzTrigger="click" nzPlacement="bottomRight"
+           nz-tooltip [nzTooltipTitle]="'login.layout' | translate" nzTooltipPlacement="bottom">
+          <i nz-icon nzType="layout" nzTheme="outline"></i>
+        </a>
+        <nz-dropdown-menu #layoutMenu>
+          <ul nz-menu nzSelectable>
+            @for (item of layouts; track item.value) {
+              <li nz-menu-item [nzSelected]="layout === item.value" (click)="setLayout(item.value)">
+                <i nz-icon [nzType]="item.icon"></i> {{ item.label | translate }}
+              </li>
+            }
+          </ul>
+        </nz-dropdown-menu>
         <nz-dropdown-menu #colorMenu>
           <div class="lp-color-panel">
             @for (c of activePresetColors; track c) {
@@ -70,7 +101,23 @@
 
     <main class="lp-side-content">
       <div class="lp-card">
-        <router-outlet></router-outlet>
+        <!-- wide layout: the brand pane shares the card with the form -->
+        @if (layout === LoginLayout.WIDE) {
+          <div class="lp-card__brand">
+            @if (logoPath) {
+              <img class="lp-hero__logo" [src]="logoPath" alt="logo">
+            }
+            <div class="lp-card__brand-text">
+              <h1 class="lp-hero__title">{{ title }}</h1>
+              @if (desc) {
+                <p class="lp-hero__desc">{{ desc }}</p>
+              }
+            </div>
+          </div>
+        }
+        <div class="lp-card__form">
+          <router-outlet></router-outlet>
+        </div>
       </div>
     </main>
 
