@@ -54,6 +54,9 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     currentKey: string;
 
+    // Level of the selected node, roots being 1; decides whether "add child" is still offered
+    currentLevel: number = 0;
+
     selectedKeys: any[] = [];
 
     printLoading: boolean = false;
@@ -125,6 +128,12 @@ export class TreeComponent implements OnInit, OnDestroy {
         }, () => {
             this.loading = false;
         });
+    }
+
+    // A node at @Tree.maxLevel cannot take children; the server enforces the same limit on save
+    canAddSub(): boolean {
+        let tree = this.eruptBuildModel.eruptModel.eruptJson.tree;
+        return !tree.maxLevel || this.currentLevel < tree.maxLevel;
     }
 
     addSub() {
@@ -489,6 +498,7 @@ private setExpanded(nodes: any[], expanded: boolean): void {
         this.selectLeaf = true;
         this.loading = true;
         this.currentKey = event.node.origin.key;
+        this.currentLevel = event.node.level + 1;
         this.selectedKeys = [this.currentKey];
         if (window.innerWidth <= 767) {
             this.mobileTreeCollapsed = true;

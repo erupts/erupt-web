@@ -114,7 +114,7 @@
                         <i nz-icon nzType="plus" nzTheme="outline"></i>
                     </button>
                 }
-                @if (currentKey && eruptBuildModel.eruptModel.eruptJson.power.add && eruptBuildModel.eruptModel.eruptJson.tree.pid) {
+                @if (currentKey && eruptBuildModel.eruptModel.eruptJson.power.add && eruptBuildModel.eruptModel.eruptJson.tree.pid && canAddSub()) {
                     <button nz-button nzType="text" nzSize="small"
                             nz-tooltip [nzTooltipTitle]="'tree.add_children'|translate"
                             (click)="addSub()" id="erupt-btn-add-sub-nav">
@@ -174,7 +174,7 @@
                             <i nz-icon nzType="copy" nzTheme="outline"></i>{{ 'global.copy'|translate }}
                         </button>
                     }
-                    @if (eruptBuildModel.eruptModel.eruptJson.power.add && eruptBuildModel.eruptModel.eruptJson.tree.pid) {
+                    @if (eruptBuildModel.eruptModel.eruptJson.power.add && eruptBuildModel.eruptModel.eruptJson.tree.pid && canAddSub()) {
                         <button nz-button nzSize="small" nzType="dashed" (click)="addSub()" [disabled]="loading"
                                 id="erupt-btn-add_sub">
                             <i nz-icon nzType="arrow-down" nzTheme="outline"></i>{{ 'tree.add_children'|translate }}

@@ -165,6 +165,7 @@ export interface Tree {
     label: string;
     pid: string;
     expandLevel: number;
+    maxLevel: number;
     level: number;
     linkTable: Link[];
     children?: Tree[];
