@@ -55,6 +55,14 @@ export class WindowModel {
 
     public static upload: Function;
 
+    // A logo key that is missing falls back; one set to null or '' hides the logo.
+    private static resolveLogo(configured: string | null | undefined, fallback: string | null): string | null {
+        if (configured === undefined) {
+            return fallback;
+        }
+        return configured || null;
+    }
+
     public static init() {
         WindowModel.r_tools = WindowModel.config["r_tools"] || [];
         WindowModel.userTools = WindowModel.config["userTools"] || [];
@@ -62,13 +70,14 @@ export class WindowModel {
         WindowModel.amapSecurityJsCode = WindowModel.config["amapSecurityJsCode"];
         WindowModel.title = WindowModel.config["title"] === null ? 'Erupt Engine' : WindowModel.config["title"];
         WindowModel.desc = WindowModel.config["desc"] || undefined;
-        WindowModel.logoPath = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "assets/logo.svg");
-        // Collapsed brand mark: follows whatever the expanded header shows
-        // (configured or the bundled default), so collapsing never swaps the
-        // logo for something else. Only a site that switched the logo off
-        // (`logoPath: ''`) gets null here and the header draws the initial.
-        WindowModel.logoFoldPath = WindowModel.config["logoFoldPath"] || WindowModel.logoPath;
-        WindowModel.loginLogoPath = WindowModel.config["loginLogoPath"] === '' ? null : (WindowModel.config["loginLogoPath"] || WindowModel.logoPath);
+        // Logo keys: leaving one out means the default, setting it to null or ''
+        // means "show nothing there".
+        WindowModel.logoPath = WindowModel.resolveLogo(WindowModel.config["logoPath"], "assets/logo.svg");
+        // Collapsed brand mark: follows whatever the expanded header shows, so
+        // collapsing never swaps the logo for something else. When there is no
+        // expanded logo the header draws the site's initial instead.
+        WindowModel.logoFoldPath = WindowModel.resolveLogo(WindowModel.config["logoFoldPath"], WindowModel.logoPath);
+        WindowModel.loginLogoPath = WindowModel.resolveLogo(WindowModel.config["loginLogoPath"], WindowModel.logoPath);
         WindowModel.logoText = WindowModel.config["logoText"] || WindowModel.title;
         WindowModel.registerPage = WindowModel.config["registerPage"] || undefined; //registration page URL
         WindowModel.copyright = WindowModel.config["copyright"];
