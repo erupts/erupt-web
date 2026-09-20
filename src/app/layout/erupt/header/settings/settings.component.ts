@@ -22,8 +22,8 @@ import {
     switchSkin,
     THEME_PRESET_COLORS,
     toHexColor,
-    WORKSPACE_FRAME_PRESETS,
-    WorkspaceFrame
+    WorkspaceFrame,
+    workspaceFrameGroups
 } from "@shared/util/theme.util";
 
 @Component({
@@ -61,7 +61,7 @@ export class SettingsComponent implements OnInit {
 
     // Workspace skin: the frame gradient. null = derived from the theme color
     // (the site default, if one is configured, is applied by startup.service).
-    workspaceFramePresets: WorkspaceFrame[] = WORKSPACE_FRAME_PRESETS;
+    workspaceFrameGroups: { key: string; presets: WorkspaceFrame[] }[] = workspaceFrameGroups();
 
     workspaceFrame: string | null = savedWorkspaceFrame();
 

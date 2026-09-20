@@ -28,7 +28,10 @@ window.eruptSiteConfig = {
         dark: false,        // false | true | "auto" (follow the OS color scheme)
         compact: false,     // denser spacing across the UI
         skin: "default",    // "default" | "brutalist" | "liquid-glass" | "workspace" (chat-app frame: dark brand-tinted sidebar + header, content as a rounded card) | "classic" (Ant Design Pro: navy sidebar, white header)
-        // workspaceFrame: "aubergine", // workspace skin only — frame gradient preset: "aubergine" | "ocean" | "lagoon" | "dusk" | "ember" | "rose" | "forest" | "graphite" | "midnight" (unset = derived from primaryColor)
+        // workspaceFrame: "sky", // workspace skin only — navigation frame preset (unset = derived from primaryColor):
+        //   light: "mist" | "sky" | "azure" | "salt" | "gray" | "mint" | "mint-chip" | "lime" | "citrus" | "banana" | "brass" | "almond" | "peach"
+        //          | "dawn" | "blush" | "raspberry" | "mauve" | "lilac" | "lavender-mint"
+        //   dark:  "deep-sea" | "lagoon" | "indigo" | "slate" | "starry" | "teal" | "jade" | "pine" | "clementine" | "wine" | "aubergine" | "plum" | "graphite"
         menuMode: "normal", // "normal" (sidebar) | "split" (categories in the header) | "dual" (two-column sidebar) | "top" (whole menu in the header, no sidebar) | "group" (categories as flat group titles) | "top-split" (categories in the header, their children in a second row, no sidebar)
         // formPanelMode: "center"  // "center" (floating dialog) | "side" (right panel) | "full" (fullscreen) — how record forms open
     },

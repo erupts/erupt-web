@@ -339,6 +339,66 @@
     }
 }
 
+// ── Workspace skin ────────────────────────────────────────────────
+// Only active when <html> has the .workspace class. The page is the same
+// navigation frame the app shell uses — painted on <body> by
+// styles/themes/workspace.less from --ws-frame / --ws-frame-image, so the
+// theme color or a chosen frame preset carries straight into the login — and
+// the login card is the shell's rounded content card floating in it. Every
+// foreground builds on --ws-fg-rgb, so a light frame preset flips the brand,
+// the buttons and the copyright to ink exactly like the app chrome.
+:host-context(.workspace) ::ng-deep {
+
+    // the frame shows through; no artwork
+    .lp-page {
+        background-color: transparent;
+        background-image: none;
+    }
+
+    .lp-side-brand-name {
+        color: var(--ws-text, rgba(255, 255, 255, 0.92));
+    }
+
+    // actions pill: a wash of the frame foreground, like the shell's rows
+    .lp-side-nav-actions {
+        background: var(--ws-hover, rgba(255, 255, 255, 0.1));
+        box-shadow: inset 0 0 0 1px var(--ws-divider, rgba(255, 255, 255, 0.1));
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .lp-nav-btn,
+    .lp-nav-lang i[nz-icon] {
+        color: var(--ws-text-muted, rgba(255, 255, 255, 0.68));
+
+        &:hover {
+            color: var(--ws-text, rgba(255, 255, 255, 0.92));
+            background: var(--ws-active, rgba(255, 255, 255, 0.18));
+        }
+    }
+
+    // the content card: the shell's radius, lifted by a soft shadow plus a
+    // hairline of the foreground so it also reads on a light frame
+    .lp-card {
+        border-radius: var(--ws-radius, 8px);
+        box-shadow: 0 0 0 1px rgba(var(--ws-fg-rgb, 255, 255, 255), 0.08),
+        0 8px 24px rgba(0, 0, 0, 0.18),
+        0 24px 56px rgba(0, 0, 0, 0.12);
+    }
+
+    .lp-copyright {
+        color: var(--ws-text-faint, rgba(255, 255, 255, 0.45));
+
+        a {
+            color: var(--ws-text-muted, rgba(255, 255, 255, 0.68));
+
+            &:hover {
+                color: var(--ws-text, rgba(255, 255, 255, 0.92));
+            }
+        }
+    }
+}
+
 // ── Theme color panel ─────────────────────────────────────────────
 // Rendered into a cdk overlay, so it sits outside the host element and cannot
 // live inside the :host block above. Angular still stamps the component's

@@ -141,42 +141,78 @@ export function isDarkColor(color: string): boolean {
 // before any TypeScript runs.
 export interface WorkspaceFrame {
     key: string;
+    // neutral, descriptive; shown only as the swatch tooltip
     label: string;
     // CSS gradient for the frame
     frame: string;
-    // solid fallback: the frame's darkest stop, used where a gradient cannot
+    // solid fallback: a mid stop of the gradient, used where a gradient cannot
     // be (derived tints, the preloader's background-color)
     solid: string;
-    // selected menu leaf: a contrasting solid that sits well on the gradient
+    // selected menu leaf: a solid that reads on the gradient and carries white text
     accent: string;
+    // a light frame: the chrome's foreground flips from white to ink, and the
+    // picker lists it under "light" rather than "dark"
+    light?: boolean;
 }
 
+// Soft, low-saturation two-tone diagonals plus a set of flat and blended
+// single hues — the palette borrows from the navigation skins of Feishu and
+// Slack (developer note; the UI groups them only by light / dark). A flat
+// frame is a two-stop gradient of one color, so every preset paints the same way.
 export const WORKSPACE_FRAME_PRESETS: WorkspaceFrame[] = [
-    {key: "aubergine", label: "Aubergine", frame: "linear-gradient(160deg, #4a154b 0%, #611f69 55%, #350d36 100%)", solid: "#4a154b", accent: "#1164a3"},
-    {key: "ocean", label: "Ocean", frame: "linear-gradient(160deg, #0b2f6b 0%, #1857b8 100%)", solid: "#0b2f6b", accent: "#00b8d9"},
-    {key: "lagoon", label: "Lagoon", frame: "linear-gradient(160deg, #0a3d4f 0%, #12798f 100%)", solid: "#0a3d4f", accent: "#2fc0a8"},
-    {key: "dusk", label: "Dusk", frame: "linear-gradient(160deg, #2b1055 0%, #4b34a0 60%, #1e3a8a 100%)", solid: "#2b1055", accent: "#7c6cf0"},
-    {key: "ember", label: "Ember", frame: "linear-gradient(160deg, #5b1d3f 0%, #b53c2b 100%)", solid: "#5b1d3f", accent: "#ff8a3d"},
-    {key: "rose", label: "Rose", frame: "linear-gradient(160deg, #5a1236 0%, #b0245f 100%)", solid: "#5a1236", accent: "#ff6b9d"},
-    {key: "forest", label: "Forest", frame: "linear-gradient(160deg, #0d3b2e 0%, #1f7a55 100%)", solid: "#0d3b2e", accent: "#2fb673"},
-    {key: "graphite", label: "Graphite", frame: "linear-gradient(160deg, #1d2230 0%, #3b4357 100%)", solid: "#1d2230", accent: "#5c7cfa"},
-    {key: "midnight", label: "Midnight", frame: "linear-gradient(160deg, #0a0f1e 0%, #182338 100%)", solid: "#0a0f1e", accent: "#4c6ef5"},
-    // second row: livelier three-stop blends
-    {key: "nebula", label: "Nebula", frame: "linear-gradient(160deg, #1a0b3d 0%, #5b2a9d 50%, #c0397a 100%)", solid: "#1a0b3d", accent: "#ff7ab6"},
-    {key: "aurora", label: "Aurora", frame: "linear-gradient(160deg, #06263a 0%, #0b6b6f 55%, #3ea36b 100%)", solid: "#06263a", accent: "#7ce7b1"},
-    {key: "sunset", label: "Sunset", frame: "linear-gradient(160deg, #3a1c71 0%, #d76d77 55%, #ffaf7b 100%)", solid: "#3a1c71", accent: "#ffd166"},
-    {key: "plum", label: "Plum", frame: "linear-gradient(160deg, #2d0b2e 0%, #6d1f5c 55%, #a83279 100%)", solid: "#2d0b2e", accent: "#ff9ecb"},
-    {key: "cobalt", label: "Cobalt", frame: "linear-gradient(160deg, #0f1c4d 0%, #1e3fa8 55%, #3b7cf0 100%)", solid: "#0f1c4d", accent: "#7ad7ff"},
-    {key: "moss", label: "Moss", frame: "linear-gradient(160deg, #1b2a1a 0%, #3b5a2e 55%, #7c8c3a 100%)", solid: "#1b2a1a", accent: "#d9e06a"},
-    {key: "copper", label: "Copper", frame: "linear-gradient(160deg, #2a1410 0%, #7a3a25 55%, #c47a3a 100%)", solid: "#2a1410", accent: "#ffc98a"},
-    {key: "slate", label: "Slate", frame: "linear-gradient(160deg, #1f2937 0%, #334155 55%, #64748b 100%)", solid: "#1f2937", accent: "#38bdf8"},
-    {key: "ink", label: "Ink", frame: "linear-gradient(160deg, #000000 0%, #16161a 60%, #2a2a33 100%)", solid: "#000000", accent: "#a78bfa"}
+    // light
+    {key: "mist", label: "Mist", frame: "linear-gradient(135deg, #eef2f8 0%, #e2e8f1 100%)", solid: "#e8edf5", accent: "#3370ff", light: true},
+    {key: "sky", label: "Sky", frame: "linear-gradient(135deg, #d9e8ff 0%, #eef4ff 100%)", solid: "#e3edff", accent: "#3370ff", light: true},
+    {key: "azure", label: "Azure", frame: "linear-gradient(135deg, #8ec5f0 0%, #4a90d9 100%)", solid: "#6aaee6", accent: "#1d5fa8", light: true},
+    {key: "salt", label: "Salt", frame: "linear-gradient(135deg, #dee5ee 0%, #eef2f6 100%)", solid: "#e6ecf2", accent: "#4c6ef5", light: true},
+    {key: "gray", label: "Gray", frame: "linear-gradient(#e4e4e6, #e4e4e6)", solid: "#e4e4e6", accent: "#4a4a4a", light: true},
+    {key: "mint", label: "Mint", frame: "linear-gradient(135deg, #d5f1e8 0%, #eaf8f3 100%)", solid: "#e0f5ee", accent: "#1f9d76", light: true},
+    {key: "mint-chip", label: "Mint Chip", frame: "linear-gradient(135deg, #a8e6c8 0%, #a0b8ff 100%)", solid: "#a4cfe4", accent: "#2f6fd6", light: true},
+    {key: "lime", label: "Lime", frame: "linear-gradient(135deg, #e4f3d4 0%, #f3f9ea 100%)", solid: "#ecf6e0", accent: "#5f9a2a", light: true},
+    {key: "citrus", label: "Citrus", frame: "linear-gradient(135deg, #eaf98c 0%, #96f0a4 100%)", solid: "#c0f498", accent: "#2a8f45", light: true},
+    {key: "banana", label: "Banana", frame: "linear-gradient(#ffe98a, #ffe98a)", solid: "#ffe98a", accent: "#8a6d00", light: true},
+    {key: "brass", label: "Brass", frame: "linear-gradient(135deg, #e6c65a 0%, #c99a2e 100%)", solid: "#d8b044", accent: "#6b4f10", light: true},
+    {key: "almond", label: "Almond", frame: "linear-gradient(135deg, #f6ecdc 0%, #faf3ea 100%)", solid: "#f8f0e4", accent: "#c47c2b", light: true},
+    {key: "peach", label: "Peach", frame: "linear-gradient(135deg, #f7d7e3 0%, #f2b866 100%)", solid: "#f5c8a5", accent: "#c0662a", light: true},
+    {key: "dawn", label: "Dawn", frame: "linear-gradient(135deg, #ffe3d4 0%, #fbe4ee 55%, #e7e9ff 100%)", solid: "#fbe5e8", accent: "#e0642f", light: true},
+    {key: "blush", label: "Blush", frame: "linear-gradient(#ff9fc4, #ff9fc4)", solid: "#ff9fc4", accent: "#b3266b", light: true},
+    {key: "raspberry", label: "Raspberry", frame: "linear-gradient(135deg, #f5c6ff 0%, #ffb3c8 100%)", solid: "#f9bde4", accent: "#c2185b", light: true},
+    {key: "mauve", label: "Mauve", frame: "linear-gradient(135deg, #d9b3a3 0%, #d987b8 100%)", solid: "#d99dae", accent: "#8b3a62", light: true},
+    {key: "lilac", label: "Lilac", frame: "linear-gradient(135deg, #e6e1ff 0%, #f3e9ff 100%)", solid: "#ece5ff", accent: "#7b61ff", light: true},
+    {key: "lavender-mint", label: "Lavender Mint", frame: "linear-gradient(135deg, #cdb4ff 0%, #7fded0 100%)", solid: "#a6c9e8", accent: "#6b4de6", light: true},
+    // dark
+    {key: "deep-sea", label: "Deep Sea", frame: "linear-gradient(135deg, #1d3557 0%, #2a4d7a 100%)", solid: "#1d3557", accent: "#57a0ff"},
+    {key: "lagoon", label: "Lagoon", frame: "linear-gradient(#0e4a6e, #0e4a6e)", solid: "#0e4a6e", accent: "#3a9bd9"},
+    {key: "indigo", label: "Indigo", frame: "linear-gradient(#1e2a78, #1e2a78)", solid: "#1e2a78", accent: "#6c7ff2"},
+    {key: "slate", label: "Slate", frame: "linear-gradient(135deg, #3c3f5c 0%, #1c2c74 100%)", solid: "#2c3568", accent: "#6a8dff"},
+    {key: "starry", label: "Starry", frame: "linear-gradient(135deg, #23223f 0%, #3b3566 100%)", solid: "#23223f", accent: "#8b7cf6"},
+    {key: "teal", label: "Teal", frame: "linear-gradient(135deg, #0d7a5b 0%, #0f4c5c 100%)", solid: "#0e635c", accent: "#f2a93b"},
+    {key: "jade", label: "Jade", frame: "linear-gradient(#0f6b4c, #0f6b4c)", solid: "#0f6b4c", accent: "#e0a72e"},
+    {key: "pine", label: "Pine", frame: "linear-gradient(135deg, #1f3b34 0%, #2c5a4c 100%)", solid: "#1f3b34", accent: "#4fc9a0"},
+    {key: "clementine", label: "Clementine", frame: "linear-gradient(#cc3d0a, #cc3d0a)", solid: "#cc3d0a", accent: "#7a2205"},
+    {key: "wine", label: "Wine", frame: "linear-gradient(135deg, #a3162b 0%, #3d1544 100%)", solid: "#701638", accent: "#e8a33d"},
+    {key: "aubergine", label: "Aubergine", frame: "linear-gradient(#3f0e40, #3f0e40)", solid: "#3f0e40", accent: "#1164a3"},
+    {key: "plum", label: "Plum", frame: "linear-gradient(135deg, #4b1a4f 0%, #2c0d31 100%)", solid: "#3c1440", accent: "#8c4bb8"},
+    {key: "graphite", label: "Graphite", frame: "linear-gradient(135deg, #2b2f36 0%, #3f4650 100%)", solid: "#2b2f36", accent: "#6c8cff"}
 ];
+
+// The presets split for the picker: light frames, then dark ones. The caption
+// is an i18n key (setting.frame-light / setting.frame-dark).
+export function workspaceFrameGroups(): { key: string; presets: WorkspaceFrame[] }[] {
+    return [
+        {key: "setting.frame-light", presets: WORKSPACE_FRAME_PRESETS.filter(p => p.light)},
+        {key: "setting.frame-dark", presets: WORKSPACE_FRAME_PRESETS.filter(p => !p.light)}
+    ];
+}
 
 export const WORKSPACE_FRAME_KEY = "workspace-frame";
 
 // Inline on <html>, so they beat the skin's own html.workspace / .dark values
-const WORKSPACE_FRAME_TOKENS = ["--ws-frame-image", "--ws-frame", "--ws-selected-bg"];
+const WORKSPACE_FRAME_TOKENS = [
+    "--ws-frame-image", "--ws-frame", "--ws-selected-bg",
+    // light frames only
+    "--ws-fg-rgb", "--ws-frame-deep", "--ws-hover", "--ws-active", "--ws-divider"
+];
 
 // The preset key the user saved, if any
 export function savedWorkspaceFrame(): string | null {
@@ -208,6 +244,14 @@ export function applyWorkspaceFrame(key: string | null, persist: boolean = true)
     el.style.setProperty("--ws-frame-image", preset.frame);
     el.style.setProperty("--ws-frame", preset.solid);
     el.style.setProperty("--ws-selected-bg", preset.accent);
+    if (preset.light) {
+        // ink foreground; the washes get lighter, a light surface needs less to read as a layer
+        el.style.setProperty("--ws-fg-rgb", "0, 0, 0");
+        el.style.setProperty("--ws-frame-deep", "rgba(0, 0, 0, 0.05)");
+        el.style.setProperty("--ws-hover", "rgba(0, 0, 0, 0.06)");
+        el.style.setProperty("--ws-active", "rgba(0, 0, 0, 0.10)");
+        el.style.setProperty("--ws-divider", "rgba(0, 0, 0, 0.08)");
+    }
 }
 
 // ── Theme (primary) color ────────────────────────────────────────────────
