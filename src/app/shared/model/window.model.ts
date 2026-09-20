@@ -63,12 +63,11 @@ export class WindowModel {
         WindowModel.title = WindowModel.config["title"] === null ? 'Erupt Engine' : WindowModel.config["title"];
         WindowModel.desc = WindowModel.config["desc"] || undefined;
         WindowModel.logoPath = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "assets/logo.svg");
-        // Collapsed brand mark. Falling back to the expanded logo is right when
-        // that logo is the site's own, but erupt's built-in mark is not a
-        // stand-in for somebody else's product, so a site that configured
-        // neither gets null here and the header draws a neutral placeholder.
-        WindowModel.logoFoldPath = WindowModel.config["logoFoldPath"]
-            || (WindowModel.config["logoPath"] ? WindowModel.logoPath : null);
+        // Collapsed brand mark: follows whatever the expanded header shows
+        // (configured or the bundled default), so collapsing never swaps the
+        // logo for something else. Only a site that switched the logo off
+        // (`logoPath: ''`) gets null here and the header draws the initial.
+        WindowModel.logoFoldPath = WindowModel.config["logoFoldPath"] || WindowModel.logoPath;
         WindowModel.loginLogoPath = WindowModel.config["loginLogoPath"] === '' ? null : (WindowModel.config["loginLogoPath"] || WindowModel.logoPath);
         WindowModel.logoText = WindowModel.config["logoText"] || WindowModel.title;
         WindowModel.registerPage = WindowModel.config["registerPage"] || undefined; //registration page URL
