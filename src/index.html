@@ -365,6 +365,14 @@
             if (frame && frame.frame) {
                 _preloaderEl.style.backgroundImage = frame.frame;
                 _preloaderEl.style.backgroundColor = frame.solid || "";
+                if (frame.light) {
+                    // ink on a light frame; the rings take the preset's accent instead of white
+                    var content = _preloaderEl.querySelector(".pl-content");
+                    if (content) content.style.setProperty("--pl-accent", frame.accent || "#3370ff");
+                    if (_brandEl) _brandEl.style.color = "rgba(0, 0, 0, 0.72)";
+                    var tip = document.getElementById("preloader-tip");
+                    if (tip) tip.style.color = "rgba(0, 0, 0, 0.40)";
+                }
             }
         };
         _paintWorkspacePreloader();

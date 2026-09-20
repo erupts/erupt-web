@@ -170,14 +170,20 @@
                       [class.theme-color-picker__swatch--active]="!workspaceFrame"
                       (click)="setWorkspaceFrame(null)"
                       nz-tooltip [nzTooltipTitle]="'global.reset' | translate"></span>
-                @for (p of workspaceFramePresets; track p.key) {
-                    <span class="theme-color-picker__swatch"
-                          [style.background]="p.frame"
-                          [class.theme-color-picker__swatch--active]="workspaceFrame === p.key"
-                          (click)="setWorkspaceFrame(p.key)"
-                          nz-tooltip [nzTooltipTitle]="p.label"></span>
-                }
             </div>
+            <!-- one captioned row each for the light and the dark frames -->
+            @for (g of workspaceFrameGroups; track g.key) {
+                <span class="skin-sub__caption">{{ g.key | translate }}</span>
+                <div class="theme-color-picker">
+                    @for (p of g.presets; track p.key) {
+                        <span class="theme-color-picker__swatch theme-color-picker__swatch--framed"
+                              [style.background]="p.frame"
+                              [class.theme-color-picker__swatch--active]="workspaceFrame === p.key"
+                              (click)="setWorkspaceFrame(p.key)"
+                              nz-tooltip [nzTooltipTitle]="p.label"></span>
+                    }
+                </div>
+            }
         </div>
     }
 </div>

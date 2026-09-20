@@ -46,13 +46,16 @@ html.workspace {
      * gradient shows through them too */
     --ws-frame-deep: rgba(0, 0, 0, 0.18);
 
-    /* Foreground on the frame */
-    --ws-text: rgba(255, 255, 255, 0.92);
-    --ws-text-muted: rgba(255, 255, 255, 0.68);
-    --ws-text-faint: rgba(255, 255, 255, 0.45);
-    --ws-divider: rgba(255, 255, 255, 0.10);
-    --ws-hover: rgba(255, 255, 255, 0.10);
-    --ws-active: rgba(255, 255, 255, 0.18);
+    /* Foreground on the frame. Every foreground alpha is built on --ws-fg-rgb,
+     * so a LIGHT frame preset (applyWorkspaceFrame sets it to 0, 0, 0 inline)
+     * flips the whole chrome to ink in one move. */
+    --ws-fg-rgb: 255, 255, 255;
+    --ws-text: rgba(var(--ws-fg-rgb), 0.92);
+    --ws-text-muted: rgba(var(--ws-fg-rgb), 0.68);
+    --ws-text-faint: rgba(var(--ws-fg-rgb), 0.45);
+    --ws-divider: rgba(var(--ws-fg-rgb), 0.10);
+    --ws-hover: rgba(var(--ws-fg-rgb), 0.10);
+    --ws-active: rgba(var(--ws-fg-rgb), 0.18);
 
     /* The current menu leaf: a solid brand block, brighter than the frame */
     --ws-selected-bg: var(--ws-hue);
@@ -74,9 +77,9 @@ html.workspace {
     --erupt-header-fill: var(--ws-hover);
     --erupt-header-fill-strong: var(--ws-active);
     --erupt-header-active-bg: var(--ws-active);
-    --erupt-header-active-text: #fff;
+    --erupt-header-active-text: rgb(var(--ws-fg-rgb));
     --erupt-header-border: transparent;
-    --erupt-header-progress: #fff;
+    --erupt-header-progress: rgb(var(--ws-fg-rgb));
 }
 
 /* Dark — the frame sinks toward black and keeps a hint of the hue; the card
@@ -162,10 +165,10 @@ html.workspace .subnav-menu.ant-menu-horizontal {
         &.ant-menu-submenu-active,
         &.ant-menu-item-selected,
         &.ant-menu-submenu-selected {
-            color: #fff;
+            color: rgb(var(--ws-fg-rgb));
 
             &::after {
-                border-bottom-color: #fff;
+                border-bottom-color: rgb(var(--ws-fg-rgb));
             }
         }
     }
@@ -190,7 +193,7 @@ html.workspace .alain-default__aside .alain-default__aside-inner::-webkit-scroll
 }
 
 html.workspace .alain-default__aside .alain-default__aside-inner::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.22);
+    background-color: rgba(var(--ws-fg-rgb), 0.22);
 }
 
 /* the stock 1px right rule would draw a seam through the frame */
@@ -258,7 +261,7 @@ html.workspace {
 
         &:hover,
         &--active {
-            color: #fff;
+            color: rgb(var(--ws-fg-rgb));
         }
     }
 
@@ -266,9 +269,9 @@ html.workspace {
         color: var(--ws-text);
     }
 
-    /* menu click ripple — white on the frame and on the brand block alike */
+    /* menu click ripple — the frame foreground, on the frame and on the brand block alike */
     .alain-default__aside .sidebar-nav__item span.ripple {
-        background: rgba(255, 255, 255, 0.35) !important;
+        background: rgba(var(--ws-fg-rgb), 0.35) !important;
     }
 
     .alain-default__aside .sidebar-nav__group-title {
@@ -287,7 +290,7 @@ html.workspace {
     }
 
     .alain-default__aside .sidebar-nav__drag-placeholder {
-        border-color: rgba(255, 255, 255, 0.5);
+        border-color: rgba(var(--ws-fg-rgb), 0.5);
     }
 
     /* Collapsed rail — the pill hugs the icon */
@@ -318,7 +321,7 @@ html.workspace {
 
         &--active {
             background: var(--ws-active);
-            color: #fff;
+            color: rgb(var(--ws-fg-rgb));
         }
     }
 
