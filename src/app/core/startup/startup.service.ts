@@ -45,7 +45,7 @@ export class StartupService {
     // brutalist pastel never boots into another skin and vice versa.
     private applyTheme(): void {
         // only the color entries go to ng-zorro; the layout-ish defaults are read elsewhere
-        const {dark, compact, skin, menuMode, workspaceFrame, customizable, ...theme} = WindowModel.theme || {};
+        const {dark, compact, skin, menuMode, workspaceFrame, customizable, loginLayout, loginBackground, ...theme} = WindowModel.theme || {};
         theme.primaryColor = resolveThemeColor();
         this.nzConfigService.set('theme', theme);
         // User choice first, then the site config default (theme.headerColor),

@@ -476,7 +476,7 @@
                 // startup.service reads the same keys afterwards and finds them gone too.
                 if (!look.customizable) {
                     ["brutalist-theme", "liquid-glass", "workspace", "classic",
-                        "theme-color", "theme-color-brutalist", "header-color", "workspace-frame"]
+                        "theme-color", "theme-color-brutalist", "header-color", "workspace-frame", "login-layout"]
                         .forEach(function (k) { localStorage.removeItem(k); });
                     document.documentElement.classList.remove("brutalist-theme", "liquid-glass", "workspace", "classic");
                     _preloaderEl.style.removeProperty("--pl-accent");
