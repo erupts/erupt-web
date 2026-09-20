@@ -59,7 +59,9 @@
       </nz-time-picker>
     }
     @case (dateEnum.WEEK) {
+      <!-- ng-zorro's default week format is `YYYY-ww`, which date-fns rejects; keep the app's own week format. -->
       <nz-week-picker [nzSize]="size" class="erupt-input stander-line-height"
+        nzFormat="yyyy-ww"
         [(ngModel)]="edit.$value"
         [nzDisabled]="readonly"
         [nzDisabledDate]="disabledDate"

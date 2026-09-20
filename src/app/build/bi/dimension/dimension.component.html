@@ -158,7 +158,8 @@
                   </nz-range-picker>
                 }
                 @case (dimType.WEEK) {
-                  <nz-week-picker [(ngModel)]="dim.$value" class="full-width"
+                  <!-- ng-zorro's default week format is `YYYY-ww`, which date-fns rejects; keep the app's own week format. -->
+                  <nz-week-picker [(ngModel)]="dim.$value" class="full-width" nzFormat="yyyy-ww"
                   [name]="dim.code"></nz-week-picker>
                 }
                 @case (dimType.MONTH) {
