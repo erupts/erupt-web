@@ -446,9 +446,23 @@
         // mask comes or goes (see the overlay observer below).
         var _readThemeColor;
         window.eruptSyncThemeColor = function () {
+            // [r, g, b, a?] on a 0..255 scale from a computed color: rgb()/rgba(),
+            // or color(srgb r g b / a) with 0..1 channels, which is how Chrome
+            // serializes a color-mix() result (the skins derive their surfaces
+            // from the brand color that way).
             var channels = function (color) {
-                var m = color && color.match(/rgba?\(([^)]+)\)/);
-                return m ? m[1].split(/[\s,\/]+/).filter(Boolean).map(parseFloat) : null;
+                var m = color && color.match(/^(rgba?|color)\(([^)]+)\)/);
+                if (!m) {
+                    return null;
+                }
+                var parts = m[2].split(/[\s,\/]+/).filter(Boolean);
+                if (m[1] === "color") {
+                    if (parts.shift() !== "srgb") {
+                        return null;
+                    }
+                    return parts.map(function (v, i) { return i < 3 ? parseFloat(v) * 255 : parseFloat(v); });
+                }
+                return parts.map(parseFloat);
             };
             // The masks lying over the top strip, as [r, g, b, a] layers at the
             // strength painted (color alpha × element opacity). Masks do not fade
@@ -495,7 +509,7 @@
                     var c = channels(getComputedStyle(n).backgroundColor);
                     var alpha = c ? (c.length > 3 ? c[3] : 1) : 0;
                     if (alpha >= 1) {
-                        base = "rgb(" + c.slice(0, 3).join(", ") + ")";
+                        base = "rgb(" + c.slice(0, 3).map(Math.round).join(", ") + ")";
                     } else if (alpha > 0) {
                         stack.unshift([c[0], c[1], c[2], alpha]);
                     }
