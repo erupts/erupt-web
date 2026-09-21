@@ -44,10 +44,12 @@ html.brutalist-theme {
     --raft-muted: #C0B9B1;        /* inactive fills, closed-state chips      */
     --raft-hairline: rgba(20, 17, 17, 0.15); /* in-card row dividers         */
     /* The menu column is cream paper. The top bar's band stops at the top
-     * bar — except in dual mode, where the first-level RAIL picks it up (see
-     * .dual-menu__rail). Carrying the band down the whole column flattens a
-     * long list into a wall and, worse, hides the current item: the selection
-     * block IS the accent, so on an accent column it disappears. */
+     * bar — except on the narrow RAILS, which pick it up: dual mode's
+     * first-level rail (.dual-menu__rail) and the collapsed column
+     * (.alain-default__collapsed). Carrying the band down a full-width list
+     * flattens it into a wall and, worse, hides the current item: the
+     * selection block IS the accent, so on an accent column it disappears;
+     * the rails invert the block to paper instead. */
     --raft-panel: var(--raft-cream);
 
     /* Drive every split border (menu, header, tree, cards) off the line color */
@@ -1282,7 +1284,31 @@ html.brutalist-theme {
     .dual-menu__main { background: var(--raft-panel); }
 
     /* Collapsed rail — a centered 40px square per item, the way Raft draws
-     * its app rail: the tile is the target, the glyph sits small inside it. */
+     * its app rail: the tile is the target, the glyph sits small inside it.
+     * The column wears the top bar's band, like the dual rail: the band
+     * always carries ink type under this skin, so the rows keep their ink
+     * colors and only the selection inverts, to a paper block. */
+    .alain-default__collapsed {
+        .alain-default__aside,
+        .alain-default__aside .fold {
+            background: var(--erupt-header-bg, var(--raft-header));
+        }
+
+        /* Hover shows through the band, as on the dual rail */
+        .fold__btn:hover,
+        .sidebar-nav__item-link:hover {
+            background: color-mix(in srgb, var(--raft-paper) 55%, transparent);
+        }
+
+        .sidebar-nav__selected > .sidebar-nav__item-link,
+        .sidebar-nav__selected > .sidebar-nav__item-link:hover {
+            background: var(--raft-paper);
+            color: var(--raft-ink);
+
+            .sidebar-nav__item-icon { color: var(--raft-ink); }
+        }
+    }
+
     .alain-default__collapsed .sidebar-nav__item .sidebar-nav__item-link {
         width: 40px;
         height: 40px;
