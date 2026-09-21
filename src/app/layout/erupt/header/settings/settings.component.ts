@@ -13,10 +13,10 @@ import {
     applyHeaderColor,
     applyThemeColor,
     applyWorkspaceFrame,
+    WORKSPACE_FRAME_PRESETS,
     BRUTALIST_PRESET_COLORS,
     currentSkin,
-    defaultHeaderColor,
-    resolveThemeColor,
+    resolveHeaderColor, resolveThemeColor,
     savedWorkspaceFrame,
     Skin,
     switchSkin,
@@ -68,10 +68,17 @@ export class SettingsComponent implements OnInit {
     // Swatch for the derived frame — the same mix as workspace.less, live
     readonly autoWorkspaceFrame = "color-mix(in srgb, var(--ant-primary-color) 42%, #151a26)";
 
+    // A preset brings its accent along as the theme color, so the frame and the
+    // controls on the content card share one palette in a single click. Clearing
+    // the preset keeps the current theme color: the derived frame then follows it.
     setWorkspaceFrame(key: string | null) {
         this.workspaceFrame = key;
         if (key) {
             applyWorkspaceFrame(key);
+            const preset = WORKSPACE_FRAME_PRESETS.find(p => p.key === key);
+            if (preset) {
+                this.setThemeColor(preset.accent);
+            }
         } else {
             // clear the saved choice, then fall back to the site default
             applyWorkspaceFrame(null);
@@ -122,10 +129,7 @@ export class SettingsComponent implements OnInit {
     // tracks at all. The resolved theme color is passed explicitly because
     // ng-zorro has not written --ant-primary-color yet at this point.
     private refreshHeaderColor() {
-        applyHeaderColor(
-            this.headerColor || WindowModel.theme?.headerColor || defaultHeaderColor(),
-            toHexColor(this.themeColor)
-        );
+        applyHeaderColor(resolveHeaderColor(), toHexColor(this.themeColor));
     }
 
     // Header (top bar) color: "" = follow theme, "primary" = theme color, or a literal color.

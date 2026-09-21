@@ -1,5 +1,5 @@
 import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
-import {Component, Inject, Input, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
+import {AfterViewInit, Component, Inject, Input, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {Menu, MenuInner, MenuService, SettingsService} from "@delon/theme";
 import {Subject, takeUntil} from "rxjs";
 import screenfull from 'screenfull';
@@ -36,7 +36,7 @@ export interface NoticePush {
         "./header.component.less"
     ]
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @Input() menu: MenuVo[];
 
@@ -192,6 +192,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 this.logoFoldPath = this.logoPath;
             }
         }
+    }
+
+    // The browser chrome color (<meta name="theme-color">, owned by index.html) is read
+    // off the painted bar, which only exists from here on
+    ngAfterViewInit() {
+        window["eruptSyncThemeColor"]?.();
     }
 
     ngOnInit() {
@@ -377,6 +383,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+        // The bar is gone (e.g. back to the login page): let the chrome color follow whatever
+        // surface replaces it
+        window["eruptSyncThemeColor"]?.();
     }
 
 }

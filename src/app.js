@@ -14,6 +14,12 @@ window.eruptSiteConfig = {
     registerPage: null,
     amapKey: 'da01c124bff9d9be1ad44e04f23aa32e',
     amapSecurityJsCode: "5bf6c7828a97fe987c8292f00629a6d9",
+    // Installed app (PWA). Name, description and color come from logoText / title / desc and the
+    // top bar; this block only adds the icon and the icon's right-click menu.
+    pwa: {
+        // icon: "assets/pwa-icon.svg",             // svg, or a png / jpg / webp (512px or larger)
+        // shortcuts: [{name: "Home", url: "./#/"}], // hash routes work; optional icon / description
+    },
     // Appearance defaults. Each one only applies until the user picks something in the
     // settings drawer; that choice is remembered in the browser and wins from then on.
     theme: {
