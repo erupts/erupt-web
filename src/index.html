@@ -44,6 +44,22 @@
             pointer-events: none;
         }
 
+        /* Installed app: the corners Chrome paints around the window controls are
+         * one flat color (--erupt-titlebar-color, from eruptSyncThemeColor), so the
+         * preloader wears the same strip on top as the login page and the header
+         * do, and its artwork starts below it. */
+        @media (display-mode: window-controls-overlay) {
+            .preloader::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 39px;
+                background: var(--erupt-titlebar-color, transparent);
+            }
+        }
+
         @keyframes plHalo {
             0%, 100% { transform: scale(1);    opacity: .7; }
             50%      { transform: scale(1.18); opacity: 1; }
@@ -577,6 +593,9 @@
         // the site's name / description / color and eruptSiteConfig.pwa's icon and
         // shortcuts. A blob manifest has no base URL, so every relative reference
         // is made absolute against the page.
+        // The corners take the preloader's color at once, from the saved skin and
+        // theme; app.js re-syncs below once the site's own defaults are applied.
+        window.eruptSyncThemeColor();
         window.eruptApplyManifest = function (cfg) {
             var link = document.querySelector("link[rel='manifest']");
             if (!link) {
