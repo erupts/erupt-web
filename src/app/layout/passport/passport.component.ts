@@ -160,6 +160,9 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.modalSrv.closeAll();
+        // No top bar here: the browser chrome color (<meta name="theme-color">, owned by
+        // index.html) follows the page surface instead
+        window["eruptSyncThemeColor"]?.();
     }
 
 }

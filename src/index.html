@@ -410,6 +410,7 @@
         window.eruptApplyDarkTheme = function (dark) {
             document.documentElement.classList.toggle("dark", dark);
             window.eruptSyncThemeBundles();
+            window.eruptSyncThemeColor();
         };
         window.eruptApplyCompactTheme = function (compact) {
             document.documentElement.classList.toggle("compact", compact);
@@ -424,6 +425,230 @@
             if (link && path) {
                 link.setAttribute("href", path);
             }
+        };
+        // The browser UI color (<meta name="theme-color">: the tab strip on Android,
+        // the title bar of an installed app). The two built-in metas hold the light
+        // and dark defaults matching the plain top bar; a color replaces both, null
+        // puts the defaults back. applyHeaderColor() calls it whenever the top bar
+        // changes so the browser chrome always continues the bar.
+        var _setThemeColorMeta = function (color) {
+            document.querySelectorAll("meta[name='theme-color']").forEach(function (m) {
+                if (!m.dataset.defaultContent) {
+                    m.dataset.defaultContent = m.getAttribute("content");
+                }
+                m.setAttribute("content", color || m.dataset.defaultContent);
+            });
+        };
+        // Re-read the bar once it has painted: a skin may recolor it and ng-zorro
+        // writes the palette asynchronously, so the requested color can differ
+        // from what is on screen. Called again after the theme bundle swap, by
+        // the header itself once it exists, and whenever a modal / drawer mask
+        // comes or goes (see the overlay observer below).
+        var _readThemeColor;
+        var _following = false;
+        window.eruptSyncThemeColor = function () {
+            var opaque = function (el) {
+                var bg = el && getComputedStyle(el).backgroundColor;
+                return bg && bg !== "transparent" && !/^rgba\(.*,\s*0\)$/.test(bg) ? bg : null;
+            };
+            var channels = function (color) {
+                var m = color && color.match(/rgba?\(([^)]+)\)/);
+                return m ? m[1].split(/[\s,\/]+/).filter(Boolean).map(parseFloat) : null;
+            };
+            // The masks lying over the top strip, as [r, g, b, a] layers at the
+            // strength actually painted this frame (color alpha × element opacity),
+            // so the corners show exactly what the page shows, mid-fade included.
+            // `settling` is set while any mask is part-way through its fade.
+            var settling = false;
+            var maskLayers = function () {
+                var layers = [];
+                settling = false;
+                document.querySelectorAll(".ant-modal-mask, .ant-drawer-mask, .cdk-overlay-backdrop").forEach(function (m) {
+                    var cs = getComputedStyle(m);
+                    var r = m.getBoundingClientRect();
+                    if (cs.display === "none" || cs.visibility === "hidden" || r.width === 0 || r.top > 0 || r.bottom <= 0) {
+                        return;
+                    }
+                    var c = channels(cs.backgroundColor);
+                    var opacity = parseFloat(cs.opacity);
+                    if (opacity > 0 && opacity < 1) {
+                        settling = true;
+                    }
+                    var alpha = (c ? (c.length > 3 ? c[3] : 1) : 0) * (isNaN(opacity) ? 1 : opacity);
+                    if (c && alpha > 0) {
+                        layers.push([c[0], c[1], c[2], alpha]);
+                    }
+                });
+                return layers;
+            };
+            // Source-over compositing of the mask layers onto the bar color, the
+            // same blend the page itself shows where a mask covers the bar
+            var composite = function (color, layers) {
+                var c = channels(color);
+                if (!c || !layers.length) {
+                    return color;
+                }
+                var out = c.slice(0, 3);
+                layers.forEach(function (l) {
+                    out = out.map(function (v, i) { return v * (1 - l[3]) + l[i] * l[3]; });
+                });
+                return "rgb(" + out.map(Math.round).join(", ") + ")";
+            };
+            var read = function () {
+                var bar = document.querySelector(".erupt-header, .alain-default__header");
+                var base = bar ? opaque(bar) : null;
+                if (!bar) {
+                    // No bar (login page): the chrome continues the page surface instead,
+                    // falling back to the light / dark defaults.
+                    var page = document.querySelector(".lp-page");
+                    if (!page) {
+                        return;
+                    }
+                    base = opaque(page) || opaque(document.body);
+                }
+                _setThemeColorMeta(base ? composite(base, maskLayers()) : null);
+                // Follow a fading mask frame by frame until it has settled
+                if (settling && !_following) {
+                    _following = true;
+                    requestAnimationFrame(function () {
+                        _following = false;
+                        read();
+                    });
+                }
+            };
+            _readThemeColor = read;
+            // Now, then again once the layers have settled: ng-zorro writes the
+            // palette and a swapped theme bundle applies a little later. Timers
+            // rather than requestAnimationFrame, so a background window gets them.
+            read();
+            setTimeout(read, 100);
+            setTimeout(read, 500);
+        };
+        // Modals and drawers (their masks included) live in the CDK overlay
+        // container, created lazily under <body>. Watch for the container, then
+        // watch its subtree so every mask entering, fading or leaving re-syncs.
+        (function () {
+            // Written in the same task as the mutation; the read itself keeps
+            // following a mask's fade frame by frame until it settles.
+            var onOverlayChange = function () {
+                (_readThemeColor || window.eruptSyncThemeColor)();
+            };
+            var watchOverlays = function (container) {
+                new MutationObserver(onOverlayChange).observe(container, {
+                    childList: true, subtree: true, attributes: true, attributeFilter: ["class", "style"]
+                });
+            };
+            var existing = document.querySelector(".cdk-overlay-container");
+            if (existing) {
+                watchOverlays(existing);
+            }
+            new MutationObserver(function (list) {
+                list.forEach(function (m) {
+                    m.addedNodes.forEach(function (n) {
+                        if (n.nodeType === 1 && n.classList.contains("cdk-overlay-container")) {
+                            watchOverlays(n);
+                        }
+                    });
+                });
+            }).observe(document.body, {childList: true});
+        })();
+        window.eruptApplyThemeColor = function (color) {
+            _setThemeColorMeta(color);
+            window.eruptSyncThemeColor();
+        };
+        // The web app manifest. manifest.json stays the static default; a branded
+        // site re-issues it as a blob: URL with its own name / theme_color so the
+        // installed app carries them. A blob manifest has no base URL, so every
+        // relative reference is made absolute against the page first. Chrome reads
+        // the manifest lazily and follows href changes, so async is fine here.
+        // The installed app's manifest: manifest.json re-issued as a blob: URL with
+        // the site's name / description / color and eruptSiteConfig.pwa's icon and
+        // shortcuts. A blob manifest has no base URL, so every relative reference
+        // is made absolute against the page.
+        window.eruptApplyManifest = function (cfg) {
+            var link = document.querySelector("link[rel='manifest']");
+            if (!link) {
+                return;
+            }
+            var base = location.href.replace(/[#?].*$/, "").replace(/[^\/]*$/, "");
+            var abs = function (url) {
+                return new URL(url, base).href;
+            };
+            var th = cfg.theme || {};
+            var pwa = cfg.pwa || {};
+            // Icon entries for one image (svg / png / jpg / webp / ico). An SVG scales
+            // to any size; a raster is loaded once and measured, since installation
+            // needs its real pixel size in `sizes`.
+            var iconEntries = function (path, purposes) {
+                var ext = (path.match(/\.([a-z0-9]+)(?:[?#]|$)/i) || ["", ""])[1].toLowerCase();
+                var type = {svg: "image/svg+xml", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", ico: "image/x-icon"}[ext];
+                return new Promise(function (resolve) {
+                    var done = function (sizes) {
+                        resolve((purposes || ["any"]).map(function (purpose) {
+                            return {src: abs(path), sizes: sizes, type: type, purpose: purpose};
+                        }));
+                    };
+                    if (ext === "svg") {
+                        return done("any");
+                    }
+                    var img = new Image();
+                    img.onload = function () {
+                        done(img.naturalWidth + "x" + img.naturalHeight);
+                    };
+                    img.onerror = function () {
+                        done("any");
+                    };
+                    img.src = path;
+                });
+            };
+            Promise.all([
+                fetch(link.href).then(function (r) {
+                    return r.json();
+                }),
+                pwa.icon ? iconEntries(pwa.icon, ["any", "maskable"]) : null,
+                // Shortcuts in manifest shape, `icon: "path"` as shorthand for one image
+                Promise.all((pwa.shortcuts || []).map(function (sc) {
+                    return (sc.icon ? iconEntries(sc.icon) : Promise.resolve(sc.icons)).then(function (icons) {
+                        return {name: sc.name, short_name: sc.shortName, description: sc.description, url: sc.url, icons: icons};
+                    });
+                }))
+            ]).then(function (r) {
+                var m = r[0];
+                var name = cfg.logoText || cfg.title;
+                var brand = (th.headerColor && th.headerColor !== "primary") ? th.headerColor : th.primaryColor;
+                if (name) {
+                    m.name = m.short_name = name;
+                }
+                if (cfg.desc) {
+                    m.description = cfg.desc;
+                }
+                if (brand) {
+                    m.theme_color = brand;
+                }
+                if (r[1]) {
+                    m.icons = r[1];
+                }
+                if (r[2].length) {
+                    m.shortcuts = r[2];
+                }
+                ["id", "start_url", "scope"].forEach(function (k) {
+                    if (m[k]) {
+                        m[k] = abs(m[k]);
+                    }
+                });
+                (m.icons || []).forEach(function (i) {
+                    i.src = abs(i.src);
+                });
+                (m.shortcuts || []).forEach(function (sc) {
+                    sc.url = abs(sc.url);
+                    (sc.icons || []).forEach(function (i) {
+                        i.src = abs(i.src);
+                    });
+                });
+                link.href = URL.createObjectURL(new Blob([JSON.stringify(m)], {type: "application/manifest+json"}));
+            }).catch(function () {
+                // Offline or unreachable: the static manifest.json stays in place
+            });
         };
         // dark-theme: "true" | "false" | "auto" (follow the OS color scheme). With no saved
         // choice the site config decides (eruptSiteConfig.darkTheme, same three values).
@@ -517,6 +742,17 @@
                 if (cfg.faviconPath) {
                     window.eruptApplyFavicon(cfg.faviconPath);
                 }
+                // Browser chrome follows the top bar: a saved header color, else the site's,
+                // else the brutalist skin's brand band. "primary" means the theme color.
+                var _th = cfg.theme || {};
+                var _hc = document.documentElement.classList.contains("brutalist-theme") ? "primary"
+                    : (localStorage.getItem("header-color") || _th.headerColor);
+                var _bar = _hc === "primary" ? (_tcPref || _th.primaryColor) : _hc;
+                // The login page has no bar; its surface is the default meta color
+                if (_bar && !/^#\/passport(\/|$)/.test(location.hash)) {
+                    window.eruptApplyThemeColor(_bar);
+                }
+                window.eruptApplyManifest(cfg);
             }
         }, 10);
     })(new Date())

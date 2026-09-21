@@ -23,11 +23,22 @@ const HEADER_TOKENS = [
 ];
 
 // The top bar color a skin falls back to when neither the user nor the site
-// config picked one. The brutalist band is a candy surface in that skin's own
-// language, so it tracks the theme color; every other skin keeps the bar
-// defined in tokens.less or in its own theme file (the workspace frame).
+// config picked one. Every skin keeps the bar defined in tokens.less or in its
+// own theme file (the workspace frame); the brutalist band is pinned below.
 export function defaultHeaderColor(): string | null {
-    return document.documentElement.classList.contains("brutalist-theme") ? "primary" : null;
+    return null;
+}
+
+// The top bar color in effect: the user's choice, then the site default
+// (theme.headerColor), then the skin's own. The brutalist band is a candy
+// surface in that skin's own language and always tracks the theme color: it
+// is not configurable there, so a saved choice is ignored (kept for the other
+// skins) and the settings drawer hides the picker.
+export function resolveHeaderColor(): string | null {
+    if (currentSkin() === Skin.BRUTALIST) {
+        return "primary";
+    }
+    return localStorage.getItem("header-color") || WindowModel.theme?.headerColor || defaultHeaderColor();
 }
 
 // ── Skins ────────────────────────────────────────────────────────────────
@@ -77,7 +88,10 @@ export function applySkin(skin: Skin): void {
 export function applyHeaderColor(value: string | null, resolvedThemeColor?: string): void {
     const el = document.documentElement;
     HEADER_TOKENS.forEach(p => el.style.removeProperty(p));
+    // The browser chrome (<meta name="theme-color">, owned by index.html) continues the bar
+    const applyThemeColorMeta: ((color: string | null) => void) | undefined = window["eruptApplyThemeColor"];
     if (!value) {
+        applyThemeColorMeta?.(null);
         return;
     }
     const bg = value === "primary" ? "var(--ant-primary-color)" : value;
@@ -85,6 +99,7 @@ export function applyHeaderColor(value: string | null, resolvedThemeColor?: stri
         ? resolvedThemeColor || getComputedStyle(el).getPropertyValue("--ant-primary-color").trim() || DEFAULT_THEME_COLOR
         : value;
     el.style.setProperty("--erupt-header-bg", bg);
+    applyThemeColorMeta?.(resolved);
     if (isDarkColor(resolved)) {
         // Dark/colored bar — white foreground, translucent-white states
         el.style.setProperty("--erupt-header-text", "rgba(255, 255, 255, 0.95)");
@@ -148,7 +163,8 @@ export interface WorkspaceFrame {
     // solid fallback: a mid stop of the gradient, used where a gradient cannot
     // be (derived tints, the preloader's background-color)
     solid: string;
-    // selected menu leaf: a solid that reads on the gradient and carries white text
+    // selected menu leaf: a solid that reads on the gradient and carries white text.
+    // Picking the preset in the settings drawer also makes it the theme color.
     accent: string;
     // a light frame: the chrome's foreground flips from white to ink, and the
     // picker lists it under "light" rather than "dark"
@@ -367,9 +383,6 @@ function pushThemeColor(nzConfigService: NzConfigService, primaryColor: string):
 export function switchSkin(nzConfigService: NzConfigService, skin: Skin): string {
     applySkin(skin);
     const color = pushThemeColor(nzConfigService, resolveThemeColor());
-    applyHeaderColor(
-        localStorage.getItem("header-color") || WindowModel.theme?.headerColor || defaultHeaderColor(),
-        toHexColor(color)
-    );
+    applyHeaderColor(resolveHeaderColor(), toHexColor(color));
     return color;
 }

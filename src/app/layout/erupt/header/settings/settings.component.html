@@ -23,6 +23,8 @@
         </span>
     </div>
 </div>
+<!-- The brutalist band always follows the theme color: no picker there -->
+@if (!brutalistTheme) {
 <div class="setting-item setting-item--stack">
     <span>{{'setting.header-color' | translate}}</span>
     <div class="theme-color-picker">
@@ -49,6 +51,7 @@
         </label>
     </div>
 </div>
+}
 }
 <div class="setting-item">
     <span>{{'setting.color-scheme' | translate}}</span>

@@ -20,7 +20,7 @@ import {NzConfigService} from "ng-zorro-antd/core/config";
 import {
     applyHeaderColor,
     applyWorkspaceFrame,
-    defaultHeaderColor,
+    resolveHeaderColor,
     resolveThemeColor,
     savedWorkspaceFrame
 } from "../../shared/util/theme.util";
@@ -49,8 +49,8 @@ export class StartupService {
         theme.primaryColor = resolveThemeColor();
         this.nzConfigService.set('theme', theme);
         // User choice first, then the site config default (theme.headerColor),
-        // then the skin's own default (the brutalist band follows the theme color)
-        applyHeaderColor(localStorage.getItem("header-color") || theme.headerColor || defaultHeaderColor());
+        // then the skin's own (the brutalist band always follows the theme color)
+        applyHeaderColor(resolveHeaderColor());
         // Workspace skin frame gradient: user choice first, then the site default;
         // the default is applied without being recorded as a choice
         applyWorkspaceFrame(savedWorkspaceFrame() || workspaceFrame || null, false);

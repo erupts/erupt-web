@@ -1027,7 +1027,7 @@ html.brutalist-theme {
     /* Brand block — divided from the menu column by the same 2px rule, so
      * the header seam lines up with the sidebar edge below it. */
     .alain-default__header-logo {
-        border-right: 2px solid var(--raft-line) !important;
+        border-right: none !important;
     }
     .header-logo-text {
         font-family: var(--raft-font);
@@ -1087,26 +1087,6 @@ html.brutalist-theme {
     .erupt-subnav {
         background: var(--raft-paper);
         border-bottom: 2px solid var(--raft-line);
-    }
-
-    /* Horizontal menus in the band (top-menu mode) */
-    .top-nav-menu.ant-menu-horizontal,
-    .subnav-menu.ant-menu-horizontal {
-        background: transparent;
-        border-bottom: none;
-    }
-    .top-nav-menu.ant-menu-horizontal > .ant-menu-item,
-    .top-nav-menu.ant-menu-horizontal > .ant-menu-submenu {
-        font-weight: 700;
-        border-radius: 0;
-    }
-    .top-nav-menu.ant-menu-horizontal > .ant-menu-item::after,
-    .top-nav-menu.ant-menu-horizontal > .ant-menu-submenu::after { border-bottom: none !important; }
-    .top-nav-menu.ant-menu-horizontal > .ant-menu-item-selected,
-    .top-nav-menu.ant-menu-horizontal > .ant-menu-submenu-selected {
-        background: var(--raft-paper);
-        box-shadow: inset 0 0 0 2px var(--raft-line);
-        color: var(--raft-ink) !important;
     }
 }
 
