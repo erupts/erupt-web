@@ -88,10 +88,10 @@ export function applySkin(skin: Skin): void {
 export function applyHeaderColor(value: string | null, resolvedThemeColor?: string): void {
     const el = document.documentElement;
     HEADER_TOKENS.forEach(p => el.style.removeProperty(p));
-    // The browser chrome (<meta name="theme-color">, owned by index.html) continues the bar
-    const applyThemeColorMeta: ((color: string | null) => void) | undefined = window["eruptApplyThemeColor"];
+    // The browser chrome (<meta name="theme-color">, owned by index.html) re-reads the bar
+    const syncThemeColor: (() => void) | undefined = window["eruptSyncThemeColor"];
     if (!value) {
-        applyThemeColorMeta?.(null);
+        syncThemeColor?.();
         return;
     }
     const bg = value === "primary" ? "var(--ant-primary-color)" : value;
@@ -99,7 +99,7 @@ export function applyHeaderColor(value: string | null, resolvedThemeColor?: stri
         ? resolvedThemeColor || getComputedStyle(el).getPropertyValue("--ant-primary-color").trim() || DEFAULT_THEME_COLOR
         : value;
     el.style.setProperty("--erupt-header-bg", bg);
-    applyThemeColorMeta?.(resolved);
+    syncThemeColor?.();
     if (isDarkColor(resolved)) {
         // Dark/colored bar — white foreground, translucent-white states
         el.style.setProperty("--erupt-header-text", "rgba(255, 255, 255, 0.95)");
