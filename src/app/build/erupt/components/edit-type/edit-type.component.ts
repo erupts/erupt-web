@@ -301,7 +301,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     clickEruptButton(field: EruptFieldModel) {
         this.buttonLoading[field.fieldName] = true;
         let formData = this.dataHandlerService.eruptValueToObject(this.eruptBuildModel);
-        this.dataService.execEruptButton(this.eruptModel.eruptName, field.fieldName, formData).subscribe({
+        this.dataService.execEruptButton(this.eruptModel.eruptName, field.fieldName, formData, this.parentEruptName).subscribe({
             next: (res) => {
                 this.buttonLoading[field.fieldName] = false;
                 if (res.status === Status.SUCCESS) {
