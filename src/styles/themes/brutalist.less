@@ -297,9 +297,31 @@ html.brutalist-theme {
     .ant-picker-large { height: 40px; }
 
     /* A field nested in an affix wrapper fills the wrapper it already sits
-     * in; giving it the outer height too would overflow it. */
-    .ant-input-affix-wrapper > .ant-input,
-    .ant-input-number-input { height: auto; }
+     * in (the wrapper is a flex row that centres it), so it takes no height
+     * of its own. */
+    .ant-input-affix-wrapper > .ant-input { height: auto; }
+
+    /* The number field's inner <input> is NOT centred by its wrap: antd
+     * sizes it to the outer height minus its 1px frame (30 / 22 / 38) and it
+     * sits at the top. Under the 2px frame that leaves a 2px gap below and
+     * the digits ride high, so it is resized to the outer height minus 4. */
+    .ant-input-number-input { height: 28px; }
+    .ant-input-number-sm .ant-input-number-input { height: 20px; }
+    .ant-input-number-lg .ant-input-number-input { height: 36px; }
+
+    /* Stepper column — the 1px grey hairline antd draws does not belong on
+     * a 2px-framed block: ink rules and glyphs, cream slip like an add-on. */
+    .ant-input-number-handler-wrap {
+        border-left: 2px solid var(--raft-line);
+        background: var(--raft-cream);
+        border-radius: 0;
+    }
+    .ant-input-number-handler-down { border-top: 2px solid var(--raft-line); }
+    .ant-input-number-handler-up-inner,
+    .ant-input-number-handler-down-inner { color: var(--raft-ink); }
+    .ant-input-number-handler:hover .ant-input-number-handler-up-inner,
+    .ant-input-number-handler:hover .ant-input-number-handler-down-inner { color: var(--raft-ink); }
+    .ant-input-number-handler:hover { background: var(--raft-accent); }
 
     .ant-input::placeholder,
     .ant-input-number-input::placeholder { color: var(--raft-text-3); }
@@ -482,10 +504,12 @@ html.brutalist-theme {
      * Tabs — Raft draws the active tab as a filled block sitting on the
      * rule, not as an underline that floats under a tinted label.
      * -------------------------------------------------------------- */
-    .ant-tabs-tab { font-weight: 700; color: var(--raft-text-2); }
-    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn { color: var(--raft-ink); font-weight: 700; }
+    /* The layout's multi-tab bar (.reuse-tab) is excluded: it keeps the
+     * default pill look from erupt.component.less in every skin. */
+    .ant-tabs-tab:not(.reuse-tab .ant-tabs-tab) { font-weight: 700; color: var(--raft-text-2); }
+    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn:not(.reuse-tab .ant-tabs-tab-btn) { color: var(--raft-ink); font-weight: 700; }
     .ant-tabs-ink-bar { background: var(--raft-accent); height: 3px !important; }
-    .ant-tabs-top > .ant-tabs-nav::before { border-bottom: 2px solid var(--raft-line); }
+    .ant-tabs-top > .ant-tabs-nav:not(.reuse-tab .ant-tabs-nav)::before { border-bottom: 2px solid var(--raft-line); }
 
     /* -------------------------------------------------------------- *
      * ng-zorro menu (not the app sidebar) — active = accent block
@@ -899,16 +923,61 @@ html.brutalist-theme {
     .ant-pagination-jump-prev, .ant-pagination-jump-next { color: var(--raft-ink); }
     .ant-pagination-disabled .ant-pagination-item-link { opacity: .4; }
 
-    /* --- Tabs (card type) --------------------------------------------- */
-    .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab {
+    /* --- Tabs (card type) — not the layout's multi-tab bar (.reuse-tab) --- */
+    .ant-tabs-card:not(.reuse-tab .ant-tabs) > .ant-tabs-nav .ant-tabs-tab {
         border: 2px solid var(--raft-line) !important;
         background: var(--raft-paper);
         margin-left: 0;
     }
-    .ant-tabs-card > .ant-tabs-nav .ant-tabs-tab-active {
+    .ant-tabs-card:not(.reuse-tab .ant-tabs) > .ant-tabs-nav .ant-tabs-tab-active {
         background: var(--raft-yellow);
         border-bottom-color: var(--raft-yellow) !important;
     }
+
+    /* --- Multi-tab bar (.reuse-tab) ------------------------------------ *
+     * Keeps the pill shape from erupt.component.less but not its brand
+     * washes: a --ant-primary-1 fill and an accent-colored label are pastel
+     * on paper under this skin and all but vanish. Candy grammar instead —
+     * the current tab is a solid accent block in an ink frame with ink type,
+     * hover is a cream block, the rest is ink at rest. !important where the
+     * layout's own rules carry it. */
+    .reuse-tab__card {
+        border-bottom: 2px solid var(--raft-line);
+
+        .ant-tabs-tab {
+            color: var(--raft-text-2);
+            font-weight: 500;
+            box-shadow: inset 0 0 0 2px transparent;
+            transition: background-color .1s ease, color .1s ease, box-shadow .1s ease;
+        }
+        .ant-tabs-tab:hover {
+            background: var(--raft-cream) !important;
+            color: var(--raft-ink);
+            box-shadow: inset 0 0 0 2px var(--raft-line);
+        }
+        .ant-tabs-tab-active,
+        .ant-tabs-tab-active:hover {
+            background: var(--raft-accent) !important;
+            box-shadow: inset 0 0 0 2px var(--raft-line);
+            font-weight: 700;
+        }
+        .ant-tabs-tab-active .ant-tabs-tab-btn { color: var(--raft-ink); }
+        .ant-tabs-tab-remove { color: inherit; opacity: .6; }
+        .ant-tabs-tab-remove:hover { opacity: 1; }
+        .ant-tabs-nav-operations, .ant-tabs-nav-more { color: var(--raft-ink); }
+    }
+    reuse-tab .ant-tabs-tab-arrow-show { color: var(--raft-ink); }
+
+    /* --- Page description strip (page-desc) --------------------------- *
+     * Same wash problem: the brand-tinted info surface reads as blank paper
+     * here. Cream well with a solid accent edge and an ink glyph instead. */
+    .page-desc {
+        background: var(--raft-cream);
+        border-bottom: 2px solid var(--raft-line);
+        border-left: 4px solid var(--raft-accent);
+        color: var(--raft-text);
+    }
+    .page-desc__icon { color: var(--raft-ink); }
 
     /* --- Menu: submenu popup / horizontal / active -------------------- */
     .ant-menu-submenu-popup > .ant-menu {
