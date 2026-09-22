@@ -307,11 +307,13 @@ export class DataService {
     }
 
     //BUTTON component click, passes all current form values to the backend handler
-    execEruptButton(eruptName: string, field: string, formData: object): Observable<EruptApiModel> {
+    execEruptButton(eruptName: string, field: string, formData: object, eruptParentName?: string): Observable<EruptApiModel> {
         return this._http.post(RestPath.comp + "/button/" + eruptName + "/" + field, formData, null, {
             observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                // a button inside a nested form (a row operation dialog) is authorized by its host menu
+                eruptParent: eruptParentName || ''
             }
         });
     }
