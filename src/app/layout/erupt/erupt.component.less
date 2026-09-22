@@ -121,11 +121,12 @@
         border-bottom: none;
     }
 
-    // ── Card style: pill tabs (default skin only, brutalist keeps its own look) ──
+    // ── Card style: pill tabs (every skin; brutalist.less excludes the
+    //    multi-tab bar from its framed card-tab rules so this look wins there too) ──
     .reuse-tab__card {
         padding-top: 0;
-        padding-left: 0;
-        padding-right: 0;
+        padding-left: 8px;
+        padding-right: 8px;
         background: var(--erupt-bg-container, #fff);
         border-bottom: 1px solid var(--ant-border-color-split);
 
@@ -136,57 +137,50 @@
         .ant-tabs-nav-container {
             padding: 0 !important;
         }
-    }
 
-    html:not(.brutalist-theme) {
-        .reuse-tab__card {
-            padding-left: 8px;
-            padding-right: 8px;
+        .ant-tabs-tab {
+            height: 28px !important;
+            line-height: 26px !important;
+            margin: 5px 4px 5px 0 !important;
+            padding: 0 12px !important;
+            border: none !important;
+            border-radius: 1px !important;
+            background: transparent !important;
+            color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+            font-size: 13px;
+            transition: color 0.2s, background 0.2s;
 
-            .ant-tabs-tab {
-                height: 28px !important;
-                line-height: 26px !important;
-                margin: 5px 4px 5px 0 !important;
-                padding: 0 12px !important;
-                border: none !important;
-                border-radius: 1px !important;
-                background: transparent !important;
-                color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
-                font-size: 13px;
-                transition: color 0.2s, background 0.2s;
+            &:hover {
+                background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.045)) !important;
+                color: var(--erupt-text, rgba(0, 0, 0, 0.88));
+            }
+
+            .ant-tabs-tab-remove {
+                margin-left: 4px;
+                margin-right: -4px;
+                color: inherit;
+                opacity: 0.45;
+                transition: opacity 0.2s;
 
                 &:hover {
-                    background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.045)) !important;
-                    color: var(--erupt-text, rgba(0, 0, 0, 0.88));
-                }
-
-                .ant-tabs-tab-remove {
-                    margin-left: 4px;
-                    margin-right: -4px;
-                    color: inherit;
-                    opacity: 0.45;
-                    transition: opacity 0.2s;
-
-                    &:hover {
-                        opacity: 1;
-                    }
+                    opacity: 1;
                 }
             }
+        }
 
-            .ant-tabs-tab-active {
-                background: var(--ant-primary-1, #e6f4ff) !important;
-                font-weight: 500;
+        .ant-tabs-tab-active {
+            background: var(--ant-primary-1, #e6f4ff) !important;
+            font-weight: 500;
 
-                .ant-tabs-tab-btn {
-                    color: var(--ant-primary-color, #1677ff);
-                }
+            .ant-tabs-tab-btn {
+                color: var(--ant-primary-color, #1677ff);
             }
+        }
 
-            .ant-tabs-nav-operations {
-                background: transparent;
-                border-left: none;
-                padding: 0 4px;
-            }
+        .ant-tabs-nav-operations {
+            background: transparent;
+            border-left: none;
+            padding: 0 4px;
         }
     }
 

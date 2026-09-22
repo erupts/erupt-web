@@ -36,6 +36,17 @@
     }
 }
 
+// Installed app in any window mode: the OS window frame already draws the
+// edge of the brand block, so the divider between logo and menu goes. In the
+// overlay mode the block is hidden below anyway. !important: the header sets
+// the divider inside its own component scope and the skins at html.<skin>
+// specificity.
+@media (display-mode: standalone), (display-mode: window-controls-overlay) {
+    .erupt-header .alain-default__header-logo {
+        border-right: none !important;
+    }
+}
+
 @media (display-mode: window-controls-overlay) {
     // The corners Chrome paints around the window controls are one opaque color
     // (<meta name="theme-color">, no alpha, no image), so a bar that is
