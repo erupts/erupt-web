@@ -48,6 +48,7 @@ import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {Userinfo} from "@shared/model/user.model";
 import {UtilsService} from "@shared/service/utils.service";
+import {SessionService} from "@shared/service/session.service";
 import {SocketService} from "@shared/service/socket.service";
 
 // #region icons
@@ -124,6 +125,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 private utilsService: UtilsService,
                 private iframeManager: IframeManagerService,
                 private statusService: StatusService,
+                public session: SessionService,
                 @Optional()
                 @Inject(ReuseTabService)
                 private reuseTabService: ReuseTabService,

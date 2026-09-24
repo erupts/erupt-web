@@ -23,6 +23,18 @@
     }
 }
 
+// Lock screen: the cover hides the bar, so the inert cover is the title bar
+// while it is up; its controls stay clickable.
+.lock-screen {
+    -webkit-app-region: drag;
+    app-region: drag;
+
+    a, button, input {
+        -webkit-app-region: no-drag;
+        app-region: no-drag;
+    }
+}
+
 // Login page: its top nav (brand left, tool buttons right) sits at the very
 // top of the window too. The extra selector depth beats the component's
 // emulated scoping.
