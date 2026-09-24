@@ -6,7 +6,18 @@ export class WindowModel {
 
     public static domain: string = WindowModel.config["domain"] ? WindowModel.config["domain"] + "/" : '';
 
+    // Attachment host. The backend AttachmentProxy is the source of truth (delivered through
+    // /erupt-app at startup); eruptSiteConfig.fileDomain remains as an explicit override.
     public static fileDomain: string = WindowModel.config["fileDomain"] || undefined;
+
+    // Adopt the backend attachment host unless the site config already pins one. Written back
+    // into the site config so embedded pages that read eruptSiteConfig (home.html) see it too.
+    public static applyFileDomain(fileDomain: string | null | undefined) {
+        if (fileDomain && !WindowModel.config["fileDomain"]) {
+            WindowModel.config["fileDomain"] = fileDomain;
+            WindowModel.fileDomain = fileDomain;
+        }
+    }
 
     public static amapKey: string;
 
