@@ -83,200 +83,38 @@
     }
 }
 
-.sidebar-header {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--ant-border-color-split);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-}
-
-.sidebar-title {
-    flex: 1;
-    min-width: 0;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--ant-text-color-secondary, #999);
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.new-chat-btn {
-    flex-shrink: 0;
-    width: 28px;
-    height: 28px;
-    padding: 0 !important;
-    border-radius: @radius-sm;
-    border: 1px solid var(--ant-border-color-base, #e0e0e0) !important;
-    background: var(--erupt-bg-container, #fff) !important;
-    color: var(--ant-text-color-secondary, #888) !important;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-
-    .anticon {
-        font-size: 14px;
-    }
-
-    &:hover {
-        border-color: var(--ant-primary-color) !important;
-        color: var(--ant-primary-color) !important;
-        background: var(--ant-primary-1, #e6f4ff) !important;
-    }
-
-    &:active {
-        background: var(--ant-primary-2, #bae7ff) !important;
-    }
-}
-
-.sidebar-fold-btn {
-    flex-shrink: 0;
-    width: 26px;
-    height: 26px;
-    padding: 0 !important;
-    color: var(--ant-text-color-secondary, #aaa) !important;
-    border-radius: @radius-sm;
-
-    &:hover {
-        background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06)) !important;
-        color: var(--ant-text-color, #1a1a1a) !important;
-    }
-}
-
+/* Collapsed-sidebar controls floating over the chat: outlined icon buttons matching the panel's new-chat button */
 .sidebar-unfold-btn,
 .sidebar-new-chat-btn {
     position: absolute;
-    top: 10px;
+    top: 12px;
     z-index: 5;
     width: 28px;
     height: 28px;
     padding: 0 !important;
     border-radius: @radius-sm;
-    border: 1px solid var(--ant-border-color-base, #e0e0e0) !important;
-    background: var(--erupt-bg-elevated, #fff) !important;
-    color: var(--ant-text-color-secondary, #888) !important;
+    border: 1px solid var(--ant-border-color-base, #d9d9d9) !important;
+    background: var(--erupt-bg-container, #fff) !important;
+    color: var(--ant-text-color-secondary, #8c8c8c) !important;
+    font-size: 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 
     &:hover {
-        border-color: var(--ant-primary-color) !important;
         color: var(--ant-primary-color) !important;
+        border-color: var(--ant-primary-color) !important;
         background: var(--ant-primary-1, #e6f4ff) !important;
     }
 }
 
 .sidebar-unfold-btn {
-    left: 10px;
+    left: 12px;
 }
 
 .sidebar-new-chat-btn {
-    left: 10px;
-    margin-left: 36px !important;
-}
-
-.sidebar-search {
-    padding: 8px 12px 0;
-
-    input {
-        border-radius: @radius-sm;
-    }
-}
-
-.conversation-list {
-    margin: 0;
-    padding: 12px;
-    list-style: none;
-    flex: 1;
-    overflow-y: auto;
-
-    li {
-        cursor: pointer;
-        padding: 9px 12px 9px 11px;
-        border-radius: @radius-sm;
-        margin-bottom: 2px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        font-size: 14px;
-        color: var(--ant-text-color, #1a1a1a);
-        transition: background 0.15s ease, border-color 0.15s ease;
-        //border-left: 3px solid transparent;
-
-        .conv-title {
-            flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            color: var(--ant-text-color-secondary, #666);
-            transition: color 0.15s ease;
-        }
-
-        &:hover {
-            background: var(--ant-primary-1, #e8f4ff);
-
-            .conv-title {
-                color: var(--ant-text-color, #1a1a1a);
-            }
-
-            .conv-more {
-                opacity: 1;
-            }
-        }
-
-        &.active {
-            background: var(--ant-primary-1, #e6f4ff);
-            border-left-color: var(--ant-primary-color);
-
-            .conv-title {
-                color: var(--ant-primary-color);
-                font-weight: 500;
-            }
-
-            .conv-more {
-                opacity: 1 !important;
-            }
-        }
-
-        .ant-btn.conv-more {
-            flex-shrink: 0;
-            opacity: 0;
-            color: var(--ant-text-color-secondary, #666);
-            transition: opacity 0.15s ease, color 0.15s ease;
-
-            &:hover {
-                color: var(--ant-text-color, #1a1a1a);
-                background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
-            }
-        }
-
-        &.conv-loading,
-        &.conv-no-more {
-            cursor: default;
-            justify-content: center;
-            color: var(--ant-text-color-secondary, #666);
-            font-size: 13px;
-
-            &:hover {
-                background: transparent;
-
-                .conv-title {
-                    color: var(--ant-text-color-secondary, #666);
-                }
-            }
-        }
-
-        &.conv-loading {
-            gap: 8px;
-        }
-    }
+    left: 46px;
 }
 
 /* Sidebar drag handle */

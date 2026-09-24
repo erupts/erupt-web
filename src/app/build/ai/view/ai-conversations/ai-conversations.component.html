@@ -1,0 +1,72 @@
+<div class="conv-panel">
+    <div class="conv-header" [class.is-searching]="searchOpen">
+        @if (searchOpen) {
+            <label class="conv-search">
+                <span nz-icon nzType="search" nzTheme="outline" class="conv-search-icon"></span>
+                <input #searchInput class="conv-search-input" [(ngModel)]="keyword" (ngModelChange)="onKeywordChange()"
+                       (blur)="onSearchBlur()" (keydown.escape)="closeSearch()"
+                       [placeholder]="'ai.chat.search_placeholder' | translate"/>
+                <span nz-icon nzType="close-circle" nzTheme="fill" class="conv-search-clear"
+                      (mousedown)="$event.preventDefault()" (click)="closeSearch()"></span>
+            </label>
+        } @else {
+            <span class="conv-title">{{ 'ai.chat.sessions' | translate }}</span>
+            <button nz-button nzType="text" class="conv-icon-btn" (click)="openSearch()"
+                    [title]="'ai.chat.search_placeholder' | translate">
+                <span nz-icon nzType="search" nzTheme="outline"></span>
+            </button>
+        }
+        <button nz-button nzType="text" class="conv-icon-btn conv-new" (click)="create.emit()"
+                [title]="'ai.chat.new_session' | translate">
+            <span nz-icon nzType="form" nzTheme="outline"></span>
+        </button>
+        @if (foldable) {
+            <button nz-button nzType="text" class="conv-icon-btn" (click)="fold.emit()"
+                    [title]="'ai.chat.collapse_sidebar' | translate">
+                <span nz-icon nzType="menu-fold" nzTheme="outline"></span>
+            </button>
+        }
+    </div>
+
+    <div #listRef class="conv-list" (scroll)="onScroll()">
+        @if (loading) {
+            <div class="conv-status"><nz-spin nzSimple nzSize="small"></nz-spin></div>
+        } @else if (!groups.length) {
+            <div class="conv-empty">
+                <span nz-icon nzType="inbox" nzTheme="outline"></span>
+                <span>{{ (keyword ? 'global.no_data' : 'ai.chat.empty_title') | translate }}</span>
+            </div>
+        }
+        @for (group of groups; track group.key) {
+            <div class="conv-group">
+                <div class="conv-group-label">{{ ('ai.chat.group.' + group.key) | translate }}</div>
+                @for (chat of group.items; track chat.id) {
+                    <div class="conv-item" [class.active]="activeId === chat.id" (click)="activate.emit(chat)">
+                        <span class="conv-item-title" [title]="chat.title">{{ chat.title }}</span>
+                        <button nz-button nzType="text" class="conv-icon-btn conv-item-more"
+                                nz-dropdown [nzDropdownMenu]="menu" nzTrigger="click" nzPlacement="bottomRight"
+                                (click)="$event.stopPropagation()"
+                                [title]="'ai.chat.more_actions' | translate">
+                            <span nz-icon nzType="ellipsis" nzTheme="outline"></span>
+                        </button>
+                        <nz-dropdown-menu #menu="nzDropdownMenu">
+                            <ul nz-menu class="conv-action-menu">
+                                <li nz-menu-item (click)="onAction($event, rename, chat)">
+                                    <span nz-icon nzType="edit" nzTheme="outline"></span>
+                                    <span>{{ 'ai.chat.rename' | translate }}</span>
+                                </li>
+                                <li nz-menu-item nzDanger (click)="onAction($event, remove, chat)">
+                                    <span nz-icon nzType="delete" nzTheme="outline"></span>
+                                    <span>{{ 'ai.chat.delete' | translate }}</span>
+                                </li>
+                            </ul>
+                        </nz-dropdown-menu>
+                    </div>
+                }
+            </div>
+        }
+        @if (loadingMore) {
+            <div class="conv-status"><nz-spin nzSimple nzSize="small"></nz-spin></div>
+        }
+    </div>
+</div>
