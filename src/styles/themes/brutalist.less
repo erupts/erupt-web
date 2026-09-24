@@ -1294,11 +1294,19 @@ html.brutalist-theme {
     /* Selected — a candy block stamped with an ink frame and the interactive
      * shadow. It works on the paper column in every mode, dual's submenu
      * column included; the rail is the only place that inverts it (paper
-     * block on the band), because there the band already is the accent. */
+     * block on the band), because there the band already is the accent.
+     * The menu service flags the whole active trail as selected, parents
+     * included, so the block is scoped to the leaf (only leaves carry an
+     * href); an ancestor on the trail keeps the quiet ink title of an open
+     * category and never wears a second block. */
     .sidebar-nav__selected {
         background-color: transparent !important;
 
         > .sidebar-nav__item-link {
+            color: var(--raft-ink);
+        }
+
+        > .sidebar-nav__item-link[href] {
             background: var(--raft-accent);
             border-color: var(--raft-line);
             box-shadow: var(--raft-sh-press);
@@ -1377,8 +1385,8 @@ html.brutalist-theme {
             background: color-mix(in srgb, var(--raft-paper) 55%, transparent);
         }
 
-        .sidebar-nav__selected > .sidebar-nav__item-link,
-        .sidebar-nav__selected > .sidebar-nav__item-link:hover {
+        .sidebar-nav__selected > .sidebar-nav__item-link[href],
+        .sidebar-nav__selected > .sidebar-nav__item-link[href]:hover {
             background: var(--raft-paper);
             color: var(--raft-ink);
 
