@@ -179,7 +179,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     ngOnInit(): void {
         if (this.collapseSidebar) this.sidebarCollapsed = true;
         if (this.embedded) {
-            this.wideMode = false;
+            // a drawer/modal host is narrow already: use the full width and hide the sidebar
+            this.wideMode = true;
             this.sidebarCollapsed = true;
         }
         this.markdown.warmup();
@@ -891,7 +892,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     /** Toggle message area wide mode */
     toggleWideMode(): void {
         this.wideMode = !this.wideMode;
-        this.saveLayout();
+        // embedded mode has its own forced default; don't overwrite the full-page layout preference
+        if (!this.embedded) {
+            this.saveLayout();
+        }
     }
 
     onResizerMousedown(e: MouseEvent): void {
