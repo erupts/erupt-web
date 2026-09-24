@@ -1,7 +1,5 @@
 import {Component, Inject} from "@angular/core";
-import {Router} from "@angular/router";
 import {SettingsService} from "@delon/theme";
-import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {DataService} from "@shared/service/data.service";
 import {I18NService} from "@core";
 import {UserTool, WindowModel} from "@shared/model/window.model";
@@ -10,7 +8,7 @@ import {MfaComponent} from "../../../../routes/mfa/mfa.component";
 import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.component";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {UtilsService} from "@shared/service/utils.service";
-import {SocketService} from "@shared/service/socket.service";
+import {SessionService} from "@shared/service/session.service";
 
 @Component({
     standalone: false,
@@ -53,6 +51,12 @@ import {SocketService} from "@shared/service/socket.service";
                 }
               </div>
             }
+            <div nz-menu-divider></div>
+            @if (lockEnable) {
+              <div nz-menu-item (click)="session.lock()">
+                <i nz-icon nzType="lock" nzTheme="outline" class="mr-sm"></i>{{ 'global.lock_screen'|translate }}
+              </div>
+            }
             <div nz-menu-item (click)="logout()">
               <i nz-icon nzType="logout" nzTheme="outline" class="mr-sm"></i>{{ 'global.logout'|translate }}
             </div>
@@ -77,17 +81,19 @@ export class HeaderUserComponent {
 
     userTools: UserTool[] = WindowModel.userTools;
 
+    //unlocking re-checks the password against the platform user, which a tenant session has none of
+    lockEnable = false;
+
     constructor(
         public settings: SettingsService,
-        private router: Router,
-        @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
         private i18n: I18NService,
         private dataService: DataService,
         @Inject(NzModalService)
         private modal: NzModalService,
         private utilsService: UtilsService,
-        private socketService: SocketService,
+        public session: SessionService,
     ) {
+        this.lockEnable = !this.utilsService.isTenantToken();
         if (this.mfaEnable && !this.utilsService.isTenantToken()) {
             this.dataService.mfaStatus().subscribe(status => this.mfaBound = status.bound);
         } else {
@@ -98,24 +104,7 @@ export class HeaderUserComponent {
     logout() {
         this.modal.confirm({
             nzTitle: this.i18n.fanyi("global.confirm_logout"),
-            nzOnOk: () => {
-                this.dataService.logout().subscribe(data => {
-                    this.socketService.closeSocket();
-                    let token = this.tokenService.get().token;
-                    if (WindowModel.eruptEvent && WindowModel.eruptEvent.logout) {
-                        WindowModel.eruptEvent.logout({
-                            userName: this.settings.user.name,
-                            token: token
-                        })
-                    }
-                    if (this.utilsService.isTenantToken()) {
-                        this.router.navigateByUrl("/passport/tenant");
-                    } else {
-                        this.router.navigateByUrl(this.tokenService.login_url);
-                    }
-                    this.tokenService.clear();
-                });
-            }
+            nzOnOk: () => this.session.logout()
         });
     }
 

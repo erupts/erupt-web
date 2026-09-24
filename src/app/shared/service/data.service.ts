@@ -563,6 +563,13 @@ export class DataService {
     }
 
 
+    //re-check the current user's password without issuing a new session (screen unlock)
+    verifyPwd(pwd: string): Observable<EruptApiModel> {
+        return this._http.post(RestPath.erupt + "/verify-pwd", {
+            pwd: EruptAppData.get().pwdTransferEncrypt ? this.pwdEncode(pwd, 3) : pwd
+        });
+    }
+
     changePwd(pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
         const encode = (p: string) => EruptAppData.get().pwdTransferEncrypt ? this.pwdEncode(p, 3) : p;
         return this._http.post(RestPath.erupt + "/change-pwd", {

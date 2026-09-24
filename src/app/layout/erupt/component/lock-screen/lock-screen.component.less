@@ -1,0 +1,119 @@
+:host {
+    display: block;
+}
+
+// Sits above every ant overlay (modal / drawer / message at 1000-1010) but under the watermark
+.lock-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 1300;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 44px;
+    padding: 24px;
+    // heavy blur keeps the page underneath unreadable while its colors still shine through
+    background: color-mix(in srgb, var(--erupt-bg-layout, #f0f2f5) 82%, transparent);
+    backdrop-filter: blur(28px) saturate(1.2);
+    -webkit-backdrop-filter: blur(28px) saturate(1.2);
+    // the cover itself never fades: index.html reads its painted alpha for the title bar
+    // color, and a hidden window would hold an animation at its first frame
+}
+
+// only the content eases in
+.lock-clock,
+.lock-card {
+    animation: lock-screen-in 0.3s ease-out both;
+}
+
+@keyframes lock-screen-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.lock-clock {
+    text-align: center;
+    color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+}
+
+.lock-time {
+    font-size: 72px;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+}
+
+.lock-date {
+    margin-top: 10px;
+    font-size: 15px;
+    color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.55));
+}
+
+.lock-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 320px;
+    max-width: 100%;
+    text-align: center;
+
+    nz-avatar {
+        box-shadow: 0 0 0 4px var(--erupt-bg-container, #fff), 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+}
+
+.lock-name {
+    margin-top: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+}
+
+.lock-tip {
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+}
+
+.lock-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-top: 24px;
+}
+
+.lock-error {
+    margin-top: -4px;
+    font-size: 13px;
+    text-align: left;
+    color: var(--ant-error-color, #ff4d4f);
+}
+
+.lock-logout {
+    margin-top: 22px;
+    font-size: 13px;
+    color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.55));
+
+    &:hover {
+        color: var(--ant-primary-color);
+    }
+}
+
+@media (max-width: 576px) {
+    .lock-screen {
+        gap: 32px;
+    }
+
+    .lock-time {
+        font-size: 56px;
+    }
+}

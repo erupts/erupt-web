@@ -483,9 +483,11 @@
             // The masks lying over the top strip, as [r, g, b, a] layers at the
             // strength painted (color alpha × element opacity). Masks do not fade
             // in the overlay mode (pwa.less), so one read per change is exact.
+            // The lock screen is one more tint over the whole window (its blur is
+            // not sampled; the tint alone is what the corners can show).
             var maskLayers = function () {
                 var layers = [];
-                document.querySelectorAll(".ant-modal-mask, .ant-drawer-mask, .cdk-overlay-backdrop").forEach(function (m) {
+                document.querySelectorAll(".ant-modal-mask, .ant-drawer-mask, .cdk-overlay-backdrop, .lock-screen").forEach(function (m) {
                     var cs = getComputedStyle(m);
                     var r = m.getBoundingClientRect();
                     if (cs.display === "none" || cs.visibility === "hidden" || r.width === 0 || r.top > 0 || r.bottom <= 0) {

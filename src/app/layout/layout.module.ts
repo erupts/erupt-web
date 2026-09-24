@@ -50,8 +50,10 @@ import {NoticeDetailComponent} from './erupt/component/notice-detail/notice-deta
 import {AnnouncementDetailComponent} from './erupt/component/announcement-detail/announcement-detail.component';
 import {NzSpaceComponent, NzSpaceItemDirective} from "ng-zorro-antd/space";
 import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
+import {A11yModule} from "@angular/cdk/a11y";
+import {LockScreenComponent} from "./erupt/component/lock-screen/lock-screen.component";
 
-const COMPONENTS = [LayoutEruptComponent, LayoutBlankComponent];
+const COMPONENTS = [LayoutEruptComponent, LayoutBlankComponent, LockScreenComponent];
 
 const HEADER_COMPONENTS = [
     HeaderSearchComponent,
@@ -104,7 +106,8 @@ const PASSPORT = [LayoutPassportComponent];
         DragDropModule,
         NzSpaceComponent,
         NzSpaceItemDirective,
-        NzTooltipDirective
+        NzTooltipDirective,
+        A11yModule
     ],
     declarations: [...COMPONENTS, ...HEADER_COMPONENTS, ...PASSPORT, MenuComponent, NoticeComponent, NoticeDetailComponent, AnnouncementDetailComponent],
     exports: [...COMPONENTS, ...PASSPORT]
