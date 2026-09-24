@@ -36,21 +36,26 @@ html.brutalist-theme {
     --raft-ink: #141111;          /* shadows, headings, primary text         */
     --raft-paper: #FFFFFF;        /* content canvas, cards, floating panels  */
     --raft-card: #FCFCFA;         /* card fill, a hair off the canvas        */
-    --raft-cream: #FFFAEF;        /* sidebar, headers, hovers, wells, affix  */
+    --raft-cream: #FFFAEF;        /* table headers, hovers, wells, affix     */
     --raft-inset: #F8F8F0;        /* sunken areas — canvases, code wells     */
     --raft-text: #141111;         /* body text                               */
     --raft-text-2: rgba(20, 17, 17, 0.6);  /* secondary text                 */
     --raft-text-3: rgba(20, 17, 17, 0.42); /* placeholders, hints            */
     --raft-muted: #C0B9B1;        /* inactive fills, closed-state chips      */
     --raft-hairline: rgba(20, 17, 17, 0.15); /* in-card row dividers         */
-    /* The menu column is cream paper. The top bar's band stops at the top
-     * bar — except on the narrow RAILS, which pick it up: dual mode's
-     * first-level rail (.dual-menu__rail) and the collapsed column
-     * (.alain-default__collapsed). Carrying the band down a full-width list
-     * flattens it into a wall and, worse, hides the current item: the
-     * selection block IS the accent, so on an accent column it disappears;
-     * the rails invert the block to paper instead. */
-    --raft-panel: var(--raft-cream);
+    /* The menu column is the same paper as the canvas: this skin separates
+     * regions with ink rules, not with tints, and the column's 2px edge does
+     * that work alone (Raft's own sidebar is flat white). Cream would only
+     * add a second paper tone, and a wash of the accent turns back into
+     * cream under the yellow theme. Because the column is paper, row hovers
+     * cannot be paper too — they use the soft accent below. The top bar's
+     * band stops at the top bar — except on the narrow RAILS, which pick it
+     * up: dual mode's first-level rail (.dual-menu__rail) and the collapsed
+     * column (.alain-default__collapsed). Carrying the band down a
+     * full-width list flattens it into a wall and, worse, hides the current
+     * item: the selection block IS the accent, so on an accent column it
+     * disappears; the rails invert the block to paper instead. */
+    --raft-panel: var(--raft-paper);
 
     /* Drive every split border (menu, header, tree, cards) off the line color */
     --ant-border-color-split: var(--raft-line);
@@ -114,7 +119,7 @@ html.brutalist-theme.dark {
     --raft-text-3: rgba(240, 232, 214, 0.42);
     --raft-muted: #4A453A;
     --raft-hairline: rgba(240, 232, 214, 0.18);
-    /* --raft-panel follows --raft-cream, so the menu column darkens with the
+    /* --raft-panel follows --raft-paper, so the menu column darkens with the
      * rest of the paper here; only the dual rail's band stays candy-bright,
      * which is the rule for candy everywhere in this skin. */
 
@@ -1170,7 +1175,7 @@ html.brutalist-theme {
  * ================================================================== */
 html.brutalist-theme {
 
-    /* Menu column — the top bar's band, continued down the side */
+    /* Menu column — plain paper, set apart only by the 2px edge below */
     .alain-default__aside {
         background: var(--raft-panel);
     }
@@ -1193,7 +1198,7 @@ html.brutalist-theme {
     }
 
     .fold__btn:hover {
-        background: var(--raft-paper);
+        background: var(--raft-accent-soft);
         color: var(--raft-ink);
     }
 
@@ -1244,8 +1249,11 @@ html.brutalist-theme {
         color: var(--raft-text-2);
         transition: background-color .1s ease, color .1s ease, border-color .1s ease;
 
+        /* Hover is a faint wash of the accent: the row sits on paper, so a
+         * paper hover would be invisible, and the wash previews the candy
+         * block the row turns into once selected. */
         &:hover {
-            background: var(--raft-paper);
+            background: var(--raft-accent-soft);
             color: var(--raft-ink);
 
             .sidebar-nav__item-icon { color: var(--raft-ink); }
@@ -1284,9 +1292,9 @@ html.brutalist-theme {
     .sidebar-nav__depth3 .sidebar-nav__item-link { padding-left: 58px; }
 
     /* Selected — a candy block stamped with an ink frame and the interactive
-     * shadow. It works on cream in every mode, dual's submenu column
-     * included; the rail is the only place that inverts it (paper block on
-     * the band), because there the band already is the accent. */
+     * shadow. It works on the paper column in every mode, dual's submenu
+     * column included; the rail is the only place that inverts it (paper
+     * block on the band), because there the band already is the accent. */
     .sidebar-nav__selected {
         background-color: transparent !important;
 
