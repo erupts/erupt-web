@@ -11,7 +11,7 @@
       <i nz-icon nzType="search"></i>
     </ng-template>
     @if (treeData) {
-      <nz-tree style="max-height: 420px;overflow: auto"
+      <nz-tree style="max-height: 420px;overflow: auto" [class.erupt-tree-readonly]="onlyRead"
         [nzCheckable]="true"
         [nzShowLine]="true"
         [nzVirtualHeight]="dataLength > 50 ? '420px' : null"
