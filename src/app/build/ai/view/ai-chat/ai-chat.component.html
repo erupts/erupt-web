@@ -4,63 +4,19 @@
 <div class="ai-chat-layout" [class.is-fullscreen]="fullscreen" [class.is-embedded]="embedded" [class.has-header]="drawerTitle">
     <div class="sidebar" [class.is-collapsed]="sidebarCollapsed"
          [style.width.px]="sidebarCollapsed ? null : sidebarWidth">
-        <div class="sidebar-header">
-            <span class="sidebar-title">{{ 'ai.chat.sessions' | translate }}</span>
-            <button nz-button nzType="text" nzSize="small" (click)="createConversation()"
-                    class="new-chat-btn" [title]="'ai.chat.new_session' | translate">
-                <span nz-icon nzType="form" nzTheme="outline"></span>
-            </button>
-            <button nz-button nzType="text" nzSize="small" class="sidebar-fold-btn"
-                    (click)="toggleSidebar()" [title]="'ai.chat.collapse_sidebar' | translate">
-                <span nz-icon nzType="menu-fold" nzTheme="outline"></span>
-            </button>
-        </div>
-        <ul
-            #chatListRef
-            class="conversation-list"
-            (scroll)="onChatListScroll()">
-            @if (loadingChats) {
-                <li class="conv-loading">
-                    <nz-spin nzSimple nzSize="small"></nz-spin>
-                </li>
-            }
-            @for (item of chats; track item.id) {
-                <li
-                    [class.active]="selectChat === item.id"
-                    (click)="onSelectChat(item.id)">
-                    <span class="conv-title">{{ item.title }}</span>
-                    <button
-                        nz-button
-                        nzType="text"
-                        nzSize="small"
-                        class="conv-more"
-                        nz-dropdown
-                        [nzDropdownMenu]="chatMenu"
-                        nzPlacement="bottomRight"
-                        (click)="$event.stopPropagation()"
-                        [title]="'ai.chat.more_actions' | translate">
-                        <span nz-icon nzType="ellipsis" nzTheme="outline"></span>
-                    </button>
-                    <nz-dropdown-menu #chatMenu="nzDropdownMenu">
-                        <ul nz-menu class="chat-action-menu">
-                            <li nz-menu-item (click)="renameChat(item.id, item.title, $event)">
-                                <span nz-icon nzType="edit" nzTheme="outline"></span>&nbsp;
-                                <span>{{ 'ai.chat.rename' | translate }}</span>
-                            </li>
-                            <li nz-menu-item nzDanger (click)="deleteChat(item.id, $event)">
-                                <span nz-icon nzType="delete" nzTheme="outline"></span>&nbsp;
-                                <span>{{ 'ai.chat.delete' | translate }}</span>
-                            </li>
-                        </ul>
-                    </nz-dropdown-menu>
-                </li>
-            }
-            @if (loadingMoreChats) {
-                <li class="conv-loading">
-                    <nz-spin nzSimple nzSize="small"></nz-spin>
-                </li>
-            }
-        </ul>
+        <erupt-ai-conversations
+            [items]="chats"
+            [activeId]="selectChat"
+            [loading]="loadingChats"
+            [loadingMore]="loadingMoreChats"
+            [hasMore]="hasMoreChats"
+            (activate)="onSelectChat($event.id)"
+            (create)="createConversation()"
+            (rename)="renameChat($event.id, $event.title)"
+            (remove)="deleteChat($event.id)"
+            (loadMore)="loadMoreChats()"
+            (fold)="toggleSidebar()">
+        </erupt-ai-conversations>
     </div>
     @if (!sidebarCollapsed && !embedded) {
         <div class="sidebar-resizer" (mousedown)="onResizerMousedown($event)"></div>
@@ -73,7 +29,7 @@
             </button>
             <button nz-button nzType="text" nzSize="small" class="sidebar-new-chat-btn"
                     (click)="createConversation()" [title]="'ai.chat.new_session' | translate">
-                <span nz-icon nzType="form" nzTheme="outline"></span>
+                <span nz-icon nzType="plus" nzTheme="outline"></span>
             </button>
         }
         <article

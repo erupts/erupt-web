@@ -1,6 +1,8 @@
 export interface Chat {
     id: number;
     title: string;
+    /** "yyyy-MM-dd HH:mm:ss", used to group the conversation list by time */
+    createdTime?: string;
 }
 
 export interface ChatMessage {
