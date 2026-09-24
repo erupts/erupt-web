@@ -30,6 +30,7 @@ export interface MfaEnroll {
 }
 
 export interface Userinfo {
+    account: string;
     avatar: string;
     nickname: string;
     indexMenuType: string;

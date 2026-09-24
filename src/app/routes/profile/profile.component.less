@@ -1,0 +1,45 @@
+.profile-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+
+  .profile-avatar-pick {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+
+    .profile-avatar-mask {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 24px;
+      background: rgba(0, 0, 0, .45);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+
+    &:hover .profile-avatar-mask {
+      opacity: 1;
+    }
+  }
+
+  .profile-avatar-actions {
+    margin-top: 8px;
+    font-size: 12px;
+
+    a {
+      margin-left: 8px;
+    }
+  }
+}

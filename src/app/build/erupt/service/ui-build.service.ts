@@ -504,11 +504,27 @@ export class UiBuildService {
                         }
                     };
                     obj.click = (item) => {
+                        if (!item[view.column]) return;
                         this.imageService.preview(item[view.column].split("|").map(it => {
                             return {
                                 src: DataService.previewAttachment(it.trim())
                             }
                         }))
+                    };
+                    break;
+                case ViewType.AVATAR:
+                    obj.type = "link";
+                    obj.className = ["text-center", "p-mini"];
+                    obj.width = titleWidth + 30;
+                    obj.format = (item: any) => {
+                        // a person silhouette stands in for a missing avatar; a picture glyph would read as "broken image"
+                        return item[view.column]
+                            ? `<img class="e-table-avatar" src="${DataService.previewAttachment(item[view.column])}" alt=""/>`
+                            : `<img class="e-table-avatar e-table-avatar-empty" src="./assets/image/avatar.svg" alt=""/>`;
+                    };
+                    obj.click = (item) => {
+                        if (!item[view.column]) return;
+                        this.imageService.preview([{src: DataService.previewAttachment(item[view.column])}]);
                     };
                     break;
                 case ViewType.HTML:

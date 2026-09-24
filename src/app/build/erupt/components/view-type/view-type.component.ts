@@ -49,6 +49,7 @@ export class ViewTypeComponent implements OnInit, AfterViewInit {
             case ViewType.ATTACHMENT:
             case ViewType.DOWNLOAD:
             case ViewType.IMAGE:
+            case ViewType.AVATAR:
             case ViewType.SWF:
                 if (this.value) {
                     if (this.view.eruptFieldModel.eruptFieldJson.edit.type === EditType.ATTACHMENT) {

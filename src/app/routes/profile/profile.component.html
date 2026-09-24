@@ -1,0 +1,51 @@
+<form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form" autocomplete="off">
+  @if (error) {
+    <nz-alert [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
+  }
+  <div class="profile-avatar">
+    <nz-upload [nzAction]="uploadAction" [nzHeaders]="uploadHeaders" nzName="file"
+      nzAccept=".jpg,.jpeg,.png,.gif,.webp" [nzShowUploadList]="false"
+      [nzBeforeUpload]="beforeUpload" (nzChange)="uploadChange($event)">
+      <div class="profile-avatar-pick" [class.uploading]="uploading">
+        @if (uploading) {
+          <i nz-icon nzType="loading"></i>
+        } @else {
+          <nz-avatar [nzSize]="96" [nzSrc]="avatarUrl||null"
+            [nzText]="name.value&&name.value.substring(0,1)"></nz-avatar>
+          <div class="profile-avatar-mask"><i nz-icon nzType="camera" nzTheme="fill"></i></div>
+        }
+      </div>
+    </nz-upload>
+    <div class="profile-avatar-actions">
+      <span class="text-grey">{{ 'profile.avatar_hint'|translate }}</span>
+      @if (avatar) {
+        <a (click)="removeAvatar()">{{ 'profile.remove_avatar'|translate }}</a>
+      }
+    </div>
+  </div>
+  <nz-form-item>
+    <nz-form-control>
+      <nz-input-group class="full-width" nzSize="large" nzAddOnBeforeIcon="user">
+        <input nz-input [value]="settings.user['account']||''" disabled="disabled">
+      </nz-input-group>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control [nzErrorTip]="nameTip">
+      <nz-input-group class="full-width" nzSize="large" nzAddOnBeforeIcon="idcard">
+        <input nz-input formControlName="name" maxlength="255" [placeholder]="'profile.nickname'|translate">
+      </nz-input-group>
+      <ng-template #nameTip>
+        @if (name.dirty && name.errors) {
+          {{ 'profile.validate.nickname'|translate }}
+        }
+      </ng-template>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <button nz-button nzType="primary" nzSize="large" type="submit" class="submit"
+      style="display:block;width: 100%;" [nzLoading]="loading" [disabled]="uploading">
+      <span>{{ 'global.update'|translate }}</span>
+    </button>
+  </nz-form-item>
+</form>
