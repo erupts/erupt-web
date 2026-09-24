@@ -85,6 +85,7 @@ export enum ViewType {
     TAB_VIEW = "TAB_VIEW",
     LINK_DIALOG = "LINK_DIALOG",
     IMAGE = "IMAGE",
+    AVATAR = "AVATAR",
     IMAGE_BASE64 = "IMAGE_BASE64",
     SWF = "SWF",
     DOWNLOAD = "DOWNLOAD",

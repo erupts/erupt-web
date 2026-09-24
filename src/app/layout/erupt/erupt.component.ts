@@ -253,7 +253,9 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.nickName = watermark;
             }
             this.settingsService.setUser({
-                avatar: userinfo.avatar,
+                account: userinfo.account,
+                avatar: DataService.resolveAvatar(userinfo.avatar),
+                avatarPath: userinfo.avatar,
                 name: userinfo.nickname,
                 tenantName: userinfo.tenantName || null,
                 indexPath: path

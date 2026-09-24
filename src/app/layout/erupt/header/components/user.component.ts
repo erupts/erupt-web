@@ -6,6 +6,7 @@ import {UserTool, WindowModel} from "@shared/model/window.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {MfaComponent} from "../../../../routes/mfa/mfa.component";
 import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.component";
+import {ProfileComponent} from "../../../../routes/profile/profile.component";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {UtilsService} from "@shared/service/utils.service";
 import {SessionService} from "@shared/service/session.service";
@@ -38,6 +39,11 @@ import {SessionService} from "@shared/service/session.service";
                 </div>
               }
             }
+            @if (profileEnable) {
+              <div nz-menu-item (click)="profile()">
+                <i nz-icon nzType="user" nzTheme="outline" class="mr-sm"></i>{{ 'global.profile'|translate }}
+              </div>
+            }
             @if (resetPassword) {
               <div nz-menu-item (click)="changePwd()">
                 <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>{{ 'global.reset_pwd'|translate }}
@@ -68,6 +74,9 @@ export class HeaderUserComponent {
 
     resetPassword = EruptAppData.get().resetPwd;
 
+    //self-service profile lives on the platform user; a tenant session has no such record here
+    profileEnable = false;
+
     //the switch is server side, a tenant session has no platform MFA binding of its own
     mfaEnable = !!(EruptAppData.get().mfa && EruptAppData.get().mfa.enable);
 
@@ -93,6 +102,7 @@ export class HeaderUserComponent {
         private utilsService: UtilsService,
         public session: SessionService,
     ) {
+        this.profileEnable = !this.utilsService.isTenantToken();
         this.lockEnable = !this.utilsService.isTenantToken();
         if (this.mfaEnable && !this.utilsService.isTenantToken()) {
             this.dataService.mfaStatus().subscribe(status => this.mfaBound = status.bound);
@@ -118,6 +128,20 @@ export class HeaderUserComponent {
             nzWidth: 460
         }).afterClose.subscribe(() => {
             this.dataService.mfaStatus().subscribe(status => this.mfaBound = status.bound);
+        });
+    }
+
+    profile() {
+        this.modal.create({
+            nzDraggable: true,
+            nzTitle: this.i18n.fanyi("global.profile"),
+            nzMaskClosable: false,
+            nzContent: ProfileComponent,
+            nzFooter: null,
+            nzWidth: 420,
+            nzBodyStyle: {
+                paddingBottom: '1px'
+            }
         });
     }
 

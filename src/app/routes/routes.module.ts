@@ -9,12 +9,13 @@ import {LayoutModule} from "../layout/layout.module";
 import {FillComponent} from "./fill/fill.component";
 import {MfaComponent} from "./mfa/mfa.component";
 import {ResetPwdComponent} from "./reset-pwd/reset-pwd.component";
+import {ProfileComponent} from "./profile/profile.component";
 import {UserTenantLoginComponent} from "../layout/passport/tenant-login/tenant-login.component";
 
 
 @NgModule({
     imports: [SharedModule, RouteRoutingModule, LayoutModule],
-    declarations: [SiteComponent, FillComponent, HomeComponent, ResetPwdComponent, MfaComponent, UserLoginComponent, UserTenantLoginComponent]
+    declarations: [SiteComponent, FillComponent, HomeComponent, ResetPwdComponent, ProfileComponent, MfaComponent, UserLoginComponent, UserTenantLoginComponent]
 })
 export class RoutesModule {
 }

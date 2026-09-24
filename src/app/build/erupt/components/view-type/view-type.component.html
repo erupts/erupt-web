@@ -1,5 +1,11 @@
 @if (show) {
   @switch (view.type) {
+    @case (viewType.AVATAR) {
+      <div class="text-center">
+        <img class="e-table-avatar" style="width: 120px;height: 120px;" ondragstart="return false;"
+          [src]="(paths[0]||'./assets/image/avatar.svg')|safeUrl" alt=""/>
+      </div>
+    }
     @case (viewType.IMAGE) {
       <nz-carousel class="text-center" onselectstart="return false;" unselectable="on"
         style="-moz-user-select:none;" #carousel>

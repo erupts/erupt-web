@@ -71,6 +71,13 @@ export class DataService {
         }
     }
 
+    // An avatar is either an absolute URL (SSO provider) or an uploaded path; only the latter goes through the attachment endpoint,
+    // so the session token never travels to a third-party host
+    static resolveAvatar(path: string): string {
+        if (!path) return null;
+        return /^https?:\/\//.test(path) ? path : DataService.previewAttachment(path);
+    }
+
     static previewAttachment(path: string, download: boolean = false): string {
         let token = "_token=" + (DataService.tokenService.get().token || '');
         if (path && (path.startsWith("http://") || path.startsWith("https://"))) {
@@ -587,6 +594,10 @@ export class DataService {
         return this._http.get<MenuVo[]>(RestPath.erupt + path, flush ? {flush: true} : null, {
             observe: "body"
         });
+    }
+
+    updateProfile(name: string, avatar: string): Observable<EruptApiModel> {
+        return this._http.post(RestPath.erupt + "/profile", {name, avatar});
     }
 
     userinfo(): Observable<Userinfo> {
