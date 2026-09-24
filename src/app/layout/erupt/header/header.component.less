@@ -475,3 +475,9 @@
         }
     }
 }
+
+// Avatar dropdown (renders in the cdk overlay): the menu sizes to its longest label
+// so a translated entry plus its badge stays on one line instead of wrapping
+::ng-deep .header-user-menu .ant-dropdown-menu-item {
+    white-space: nowrap;
+}

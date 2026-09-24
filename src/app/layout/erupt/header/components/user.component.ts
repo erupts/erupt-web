@@ -24,7 +24,7 @@ import {SocketService} from "@shared/service/socket.service";
           <span class="hidden-mobile">{{ settings.user.name }}</span>
         </div>
         <nz-dropdown-menu #avatarMenu>
-          <div nz-menu class="width-sm" style="padding: 0">
+          <div nz-menu class="min-width-sm header-user-menu" style="padding: 0">
             @if (settings.user['tenantName']) {
               <div style="padding: 8px 12px;border-bottom:1px solid #eee">
                 {{ settings.user['tenantName'] }}
