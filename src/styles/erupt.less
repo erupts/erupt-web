@@ -6,6 +6,20 @@
     padding: 0;
 }
 
+// read-only tab tree: checked state stays visible, checkboxes stop reacting and take the ant disabled palette
+.erupt-tree-readonly .ant-tree-checkbox {
+    pointer-events: none;
+
+    .ant-tree-checkbox-inner {
+        background: var(--erupt-fill-tertiary, #f5f5f5);
+        border-color: var(--erupt-border, #d9d9d9) !important;
+    }
+
+    &.ant-tree-checkbox-checked .ant-tree-checkbox-inner::after {
+        border-color: var(--erupt-text-quaternary, rgba(0, 0, 0, .25));
+    }
+}
+
 span.ripple {
     position: absolute;
     left: 0;
