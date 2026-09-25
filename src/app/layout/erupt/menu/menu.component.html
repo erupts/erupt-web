@@ -28,17 +28,17 @@
     }
   }
 </ng-template>
+<!-- The menu tree keeps the order the server sends (the admin's sort field);
+     only the favorites section above it can be rearranged by the user. -->
 <ng-template #tree let-ls>
-  <div cdkDropList [cdkDropListDisabled]="isPad" (cdkDropListDropped)="drop($event, ls)">
+  <div>
     @for (i of ls; track i) {
-      @if (i._hidden !== true) {
+      @if (i._hidden !== true && !i._filtered) {
         <li
-          cdkDrag [cdkDragDisabled]="isPad"
           class="sidebar-nav__item"
           [class.sidebar-nav__selected]="i._selected"
           [class.sidebar-nav__open]="i.open"
           >
-          <div class="sidebar-nav__drag-placeholder" *cdkDragPlaceholder></div>
           <!-- link -->
           @if (i.children.length === 0) {
             <a
@@ -110,9 +110,9 @@
   </div>
 </ng-template>
 
-<!-- Favorites (shown in every mode) -->
+<!-- Favorites (shown in every mode, stepped aside while a keyword filter is on) -->
 <ng-template #favTpl>
-  @if (!collapsed && !isPad && favorites.length > 0) {
+  @if (!collapsed && !isPad && favorites.length > 0 && !filterKeyword) {
     <ul class="sidebar-nav sidebar-nav--pinned" cdkDropList (cdkDropListDropped)="dropFavorite($event)">
       @for (f of favorites; track f) {
         <li cdkDrag class="sidebar-nav__item sidebar-nav__item--fav" [class.sidebar-nav__selected]="f._selected">
@@ -137,19 +137,26 @@
   <ng-template [ngTemplateOutlet]="favTpl"></ng-template>
 }
 
+<!-- keyword filter with no hit -->
+@if (filterKeyword && filterMatches === 0 && !collapsed) {
+  <div class="sidebar-nav__filter-empty">{{ 'menu.filter_none' | translate }}</div>
+}
+
 <!-- ── Dual-column mode: first-level rail on the left, selected category's children on the right ── -->
 @if (dualMenu && !collapsed) {
   <div class="dual-menu">
-    <div class="dual-menu__rail">
+    <div class="dual-menu__rail" [class.dual-menu__rail--icon-only]="!dualRailText">
       @for (item of splitTopItems; track item) {
         <a class="dual-menu__rail-item" [class.dual-menu__rail-item--active]="item === selectedTopItem"
-           (click)="selectTopItem(item)">
+           [attr.title]="dualRailText ? null : item.text" (click)="selectTopItem(item)">
           @if (item.icon) {
             <ng-template [ngTemplateOutlet]="icon" [ngTemplateOutletContext]="{ $implicit: item.icon }"></ng-template>
           } @else {
             <i class="sidebar-nav__item-icon" nz-icon nzType="appstore" nzTheme="outline"></i>
           }
-          <span class="dual-menu__rail-text" [attr.title]="item.text">{{ item.text }}</span>
+          @if (dualRailText) {
+            <span class="dual-menu__rail-text" [attr.title]="item.text">{{ item.text }}</span>
+          }
         </a>
       }
     </div>
@@ -181,8 +188,31 @@
   }
 }
 
+<!-- ── Group mode: first-level items become flat group titles, their children are
+     listed underneath (leaf first-level items stay regular entries). The collapsed
+     sidebar falls back to the normal tree so the icon rail keeps working. ── -->
+@if (groupMenu && !splitMenu && !dualMenu && !collapsed) {
+  <ul class="sidebar-nav sidebar-nav--group">
+    @if (loading) {
+      <nz-skeleton [nzParagraph]="{ rows: 12 }" [nzTitle]="false" [nzActive]="true" style="padding: 12px"></nz-skeleton>
+    }
+    @if (!loading) {
+      @for (item of splitTopItems; track item) {
+        @if (item.children.length > 0 && !item._filtered) {
+          <li class="sidebar-nav__item sidebar-nav__group-title">
+            <span [innerHTML]="item._text" [attr.title]="item.text"></span>
+          </li>
+          <ng-template [ngTemplateOutlet]="tree" [ngTemplateOutletContext]="{ $implicit: item.children }"></ng-template>
+        } @else {
+          <ng-template [ngTemplateOutlet]="tree" [ngTemplateOutletContext]="{ $implicit: [item] }"></ng-template>
+        }
+      }
+    }
+  </ul>
+}
+
 <!-- ── Normal menu mode ── -->
-@if (!splitMenu && (!dualMenu || collapsed)) {
+@if (!splitMenu && ((!dualMenu && !groupMenu) || collapsed)) {
   <ul class="sidebar-nav">
     @if (loading) {
       <nz-skeleton [nzParagraph]="{ rows: 12 }" [nzTitle]="false" [nzActive]="true" style="padding: 12px"></nz-skeleton>

@@ -15,6 +15,7 @@ export class RestPath {
     public static eruptAttachment: string = WindowModel.domain + "erupt-attachment";
     public static bi: string = RestPath.erupt + "/bi";
     public static formView: string = RestPath.erupt + "/data/form-view";
+    public static comment: string = RestPath.erupt + "/comment";
 }
 
 export enum EditType {
@@ -22,6 +23,8 @@ export enum EditType {
     PASSWORD = "PASSWORD",
     NUMBER = "NUMBER",
     COLOR = "COLOR",
+    ICON = "ICON",                             //Font Awesome icon picker
+    KEY_VALUE = "KEY_VALUE",                   //key-value pairs stored as a JSON object
     TEXTAREA = "TEXTAREA",                     //large text area
     CHOICE = "CHOICE",                         //single selection
     MULTI_CHOICE = "MULTI_CHOICE",             //multiple selection
@@ -44,6 +47,7 @@ export enum EditType {
     SLIDER = "SLIDER",                         //numeric slider
     RATE = "RATE",
     CHECKBOX = "CHECKBOX",
+    TRANSFER = "TRANSFER",
     EMPTY = "EMPTY",
     TPL = "TPL",
     MARKDOWN = "MARKDOWN",
@@ -74,11 +78,14 @@ export enum HtmlEditTypeEnum {
 export enum ViewType {
     TEXT = "TEXT",
     COLOR = "COLOR",
+    ICON = "ICON",
+    KEY_VALUE = "KEY_VALUE",
     SAFE_TEXT = "SAFE_TEXT",
     LINK = "LINK",
     TAB_VIEW = "TAB_VIEW",
     LINK_DIALOG = "LINK_DIALOG",
     IMAGE = "IMAGE",
+    AVATAR = "AVATAR",
     IMAGE_BASE64 = "IMAGE_BASE64",
     SWF = "SWF",
     DOWNLOAD = "DOWNLOAD",
@@ -125,9 +132,18 @@ export enum ChoiceEnum {
     SELECT = "SELECT",
 }
 
+// Mirrors BoolType.Type in erupt-annotation. AUTO exists for the designer, which edits the
+// annotation itself; the server resolves it before the schema reaches the form
+export enum BoolEnum {
+    AUTO = "AUTO",
+    RADIO = "RADIO",
+    SWITCH = "SWITCH",
+}
+
 export enum MultiChoiceEnum {
     SELECT = "SELECT",
-    CHECKBOX = "CHECKBOX"
+    CHECKBOX = "CHECKBOX",
+    TRANSFER = "TRANSFER"
 }
 
 export enum SelectMode {

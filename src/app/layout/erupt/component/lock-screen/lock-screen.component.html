@@ -1,0 +1,31 @@
+<div class="lock-screen" role="dialog" aria-modal="true" cdkTrapFocus cdkTrapFocusAutoCapture>
+  <div class="lock-clock">
+    <div class="lock-time">{{ now | date:'HH:mm' }}</div>
+    <div class="lock-date">{{ now | date:'fullDate' }}</div>
+  </div>
+
+  <div class="lock-card">
+    <nz-avatar [nzSize]="72" [nzText]="settings.user.name && settings.user.name.substring(0, 1)"
+      [nzSrc]="settings.user.avatar || null"></nz-avatar>
+    <div class="lock-name">{{ settings.user.name }}</div>
+    <div class="lock-tip">{{ 'lock.tip'|translate }}</div>
+
+    <form class="lock-form" (ngSubmit)="unlock()">
+      <nz-input-group nzSize="large" nzPrefixIcon="lock">
+        <input nz-input type="password" name="pwd" [(ngModel)]="pwd" autocomplete="current-password"
+          [placeholder]="'login.pwd'|translate" [disabled]="loading">
+      </nz-input-group>
+      @if (error) {
+        <div class="lock-error">{{ error }}</div>
+      }
+      <button nz-button nzType="primary" nzSize="large" nzBlock type="submit" [nzLoading]="loading" [disabled]="!pwd">
+        {{ 'lock.unlock'|translate }}
+      </button>
+    </form>
+
+    <a class="lock-logout" (click)="session.logout()">
+      <i nz-icon nzType="logout" nzTheme="outline"></i>
+      {{ 'global.logout'|translate }}
+    </a>
+  </div>
+</div>

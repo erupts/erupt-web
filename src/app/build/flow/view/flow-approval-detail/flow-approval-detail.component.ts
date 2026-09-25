@@ -1,3 +1,4 @@
+import {openResizableDrawer, resizableDrawerContent} from "@shared/component/resizable-drawer.component";
 import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {
     ApprovalView,
@@ -24,7 +25,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {EruptUser} from "../../../cube/model/dashboard.model";
 import {forkJoin} from "rxjs";
-import {getAvatarColor} from "@flow/util/flow.util";
+import {getAvatarColor, getStatusColor} from "@flow/util/flow.util";
 import {ActivatedRoute} from "@angular/router";
 import {FormAccessEnum, PrintSetting} from "@flow/model/flow.model";
 import {Scene} from "../../../erupt/model/erupt.enum";
@@ -621,7 +622,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     // New method: view the flow diagram
     viewFlow() {
-        let ref = this.drawerService.create({
+        let ref = openResizableDrawer(this.drawerService, {
             nzTitle: this.i18n.fanyi('flow.action.view_flow'),
             nzContent: EruptFlowComponent,
             nzContentParams: {
@@ -636,9 +637,9 @@ export class FlowApprovalDetailComponent implements OnInit {
             nzPlacement: 'bottom',
             nzHeight: '85%',
             nzFooter: null
-        })
+        }, "flow-view")
         this.flowInstanceApiService.progress(this.selectedInstance.id).subscribe(res => {
-            ref.getContentComponent().progress = res.data;
+            resizableDrawerContent<EruptFlowComponent>(ref).progress = res.data;
         })
     }
 
@@ -704,6 +705,8 @@ export class FlowApprovalDetailComponent implements OnInit {
     protected readonly Object = Object;
 
     protected readonly getAvatarColor = getAvatarColor;
+
+    protected readonly getStatusColor = getStatusColor;
 
     protected readonly FormAccessEnum = FormAccessEnum;
 

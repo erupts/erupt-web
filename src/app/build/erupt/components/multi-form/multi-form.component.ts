@@ -122,9 +122,7 @@ export class MultiFormComponent implements OnInit, DoCheck {
             this.dataHandlerService.objectToEruptValue(row, build);
             this.blocks.push({build: build, pk: row[pkCol]});
         }
-        if (!this.onlyRead) {
-            this.edit.$tempValue = this.blocks;
-        }
+        this.edit.$tempValue = this.blocks;
     }
 
     // a copied block must become a brand-new entity, including its one-to-many children

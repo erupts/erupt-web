@@ -1,5 +1,6 @@
 import {
     AttachmentEnum,
+    BoolEnum,
     ChoiceEnum,
     DateEnum,
     EditType,
@@ -76,6 +77,8 @@ export interface View {
     type: ViewType;
     template: string;
     sortable: boolean;
+    // adjacent columns sharing a group render under one merged header cell
+    group: string;
     tpl: Tpl;
     //extra
     eruptFieldModel?: EruptFieldModel;
@@ -115,6 +118,7 @@ export interface Edit {
     codeEditType?: CodeEditType;
     mapType?: MapType;
     colorType?: ColorType;
+    keyValueType?: KeyValueType;
     groupType?: GroupType;
     calloutType?: CalloutType;
     buttonType?: ButtonType;
@@ -214,6 +218,7 @@ export interface ReferenceTableType {
 interface BoolType {
     trueText: string;
     falseText: string;
+    type: BoolEnum;
 }
 
 interface ChoiceType {
@@ -279,6 +284,13 @@ export interface ColorType {
     alpha: boolean;
     presets: string[];
     showText: boolean;
+}
+
+export interface KeyValueType {
+    keyPlaceholder: string;
+    valuePlaceholder: string;
+    max: number;
+    keys: string[];
 }
 
 interface GroupType {

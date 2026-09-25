@@ -278,6 +278,11 @@
 
     // ── st table styles ───────────────────────────────────────────
     ::ng-deep {
+        // a click on the row opens its detail panel (rowClickView); interactive cells keep their own cursor
+        .erupt-row-click-view .ant-table-tbody > tr.ant-table-row > td {
+            cursor: pointer;
+        }
+
         // tc-actions and tc-utils use gap for spacing; reset the global auto margin-left
         // that ng-zorro injects between adjacent ant-btn siblings to avoid double spacing
         .tc-actions, .tc-utils {
@@ -490,6 +495,23 @@
         }
     }
 
+    // @Layout(tableTruncate = false): the cell shows everything over as many lines as it takes,
+    // the same deal the operation column gets
+    &.erupt-cell-wrap .erupt-cell-text {
+        // centred cells size themselves to their content (flex: 0 0 auto), so cap them to the
+        // column or a long value would run past it instead of wrapping inside it
+        max-width: 100%;
+        overflow: visible;
+        text-overflow: clip;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .erupt-cell-fa {
+        font-size: 1.2rem;
+        vertical-align: middle;
+    }
+
     .erupt-cell-swatch {
         font-size: 1.2rem;
     }
@@ -569,5 +591,47 @@
         justify-content: flex-end;
         gap: 8px;
         margin-top: 12px;
+    }
+}
+
+// count badge on the row comment button (st renders the button html, so the rule is global).
+// It sits on top of the icon as a superscript so the button costs the same width as any other
+// icon action instead of widening the whole operation column.
+:host ::ng-deep .erupt-comment-btn {
+    position: relative;
+
+    // st always emits the text wrapper, padded when an icon is present; the badge is out of flow
+    .pl-xs {
+        padding-left: 0 !important;
+    }
+
+    .erupt-comment-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        min-width: 14px;
+        height: 14px;
+        padding: 0 3px;
+        font-size: 10px;
+        line-height: 14px;
+        text-align: center;
+        border-radius: 7px;
+        color: #fff;
+        background: var(--ant-primary-color);
+        pointer-events: none;
+    }
+}
+
+// Operation column of a wrapping table (@Layout tableTruncate = false): the actions flow onto
+// further lines, and the looser line-height keeps the comment badge — which hangs above its
+// button — clear of the line above it.
+:host ::ng-deep td.erupt-op-col {
+    line-height: 2.2;
+
+    // only the space between two actions may break: a labelled action moves to the next line as a
+    // whole instead of splitting mid-label
+    .st__btn-text {
+        display: inline-block;
+        white-space: nowrap;
     }
 }

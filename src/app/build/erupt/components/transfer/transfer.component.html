@@ -1,0 +1,15 @@
+<nz-spin [nzSpinning]="loading">
+  @if (options?.length) {
+    <nz-transfer [nzDataSource]="items" nzShowSearch
+      [nzTitles]="['global.transfer.source' | translate, 'global.transfer.target' | translate]"
+      [nzListStyle]="{width: '44%', height: '420px'}"
+      [nzDisabled]="disabled"
+      [nzRender]="render"
+      (nzChange)="onChange()"></nz-transfer>
+    <ng-template #render let-item>
+      <span nz-tooltip [nzTooltipTitle]="item.description">{{ item.title }}</span>
+    </ng-template>
+  } @else if (!loading) {
+    <nz-empty [nzNotFoundImage]="'simple'" [nzNotFoundContent]="null"></nz-empty>
+  }
+</nz-spin>

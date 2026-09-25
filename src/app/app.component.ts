@@ -8,6 +8,9 @@ import {WindowModel} from "@shared/model/window.model";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzNotificationService} from "ng-zorro-antd/notification";
 import {DomSanitizer} from "@angular/platform-browser";
+import {NzConfigService} from "ng-zorro-antd/core/config";
+import {Skin, switchSkin} from "@shared/util/theme.util";
+import {installModalDragClamp} from "@shared/util/pwa.util";
 
 @Component({
     selector: 'app-root',
@@ -26,7 +29,8 @@ export class AppComponent implements OnInit {
         private sanitizer: DomSanitizer,
         @Inject(NzModalService) private modal: NzModalService,
         @Inject(NzMessageService) private msg: NzMessageService,
-        @Inject(NzNotificationService) private notification: NzNotificationService
+        @Inject(NzNotificationService) private notification: NzNotificationService,
+        private nzConfigService: NzConfigService
     ) {
         renderer.setAttribute(el.nativeElement, 'ng-alain-version', VERSION_ALAIN.full);
         renderer.setAttribute(el.nativeElement, 'ng-zorro-version', VERSION_ZORRO.full);
@@ -42,6 +46,11 @@ export class AppComponent implements OnInit {
         window["safeHtml"] = (html: string) => {
             return this.sanitizer.bypassSecurityTrustHtml(html);
         };
+        // Skin switch for scripts outside Angular (the home page iframe): goes
+        // through the same path as the settings drawer, so the theme color and
+        // the header bar follow the skin instead of only the <html> class.
+        window["eruptApplySkin"] = (skin: string) => switchSkin(this.nzConfigService, skin as Skin);
+        installModalDragClamp();
         let configLoad = false;
         this.router.events.subscribe(ev => {
             if (ev instanceof RouteConfigLoadStart) {

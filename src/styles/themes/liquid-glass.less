@@ -198,6 +198,12 @@ html.liquid-glass.rtl .alain-default__collapsed .erupt_content {
 
 /* --- Multi-tab bar: fixed, so it floats ON the slab. Keep it transparent and
  *     inset by the slab's 1px border so the rounded top reads as one piece. */
+/* Top-split menu mode: the 40px sub-nav row under the header is part of the
+ * "header" the slab and the tab bar hang from. */
+html.liquid-glass .alain-default__sub-nav {
+    --lg-header-h: 84px;
+}
+
 html.liquid-glass .alain-default__fixed .reuse-tab {
     /* !important — @delon/abc pins the fixed tab bar with `top: 44px !important` */
     top: calc(var(--lg-header-h) + var(--lg-gap) + 1px) !important;

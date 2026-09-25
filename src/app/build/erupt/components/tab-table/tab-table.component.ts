@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnInit, ViewChild} from "@angular/core";
+import {Component, Inject, Input, OnChanges, OnInit, ViewChild} from "@angular/core";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {EditTypeComponent} from "../edit-type/edit-type.component";
@@ -23,7 +23,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
     styles: [],
     styleUrls: ["./tab-table.component.less"]
 })
-export class TabTableComponent implements OnInit {
+export class TabTableComponent implements OnInit, OnChanges {
 
     @Input() eruptBuildModel: EruptBuildModel;
 
@@ -75,8 +75,13 @@ export class TabTableComponent implements OnInit {
         setTimeout(() => {
             this.loading = false;
         }, 300);
+    }
+
+    // columns follow the inputs: the record panel flips onlyRead in place when switching view <-> edit
+    ngOnChanges() {
+        let flatColumns: STColumn[];
         if (this.onlyRead) {
-            this.column = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false);
+            flatColumns = this.uiBuildService.viewToAlainTableConfig(this.tabErupt.eruptBuildModel, false);
         } else {
             const viewValue: STColumn[] = [];
             viewValue.push({
@@ -157,9 +162,11 @@ export class TabTableComponent implements OnInit {
                 className: "text-center",
                 buttons: operators
             });
-            this.column = viewValue;
+            flatColumns = viewValue;
         }
-        this.tableWidth = UiBuildService.calcTableWidth(this.column);
+        // width is summed over the leaf columns; the grouped list carries width-less parents
+        this.tableWidth = UiBuildService.calcTableWidth(flatColumns);
+        this.column = UiBuildService.groupColumns(flatColumns);
     }
 
     addData() {

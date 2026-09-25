@@ -14,11 +14,14 @@ import {Router} from '@angular/router';
 import {ReuseTabService} from '@delon/abc/reuse-tab';
 import {leaveReuseTab} from '@core';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
+import {HttpEventType} from '@angular/common/http';
 import {Terminal} from '@xterm/xterm';
 import {FitAddon} from '@xterm/addon-fit';
 import {Status} from '../../../erupt/model/erupt-api.model';
 import {RemoteApiService} from '../../service/remote-api.service';
-import {ConnState, describeClose, remoteWsUrl} from '../../model/remote.model';
+import {
+    ConnState, describeClose, formatSize, joinPath, parentPath, remoteWsUrl, SftpEntry, UploadItem
+} from '../../model/remote.model';
 
 const TERM_THEME = {
     background: '#15161b', foreground: '#d6d6d6', cursor: '#c7c7c7', cursorAccent: '#15161b',
@@ -40,16 +43,33 @@ export class SshComponent implements OnInit, OnDestroy {
 
     @ViewChild('shell', {static: true}) shellEl!: ElementRef<HTMLDivElement>;
     @ViewChild('termEl', {static: true}) termEl!: ElementRef<HTMLDivElement>;
+    @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
 
     @Input() hostId!: string;
     @Input() hostName = '';
     /** Ticket already issued by the entry component; used for the first connection only */
     @Input() initialTicket: string | null = null;
+    /** Whether the host offers the SFTP file panel */
+    @Input() fileTransfer = false;
 
     state: ConnState = 'connecting';
     statusText = '';
     fullscreen = false;
     toast = '';
+
+    // ---- file panel
+    filesOpen = false;
+    cwd = '';
+    pathInput = '';
+    entries: SftpEntry[] = [];
+    filesLoading = false;
+    filesError = '';
+    dragOver = false;
+    /** Entry awaiting inline delete confirmation, by name */
+    confirmDelete: string | null = null;
+    newFolder: string | null = null;
+    uploads: UploadItem[] = [];
+    readonly formatSize = formatSize;
 
     private term!: Terminal;
     private fit!: FitAddon;
@@ -199,6 +219,164 @@ export class SshComponent implements OnInit, OnDestroy {
         } else {
             this.shellEl.nativeElement.requestFullscreen().catch(() => {});
         }
+    }
+
+    // ------------------------------------------------------------------ file panel (SFTP)
+
+    toggleFiles(): void {
+        this.filesOpen = !this.filesOpen;
+        requestAnimationFrame(() => this.fit.fit());
+        if (this.filesOpen && !this.cwd) this.goHome();
+    }
+
+    goHome(): void {
+        this.filesLoading = true;
+        this.filesError = '';
+        this.api.sftpHome(this.hostId).subscribe({
+            next: res => {
+                if (res.status !== Status.SUCCESS) {
+                    this.filesFail(res.message);
+                    return;
+                }
+                this.cd(res.data || '/');
+            },
+            error: () => this.filesFail('')
+        });
+    }
+
+    cd(path: string): void {
+        this.filesLoading = true;
+        this.filesError = '';
+        this.confirmDelete = null;
+        this.newFolder = null;
+        this.api.sftpList(this.hostId, path).subscribe({
+            next: res => {
+                this.filesLoading = false;
+                if (res.status !== Status.SUCCESS) {
+                    this.filesFail(res.message);
+                    return;
+                }
+                this.cwd = path;
+                this.pathInput = path;
+                this.entries = res.data || [];
+            },
+            error: () => this.filesFail('')
+        });
+    }
+
+    up(): void {
+        this.cd(parentPath(this.cwd));
+    }
+
+    refresh(): void {
+        this.cd(this.cwd);
+    }
+
+    goPath(): void {
+        const p = this.pathInput.trim();
+        if (p) this.cd(p.startsWith('/') ? p : joinPath(this.cwd, p));
+    }
+
+    openEntry(entry: SftpEntry): void {
+        if (entry.directory) {
+            this.cd(joinPath(this.cwd, entry.name));
+        } else {
+            this.download(entry);
+        }
+    }
+
+    download(entry: SftpEntry): void {
+        const a = document.createElement('a');
+        a.href = this.api.sftpDownloadUrl(this.hostId, joinPath(this.cwd, entry.name));
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    }
+
+    /** Types the entry's path into the terminal at the cursor, quoted when it needs to be */
+    insertPath(entry: SftpEntry): void {
+        const path = joinPath(this.cwd, entry.name);
+        this.send({type: 'input', data: /[^\w./@:+=-]/.test(path) ? `'${path.replace(/'/g, `'\\''`)}'` : path});
+        this.term.focus();
+    }
+
+    askDelete(entry: SftpEntry): void {
+        this.confirmDelete = entry.name;
+    }
+
+    doDelete(entry: SftpEntry): void {
+        this.confirmDelete = null;
+        this.api.sftpDelete(this.hostId, joinPath(this.cwd, entry.name)).subscribe({
+            next: res => res.status === Status.SUCCESS ? this.refresh() : this.showToast(res.message || 'Delete failed'),
+            error: () => this.showToast('Delete failed')
+        });
+    }
+
+    createFolder(): void {
+        const name = (this.newFolder || '').trim();
+        this.newFolder = null;
+        if (!name) return;
+        this.api.sftpMkdir(this.hostId, this.cwd, name).subscribe({
+            next: res => res.status === Status.SUCCESS ? this.refresh() : this.showToast(res.message || 'Create folder failed'),
+            error: () => this.showToast('Create folder failed')
+        });
+    }
+
+    pickFiles(): void {
+        this.fileInput?.nativeElement.click();
+    }
+
+    onFilesChosen(ev: Event): void {
+        const input = ev.target as HTMLInputElement;
+        if (input.files) this.uploadFiles(Array.from(input.files));
+        input.value = '';
+    }
+
+    onDrop(ev: DragEvent): void {
+        ev.preventDefault();
+        this.dragOver = false;
+        if (ev.dataTransfer?.files?.length) this.uploadFiles(Array.from(ev.dataTransfer.files));
+    }
+
+    onDragOver(ev: DragEvent): void {
+        ev.preventDefault();
+        this.dragOver = true;
+    }
+
+    private uploadFiles(files: File[]): void {
+        const dir = this.cwd;
+        for (const file of files) {
+            const item: UploadItem = {name: file.name, percent: 0};
+            this.uploads = [...this.uploads.filter(u => u.name !== file.name || !u.done), item];
+            this.api.sftpUpload(this.hostId, dir, file).subscribe({
+                next: ev => {
+                    if (ev.type === HttpEventType.UploadProgress && ev.total) {
+                        item.percent = Math.round(ev.loaded * 100 / ev.total);
+                    } else if (ev.type === HttpEventType.Response) {
+                        const body = ev.body;
+                        if (body && body.status !== Status.SUCCESS) {
+                            item.error = body.message || 'Upload failed';
+                        } else {
+                            item.percent = 100;
+                            item.done = true;
+                            if (this.cwd === dir) this.refresh();
+                            setTimeout(() => this.ngZone.run(() => this.uploads = this.uploads.filter(u => u !== item)), 2500);
+                        }
+                    }
+                },
+                error: err => item.error = err?.error?.message || err?.message || 'Upload failed'
+            });
+        }
+    }
+
+    dismissUpload(item: UploadItem): void {
+        this.uploads = this.uploads.filter(u => u !== item);
+    }
+
+    private filesFail(message: string): void {
+        this.filesLoading = false;
+        this.filesError = message || 'Could not reach the file system';
     }
 
     private showToast(text: string): void {

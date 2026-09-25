@@ -4,7 +4,7 @@ import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 
 import {ICONS_AUTO} from "../../../style-icons-auto";
 import {WindowModel} from "@shared/model/window.model";
-import {MenuMode} from "@shared/model/erupt-menu";
+import {hasMenuModeChoice, isHeaderMenuMode, MenuMode, menuModeFlags} from "@shared/model/erupt-menu";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {EruptAppData, EruptAppModel} from "@shared/model/erupt-app.model";
@@ -17,7 +17,13 @@ import {NzMessageService} from "ng-zorro-antd/message";
 
 
 import {NzConfigService} from "ng-zorro-antd/core/config";
-import {applyHeaderColor} from "../../shared/util/theme.util";
+import {
+    applyHeaderColor,
+    applyWorkspaceFrame,
+    resolveHeaderColor,
+    resolveThemeColor,
+    savedWorkspaceFrame
+} from "../../shared/util/theme.util";
 
 
 @Injectable()
@@ -34,19 +40,20 @@ export class StartupService {
     }
 
     // Site config supplies the default theme; a color the user picked in the
-    // settings drawer (localStorage "theme-color") wins over it.
+    // settings drawer wins over it. The color comes from the active skin's own
+    // slot (index.html has already put the skin class on <html>), so a
+    // brutalist pastel never boots into another skin and vice versa.
     private applyTheme(): void {
         // only the color entries go to ng-zorro; the layout-ish defaults are read elsewhere
-        const {dark, compact, skin, menuMode, ...theme} = WindowModel.theme || {};
-        const savedColor = localStorage.getItem("theme-color");
-        if (savedColor) {
-            theme.primaryColor = savedColor;
-        }
-        if (Object.keys(theme).length > 0) {
-            this.nzConfigService.set('theme', theme);
-        }
-        // User choice first, then the site config default (theme.headerColor)
-        applyHeaderColor(localStorage.getItem("header-color") || theme.headerColor || null);
+        const {dark, compact, skin, menuMode, workspaceFrame, customizable, loginLayout, loginBackground, ...theme} = WindowModel.theme || {};
+        theme.primaryColor = resolveThemeColor();
+        this.nzConfigService.set('theme', theme);
+        // User choice first, then the site config default (theme.headerColor),
+        // then the skin's own (the brutalist band always follows the theme color)
+        applyHeaderColor(resolveHeaderColor());
+        // Workspace skin frame gradient: user choice first, then the site default;
+        // the default is applied without being recorded as a choice
+        applyWorkspaceFrame(savedWorkspaceFrame() || workspaceFrame || null, false);
     }
 
     async load(): Promise<any> {
@@ -77,6 +84,7 @@ export class StartupService {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     let eruptAppProp = <EruptAppModel>JSON.parse(xhr.responseText);
                     EruptAppData.put(eruptAppProp);
+                    WindowModel.applyFileDomain(eruptAppProp.fileDomain);
                     if (!!EruptAppData.get().properties["erupt-tenant"]) {
                         let domainInfoXhr = new XMLHttpRequest();
                         domainInfoXhr.open('GET', RestPath.domainInfo + "?host=" + location.host);
@@ -132,21 +140,26 @@ export class StartupService {
             : !!WindowModel.config['tabReuse'];
         // Table border
         this.settingSrv.layout['bordered'] = false !== this.settingSrv.layout['bordered'];
+        // Clicking a table row opens its detail panel — off unless the user
+        // turned it on in the settings drawer. A whole row is a large target
+        // that also carries links, buttons and editable cells, so opening a
+        // panel from it is opt-in rather than something a first click does.
+        this.settingSrv.layout['rowClickView'] = !!this.settingSrv.layout['rowClickView'];
         // Breadcrumb navigation
         this.settingSrv.layout['breadcrumbs'] = false !== this.settingSrv.layout['breadcrumbs'];
         // Menu layout mode: a choice persisted from the settings drawer wins; otherwise
-        // eruptSiteConfig.theme.menuMode ("normal" | "split" | "dual" | "top") seeds the
-        // flags. Not persisted here, so a later change of the config default still takes
-        // effect for users who never picked a mode themselves.
+        // eruptSiteConfig.theme.menuMode (a MenuMode value) seeds the flags. Not persisted
+        // here, so a later change of the config default still takes effect for users who
+        // never picked a mode themselves. With the appearance locked
+        // (theme.customizable = false) the site default is forced on every load, a
+        // saved choice included.
         const layout = this.settingSrv.layout;
-        const menuModeChosen = 'splitMenu' in layout || 'dualMenu' in layout || 'topMenu' in layout;
-        const defaultMenuMode = WindowModel.theme?.menuMode as MenuMode;
-        if (!menuModeChosen && defaultMenuMode && defaultMenuMode !== MenuMode.NORMAL) {
-            layout['splitMenu'] = defaultMenuMode === MenuMode.SPLIT;
-            layout['dualMenu'] = defaultMenuMode === MenuMode.DUAL;
-            layout['topMenu'] = defaultMenuMode === MenuMode.TOP;
+        const defaultMenuMode = (WindowModel.theme?.menuMode as MenuMode) || MenuMode.NORMAL;
+        const locked = !WindowModel.appearanceCustomizable();
+        if (locked || (!hasMenuModeChoice(layout) && defaultMenuMode !== MenuMode.NORMAL)) {
+            Object.assign(layout, menuModeFlags(defaultMenuMode));
             // the header-menu modes take the breadcrumb's place (same rule as setMenuMode)
-            if (defaultMenuMode === MenuMode.SPLIT || defaultMenuMode === MenuMode.TOP) {
+            if (isHeaderMenuMode(defaultMenuMode)) {
                 layout['breadcrumbs'] = false;
             }
         }

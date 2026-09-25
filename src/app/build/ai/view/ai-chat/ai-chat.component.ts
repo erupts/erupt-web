@@ -13,6 +13,7 @@ import {
 } from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {SharedModule} from '@shared/shared.module';
+import {AiConversationsComponent} from '../ai-conversations/ai-conversations.component';
 import {ActivatedRoute} from '@angular/router';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {Subject} from 'rxjs';
@@ -47,8 +48,6 @@ interface ChatSseState {
     /** Previous call name; duplicates with the same name are deduplicated and not rendered */
     lastCallName: string;
 }
-/** Distance from the bottom (px) at which loading more chats is triggered */
-const CHAT_SCROLL_THRESHOLD = 80;
 /** Buffer in px for considering the message area "at the bottom": auto-scroll to bottom only when the user is within this range */
 const BUBBLES_BOTTOM_BUFFER_PX = 300;
 
@@ -57,7 +56,7 @@ const BUBBLES_BOTTOM_BUFFER_PX = 300;
     selector: 'erupt-ai-chat',
     templateUrl: './ai-chat.component.html',
     styleUrls: ['./ai-chat.component.less'],
-    imports: [SharedModule],
+    imports: [SharedModule, AiConversationsComponent],
     providers: [ChatApiService, MarkdownService, NzImageService]
 })
 export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
@@ -65,10 +64,12 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     @Input() embedded = false;
 
+    // when set, a drawer header (icon, title, close) is drawn above the chat, in place of the drawer's own
+    @Input() drawerTitle: string;
+
     @Input() context = '';
 
     @ViewChild('bubblesRef') bubblesRef!: ElementRef<HTMLDivElement>;
-    @ViewChild('chatListRef') chatListRef!: ElementRef<HTMLUListElement>;
     @ViewChild('renameModalTpl') renameModalTpl!: TemplateRef<unknown>;
     @ViewChild('textareaRef') textareaRef!: ElementRef<HTMLTextAreaElement>;
     @ViewChild('senderWrapRef') senderWrapRef!: ElementRef<HTMLDivElement>;
@@ -91,8 +92,6 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     pendingImages: { path: string; url: string }[] = [];
     /** Number of image uploads in flight; sending is blocked until it drops to 0 */
     uploadingImageCount = 0;
-    /** Chat search keyword */
-    chatSearchKeyword = '';
     /** Input history */
     private inputHistory: string[] = [];
     private historyIndex = -1;
@@ -151,11 +150,6 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         return this.agents.find(a => a.id === this.selectAgentId);
     }
 
-    get filteredChats(): Chat[] {
-        const kw = this.chatSearchKeyword?.trim().toLowerCase();
-        return kw ? this.chats.filter(c => c.title?.toLowerCase().includes(kw)) : this.chats;
-    }
-
     constructor(
         protected settingsService: SettingsService,
         private chatApi: ChatApiService,
@@ -185,7 +179,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     ngOnInit(): void {
         if (this.collapseSidebar) this.sidebarCollapsed = true;
         if (this.embedded) {
-            this.wideMode = false;
+            // a drawer/modal host is narrow already: use the full width and hide the sidebar
+            this.wideMode = true;
             this.sidebarCollapsed = true;
         }
         this.markdown.warmup();
@@ -281,27 +276,22 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     /** Chat list scroll: load the next page when reaching the bottom */
-    onChatListScroll(): void {
+    loadMoreChats(): void {
         if (this.loadingMoreChats || !this.hasMoreChats) return;
-        const el = this.chatListRef?.nativeElement;
-        if (!el) return;
-        const {scrollTop, scrollHeight, clientHeight} = el;
-        if (scrollTop + clientHeight >= scrollHeight - CHAT_SCROLL_THRESHOLD) {
-            this.loadingMoreChats = true;
-            this.chatPage += 1;
-            this.chatApi.chats(this.chatPage, CHAT_PAGE_SIZE).subscribe({
-                next: res => {
-                    const pageData = res.data;
-                    const list = pageData?.list ?? [];
-                    const total = pageData?.total ?? 0;
-                    this.chats = this.chats.concat(list);
-                    this.hasMoreChats = this.chats.length < total;
-                },
-                complete: () => {
-                    this.loadingMoreChats = false;
-                }
-            });
-        }
+        this.loadingMoreChats = true;
+        this.chatPage += 1;
+        this.chatApi.chats(this.chatPage, CHAT_PAGE_SIZE).subscribe({
+            next: res => {
+                const pageData = res.data;
+                const list = pageData?.list ?? [];
+                const total = pageData?.total ?? 0;
+                this.chats = this.chats.concat(list);
+                this.hasMoreChats = this.chats.length < total;
+            },
+            complete: () => {
+                this.loadingMoreChats = false;
+            }
+        });
     }
 
     clearStatus(): void {
@@ -793,8 +783,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.showScrollToBottom = false;
     }
 
-    deleteChat(chatId: number, event: Event): void {
-        event.stopPropagation();
+    deleteChat(chatId: number): void {
         this.modal.confirm({
             nzTitle: this.i18n.fanyi('ai.chat.delete_confirm_title'),
             nzContent: this.i18n.fanyi('ai.chat.delete_confirm_content'),
@@ -815,8 +804,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         });
     }
 
-    renameChat(chatId: number, currentTitle: string, event: Event): void {
-        event.stopPropagation();
+    renameChat(chatId: number, currentTitle: string): void {
         this.renameTitle = currentTitle;
         this.renameChatId = chatId;
         this.modal.create({
@@ -904,7 +892,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     /** Toggle message area wide mode */
     toggleWideMode(): void {
         this.wideMode = !this.wideMode;
-        this.saveLayout();
+        // embedded mode has its own forced default; don't overwrite the full-page layout preference
+        if (!this.embedded) {
+            this.saveLayout();
+        }
     }
 
     onResizerMousedown(e: MouseEvent): void {

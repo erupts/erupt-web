@@ -1,0 +1,185 @@
+// Installed app with display_override "window-controls-overlay": the page
+// starts at the very top of the window and the OS window controls float over
+// its top corner, so the top bar doubles as the title bar.
+//
+// Drag regions are declared unconditionally: browsers ignore app-region
+// outside the overlay mode, so nothing changes in a tab or a plain standalone
+// window, and the bar drags as soon as the overlay is switched on. A control
+// marked no-drag stays clickable; a drag surface swallows the click, so the two
+// cannot share pixels — menu items and buttons are click, the gaps drag.
+//
+// The padding that clears the controls lives with each bar's own layout rules
+// (erupt.component.less for the header, below for the login nav), where it
+// wins over the component-scoped base padding without !important.
+.erupt-header,
+.alain-default__header {
+    -webkit-app-region: drag;
+    app-region: drag;
+
+    a, button, input, .alain-default__nav-item, .split-nav-item, .ant-dropdown-trigger, .ant-tabs-nav, nz-select,
+    [nz-popover], [nz-dropdown], [nz-menu-item], [nz-submenu] .ant-menu-submenu-title {
+        -webkit-app-region: no-drag;
+        app-region: no-drag;
+    }
+}
+
+// Lock screen: the cover hides the bar, so the inert cover is the title bar
+// while it is up; its controls stay clickable.
+.lock-screen {
+    -webkit-app-region: drag;
+    app-region: drag;
+
+    a, button, input {
+        -webkit-app-region: no-drag;
+        app-region: no-drag;
+    }
+}
+
+// Login page: its top nav (brand left, tool buttons right) sits at the very
+// top of the window too. The extra selector depth beats the component's
+// emulated scoping.
+.lp-page .lp-side .lp-side-nav {
+    -webkit-app-region: drag;
+    app-region: drag;
+
+    a, button, input, label, .lp-nav-btn, .lp-swatch, .lp-nav-lang, [nz-popover], [nz-dropdown] {
+        -webkit-app-region: no-drag;
+        app-region: no-drag;
+    }
+}
+
+// Installed app in any window mode: the OS window frame already draws the
+// edge of the brand block, so the divider between logo and menu goes. In the
+// overlay mode the block is hidden below anyway. !important: the header sets
+// the divider inside its own component scope and the skins at html.<skin>
+// specificity.
+@media (display-mode: standalone), (display-mode: window-controls-overlay) {
+    .erupt-header .alain-default__header-logo {
+        border-right: none !important;
+    }
+}
+
+@media (display-mode: window-controls-overlay) {
+    // The corners Chrome paints around the window controls are one opaque color
+    // (<meta name="theme-color">, no alpha, no image), so a bar that is
+    // transparent over the workspace frame or a translucent glass tint can
+    // never be matched by them. Instead the bar meets the corners: a layer
+    // between the bar's own background and its content paints the very color
+    // the corners get (--erupt-titlebar-color, set by eruptSyncThemeColor in
+    // index.html from what the bar would show), so the strip reads as one
+    // piece and the frame's gradient starts below it.
+    .erupt-header::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: var(--erupt-titlebar-color, transparent);
+    }
+
+    // The login page's nav floats over the artwork, a picture the corners cannot
+    // show either. The same flat strip, the nav's height and the whole window
+    // wide (fixed: the nav is only its own column in the cover / poster
+    // layouts, while the controls sit at the window edges). Below the nav's
+    // content, above the page's picture and its vignette; the brand name drops
+    // its picture-legibility white for the text color, since the strip is the
+    // container surface now.
+    .lp-side-nav {
+        position: relative;
+        z-index: 0;
+
+        &::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: inherit;
+            z-index: -1;
+            background: var(--erupt-titlebar-color, transparent);
+        }
+    }
+
+    // The nav is the title bar here, so it takes the browser's default title
+    // bar height (39px), not its roomy 64px on a web page. The extra selector
+    // depth beats the component's emulated scoping.
+    .lp-page .lp-side .lp-side-nav {
+        height: 39px;
+        // the icons sit against the window controls, with a hair of air
+        padding-right: 3px;
+    }
+
+    // On a solid title bar the frosted pill around the icons has nothing to frost
+    // and reads as a lozenge stuck on the bar: the icons become plain toolbar
+    // buttons like the header's, flat with a rounded-square hover fill.
+    .lp-page .lp-side .lp-side-nav-actions {
+        gap: 4px;
+        padding: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .lp-page .lp-side .lp-nav-btn,
+    .lp-page .lp-side .lp-nav-lang i[nz-icon] {
+        border-radius: 6px;
+    }
+
+    .lp-page.lp-page--has-wallpaper .lp-side-nav .lp-side-brand-name {
+        color: var(--erupt-text, rgba(0, 0, 0, 0.88));
+        text-shadow: none;
+    }
+
+    // The brand block goes: the window's own title bar carries the app name and
+    // icon, and the traffic lights would sit on top of the logo anyway. The
+    // header padding still clears the controls, so the menu starts right after
+    // them. !important: the skins address the block at html.<skin> specificity.
+    .erupt-header .alain-default__header-logo {
+        display: none !important;
+    }
+
+    // Layers that dock to the top edge keep their content clear of the controls:
+    // drawer panels, the docked form panels (side / full, form-panel.less) and
+    // notifications start below the bar. Masks are left alone and still dim the
+    // whole window, bar included; index.html darkens the browser chrome color
+    // to match while one is up (eruptSyncThemeColor), so the corners Chrome
+    // paints follow the mask like the rest of the bar.
+    .ant-drawer-left > .ant-drawer-content-wrapper,
+    .ant-drawer-right > .ant-drawer-content-wrapper,
+    .ant-modal-wrap.erupt-form-panel--side,
+    .ant-modal-wrap.erupt-form-panel--full {
+        top: max(44px, env(titlebar-area-height, 0px));
+    }
+
+    .ant-notification {
+        margin-top: max(44px, env(titlebar-area-height, 0px));
+    }
+
+    // Masks appear and leave in one step. The browser repaints the window
+    // controls' surround from <meta name="theme-color"> on its own schedule, so
+    // it cannot follow a 0.3s fade frame by frame; with no fade there is no
+    // moment where the corners and the page disagree.
+    .cdk-overlay-backdrop,
+    .ant-modal-mask,
+    .ant-drawer-mask {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    // The login nav's ends clear the controls. Margins on the two end blocks
+    // rather than padding on the nav: the brutalist block in
+    // passport.component.less sets its own nav padding at a specificity a
+    // global rule cannot beat, while nothing else sets these margins. The
+    // right gap uses 100vw because the nav column is flush with the right
+    // window edge in every layout; the left gap is skipped in the layouts
+    // that put the artwork column on the left (cover, poster), where the nav
+    // starts mid-window and the controls overlap the artwork instead.
+    .lp-page .lp-side-nav .lp-side-nav-actions {
+        margin-right: calc(100vw - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100vw));
+    }
+
+    .lp-page:not(.lp-page--cover):not(.lp-page--poster) .lp-side-nav .lp-side-brand {
+        margin-left: env(titlebar-area-x, 0px);
+    }
+}

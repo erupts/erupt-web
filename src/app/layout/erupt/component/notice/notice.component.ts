@@ -3,12 +3,11 @@ import {DataService} from '@shared/service/data.service';
 import {Announcement, NoticeMessageDetail, NoticeScene, NoticeStatus} from '@shared/model/user.model';
 import {Subject} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {NzDrawerRef, NzDrawerService} from 'ng-zorro-antd/drawer';
+import {NzDrawerService} from 'ng-zorro-antd/drawer';
 import {NzModalService} from "ng-zorro-antd/modal";
-import {NoticeDetailComponent} from "../notice-detail/notice-detail.component";
+import {NoticeDetailComponent, openNoticeUrl} from "../notice-detail/notice-detail.component";
 import {I18NService} from "@core";
 import {AnnouncementDetailComponent} from "../announcement-detail/announcement-detail.component";
-import {EruptIframeComponent} from "@shared/component/iframe.component";
 
 // export enum for use in templates
 export {NoticeStatus};
@@ -40,7 +39,6 @@ export class NoticeComponent implements OnInit, OnDestroy {
 
     constructor(
         private dataService: DataService,
-        private drawerRef: NzDrawerRef,
         private i18nService: I18NService,
         private cdr: ChangeDetectorRef,
         @Inject(NzModalService) private modal: NzModalService,
@@ -146,7 +144,6 @@ export class NoticeComponent implements OnInit, OnDestroy {
     // view message detail
     viewMessageDetail(message: NoticeMessageDetail): void {
         message.status = NoticeStatus.READ;
-        const messageId = (message as any).id || (message.noticeLog as any)?.id;
         let ref = this.modal.create({
             nzDraggable: true,
             nzTitle: message.noticeLog?.title,
@@ -156,7 +153,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
             nzFooter: null,
             nzContent: NoticeDetailComponent,
         });
-        ref.componentInstance.messageId = messageId;
+        ref.componentInstance.messageId = message.id;
     }
 
     viewAnnouncementDetail(announcement: Announcement): void {
@@ -173,28 +170,8 @@ export class NoticeComponent implements OnInit, OnDestroy {
         ref.componentInstance.announcement = announcement;
     }
 
-    // close drawer
-    close(): void {
-        this.drawerRef.close();
-    }
-
-    // open URL link
-    openUrl(url: string, title: string): void {
-        this.drawerService.create({
-            nzTitle: null,
-            nzClosable: false,
-            nzContent: EruptIframeComponent,
-            nzContentParams: {
-                url: url,
-                height: "100%",
-                width: '100%'
-            },
-            nzWidth: '45%',
-            nzBodyStyle: {
-                padding: 0
-            },
-            nzMaskClosable: true
-        });
+    openUrl(url: string): void {
+        openNoticeUrl(this.drawerService, url);
     }
 
     // mark all as read

@@ -1,15 +1,15 @@
 import {Component, Inject} from "@angular/core";
-import {Router} from "@angular/router";
 import {SettingsService} from "@delon/theme";
-import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {DataService} from "@shared/service/data.service";
 import {I18NService} from "@core";
 import {UserTool, WindowModel} from "@shared/model/window.model";
 import {NzModalService} from "ng-zorro-antd/modal";
+import {MfaComponent} from "../../../../routes/mfa/mfa.component";
 import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.component";
+import {ProfileComponent} from "../../../../routes/profile/profile.component";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {UtilsService} from "@shared/service/utils.service";
-import {SocketService} from "@shared/service/socket.service";
+import {SessionService} from "@shared/service/session.service";
 
 @Component({
     standalone: false,
@@ -17,13 +17,13 @@ import {SocketService} from "@shared/service/socket.service";
     template: `
         <div class="alain-default__nav-item d-flex align-items-center px-sm" nz-dropdown nzPlacement="bottomRight"
           [nzDropdownMenu]="avatarMenu">
-          <nz-avatar [nzText]="settings.user.name&&settings.user.name.substring(0,1)"
+          <nz-avatar class="mr-sm" [nzText]="settings.user.name&&settings.user.name.substring(0,1)"
             [nzSrc]="settings.user.avatar||null"
-          nzSize="default" class="mr-sm"></nz-avatar>
+          nzSize="default"></nz-avatar>
           <span class="hidden-mobile">{{ settings.user.name }}</span>
         </div>
         <nz-dropdown-menu #avatarMenu>
-          <div nz-menu class="width-sm" style="padding: 0">
+          <div nz-menu class="min-width-sm header-user-menu" style="padding: 0">
             @if (settings.user['tenantName']) {
               <div style="padding: 8px 12px;border-bottom:1px solid #eee">
                 {{ settings.user['tenantName'] }}
@@ -39,9 +39,28 @@ import {SocketService} from "@shared/service/socket.service";
                 </div>
               }
             }
+            @if (profileEnable) {
+              <div nz-menu-item (click)="profile()">
+                <i nz-icon nzType="user" nzTheme="outline" class="mr-sm"></i>{{ 'global.profile'|translate }}
+              </div>
+            }
             @if (resetPassword) {
               <div nz-menu-item (click)="changePwd()">
                 <i nz-icon nzType="edit" nzTheme="fill" class="mr-sm"></i>{{ 'global.reset_pwd'|translate }}
+              </div>
+            }
+            @if (mfaEnable) {
+              <div nz-menu-item (click)="mfa()">
+                <i nz-icon nzType="safety-certificate" nzTheme="fill" class="mr-sm"></i>{{ 'global.mfa'|translate }}
+                @if (mfaUnprotected) {
+                  <nz-badge nzStatus="error" class="ml-sm"></nz-badge>
+                }
+              </div>
+            }
+            <div nz-menu-divider></div>
+            @if (lockEnable) {
+              <div nz-menu-item (click)="session.lock()">
+                <i nz-icon nzType="lock" nzTheme="outline" class="mr-sm"></i>{{ 'global.lock_screen'|translate }}
               </div>
             }
             <div nz-menu-item (click)="logout()">
@@ -55,41 +74,73 @@ export class HeaderUserComponent {
 
     resetPassword = EruptAppData.get().resetPwd;
 
+    //self-service profile lives on the platform user; a tenant session has no such record here
+    profileEnable = false;
+
+    //the switch is server side, a tenant session has no platform MFA binding of its own
+    mfaEnable = !!(EruptAppData.get().mfa && EruptAppData.get().mfa.enable);
+
+    //undefined until the status call answers, so the dot never flashes for a bound user
+    mfaBound: boolean;
+
+    //the server offers MFA and this account has not taken it up
+    get mfaUnprotected(): boolean {
+        return this.mfaEnable && this.mfaBound === false;
+    }
+
     userTools: UserTool[] = WindowModel.userTools;
+
+    //unlocking re-checks the password against the platform user, which a tenant session has none of
+    lockEnable = false;
 
     constructor(
         public settings: SettingsService,
-        private router: Router,
-        @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
         private i18n: I18NService,
         private dataService: DataService,
         @Inject(NzModalService)
         private modal: NzModalService,
         private utilsService: UtilsService,
-        private socketService: SocketService,
+        public session: SessionService,
     ) {
+        this.profileEnable = !this.utilsService.isTenantToken();
+        this.lockEnable = !this.utilsService.isTenantToken();
+        if (this.mfaEnable && !this.utilsService.isTenantToken()) {
+            this.dataService.mfaStatus().subscribe(status => this.mfaBound = status.bound);
+        } else {
+            this.mfaEnable = false;
+        }
     }
 
     logout() {
         this.modal.confirm({
             nzTitle: this.i18n.fanyi("global.confirm_logout"),
-            nzOnOk: () => {
-                this.dataService.logout().subscribe(data => {
-                    this.socketService.closeSocket();
-                    let token = this.tokenService.get().token;
-                    if (WindowModel.eruptEvent && WindowModel.eruptEvent.logout) {
-                        WindowModel.eruptEvent.logout({
-                            userName: this.settings.user.name,
-                            token: token
-                        })
-                    }
-                    if (this.utilsService.isTenantToken()) {
-                        this.router.navigateByUrl("/passport/tenant");
-                    } else {
-                        this.router.navigateByUrl(this.tokenService.login_url);
-                    }
-                    this.tokenService.clear();
-                });
+            nzOnOk: () => this.session.logout()
+        });
+    }
+
+    mfa() {
+        this.modal.create({
+            nzDraggable: true,
+            nzTitle: this.i18n.fanyi("global.mfa"),
+            nzMaskClosable: false,
+            nzContent: MfaComponent,
+            nzFooter: null,
+            nzWidth: 460
+        }).afterClose.subscribe(() => {
+            this.dataService.mfaStatus().subscribe(status => this.mfaBound = status.bound);
+        });
+    }
+
+    profile() {
+        this.modal.create({
+            nzDraggable: true,
+            nzTitle: this.i18n.fanyi("global.profile"),
+            nzMaskClosable: false,
+            nzContent: ProfileComponent,
+            nzFooter: null,
+            nzWidth: 420,
+            nzBodyStyle: {
+                paddingBottom: '1px'
             }
         });
     }

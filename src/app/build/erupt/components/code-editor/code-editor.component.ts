@@ -22,6 +22,9 @@ export class CodeEditorComponent implements OnInit, OnDestroy {
 
     @Input() height: number = 300;
 
+    //file name offered by the download button, no button without one
+    @Input() download: string;
+
     @Input() eruptName: string;
 
     @Input() fieldName: string;
@@ -119,6 +122,15 @@ export class CodeEditorComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this._completionProvider?.dispose();
         this._themeObserver?.disconnect();
+    }
+
+    //a file name turns the editor into something the reader can take away
+    downloadCode() {
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(new Blob([this.edit.$value || '']));
+        link.download = this.download;
+        link.click();
+        URL.revokeObjectURL(link.href);
     }
 
     copyCode() {

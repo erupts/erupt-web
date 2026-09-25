@@ -4,15 +4,17 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {EruptTenantInfoData} from "../../build/erupt/model/erupt-tenant";
 import {DataService} from "@shared/service/data.service";
 import {NzConfigService} from "ng-zorro-antd/core/config";
+import {LOGIN_LAYOUT_KEY, LoginLayout, loginLayoutOf} from "@shared/model/login-layout";
 import {
     applyThemeColor,
     BRUTALIST_PRESET_COLORS,
-    DEFAULT_THEME_COLOR,
+    currentSkin,
+    resolveThemeColor,
+    Skin,
+    switchSkin,
     THEME_PRESET_COLORS,
     toHexColor
 } from "@shared/util/theme.util";
-
-type PassportSkin = 'default' | 'brutalist' | 'liquid-glass';
 
 @Component({
     standalone: false,
@@ -36,6 +38,53 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     tenantDomainInfo = EruptTenantInfoData.get();
 
+    // Site config may lock the appearance (theme.customizable = false): the
+    // dark / skin / color / layout buttons are then left out of the nav.
+    readonly appearanceCustomizable: boolean = WindowModel.appearanceCustomizable();
+
+    // Page layout (LoginLayout): the visitor's own choice first, then the site
+    // default, then the centered card.
+    readonly LoginLayout = LoginLayout;
+
+    layouts: { value: LoginLayout; icon: string; label: string }[] = [
+        {value: LoginLayout.CENTER, icon: "border", label: "login.layout-center"},
+        {value: LoginLayout.COVER, icon: "layout", label: "login.layout-cover"},
+        {value: LoginLayout.WIDE, icon: "idcard", label: "login.layout-wide"},
+        {value: LoginLayout.WALLPAPER, icon: "picture", label: "login.layout-wallpaper"},
+        {value: LoginLayout.POSTER, icon: "font-size", label: "login.layout-poster"}
+    ];
+
+    // Layouts that show the brand panel (.lp-hero) beside / behind the form
+    get heroLayout(): boolean {
+        return this.layout === LoginLayout.COVER || this.layout === LoginLayout.POSTER;
+    }
+
+    // Site-configured picture (theme.loginBackground): the page artwork in every
+    // layout. The wallpaper layout adds the frosted card and falls back to the
+    // stock artwork when no picture is configured. The picture is used only once
+    // it has actually loaded (see loadWallpaper): a URL that fails — hotlink
+    // protection, a typo — would otherwise leave the page with just the vignette.
+    wallpaper: string | null = null;
+
+    private loadWallpaper(): void {
+        const url = WindowModel.theme?.loginBackground;
+        if (!url) {
+            return;
+        }
+        const img = new Image();
+        img.onload = () => this.wallpaper = url;
+        img.src = url;
+    }
+
+    layout: LoginLayout = loginLayoutOf(localStorage.getItem(LOGIN_LAYOUT_KEY))
+        || loginLayoutOf(WindowModel.theme?.loginLayout)
+        || LoginLayout.CENTER;
+
+    setLayout(value: LoginLayout): void {
+        this.layout = value;
+        localStorage.setItem(LOGIN_LAYOUT_KEY, value);
+    }
+
     // Dark theme — reflects the class index.html applied before bootstrap.
     darkTheme: boolean = document.documentElement.classList.contains("dark");
 
@@ -49,26 +98,28 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     // Visual skin — at most one is active, so it is a single choice rather than a
     // toggle. Reflects the class index.html applied before bootstrap. Kept in
-    // step with the settings drawer: same values, same two storage flags.
-    skins: { value: PassportSkin; label: string }[] = [
-        {value: "default", label: "Default"},
-        {value: "brutalist", label: "Brutalist"},
-        {value: "liquid-glass", label: "Liquid Glass"}
+    // step with the settings drawer: same enum, same apply path (theme.util).
+    // Classic is left out: it only restyles the app's sidebar, so on this page
+    // it looks exactly like the default.
+    readonly Skin = Skin;
+
+    skins: { value: Skin; label: string }[] = [
+        {value: Skin.DEFAULT, label: "Default"},
+        {value: Skin.WORKSPACE, label: "Workspace"},
+        {value: Skin.LIQUID_GLASS, label: "Liquid Glass"},
+        {value: Skin.BRUTALIST, label: "Brutalist"}
     ];
 
-    skin: PassportSkin = document.documentElement.classList.contains("brutalist-theme")
-        ? "brutalist"
-        : document.documentElement.classList.contains("liquid-glass")
-            ? "liquid-glass"
-            : "default";
+    skin: Skin = currentSkin();
 
     // Theme color — same palettes, same storage and the same apply path as the
     // settings drawer (@shared/util/theme.util), so a color chosen here is the
     // one the app boots into after signing in.
-    themeColor: string = localStorage.getItem("theme-color") || WindowModel.theme?.primaryColor || DEFAULT_THEME_COLOR;
+    // The active skin's own color (the brutalist skin keeps a separate slot)
+    themeColor: string = resolveThemeColor();
 
     get activePresetColors(): string[] {
-        return this.skin === "brutalist" ? BRUTALIST_PRESET_COLORS : THEME_PRESET_COLORS;
+        return this.skin === Skin.BRUTALIST ? BRUTALIST_PRESET_COLORS : THEME_PRESET_COLORS;
     }
 
     get themeColorHex(): string {
@@ -83,18 +134,16 @@ export class LayoutPassportComponent implements AfterViewInit {
         this.themeColor = applyThemeColor(this.nzConfigService, null);
     }
 
-    setSkin(value: PassportSkin): void {
+    // Persists too, so the choice survives reload (honored by index.html on next
+    // load); the theme color follows the skin's own slot.
+    setSkin(value: Skin): void {
         this.skin = value;
-        const root = document.documentElement;
-        root.classList.toggle("brutalist-theme", value === "brutalist");
-        root.classList.toggle("liquid-glass", value === "liquid-glass");
-        // Persist so the choice survives reload (honored by index.html on next load).
-        localStorage.setItem("brutalist-theme", String(value === "brutalist"));
-        localStorage.setItem("liquid-glass", String(value === "liquid-glass"));
+        this.themeColor = switchSkin(this.nzConfigService, value);
     }
 
     constructor(private modalSrv: NzModalService,
                 private nzConfigService: NzConfigService) {
+        this.loadWallpaper();
         if (WindowModel.copyrightTxt) {
             if (typeof (WindowModel.copyrightTxt) === 'function') {
                 this.copyrightTxt = WindowModel.copyrightTxt();
@@ -111,6 +160,9 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.modalSrv.closeAll();
+        // No top bar here: the browser chrome color (<meta name="theme-color">, owned by
+        // index.html) follows the page surface instead
+        window["eruptSyncThemeColor"]?.();
     }
 
 }

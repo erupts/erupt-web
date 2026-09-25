@@ -1,6 +1,30 @@
+.detail-body {
+    padding: 12px;
+}
+
 .message-content {
     height: 460px;
     overflow: auto;
     white-space: pre-line;
     margin-bottom: 0;
+}
+
+.detail-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border-top: 1px solid var(--erupt-border, #e8e8e8);
+    font-size: 13px;
+
+    .detail-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .detail-time {
+        margin-left: auto;
+        color: var(--erupt-text-tertiary, #8c8c8c);
+    }
 }

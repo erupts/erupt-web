@@ -1,8 +1,122 @@
-@if (eruptBuildModel!=null) {
-  <div>
+<!-- In side-panel mode the left edge is draggable (nz-resizable); the body delta is translated
+     to the modal width by FormModalService. -->
+<div class="erupt-form-body" nz-resizable nzBounds="window" [nzMinWidth]="320"
+     [nzDisabled]="panelMode !== FormPanelMode.SIDE" (nzResize)="onPanelResize($event)">
+  @if (panelMode === FormPanelMode.SIDE) {
+    <nz-resize-handles [nzDirections]="['left']"></nz-resize-handles>
+  }
+  @if (eruptBuildModel!=null) {
     <nz-spin [nzSpinning]="loading">
       <erupt-edit-type [loading]="loading" #eruptEdit [eruptBuildModel]="eruptBuildModel" [readonly]="readonly"
       [mode]="behavior" [size]="size"></erupt-edit-type>
     </nz-spin>
+  }
+</div>
+
+<ng-template #footerTpl let-modalRef="modalRef">
+  @if (footerButtons) {
+    @for (b of footerButtons; track $index) {
+      <button nz-button [hidden]="buttonProp(b, 'show') === false" [nzLoading]="buttonProp(b, 'loading')"
+              [disabled]="buttonProp(b, 'disabled')" [nzType]="b.type || 'default'" [nzDanger]="b.danger"
+              (click)="clickButton(b)">{{b.label}}</button>
+    }
+  } @else {
+    <button nz-button (click)="modalRef.triggerCancel()"
+            [nzLoading]="modalRef.getConfig().nzCancelLoading">{{'global.cancel' | translate}}</button>
+    <button nz-button nzType="primary" (click)="modalRef.triggerOk()"
+            [nzLoading]="modalRef.getConfig().nzOkLoading">{{okText || ('global.ok' | translate)}}</button>
+  }
+</ng-template>
+
+<!-- Title bar: caption on the left, the three panel forms on the right. mousedown is stopped so
+     clicking a mode icon never starts the modal drag (the header is the cdk drag handle). -->
+<ng-template #titleTpl>
+  <div class="erupt-form-title">
+    <span class="erupt-form-title__text">{{title}}</span>
+    <span class="erupt-form-title__spacer"></span>
+    @if (navigator) {
+      <!-- record pager: ‹ n / total › within the list that opened the panel; first group on the right,
+           separated from the record actions -->
+      <span class="erupt-form-title__group erupt-form-title__pager" (mousedown)="$event.stopPropagation()">
+        <span class="erupt-form-title__btn erupt-form-title__btn--icon"
+              [class.erupt-form-title__btn--disabled]="!navigator.canStep(-1)"
+              nz-tooltip [nzTooltipTitle]="'form.prev_record' | translate" (click)="navigator.canStep(-1) && stepRecord.emit(-1)">
+          <i nz-icon nzType="left"></i>
+        </span>
+        @if (navigator.position(); as pos) {
+          <span class="erupt-form-title__btn erupt-form-title__btn--static">{{pos.index}} / {{pos.total}}</span>
+        }
+        <span class="erupt-form-title__btn erupt-form-title__btn--icon"
+              [class.erupt-form-title__btn--disabled]="!navigator.canStep(1)"
+              nz-tooltip [nzTooltipTitle]="'form.next_record' | translate" (click)="navigator.canStep(1) && stepRecord.emit(1)">
+          <i nz-icon nzType="right"></i>
+        </span>
+      </span>
+    }
+    @if (canToggleEdit || commentAction || aiAction || removeAction || menuActions.length) {
+      <!-- record actions as small outlined buttons, ant style; the mode switch keeps its own pill -->
+      <span class="erupt-form-title__actions" (mousedown)="$event.stopPropagation()">
+        @if (canToggleEdit) {
+          <span class="erupt-form-title__btn" (click)="toggleEdit.emit()">
+            <i nz-icon [nzType]="readonly ? 'edit' : 'eye'"></i>
+            {{(readonly ? 'global.editor' : 'global.view') | translate}}
+          </span>
+        }
+        @if (commentAction) {
+          <span class="erupt-form-title__btn erupt-form-title__btn--icon" nz-tooltip
+                [nzTooltipTitle]="'form.comments' | translate" (click)="commentAction()">
+            <i nz-icon nzType="message"></i>
+          </span>
+        }
+        @if (aiAction) {
+          <span class="erupt-form-title__btn erupt-form-title__btn--icon" nz-tooltip
+                [nzTooltipTitle]="'form.ai_assistant' | translate" (click)="aiAction()">
+            <i nz-icon nzType="bulb"></i>
+          </span>
+        }
+        @if (removeAction) {
+          <span class="erupt-form-title__btn erupt-form-title__btn--icon erupt-form-title__btn--danger"
+                nz-popconfirm [nzPopconfirmTitle]="removeAction.confirm" nzPopconfirmPlacement="bottomRight"
+                nzOkDanger (nzOnConfirm)="removeAction.run()">
+            <i nz-icon nzType="delete"></i>
+          </span>
+        }
+        @if (menuActions.length) {
+          <span class="erupt-form-title__btn erupt-form-title__btn--icon" nz-dropdown [nzDropdownMenu]="moreMenu"
+                nzTrigger="click" nzPlacement="bottomRight">
+            <i nz-icon nzType="ellipsis"></i>
+          </span>
+          <nz-dropdown-menu #moreMenu="nzDropdownMenu">
+            <ul nz-menu>
+              @for (a of menuActions; track a.label) {
+                <li nz-menu-item (click)="a.run()"><i nz-icon [nzType]="a.icon"></i>&nbsp; {{a.label}}</li>
+              }
+            </ul>
+          </nz-dropdown-menu>
+        }
+      </span>
+    }
+    <span class="erupt-form-title__modes" (mousedown)="$event.stopPropagation()">
+      @for (m of panelModes; track m.mode) {
+        <span class="erupt-form-title__mode" [class.erupt-form-title__mode--active]="panelMode === m.mode"
+              nz-tooltip [nzTooltipTitle]="m.i18n | translate" (click)="panelModeChange.emit(m.mode)">
+          <!-- window pictogram: the frame is the page, the filled block is where the panel sits -->
+          <svg viewBox="0 0 16 12" width="16" height="12" aria-hidden="true">
+            <rect x=".5" y=".5" width="15" height="11" rx="1.5" fill="none" stroke="currentColor" opacity=".4"/>
+            @switch (m.mode) {
+              @case (FormPanelMode.SIDE) {
+                <rect x="9" y="2" width="5" height="8" rx="1" fill="currentColor"/>
+              }
+              @case (FormPanelMode.FULL) {
+                <rect x="2" y="2" width="12" height="8" rx="1" fill="currentColor"/>
+              }
+              @default {
+                <rect x="4.5" y="3" width="7" height="6" rx="1" fill="currentColor"/>
+              }
+            }
+          </svg>
+        </span>
+      }
+    </span>
   </div>
-}
+</ng-template>

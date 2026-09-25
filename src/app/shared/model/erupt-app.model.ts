@@ -9,7 +9,9 @@ export interface EruptAppModel {
     waterMarkDate: boolean;  // whether the watermark displays the date
     waterMarkContent: string;  // custom watermark content
     resetPwd: boolean;
+    mfa: { enable: boolean; issuer: string; window: number };
     resetPwdPrompt: boolean;  // whether to prompt users who haven't changed the default password
+    fileDomain?: string;  // attachment host from the backend AttachmentProxy; null when erupt serves attachments itself
     properties: object;
 }
 

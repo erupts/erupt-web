@@ -38,7 +38,7 @@ import {
 import {DataService} from "@shared/service/data.service";
 import {generateMenuPath} from "@shared/util/erupt.util";
 import {RecentMenus} from "@shared/util/recent-menu.util";
-import {MenuTypeEnum, MenuVo} from "@shared/model/erupt-menu";
+import {MenuTypeEnum, MenuVo, selectedTopMenu, topLevelMenus} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
@@ -48,6 +48,7 @@ import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {Userinfo} from "@shared/model/user.model";
 import {UtilsService} from "@shared/service/utils.service";
+import {SessionService} from "@shared/service/session.service";
 import {SocketService} from "@shared/service/socket.service";
 
 // #region icons
@@ -88,6 +89,8 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private notify$: Subscription;
 
+    private menuChange$: Subscription;
+
     isFetching = false;
 
     nowYear = new Date().getFullYear();
@@ -122,6 +125,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 private utilsService: UtilsService,
                 private iframeManager: IframeManagerService,
                 private statusService: StatusService,
+                public session: SessionService,
                 @Optional()
                 @Inject(ReuseTabService)
                 private reuseTabService: ReuseTabService,
@@ -181,6 +185,10 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
     private setClass() {
         const {el, renderer, settings} = this;
         const layout = settings.layout;
+        // Category the header tabs point at (split / top-split); a first-level leaf such
+        // as the home page has nothing to show below, so its secondary area is dropped
+        const topItem = selectedTopMenu(topLevelMenus(this.menuSrv.menus), layout);
+        const secondaryEmpty = !!topItem && !topItem.children?.length;
         updateHostClass(
             el.nativeElement,
             renderer,
@@ -189,9 +197,13 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 [`alain-default__fixed`]: true,
                 [`alain-default__boxed`]: layout['boxed'],
                 [`alain-default__collapsed`]: layout.collapsed,
-                // top-menu mode: the whole menu lives in the header, the sidebar is
-                // hidden on desktop and the content takes the full width
-                [`alain-default__top-menu`]: layout['topMenu']
+                // sidebar-less: the header carries the menu, the sidebar is hidden on desktop
+                // and the content takes the full width (top / top-split modes, and split
+                // mode while the selected category has no children)
+                [`alain-default__top-menu`]: layout['topMenu'] || layout['topSplitMenu']
+                    || (layout['splitMenu'] && secondaryEmpty),
+                // top-split adds a 40px sub-nav row under the header
+                [`alain-default__sub-nav`]: layout['topSplitMenu'] && !secondaryEmpty
             },
             true
         );
@@ -213,6 +225,8 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             this.socketService.initWebSocket();
         }
         this.notify$ = this.settings.notify.subscribe(() => this.setClass());
+        // the sidebar-less decision reads the menu tree, which arrives after init
+        this.menuChange$ = this.menuSrv.change.subscribe(() => this.setClass());
         this.setClass();
         this.loadMenu().subscribe();
         let userinfoObservable: Observable<Userinfo>;
@@ -239,7 +253,9 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.nickName = watermark;
             }
             this.settingsService.setUser({
-                avatar: userinfo.avatar,
+                account: userinfo.account,
+                avatar: DataService.resolveAvatar(userinfo.avatar),
+                avatarPath: userinfo.avatar,
                 name: userinfo.nickname,
                 tenantName: userinfo.tenantName || null,
                 indexPath: path
@@ -347,6 +363,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnDestroy() {
         this.notify$.unsubscribe();
+        this.menuChange$.unsubscribe();
     }
 }
 

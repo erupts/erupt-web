@@ -13,6 +13,9 @@
             <button class="tb-btn" title="Send Ctrl+C" [disabled]="state !== 'connected'" (click)="sendCtrlC()">Ctrl+C</button>
             <button class="tb-btn" title="Paste local clipboard" [disabled]="state !== 'connected'" (click)="pasteClipboard()">Paste</button>
             <button class="tb-btn" title="Clear screen" (click)="clear()">Clear</button>
+            @if (fileTransfer) {
+                <button class="tb-btn" [class.on]="filesOpen" title="Browse, upload and download files over SFTP" (click)="toggleFiles()">Files</button>
+            }
             <span class="divider"></span>
             <button class="tb-btn" [title]="fullscreen ? 'Exit fullscreen' : 'Fullscreen'" (click)="toggleFullscreen()">
                 {{ fullscreen ? 'Exit full' : 'Fullscreen' }}
@@ -27,6 +30,83 @@
 
     <div class="term-area">
         <div class="term-wrap" #termEl></div>
+
+        @if (filesOpen) {
+            <aside class="file-panel" [class.drag-over]="dragOver"
+                   (dragover)="onDragOver($event)" (dragleave)="dragOver = false" (drop)="onDrop($event)">
+                <div class="fp-bar">
+                    <button class="fp-icon" title="Parent directory" [disabled]="cwd === '/'" (click)="up()">↑</button>
+                    <input class="fp-path" [(ngModel)]="pathInput" (keydown.enter)="goPath()" spellcheck="false" placeholder="/">
+                    <button class="fp-icon" title="Home directory" (click)="goHome()">⌂</button>
+                    <button class="fp-icon" title="Refresh" (click)="refresh()">⟳</button>
+                </div>
+                <div class="fp-bar actions">
+                    <button class="tb-btn" (click)="pickFiles()">Upload</button>
+                    <button class="tb-btn" (click)="newFolder = ''">New folder</button>
+                    <input #fileInput type="file" multiple hidden (change)="onFilesChosen($event)">
+                </div>
+
+                @if (newFolder !== null) {
+                    <div class="fp-bar">
+                        <input class="fp-path" [(ngModel)]="newFolder" (keydown.enter)="createFolder()" (keydown.escape)="newFolder = null"
+                               placeholder="Folder name" autofocus spellcheck="false">
+                        <button class="tb-btn primary" (click)="createFolder()">Create</button>
+                    </div>
+                }
+
+                <div class="fp-list">
+                    @if (filesError) {
+                        <div class="fp-msg error">{{ filesError }}</div>
+                    } @else if (!filesLoading && entries.length === 0) {
+                        <div class="fp-msg">Empty directory</div>
+                    }
+                    @for (e of entries; track e.name) {
+                        <div class="fp-row" [class.dir]="e.directory" (dblclick)="openEntry(e)">
+                            <span class="fp-ico">{{ e.directory ? '▸' : '·' }}</span>
+                            <span class="fp-name" [title]="e.mode + '  ' + (e.mtime | date:'yyyy-MM-dd HH:mm')" (click)="openEntry(e)">{{ e.name }}</span>
+                            @if (confirmDelete === e.name) {
+                                <span class="fp-confirm">
+                                    Delete?
+                                    <button class="fp-icon danger" (click)="doDelete(e)">Yes</button>
+                                    <button class="fp-icon" (click)="confirmDelete = null">No</button>
+                                </span>
+                            } @else {
+                                <span class="fp-size">{{ e.directory ? '' : formatSize(e.size) }}</span>
+                                <span class="fp-ops">
+                                    <button class="fp-icon" title="Type path into terminal" (click)="insertPath(e)">⇥</button>
+                                    @if (!e.directory) {
+                                        <button class="fp-icon" title="Download" (click)="download(e)">↓</button>
+                                    }
+                                    <button class="fp-icon danger" [title]="e.directory ? 'Delete empty directory' : 'Delete file'" (click)="askDelete(e)">×</button>
+                                </span>
+                            }
+                        </div>
+                    }
+                </div>
+
+                @if (uploads.length) {
+                    <div class="fp-uploads">
+                        @for (u of uploads; track u) {
+                            <div class="fp-upload" [class.error]="u.error" [class.done]="u.done">
+                                <span class="fp-name" [title]="u.error || u.name">{{ u.error || u.name }}</span>
+                                <span class="fp-size">{{ u.error ? '' : u.percent + '%' }}</span>
+                                @if (u.error) {
+                                    <button class="fp-icon" (click)="dismissUpload(u)">×</button>
+                                }
+                                <span class="fp-progress" [style.width.%]="u.percent"></span>
+                            </div>
+                        }
+                    </div>
+                }
+
+                @if (filesLoading) {
+                    <div class="fp-loading"><div class="spinner"></div></div>
+                }
+                @if (dragOver) {
+                    <div class="fp-drop">Drop to upload into {{ cwd }}</div>
+                }
+            </aside>
+        }
     </div>
 
     @if (toast) {

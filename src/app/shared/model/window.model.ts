@@ -6,7 +6,18 @@ export class WindowModel {
 
     public static domain: string = WindowModel.config["domain"] ? WindowModel.config["domain"] + "/" : '';
 
+    // Attachment host. The backend AttachmentProxy is the source of truth (delivered through
+    // /erupt-app at startup); eruptSiteConfig.fileDomain remains as an explicit override.
     public static fileDomain: string = WindowModel.config["fileDomain"] || undefined;
+
+    // Adopt the backend attachment host unless the site config already pins one. Written back
+    // into the site config so embedded pages that read eruptSiteConfig (home.html) see it too.
+    public static applyFileDomain(fileDomain: string | null | undefined) {
+        if (fileDomain && !WindowModel.config["fileDomain"]) {
+            WindowModel.config["fileDomain"] = fileDomain;
+            WindowModel.fileDomain = fileDomain;
+        }
+    }
 
     public static amapKey: string;
 
@@ -33,6 +44,11 @@ export class WindowModel {
     // eruptSiteConfig.theme — appearance defaults. Every entry applies only while the
     // user has no saved choice in the settings drawer.
     public static theme: {
+        // false locks the branding side of the appearance (colors, skin, navigation
+        // gradient, menu mode): the user-facing controls are hidden and saved user
+        // choices are ignored (index.html purges those keys on load, startup.service
+        // forces menuMode). Light/dark and compact stay per-user.
+        customizable?: boolean,
         primaryColor?: string,
         // Header bar color: "primary" (follow the primary color) or a literal
         // CSS color; users can still override it in the settings drawer.
@@ -40,11 +56,25 @@ export class WindowModel {
         // false | true | "auto" (follow the OS color scheme)
         dark?: boolean | "auto",
         compact?: boolean,
-        // "default" | "brutalist" | "liquid-glass"
+        // "default" | "brutalist" | "liquid-glass" | "workspace" | "classic" (Skin in @shared/util/theme.util)
         skin?: string,
-        // "normal" | "split" | "dual" | "top" (MenuMode)
+        // Workspace skin only: a frame gradient preset key (WORKSPACE_FRAME_PRESETS in
+        // @shared/util/theme.util); unset = the frame is derived from the primary color
+        workspaceFrame?: string,
+        // "normal" | "split" | "dual" | "top" | "group" | "top-split" (MenuMode)
         menuMode?: string,
+        // "center" | "side" | "full" (FormPanelMode): how record forms open
+        formPanelMode?: string,
+        // "center" | "cover" | "wide" | "wallpaper" | "poster" (LoginLayout): the login page layout
+        loginLayout?: string,
+        // login page picture URL: replaces the stock artwork in every layout
+        loginBackground?: string,
         [key: string]: any
+    }
+
+    // Whether users may change the appearance themselves (theme.customizable, default true)
+    public static appearanceCustomizable(): boolean {
+        return WindowModel.theme?.customizable !== false;
     }
 
     public static r_tools: CustomerTool[];
@@ -53,6 +83,14 @@ export class WindowModel {
 
     public static upload: Function;
 
+    // A logo key that is missing falls back; one set to null or '' hides the logo.
+    private static resolveLogo(configured: string | null | undefined, fallback: string | null): string | null {
+        if (configured === undefined) {
+            return fallback;
+        }
+        return configured || null;
+    }
+
     public static init() {
         WindowModel.r_tools = WindowModel.config["r_tools"] || [];
         WindowModel.userTools = WindowModel.config["userTools"] || [];
@@ -60,9 +98,14 @@ export class WindowModel {
         WindowModel.amapSecurityJsCode = WindowModel.config["amapSecurityJsCode"];
         WindowModel.title = WindowModel.config["title"] === null ? 'Erupt Engine' : WindowModel.config["title"];
         WindowModel.desc = WindowModel.config["desc"] || undefined;
-        WindowModel.logoPath = WindowModel.config["logoPath"] === '' ? null : (WindowModel.config["logoPath"] || "assets/logo.svg");
-        WindowModel.logoFoldPath = WindowModel.config["logoFoldPath"] || WindowModel.logoPath;
-        WindowModel.loginLogoPath = WindowModel.config["loginLogoPath"] === '' ? null : (WindowModel.config["loginLogoPath"] || WindowModel.logoPath);
+        // Logo keys: leaving one out means the default, setting it to null or ''
+        // means "show nothing there".
+        WindowModel.logoPath = WindowModel.resolveLogo(WindowModel.config["logoPath"], "assets/logo.svg");
+        // Collapsed brand mark: follows whatever the expanded header shows, so
+        // collapsing never swaps the logo for something else. When there is no
+        // expanded logo the header draws the site's initial instead.
+        WindowModel.logoFoldPath = WindowModel.resolveLogo(WindowModel.config["logoFoldPath"], WindowModel.logoPath);
+        WindowModel.loginLogoPath = WindowModel.resolveLogo(WindowModel.config["loginLogoPath"], WindowModel.logoPath);
         WindowModel.logoText = WindowModel.config["logoText"] || WindowModel.title;
         WindowModel.registerPage = WindowModel.config["registerPage"] || undefined; //registration page URL
         WindowModel.copyright = WindowModel.config["copyright"];

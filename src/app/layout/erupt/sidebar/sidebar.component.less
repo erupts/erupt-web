@@ -67,6 +67,74 @@
             color: var(--erupt-text, rgba(0, 0, 0, 0.88));
             background: var(--ant-item-hover-bg, rgba(0, 0, 0, 0.04));
         }
+
+        // a toggle that is currently on (the keyword filter)
+        &--on {
+            color: var(--ant-primary-color);
+        }
+    }
+
+    // Keyword filter box pinned above the scrolling menu. 39px = the multi-tab
+    // bar beside it (38px nav + 1px rule), so the two top edges line up.
+    .aside-filter {
+        flex-shrink: 0;
+        box-sizing: border-box;
+        height: 39px;
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
+        border-bottom: 1px solid var(--ant-border-color-split);
+        background: var(--erupt-bg-container, #fff);
+
+        nz-input-group {
+            width: 100%;
+        }
+
+        &__close {
+            cursor: pointer;
+            color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
+
+            &:hover {
+                color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+            }
+        }
+    }
+}
+
+// "Recently visited" dropdown from the utility bar (renders in the cdk overlay)
+::ng-deep .recent-menu {
+    min-width: 180px;
+    max-width: 280px;
+    max-height: 60vh;
+    overflow-y: auto;
+
+    .ant-dropdown-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    &__text {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    // visit count, quiet
+    &__count {
+        flex-shrink: 0;
+        font-size: 11px;
+        line-height: 16px;
+        padding: 0 5px;
+        border-radius: 8px;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+        background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
+    }
+
+    &__clear {
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
     }
 }
 

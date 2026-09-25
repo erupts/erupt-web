@@ -1,20 +1,149 @@
-:host {
-    ::ng-deep {
-        //nz-tree > ul {
-        //  max-height: 420px;
-        //  overflow: auto;
-        //}
+// Rendered inside the nz-modal header via FormModalService (still scoped to this component).
+// Right padding keeps the mode switch clear of the modal's absolute close button.
+.erupt-form-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-right: 36px;
 
-        //.ant-tabs-tab {
-        //  min-width: 130px;
-        //  margin-right: 8px !important;
-        //  border-radius: 0 !important;
-        //  text-align: center;
-        //}
-        //
+    &__text {
+        flex: 0 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    &__spacer {
+        flex: 1;
+    }
+
+    // right side reads as three groups: pager │ record actions │ mode switch
+    &__pager,
+    &__actions {
+        flex-shrink: 0;
+        padding-right: 12px;
+        margin-right: -2px;
+        border-right: 1px solid var(--erupt-border, rgba(0, 0, 0, 0.06));
+    }
+
+    &__actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    // small outlined button, ant "default" size small
+    &__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        height: 26px;
+        padding: 0 10px;
+        border: 1px solid var(--erupt-border, rgba(0, 0, 0, 0.15));
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: normal;
+        line-height: 1;
+        cursor: pointer;
+        color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+        background: var(--erupt-bg-container, #fff);
+        transition: color 0.2s, border-color 0.2s;
+
+        &:hover {
+            color: var(--ant-primary-color);
+            border-color: var(--ant-primary-color);
+        }
+
+        &--icon {
+            width: 26px;
+            padding: 0;
+            justify-content: center;
+            color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+        }
+
+        &--disabled,
+        &--disabled:hover {
+            color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
+            border-color: var(--erupt-border, rgba(0, 0, 0, 0.15));
+            cursor: not-allowed;
+        }
+
+        &--danger:hover {
+            color: var(--ant-error-color, #ff4d4f);
+            border-color: var(--ant-error-color, #ff4d4f);
+        }
+
+        // read-only cell inside a group (the "n / total" readout)
+        &--static,
+        &--static:hover {
+            cursor: default;
+            font-size: 12px;
+            font-variant-numeric: tabular-nums;
+            color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+            border-color: var(--erupt-border, rgba(0, 0, 0, 0.15));
+        }
+    }
 
 
+    // compact button group for previous / next: shared edges, one radius
+    &__group {
+        display: inline-flex;
+
+        .erupt-form-title__btn {
+            border-radius: 0;
+            margin-left: -1px;
+
+            &:first-child {
+                margin-left: 0;
+                border-radius: 4px 0 0 4px;
+            }
+
+            &:last-child {
+                border-radius: 0 4px 4px 0;
+            }
+
+            // the hovered edge should win over its neighbour's border
+            &:hover {
+                position: relative;
+                z-index: 1;
+            }
+        }
+    }
+
+    // segmented control: gray track, the active item raised on a white pill
+    &__modes {
+        display: inline-flex;
+        gap: 2px;
+        flex-shrink: 0;
+        padding: 2px;
+        border-radius: 6px;
+        background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.04));
+    }
+
+    &__mode {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 22px;
+        border-radius: 4px;
+        cursor: pointer;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+        transition: color 0.2s, background-color 0.2s, box-shadow 0.2s;
+
+        svg {
+            display: block;
+        }
+
+        &:hover {
+            color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+        }
+
+        &--active {
+            color: var(--ant-primary-color);
+            background: var(--erupt-bg-elevated, #fff);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--erupt-border, rgba(0, 0, 0, 0.06));
+        }
     }
 }
-
-

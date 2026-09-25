@@ -3,6 +3,26 @@ import {DataService} from "@shared/service/data.service";
 import {NoticeMessageDetail} from "@shared/model/user.model";
 import {NzDrawerService} from 'ng-zorro-antd/drawer';
 import {EruptIframeComponent} from "@shared/component/iframe.component";
+import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
+
+/** Opens a notice's link in a side drawer whose width the user can drag; the width is remembered. */
+export function openNoticeUrl(drawerService: NzDrawerService, url: string): void {
+    openResizableDrawer(drawerService, {
+        nzTitle: null,
+        nzClosable: false,
+        nzContent: EruptIframeComponent,
+        nzContentParams: {
+            url: url,
+            height: "100%",
+            width: '100%'
+        },
+        nzWidth: '45%',
+        nzBodyStyle: {
+            padding: 0
+        },
+        nzMaskClosable: true
+    }, "notice-link");
+}
 
 @Component({
     standalone: false,
@@ -16,6 +36,8 @@ export class NoticeDetailComponent implements OnInit {
 
     noticeMessageDetail: NoticeMessageDetail;
 
+    loading = true;
+
     constructor(
         private dataService: DataService,
         private drawerService: NzDrawerService
@@ -27,29 +49,16 @@ export class NoticeDetailComponent implements OnInit {
             .subscribe({
                 next: (result) => {
                     this.noticeMessageDetail = result.data;
+                    this.loading = false;
                 },
-                error: () => {
-                }
+                // a deleted notice, or one belonging to someone else, answers with an error the
+                // interceptor already reports; stop the spinner so the dialog is not stuck
+                error: () => this.loading = false
             });
     }
 
-    // open URL link
-    openUrlDrawer(url: string, title: string): void {
-        this.drawerService.create({
-            nzTitle: null,
-            nzClosable: false,
-            nzContent: EruptIframeComponent,
-            nzContentParams: {
-                url: url,
-                height: "100%",
-                width: '100%'
-            },
-            nzWidth: '45%',
-            nzBodyStyle: {
-                padding: 0
-            },
-            nzMaskClosable: true
-        });
+    openUrlDrawer(url: string): void {
+        openNoticeUrl(this.drawerService, url);
     }
 
 }

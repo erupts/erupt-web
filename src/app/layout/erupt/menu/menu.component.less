@@ -3,7 +3,26 @@
     overflow: hidden;
 }
 
-// Drag & Drop
+// One-shot pulse on the row the sidebar's "locate current" button scrolled to
+.sidebar-nav__item-link--located,
+.dual-menu__rail-item.sidebar-nav__item-link--located {
+    animation: erupt-menu-locate-pulse 1.2s ease-out;
+}
+
+@keyframes erupt-menu-locate-pulse {
+    0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ant-primary-color, #1677ff) 70%, transparent); }
+    100% { box-shadow: 0 0 0 8px transparent; }
+}
+
+// Keyword filter with nothing left to show
+.sidebar-nav__filter-empty {
+    padding: 24px 16px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+}
+
+// Drag & Drop — favorites section only (the tree itself is not sortable)
 .sidebar-nav__drag-placeholder {
     height: 36px;
     margin: 2px 8px;
@@ -101,6 +120,8 @@
 // Height fills the viewport between the 44px header and the 38px fold bar,
 // so the rail and the submenu column scroll independently.
 @dual-rail-width: 60px;
+// Without labels the rail only has to hold a centred glyph
+@dual-rail-width-icon: 44px;
 
 .dual-menu {
     display: flex;
@@ -119,6 +140,14 @@
 
     &::-webkit-scrollbar {
         display: none;
+    }
+
+    &--icon-only {
+        width: @dual-rail-width-icon;
+
+        .dual-menu__rail-item {
+            padding: 8px 2px;
+        }
     }
 }
 
@@ -167,3 +196,44 @@
     overflow-x: hidden;
 }
 
+
+// ── Group menu mode ───────────────────────────────────────────
+// First-level items are rendered as group titles, so their children sit at root
+// indentation and every deeper level moves up by one delon depth step
+// (depth2 → depth1 padding, depth3 → depth2 padding ...).
+.sidebar-nav--group {
+    .sidebar-nav__group-title {
+        margin-top: 12px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        font-size: 12px;
+        line-height: 20px;
+        letter-spacing: .02em;
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, .45));
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:first-child {
+            margin-top: 4px;
+        }
+    }
+
+    // Children of a group mix items with and without an icon: reserve the icon
+    // column (14px icon + 8px gap) for the icon-less ones so the labels line up.
+    > div > .sidebar-nav__item > .sidebar-nav__item-link:not(:has(.sidebar-nav__item-icon)) {
+        padding-left: 38px;
+    }
+
+    .sidebar-nav__depth2 .sidebar-nav__item-link {
+        padding-left: 38px;
+    }
+
+    .sidebar-nav__depth3 .sidebar-nav__item-link {
+        padding-left: 46px;
+    }
+
+    .sidebar-nav__depth4 .sidebar-nav__item-link {
+        padding-left: 54px;
+    }
+}

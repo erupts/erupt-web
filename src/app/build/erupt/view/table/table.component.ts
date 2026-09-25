@@ -1,24 +1,14 @@
 import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {
-    Alert,
-    Drill,
-    DrillInput,
-    EruptModel,
-    FieldVisibility,
-    Page,
-    Power,
-    Row,
-    RowOperation,
-    Vis,
-    VisType
-} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, FieldVisibility, Page, Power, Row, RowOperation, Vis, VisType} from "../../model/erupt.model";
 
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
+import {FormAction, FormModalService, FormNavigator} from "../../service/form-modal.service";
+import {RecordCommentComponent} from "../../components/record-comment/record-comment.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
 import {
@@ -39,17 +29,18 @@ import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {Status} from "../../model/erupt-api.model";
 import {EruptFieldModel, View, VL} from "../../model/erupt-field.model";
-import {Observable} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 import {UiBuildService} from "../../service/ui-build.service";
 import {EruptColumnConfig, LocalSettingsService} from "../../service/local-settings.service";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {ModalButtonOptions, NzModalRef, NzModalService} from "ng-zorro-antd/modal";
 import {TreeSelectComponent} from "../../components/tree-select/tree-select.component";
-import {STChange, STColumn, STColumnButton, STComponent, STDragOptions, STPage} from "@delon/abc/st";
+import {STChange, STColumn, STColumnButton, STComponent, STDragOptions, STPage, STWidthMode} from "@delon/abc/st";
 import {PageDescMode} from "@shared/component/page-desc/page-desc.component";
 import {CodeEditorComponent} from "../../components/code-editor/code-editor.component";
 import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
+import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
 import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
 import {TableStyle} from "../../model/erupt.vo";
 import {colRules} from "@shared/model/util.model";
@@ -69,6 +60,16 @@ import printJS from 'print-js';
 })
 export class TableComponent implements OnInit, OnDestroy {
 
+    // How many icon actions the operation column is sized for when cells wrap (@Layout
+    // tableTruncate = false); the rest flow onto further lines.
+    private static readonly ONE_LINE_OPERATORS = 5;
+
+    // @Layout(tableTruncate = false): cells wrap instead of being cut off with an ellipsis.
+    // Rows then vary in height, which rules out the fixed-height virtual scroller.
+    wrapCells: boolean = false;
+
+    widthMode: STWidthMode = {strictBehavior: "truncate"};
+
     readonly PageDescMode = PageDescMode;
 
     protected readonly VisType = VisType;
@@ -87,9 +88,11 @@ export class TableComponent implements OnInit, OnDestroy {
         @Inject(NzDrawerService)
         private drawerService: NzDrawerService,
         private eruptLocalSettings: LocalSettingsService,
+        private formModal: FormModalService,
         private el: ElementRef,
         private menuSrv: MenuService,
-        private router: Router
+        private router: Router,
+        private route: ActivatedRoute
     ) {
         this.hideCondition = !!this.settingSrv.layout['searchCollapsed'];
     }
@@ -276,6 +279,11 @@ export class TableComponent implements OnInit, OnDestroy {
             erupt.power.edit = false;
             erupt.power.export = false;
             erupt.power.viewDetails = false;
+            // a picker has no comment column, and the referenced model usually has no menu of its own,
+            // so the counts request (sent under the referenced name, no parent header) would be a 403
+            erupt.power.comment = false;
+            // the picker is a lookup, not a workspace: no AI panel or AI toolbar button
+            erupt.power.ai = false;
         });
     }
 
@@ -293,6 +301,15 @@ export class TableComponent implements OnInit, OnDestroy {
         document.addEventListener('fullscreenchange', this.fullscreenChange);
         // capture-phase filter so the CDK row drag (st has no drag handle support) only starts from the grip cell
         this.el.nativeElement.addEventListener('mousedown', this.dragHandleFilter, true);
+        // reuse-tab reattaches a cached table instead of recreating it, so a deep link arriving on an
+        // already open tab shows up here as a query-param change rather than through init()
+        this.deepLink$ = this.route.queryParamMap.subscribe(q => {
+            const id = q.get("id");
+            if (id !== this.deepLinkId) {
+                this.deepLinkId = id;
+                this.openDeepLink();
+            }
+        });
     }
 
     get isEruptPrint(): boolean {
@@ -300,10 +317,13 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     get hasPrintConfig(): boolean {
-        return this.isEruptPrint && null != this.menuSrv.getItem("PRINT_CONFIG");
+        // a model that withholds printing has no layout to configure either
+        return !!(this.eruptBuildModel?.eruptModel?.eruptJson?.power?.print
+            && this.isEruptPrint && null != this.menuSrv.getItem("PRINT_CONFIG"));
     }
 
     ngOnDestroy(): void {
+        this.deepLink$?.unsubscribe();
         this.refreshTimeInterval && clearInterval(this.refreshTimeInterval);
         document.removeEventListener('fullscreenchange', this.fullscreenChange);
         this.el.nativeElement.removeEventListener('mousedown', this.dragHandleFilter, true);
@@ -346,6 +366,26 @@ export class TableComponent implements OnInit, OnDestroy {
             && this.eruptBuildModel.eruptModel.eruptJson.power.ai !== false;
     }
 
+    // erupt-comment module present and the model has not opted out via @Power(comment = false)
+    get isCommentEnabled(): boolean {
+        return !!EruptAppData.get().properties["erupt-comment"]
+            && this.eruptBuildModel.eruptModel.eruptJson.power.comment !== false;
+    }
+
+    // comment count per record id of the current page, shown as a badge on the row button
+    commentCounts: Record<string, number> = {};
+
+    private loadCommentCounts() {
+        if (!this.isCommentEnabled || !this.dataPage.data.length) return;
+        const ids = this.dataPage.data.map(r => r[this.pkCol]).filter(id => id != null);
+        this.dataService.commentCounts(this.eruptBuildModel.eruptModel.eruptName, ids).subscribe(res => {
+            if (!res.success) return;
+            this.commentCounts = res.data || {};
+            // button texts are computed when st optimizes the rows, so rebuild them with the counts in
+            this.st?.resetColumns();
+        });
+    }
+
     private aiDrawerRef: NzDrawerRef | null = null;
 
     toggleAiPanel() {
@@ -365,7 +405,7 @@ export class TableComponent implements OnInit, OnDestroy {
         this.aiDrawerRef = this.drawerService.create<AiChatComponent>({
             nzContent: AiChatComponent,
             nzContentParams: {collapseSidebar: true, embedded: true, context: this.aiContext},
-            nzTitle: this.i18n.fanyi('AI'),
+            nzTitle: this.i18n.fanyi('ai.chat.title'),
             nzWidth: '100%',
             nzBodyStyle: {padding: '0', height: '100%'}
         });
@@ -547,6 +587,7 @@ export class TableComponent implements OnInit, OnDestroy {
                     }
                 }
                 this.query(1);
+                this.openDeepLink();
             }
         );
     }
@@ -590,12 +631,13 @@ export class TableComponent implements OnInit, OnDestroy {
         return body;
     }
 
-    query(page?: number, size?: number, sort?: Record<string, SortType>) {
+    // Resolves with the loaded rows so callers (record browsing) can wait for the page.
+    query(page?: number, size?: number, sort?: Record<string, SortType>): Promise<any[]> {
         if (!this.eruptBuildModel.power.query) {
-            return;
+            return Promise.resolve([]);
         }
         if (!this.vis.length && this.eruptBuildModel.eruptModel.eruptJson.visRawTable === false) {
-            return;
+            return Promise.resolve([]);
         }
         this.dataPage.pi = page || this.dataPage.pi;
         this.dataPage.ps = size || this.dataPage.ps;
@@ -603,18 +645,26 @@ export class TableComponent implements OnInit, OnDestroy {
         this.selectedRows = [];
         this.dataPage.querying = true;
         this.setVisTplData(null)
-        this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url,
-            this.buildQueryBody(), this.header).subscribe(page => {
-            this.dataPage.querying = false;
-            this.dataPage.data = page.list || [];
-            this.dataPage.total = page.total;
-            this.alert = page.alert;
-            this.extraContent = page.extraContent;
-            if (this.vis[this.selectedVisIndex]?.type == VisType.TPL) {
-                this.setVisTplData(this.dataPage.data);
-            }
-        })
+        const loaded = new Promise<any[]>(resolve => {
+            this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url,
+                this.buildQueryBody(), this.header).subscribe(page => {
+                this.dataPage.querying = false;
+                this.dataPage.data = page.list || [];
+                this.dataPage.total = page.total;
+                this.alert = page.alert;
+                this.extraContent = page.extraContent;
+                if (this.vis[this.selectedVisIndex]?.type == VisType.TPL) {
+                    this.setVisTplData(this.dataPage.data);
+                }
+                this.loadCommentCounts();
+                resolve(this.dataPage.data);
+            }, () => {
+                this.dataPage.querying = false;
+                resolve([]);
+            });
+        });
         this.extraRowFun(this.buildQueryBody());
+        return loaded;
     }
 
     setVisTplData(data: any[]) {
@@ -626,6 +676,11 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     buildTableConfig() {
+        // @Layout(tableTruncate = false) trades st's ellipsis for wrapping, which is also what
+        // lets a crowded operation column show every action instead of hiding the tail behind "..."
+        const wrapCells = this.eruptBuildModel.eruptModel.eruptJson.layout?.tableTruncate === false;
+        this.wrapCells = wrapCells;
+        this.widthMode = {strictBehavior: wrapCells ? "wrap" : "truncate"};
         const _columns: STColumn[] = [];
         if (this._reference) {
             _columns.push({
@@ -661,57 +716,15 @@ export class TableComponent implements OnInit, OnDestroy {
         const collapseAction = this.eruptBuildModel.eruptModel.eruptJson.layout?.collapseActionButton;
         const collapsedStd: STColumnButton[] = [];
         if (this.eruptBuildModel.eruptModel.eruptJson.power.viewDetails) {
-            let fullLine = false;
-            let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
-            if (layout && layout.formSize == FormSize.FULL_LINE) {
-                fullLine = true;
-            }
-            const _viewClick = (record: any, modal: any) => {
-                let params = {
-                    readonly: true,
-                    eruptBuildModel: this.eruptBuildModel,
-                    behavior: Scene.EDIT,
-                    id: record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]
-                };
-                if (this.settingSrv.layout['drawDraw']) {
-                    //open details in drawer mode
-                    this.drawerService.create({
-                        nzTitle: this.i18n.fanyi("global.view"),
-                        nzWidth: "75%",
-                        nzContent: EditComponent,
-                        nzContentParams: params
-                    });
-                } else {
-                    let ref = this.modal.create({
-                        nzDraggable: true,
-                        nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
-                        nzWidth: fullLine ? 550 : null,
-                        nzStyle: {top: "60px"},
-                        nzMaskClosable: true,
-                        nzKeyboard: true,
-                        nzTitle: this.i18n.fanyi("global.view"),
-                        nzContent: EditComponent,
-                        nzFooter: [
-                            ...getEditButtons(record),
-                            {
-                                label: this.i18n.fanyi("global.refresh"),
-                                onClick: () => ref.getContentComponent().reload()
-                            },
-                            {
-                                label: this.i18n.fanyi("global.close"),
-                                onClick: () => ref.close()
-                            }
-                        ]
-                    });
-                    Object.assign(ref.getContentComponent(), params)
-                }
-            };
+            const _viewClick = (record: any) => this.openView(record);
             const _viewIif = (item) => {
                 if (item[TableStyle.power]) {
                     return (<Power>item[TableStyle.power]).viewDetails !== false
                 }
                 return true;
             };
+            this.viewAllowed = _viewIif;
+            this.viewRecord = record => _viewIif(record) && _viewClick(record);
             if (collapseAction) {
                 collapsedStd.push({text: this.i18n.fanyi("global.view"), click: _viewClick, iif: _viewIif});
             } else {
@@ -833,22 +846,17 @@ export class TableComponent implements OnInit, OnDestroy {
                 });
             return [...roButtons, ...editButtons];
         }
+        this.recordButtons = getEditButtons;
 
         if (this.eruptBuildModel.eruptModel.eruptJson.power.edit) {
-            let fullLine = false;
-            let layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
-            if (layout && layout.formSize == FormSize.FULL_LINE) {
-                fullLine = true;
-            }
-            const _editClick = (record: any) => {
-                this.onEdit(record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol], fullLine, getEditButtons(record));
-            };
+            const _editClick = (record: any) => this.openEdit(record);
             const _editIif = (item) => {
                 if (item[TableStyle.power]) {
                     return (<Power>item[TableStyle.power]).edit !== false
                 }
                 return true;
             };
+            this.editAllowed = _editIif;
             if (collapseAction) {
                 collapsedStd.push({text: this.i18n.fanyi("global.editor"), click: _editClick, iif: _editIif});
             } else {
@@ -881,6 +889,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 }
                 return true;
             };
+            this.deleteAllowed = _delIif;
             if (collapseAction) {
                 collapsedStd.push({
                     text: this.i18n.fanyi("global.delete"),
@@ -901,12 +910,36 @@ export class TableComponent implements OnInit, OnDestroy {
             }
         }
         tableOperators.push(...tableButtons);
+        // comment stream of the row, in a drawer; same entry the record panel's title bar offers.
+        // The count badge tells which rows carry a discussion.
+        if (this.isCommentEnabled) {
+            const commentClick = (record: any) => this.recordComment(record)?.(null);
+            const badge = (record: any) => {
+                const n = this.commentCounts[String(record[this.pkCol])];
+                return n > 0 ? `<span class="erupt-comment-badge">${n > 99 ? "99+" : n}</span>` : "";
+            };
+            if (collapseAction) {
+                collapsedStd.push({
+                    text: record => this.i18n.fanyi("form.comments") + badge(record),
+                    click: commentClick
+                });
+            } else {
+                tableOperators.push({
+                    icon: "message",
+                    // the count rides on the icon as a superscript, so the button stays one icon wide
+                    className: "erupt-comment-btn",
+                    text: badge,
+                    tooltip: this.i18n.fanyi("form.comments"),
+                    click: commentClick
+                });
+            }
+        }
         if (this.eruptBuildModel.eruptModel.tags?.["EruptFlow"]) {
             tableOperators.push({
                 icon: "node-index",
                 tooltip: this.i18n.fanyi("VIEW_FLOW"),
                 click: (record: any, modal: any) => {
-                    this.drawerService.create({
+                    openResizableDrawer(this.drawerService, {
                         nzClosable: false,
                         nzKeyboard: true,
                         nzMaskClosable: true,
@@ -923,7 +956,7 @@ export class TableComponent implements OnInit, OnDestroy {
                             height: "100%",
                             width: '100%'
                         }
-                    })
+                    }, "flow-approval")
                 },
                 iif: (item) => {
                     return item["__flow_id__"];
@@ -958,12 +991,19 @@ export class TableComponent implements OnInit, OnDestroy {
             });
         }
         if (tableOperators.length > 0) {
+            // 35px per icon button, 60px for the "more" dropdown
+            const foldWidth = isFoldButtons ? 60 : 0;
+            const btnCount = tableOperators.length + (this.eruptBuildModel.eruptModel.tags?.size || 0);
+            // when cells wrap the column only has to fit one line of icons, the rest flow down;
+            // truncating tables keep the full row width or they would lose actions to the ellipsis
+            const autoWidth = (wrapCells
+                ? Math.min(btnCount - (isFoldButtons ? 1 : 0), TableComponent.ONE_LINE_OPERATORS)
+                : btnCount) * 35 + 18 + foldWidth;
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
-                width: eruptJson.layout.tableOperatorWidth ? eruptJson.layout.tableOperatorWidth :
-                    ((tableOperators.length + (this.eruptBuildModel.eruptModel.tags?.size || 0)) * 35 + 18 + (isFoldButtons ? 60 : 0)),
-                className: "text-center",
+                width: eruptJson.layout.tableOperatorWidth || autoWidth,
+                className: wrapCells ? ["text-center", "erupt-op-col"] : "text-center",
                 buttons: tableOperators,
                 resizable: false
             });
@@ -977,15 +1017,69 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
-    onEdit(pk: any, fullLine = false, buttons: ModalButtonOptions[] = []) {
-        let params = {
-            eruptBuildModel: this.eruptBuildModel,
-            id: pk,
-            behavior: Scene.EDIT
-        }
-        const doSave = async (): Promise<boolean> => {
-            let validateResult = model.getContentComponent().beforeSaveValidate();
-            if (!validateResult) return false;
+    // ---------- record form panel (view / edit) ----------
+
+    // Row-level permission checks and the per-record footer buttons, set while building the
+    // table config; view / edit are absent when the model lacks the power.
+    private viewAllowed?: (record: any) => boolean;
+
+    private editAllowed?: (record: any) => boolean;
+
+    private deleteAllowed?: (record: any) => boolean;
+
+    private recordButtons: (record: any) => ModalButtonOptions[] = () => [];
+
+    private get pkCol(): string {
+        return this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+    }
+
+    private get fullLineForm(): boolean {
+        return this.eruptBuildModel.eruptModel.eruptJson.layout?.formSize == FormSize.FULL_LINE;
+    }
+
+    // Vis components (card / board / calendar) only know the primary key.
+    onEdit(pk: any) {
+        this.openEdit(this.dataPage.data.find(r => r[this.pkCol] === pk) ?? {[this.pkCol]: pk});
+    }
+
+    // Read-only detail panel; `into` reloads an open panel (record browsing, leaving edit mode).
+    openView(record: any, into?: NzModalRef<EditComponent>) {
+        this.formModal.open({
+            owner: this,
+            into,
+            title: this.i18n.fanyi("global.view"),
+            fullLine: this.fullLineForm,
+            params: {
+                readonly: true,
+                eruptBuildModel: this.eruptBuildModel,
+                behavior: Scene.EDIT,
+                id: record[this.pkCol]
+            },
+            navigator: this.recordNavigator(record, (r, ref) => this.openView(r, ref)),
+            toggleEdit: this.editAllowed?.(record) ? ref => this.openEdit(record, ref) : undefined,
+            link: this.recordLink(record),
+            ai: this.recordAi(),
+            comment: this.recordComment(record),
+            remove: this.recordRemove(record, (r, ref) => this.openView(r, ref)),
+            more: this.recordActions(record),
+            footer: ref => [
+                ...this.recordButtons(record),
+                {
+                    label: this.i18n.fanyi("global.refresh"),
+                    onClick: () => ref.getContentComponent().reload()
+                },
+                {
+                    label: this.i18n.fanyi("global.close"),
+                    onClick: () => ref.close()
+                }
+            ]
+        });
+    }
+
+    openEdit(record: any, into?: NzModalRef<EditComponent>) {
+        const pk = record[this.pkCol];
+        const doSave = async (ref: NzModalRef<EditComponent>): Promise<boolean> => {
+            if (!ref.getContentComponent().beforeSaveValidate()) return false;
             let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
             let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise();
             if (res.status === Status.SUCCESS) {
@@ -995,44 +1089,177 @@ export class TableComponent implements OnInit, OnDestroy {
             }
             return false;
         };
-        const model = this.modal.create({
-            nzDraggable: true,
-            nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
-            nzWidth: fullLine ? 550 : null,
-            nzStyle: {top: "60px"},
-            nzMaskClosable: false,
-            nzKeyboard: false,
-            nzTitle: this.i18n.fanyi("global.editor"),
-            nzContent: EditComponent,
-            nzFooter: [
+        this.formModal.open({
+            owner: this,
+            into,
+            title: this.i18n.fanyi("global.editor"),
+            fullLine: this.fullLineForm,
+            params: {
+                eruptBuildModel: this.eruptBuildModel,
+                id: pk,
+                behavior: Scene.EDIT
+            },
+            navigator: this.recordNavigator(record, (r, ref) => this.openEdit(r, ref)),
+            toggleEdit: this.viewAllowed?.(record) ? ref => this.openView(record, ref) : undefined,
+            link: this.recordLink(record),
+            ai: this.recordAi(),
+            comment: this.recordComment(record),
+            remove: this.recordRemove(record, (r, ref) => this.openEdit(r, ref)),
+            more: this.recordActions(record),
+            footer: ref => [
                 {
                     label: this.i18n.fanyi("global.cancel"),
-                    onClick: () => model.close()
+                    // through nzOnCancel, so unsaved input is confirmed first
+                    onClick: () => ref.triggerCancel()
                 },
                 {
                     label: this.i18n.fanyi("global.refresh"),
-                    onClick: () => model.getContentComponent().reload()
+                    onClick: () => ref.getContentComponent().reload()
                 },
-                ...buttons,
+                ...this.recordButtons(record),
                 {
                     label: this.i18n.fanyi("global.save_only"),
                     onClick: async () => {
                         // reload after save: unsaved sub-table rows hold temp ids, the form
                         // must be rebuilt from backend data to pick up the persisted ids
-                        if (await doSave()) {
-                            model.getContentComponent().reload();
+                        if (await doSave(ref)) {
+                            ref.getContentComponent().reload();
                         }
                     }
                 },
                 {
                     label: this.i18n.fanyi("global.save_close"),
                     type: "primary",
-                    onClick: () => model.triggerOk()
+                    onClick: () => ref.triggerOk()
                 },
             ],
-            nzOnOk: async () => doSave()
+            onOk: ref => doSave(ref)
         });
-        Object.assign(model.getContentComponent(), params)
+    }
+
+    // Previous / next within the current page; steps onto the neighbouring page at its edges.
+    private recordNavigator(record: any, reopen: (r: any, ref: NzModalRef<EditComponent>) => void): FormNavigator {
+        const indexOf = () => this.dataPage.data.findIndex(r => r[this.pkCol] === record[this.pkCol]);
+        const lastPage = () => Math.max(1, Math.ceil(this.dataPage.total / this.dataPage.ps));
+        return {
+            position: () => {
+                const i = indexOf();
+                if (i < 0) return undefined;
+                // front / no paging keeps every row in data; backend paging offsets by the page
+                const paged = this.dataPage.total > this.dataPage.data.length;
+                return {
+                    index: (paged ? (this.dataPage.pi - 1) * this.dataPage.ps : 0) + i + 1,
+                    total: paged ? this.dataPage.total : this.dataPage.data.length
+                };
+            },
+            canStep: step => {
+                const i = indexOf();
+                if (i < 0) return false;
+                return step > 0
+                    ? i < this.dataPage.data.length - 1 || this.dataPage.pi < lastPage()
+                    : i > 0 || this.dataPage.pi > 1;
+            },
+            step: async step => {
+                const i = indexOf();
+                if (i < 0) return undefined;
+                const j = i + step;
+                if (j >= 0 && j < this.dataPage.data.length) return this.dataPage.data[j];
+                if (step > 0 ? this.dataPage.pi >= lastPage() : this.dataPage.pi <= 1) return undefined;
+                const list = await this.query(this.dataPage.pi + step);
+                return step > 0 ? list[0] : list[list.length - 1];
+            },
+            open: reopen
+        };
+    }
+
+    // "More" menu of the panel: printing when the print module is on and the model allows it.
+    private recordActions(record: any): FormAction[] {
+        const actions: FormAction[] = [];
+        if (this.isEruptPrint && this.eruptBuildModel?.eruptModel?.eruptJson?.power?.print) {
+            actions.push({label: this.i18n.fanyi("global.print"), icon: "printer", run: () => this.printRecord(record[this.pkCol])});
+        }
+        return actions;
+    }
+
+    // Comment stream of the record in a drawer; only when the erupt-comment module is present.
+    private recordComment(record: any): ((ref: NzModalRef<EditComponent>) => void) | undefined {
+        if (!this.isCommentEnabled) return undefined;
+        return () => openResizableDrawer(this.drawerService, {
+            nzContent: RecordCommentComponent,
+            nzContentParams: {eruptName: this.eruptBuildModel.eruptModel.eruptName, id: record[this.pkCol]},
+            nzTitle: this.i18n.fanyi("form.comments"),
+            nzWidth: window.innerWidth <= 768 ? "100%" : 420,
+            nzBodyStyle: {padding: "0", height: "100%"}
+        }, "form-comment").afterClose.subscribe(() => this.loadCommentCounts());
+    }
+
+    // AI chat in a drawer, primed with the module context plus the record currently in the panel.
+    private recordAi(): ((ref: NzModalRef<EditComponent>) => void) | undefined {
+        if (!this.isAiEnabled) return undefined;
+        return ref => {
+            const comp = ref.getContentComponent();
+            const data = this.dataHandler.eruptValueToObject(comp.eruptBuildModel);
+            const context = [
+                this.aiContext,
+                `The user has a single record open in the ${comp.readonly ? "detail view" : "edit form"}.`,
+                `Current record data (JSON): ${JSON.stringify(data)}`,
+                `Help with this record: summarize it, check the filled values for problems, or answer questions about it.`
+            ].join("\n");
+            openResizableDrawer(this.drawerService, {
+                nzContent: AiChatComponent,
+                nzContentParams: {collapseSidebar: true, embedded: true, context},
+                nzTitle: this.i18n.fanyi("form.ai_assistant"),
+                nzWidth: window.innerWidth <= 768 ? "100%" : 480,
+                nzBodyStyle: {padding: "0", height: "100%"}
+            }, "form-ai");
+        };
+    }
+
+    // Delete action of the panel, when the model and the row allow it; `reopen` keeps the
+    // panel's role (view / edit) for the neighbouring record.
+    private recordRemove(record: any, reopen: (r: any, ref: NzModalRef<EditComponent>) => void) {
+        if (!this.deleteAllowed?.(record)) return undefined;
+        return {confirm: this.i18n.fanyi("table.delete.hint"), run: ref => this.deleteFromPanel(record, ref, reopen)};
+    }
+
+    // Delete the record shown in the panel, then move the panel to its neighbour (or close it).
+    private async deleteFromPanel(record: any, ref: NzModalRef<EditComponent>,
+                                  reopen: (r: any, ref: NzModalRef<EditComponent>) => void) {
+        const pk = record[this.pkCol];
+        const i = this.dataPage.data.findIndex(r => r[this.pkCol] === pk);
+        const neighbour = i < 0 ? undefined : (this.dataPage.data[i + 1] ?? this.dataPage.data[i - 1]);
+        const res = await this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, pk).toPromise();
+        if (res.status !== Status.SUCCESS) return;
+        this.msg.success(this.i18n.fanyi("global.delete.success"));
+        // last row of a later page: fall back to the previous page
+        const pi = this.dataPage.data.length <= 1 && this.dataPage.pi > 1 ? this.dataPage.pi - 1 : this.dataPage.pi;
+        await this.query(pi);
+        if (neighbour) {
+            reopen(neighbour, ref);
+        } else {
+            ref.close();
+        }
+    }
+
+    // Shareable url that opens this record's detail panel (only for the routed table itself).
+    private recordLink(record: any): string | undefined {
+        if (this._drill || this._reference) return undefined;
+        const path = this.router.url.split("?")[0];
+        return `${location.origin}${location.pathname}#${path}?id=${encodeURIComponent(record[this.pkCol])}`;
+    }
+
+    private deepLink$?: Subscription;
+
+    // last `?id=` handled, so re-emissions of the same query params do not reopen the panel
+    private deepLinkId: string | null = null;
+
+    // `?id=` in the route opens that record's detail panel; called once the table is ready
+    // (end of init) and whenever the query params change on an already open tab.
+    private openDeepLink() {
+        const id = this.deepLinkId;
+        if (!id || this._drill || this._reference || !this.eruptBuildModel || !this.viewRecord) return;
+        this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, id)
+            .subscribe(data => data && this.openView(data));
     }
 
 
@@ -1139,6 +1366,28 @@ export class TableComponent implements OnInit, OnDestroy {
         }
     }
 
+    // Opens the detail panel of a record (set while building the view column); undefined when the
+    // model has no viewDetails power.
+    private viewRecord?: (record: any) => void;
+
+    private rowClickTimer: any;
+
+    // rows read as clickable (pointer cursor) only while a click actually opens the panel
+    get rowClickViewEnabled(): boolean {
+        return !!this.viewRecord && !!this.settingSrv.layout['rowClickView'];
+    }
+
+    // Clicking anywhere on a row opens its detail panel. Interactive cells and text selection are
+    // skipped, and the open is deferred so a double click (inline cell edit) can cancel it.
+    private rowClickView(click: { e?: Event; item?: any }) {
+        if (!this.viewRecord || this.editingCell || !this.settingSrv.layout['rowClickView']) return;
+        const target = click.e?.target as HTMLElement;
+        if (target?.closest("a, button, input, label, .ant-checkbox-wrapper, .ant-radio-wrapper")) return;
+        if (window.getSelection()?.toString()) return;
+        clearTimeout(this.rowClickTimer);
+        this.rowClickTimer = setTimeout(() => this.viewRecord(click.item), 250);
+    }
+
     //add new record
     addData() {
         let fullLine = false;
@@ -1146,23 +1395,23 @@ export class TableComponent implements OnInit, OnDestroy {
         if (layout && layout.formSize == FormSize.FULL_LINE) {
             fullLine = true;
         }
-        const modal = this.modal.create({
-            nzDraggable: true,
-            nzStyle: {top: "60px"},
-            nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
-            nzWidth: fullLine ? 550 : null,
-            nzMaskClosable: false,
-            nzKeyboard: false,
-            nzTitle: this.i18n.fanyi("global.new"),
-            nzContent: EditComponent,
-            nzOkText: this.i18n.fanyi("global.add"),
-            nzOnOk: async () => {
+        this.formModal.open({
+            owner: this,
+            title: this.i18n.fanyi("global.new"),
+            fullLine,
+            okText: this.i18n.fanyi("global.add"),
+            params: {
+                eruptBuildModel: this.eruptBuildModel,
+                behavior: Scene.ADD,
+                header: this._drill ? DataService.drillToHeader(this._drill) : {}
+            },
+            onOk: async ref => {
                 if (!this.adding) {
                     this.adding = true;
                     setTimeout(() => {
                         this.adding = false;
                     }, 500);
-                    if (modal.getContentComponent().beforeSaveValidate()) {
+                    if (ref.getContentComponent().beforeSaveValidate()) {
                         let header = {};
                         if (this.linkTree) {
                             let lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
@@ -1183,8 +1432,6 @@ export class TableComponent implements OnInit, OnDestroy {
                 return false;
             }
         });
-        modal.getContentComponent().eruptBuildModel = this.eruptBuildModel
-        modal.getContentComponent().header = this._drill ? DataService.drillToHeader(this._drill) : {};
     }
 
     pageIndexChange(index) {
@@ -1253,7 +1500,7 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     clearCondition() {
-        this.dataHandler.emptyEruptValue({eruptModel: this.searchErupt});
+        this.dataHandler.emptyEruptValue({eruptModel: this.searchErupt}, true);
         this.dataHandler.resetSearchOperators(this.searchErupt);
         this.selectedSorts = [];
         this.query(1);
@@ -1279,6 +1526,11 @@ export class TableComponent implements OnInit, OnDestroy {
         } else {
             if (event.type === "checkbox") {
                 this.selectedRows = event.checkbox;
+            } else if (event.type === "click") {
+                this.rowClickView(event.click);
+            } else if (event.type === "dblClick") {
+                // a double click (cell edit) must not open the panel
+                clearTimeout(this.rowClickTimer);
             }
         }
         if (event.type == "sort") {
@@ -1394,6 +1646,32 @@ export class TableComponent implements OnInit, OnDestroy {
                 ref.getContentComponent().language = lang;
                 // @ts-ignore
                 ref.getContentComponent().edit = {$value: code}
+            },
+            // the same editor in a drawer: a long file gets the full height and the table stays in place
+            codeDrawer: (lang: string, code: any, title?: string) => {
+                openResizableDrawer(this.drawerService, {
+                    nzContent: CodeEditorComponent,
+                    nzContentParams: {
+                        readonly: true,
+                        language: lang,
+                        download: title,
+                        // the editor sizes itself in pixels, the drawer body is the viewport minus its header
+                        height: window.innerHeight - 55,
+                        edit: {$value: code}
+                    },
+                    nzTitle: title || this.i18n.fanyi("global.code"),
+                    nzWidth: window.innerWidth <= 768 ? "100%" : 820,
+                    nzBodyStyle: {padding: "0", height: "100%"}
+                }, "code-drawer");
+            },
+            // bytes the request was already authorised for, saved without asking for them again
+            downloadFile: (name: string, base64: string, type?: string) => {
+                const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(new Blob([bytes], {type: type || 'application/octet-stream'}));
+                link.download = name;
+                link.click();
+                URL.revokeObjectURL(link.href);
             }
         }
         try {
@@ -1729,8 +2007,8 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * A column with a render template bypasses the column format, its "tag" type and its click
-     * handler, so an editable cell has to paint itself. This says which shape to paint; the
+     * A column with a render template bypasses the column format and its click handler, so an
+     * editable cell has to paint itself. This says which shape to paint; the
      * editable view types are limited to the ones covered here.
      */
     cellKind(col: STColumn): string {
@@ -1740,6 +2018,9 @@ export class TableComponent implements OnInit, OnDestroy {
         }
         if (viewType === ViewType.COLOR) {
             return "color";
+        }
+        if (viewType === ViewType.ICON) {
+            return "icon";
         }
         const editType = this.cellFieldModel(this.colIndexStr(col))?.eruptFieldJson.edit?.type;
         if (editType === EditType.BOOLEAN) {
@@ -1826,6 +2107,21 @@ export class TableComponent implements OnInit, OnDestroy {
 
     private blankCell(value: any): boolean {
         return value === null || value === undefined || value === "";
+    }
+
+    // grouped header view of `columns`, memoized on the array reference so the st input only
+    // changes when the column list itself is rebuilt; child entries are the same objects as
+    // in `columns`, so show / width / fixed edits made in place are picked up by resetColumns()
+    private stColumnsSrc: STColumn[];
+
+    private stColumnsCache: STColumn[];
+
+    get stColumns(): STColumn[] {
+        if (this.stColumnsSrc !== this.columns) {
+            this.stColumnsSrc = this.columns;
+            this.stColumnsCache = UiBuildService.groupColumns(this.columns);
+        }
+        return this.stColumnsCache;
     }
 
     private colIndexStr(col: STColumn): string {
@@ -1930,21 +2226,22 @@ export class TableComponent implements OnInit, OnDestroy {
             let fullLine = false;
             const layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
             if (layout && layout.formSize == FormSize.FULL_LINE) fullLine = true;
-            const modal = this.modal.create({
-                nzDraggable: true,
-                nzStyle: {top: "60px"},
-                nzWrapClassName: fullLine ? null : "modal-lg edit-modal-lg",
-                nzWidth: fullLine ? 550 : null,
-                nzMaskClosable: false,
-                nzKeyboard: false,
-                nzTitle: this.i18n.fanyi("global.copy"),
-                nzContent: EditComponent,
-                nzOkText: this.i18n.fanyi("global.add"),
-                nzOnOk: async () => {
+            this.formModal.open({
+                owner: this,
+                title: this.i18n.fanyi("global.copy"),
+                fullLine,
+                okText: this.i18n.fanyi("global.add"),
+                params: {
+                    eruptBuildModel: this.eruptBuildModel,
+                    behavior: Scene.ADD,
+                    prefillData: data,
+                    header: this._drill ? DataService.drillToHeader(this._drill) : {}
+                },
+                onOk: async ref => {
                     if (!this.adding) {
                         this.adding = true;
                         setTimeout(() => this.adding = false, 500);
-                        if (modal.getContentComponent().beforeSaveValidate()) {
+                        if (ref.getContentComponent().beforeSaveValidate()) {
                             let header: any = {};
                             if (this.linkTree) {
                                 const lt = this.eruptBuildModel.eruptModel.eruptJson.linkTree;
@@ -1964,11 +2261,6 @@ export class TableComponent implements OnInit, OnDestroy {
                     return false;
                 }
             });
-            const editComp = modal.getContentComponent();
-            editComp.eruptBuildModel = this.eruptBuildModel;
-            editComp.behavior = Scene.ADD;
-            editComp.prefillData = data;
-            editComp.header = this._drill ? DataService.drillToHeader(this._drill) : {};
         });
     }
 
@@ -2142,8 +2434,13 @@ export class TableComponent implements OnInit, OnDestroy {
     printConfigLoading: boolean = false;
 
     printSelectedRows() {
+        this.printRecord(this.selectedRows[0][this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]);
+    }
+
+    // Print one record: pick a layout when print templates exist, otherwise the built-in preview.
+    printRecord(pk: any) {
         const eruptName = this.eruptBuildModel.eruptModel.eruptName;
-        this._printPk = this.selectedRows[0][this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol];
+        this._printPk = pk;
         this.printLoading = true;
         this.dataService.printConfigList(eruptName).subscribe({
             next: res => {

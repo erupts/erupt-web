@@ -5,6 +5,7 @@ import {EruptFieldModel} from "../../model/erupt-field.model";
 import {DataService} from "@shared/service/data.service";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataHandlerService} from "../../service/data-handler.service";
+import {TransferOption} from "../transfer/transfer.component";
 
 @Component({
     standalone: false,
@@ -71,6 +72,25 @@ export class MultiChoiceComponent implements OnInit, AfterViewChecked {
                 });
             }
         }
+    }
+
+    // VL list as transfer options, memoized on the componentValue reference (dependField reloads replace it)
+    private transferSrc: any[];
+
+    private transferCache: TransferOption[];
+
+    get transferOptions(): TransferOption[] {
+        const items = this.eruptField.componentValue;
+        if (!this.transferCache || this.transferSrc !== items) {
+            this.transferSrc = items;
+            this.transferCache = (items || []).map(vl => ({
+                key: this.isNumeric(vl.value) ? parseInt(vl.value) : vl.value,
+                title: vl.label,
+                description: vl.desc,
+                disabled: vl.disable
+            }));
+        }
+        return this.transferCache;
     }
 
     getFormData(): object {

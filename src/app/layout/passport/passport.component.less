@@ -50,9 +50,9 @@
         }
 
         .lp-side-brand-name {
-            font-size: 16px;
-            font-weight: 600;
-            letter-spacing: 0.2px;
+            font-size: 17px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
             color: var(--erupt-text, rgba(0, 0, 0, 0.88));
             line-height: 1;
         }
@@ -169,6 +169,364 @@
     }
 }
 
+// ── Layouts (LoginLayout) ─────────────────────────────────────────
+// The page is a flex row: an optional brand panel (.lp-hero) and the .lp-side
+// column that holds the nav, the card and the copyright. The layout class on
+// .lp-page decides whether the hero shows and whether the card is a floating
+// box (center) or dissolves into its column (cover).
+:host ::ng-deep {
+
+    .lp-hero {
+        display: none;
+    }
+
+    .lp-hero__inner {
+        max-width: 440px;
+    }
+
+    .lp-hero__logo {
+        height: 44px;
+        margin-bottom: 24px;
+        object-fit: contain;
+    }
+
+    .lp-hero__title {
+        margin: 0 0 12px;
+        font-size: 34px;
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: 0.2px;
+    }
+
+    .lp-hero__desc {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+    // a column-shaped page: the card is not a floating box (the nav pill keeps
+    // the same look as in every other layout)
+    .lp-page--cover {
+        .lp-card {
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
+        }
+    }
+
+    // ── cover: full-bleed artwork, the form docked right as a panel ──
+    .lp-page--cover {
+        .lp-hero {
+            flex: 1 1 auto;
+            display: flex;
+            align-items: flex-end;
+            padding: 56px 64px;
+        }
+
+        .lp-hero__title {
+            color: var(--erupt-text, rgba(0, 0, 0, 0.88));
+        }
+
+        .lp-hero__desc {
+            color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+        }
+
+        .lp-side {
+            flex: 0 0 440px;
+            background: var(--erupt-bg-container, #fff);
+            border-left: 1px solid var(--ant-border-color-split, #f0f0f0);
+            box-shadow: -12px 0 40px rgba(0, 0, 0, 0.06);
+        }
+
+        .lp-side-brand {
+            visibility: hidden;
+        }
+    }
+
+    // the brand gradient of the wide card's brand pane
+    .lp-brand-gradient() {
+        color: #fff;
+        background: linear-gradient(135deg,
+        var(--ant-primary-color, #1677ff) 0%,
+        color-mix(in srgb, var(--ant-primary-color, #1677ff) 55%, #101828) 100%);
+
+        .lp-hero__title {
+            color: #fff;
+        }
+
+        .lp-hero__desc {
+            color: rgba(255, 255, 255, 0.78);
+        }
+    }
+
+    // ── wide: one wide card, brand pane left, form right ─────────
+    .lp-page--wide {
+        .lp-card {
+            display: flex;
+            max-width: 800px;
+            min-height: 540px;
+            border-radius: 12px;
+        }
+
+        // Brand pane: logo top, title and line bottom, and some depth — two soft
+        // glows and one ring bleeding off the corner — so the pane is a place,
+        // not a flat block of color
+        .lp-card__brand {
+            .lp-brand-gradient();
+            position: relative;
+            overflow: hidden;
+            flex: 0 0 40%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 36px 36px 40px;
+            background-image: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.22), transparent 42%),
+            radial-gradient(circle at 10% 95%, rgba(255, 255, 255, 0.14), transparent 46%),
+            linear-gradient(135deg,
+            var(--ant-primary-color, #1677ff) 0%,
+            color-mix(in srgb, var(--ant-primary-color, #1677ff) 55%, #101828) 100%);
+
+            &::before,
+            &::after {
+                content: '';
+                position: absolute;
+                border-radius: 50%;
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                pointer-events: none;
+            }
+
+            &::before {
+                right: -120px;
+                bottom: -160px;
+                width: 380px;
+                height: 380px;
+            }
+
+            &::after {
+                right: -40px;
+                bottom: -80px;
+                width: 220px;
+                height: 220px;
+                border-color: rgba(255, 255, 255, 0.12);
+            }
+
+            .lp-hero__logo {
+                align-self: flex-start;
+                height: 36px;
+                margin: 0;
+            }
+
+            .lp-hero__title {
+                font-size: 30px;
+                margin-bottom: 10px;
+            }
+
+            .lp-hero__desc {
+                font-size: 14px;
+                max-width: 300px;
+            }
+        }
+
+        // the text block; on top of the rings
+        .lp-card__brand-text {
+            position: relative;
+        }
+
+        .lp-card__form {
+            flex: 1 1 auto;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+    }
+
+    // wide with a configured picture: the pane shows the picture, a dark ramp
+    // at the bottom carries the text, the rings go
+    .lp-page--wide.lp-page--has-wallpaper .lp-card__brand {
+        background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.05) 40%, rgba(0, 0, 0, 0.62) 100%), var(--lp-wallpaper);
+        background-size: cover;
+        background-position: center;
+
+        &::before,
+        &::after {
+            display: none;
+        }
+    }
+
+    // ── wallpaper: a full-screen picture, a frosted card in the middle ──
+    .lp-page--wallpaper {
+        // the site's picture when one is configured, the stock artwork otherwise
+        background-image: var(--lp-wallpaper, url('/assets/passport/passport-bg.svg'));
+
+        .lp-card {
+            background: color-mix(in srgb, var(--erupt-bg-container, #fff) 76%, transparent);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+            0 8px 24px rgba(0, 0, 0, 0.12),
+            0 24px 56px rgba(0, 0, 0, 0.12);
+            backdrop-filter: saturate(160%) blur(20px);
+            -webkit-backdrop-filter: saturate(160%) blur(20px);
+        }
+    }
+
+    // A configured picture replaces the stock artwork in every layout. A real
+    // photo can be anything from bright to dark: a soft vignette at the top and
+    // bottom keeps the brand and the copyright legible, both set to white.
+    .lp-page--has-wallpaper {
+        position: relative;
+        background-image: var(--lp-wallpaper);
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.28), transparent 32%, transparent 68%, rgba(0, 0, 0, 0.32));
+        }
+
+        .lp-side {
+            position: relative;
+        }
+
+        .lp-side-brand-name {
+            color: #fff;
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+        }
+
+        .lp-copyright,
+        .lp-copyright a {
+            color: rgba(255, 255, 255, 0.78);
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+        }
+
+    }
+
+    // cover: the copyright is inside the white panel, not on the photo
+    .lp-page--cover.lp-page--has-wallpaper {
+        .lp-copyright,
+        .lp-copyright a {
+            color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.38));
+            text-shadow: none;
+        }
+    }
+
+    // ── poster: the brand as a headline, the form as a small card bottom right ──
+    .lp-page--poster {
+        position: relative;
+
+        .lp-hero {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: flex-end;
+            padding: 0 64px 72px;
+            pointer-events: none;
+        }
+
+        .lp-hero__inner {
+            max-width: 60%;
+        }
+
+        .lp-hero__logo {
+            height: 56px;
+            margin-bottom: 28px;
+        }
+
+        .lp-hero__title {
+            font-size: clamp(48px, 7vw, 96px);
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -0.02em;
+            color: var(--erupt-text, rgba(0, 0, 0, 0.88));
+        }
+
+        .lp-hero__desc {
+            margin-top: 20px;
+            font-size: 18px;
+            color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+        }
+
+        .lp-side {
+            position: relative;
+        }
+
+        .lp-side-brand {
+            visibility: hidden;
+        }
+
+        .lp-side-content {
+            align-items: flex-end;
+            justify-content: flex-end;
+            padding: 40px 64px 56px;
+        }
+
+        .lp-card {
+            max-width: 340px;
+        }
+
+        .lp-copyright {
+            text-align: right;
+            padding-right: 64px;
+        }
+    }
+
+    // poster on a photo: the headline goes white (out-specifies the poster block above)
+    .lp-page--poster.lp-page--has-wallpaper {
+        .lp-hero__title {
+            color: #fff;
+            text-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+        }
+
+        .lp-hero__desc {
+            color: rgba(255, 255, 255, 0.82);
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
+        }
+    }
+
+    // Narrow screens: hero panes go, the side column takes the width and the
+    // nav brand comes back — every layout collapses to the centered card
+    @media (max-width: 991px) {
+        .lp-page--cover,
+        .lp-page--poster {
+            .lp-hero {
+                display: none;
+            }
+
+            .lp-side {
+                flex: 1 1 auto;
+                min-width: 0;
+                border-left: 0;
+                box-shadow: none;
+            }
+
+            .lp-side-brand {
+                visibility: visible;
+            }
+        }
+
+        .lp-page--wide .lp-card__brand {
+            display: none;
+        }
+
+        .lp-page--poster {
+            .lp-side-content {
+                align-items: center;
+                justify-content: center;
+                padding: 40px 20px 56px;
+            }
+
+            .lp-card {
+                max-width: 380px;
+            }
+
+            .lp-copyright {
+                text-align: center;
+                padding-right: 0;
+            }
+        }
+    }
+}
+
 // ── Dark theme ────────────────────────────────────────────────────
 // Surfaces and text already follow the --erupt-* tokens; only the decorative
 // background image carries a baked-in light ground and needs a dark variant.
@@ -271,6 +629,11 @@
         animation: lpCardInBrutalist 0.40s cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
+    // the wide card: this skin's card rule would otherwise pin it to 400px
+    .lp-page--wide .lp-card {
+        max-width: 800px;
+    }
+
     @keyframes lpCardInBrutalist {
         from {
             opacity: 0;
@@ -336,6 +699,66 @@
         backdrop-filter: var(--lg-blur, saturate(180%) blur(22px));
         -webkit-backdrop-filter: var(--lg-blur, saturate(180%) blur(22px));
         box-shadow: var(--lg-shadow, 0 12px 32px rgba(24, 32, 56, 0.1)), var(--lg-specular, none);
+    }
+}
+
+// ── Workspace skin ────────────────────────────────────────────────
+// Only active when <html> has the .workspace class. The page is the same
+// navigation frame the app shell uses — painted on <body> by
+// styles/themes/workspace.less from --ws-frame / --ws-frame-image, so the
+// theme color or a chosen frame preset carries straight into the login — and
+// the login card is the shell's rounded content card floating in it. Every
+// foreground builds on --ws-fg-rgb, so a light frame preset flips the brand,
+// the buttons and the copyright to ink exactly like the app chrome.
+:host-context(.workspace) ::ng-deep {
+
+    // the frame shows through; no artwork
+    .lp-page {
+        background-color: transparent;
+        background-image: none;
+    }
+
+    .lp-side-brand-name {
+        color: var(--ws-text, rgba(255, 255, 255, 0.92));
+    }
+
+    // actions pill: a wash of the frame foreground, like the shell's rows
+    .lp-side-nav-actions {
+        background: var(--ws-hover, rgba(255, 255, 255, 0.1));
+        box-shadow: inset 0 0 0 1px var(--ws-divider, rgba(255, 255, 255, 0.1));
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .lp-nav-btn,
+    .lp-nav-lang i[nz-icon] {
+        color: var(--ws-text-muted, rgba(255, 255, 255, 0.68));
+
+        &:hover {
+            color: var(--ws-text, rgba(255, 255, 255, 0.92));
+            background: var(--ws-active, rgba(255, 255, 255, 0.18));
+        }
+    }
+
+    // the content card: the shell's radius, lifted by a soft shadow plus a
+    // hairline of the foreground so it also reads on a light frame
+    .lp-card {
+        border-radius: var(--ws-radius, 8px);
+        box-shadow: 0 0 0 1px rgba(var(--ws-fg-rgb, 255, 255, 255), 0.08),
+        0 8px 24px rgba(0, 0, 0, 0.18),
+        0 24px 56px rgba(0, 0, 0, 0.12);
+    }
+
+    .lp-copyright {
+        color: var(--ws-text-faint, rgba(255, 255, 255, 0.45));
+
+        a {
+            color: var(--ws-text-muted, rgba(255, 255, 255, 0.68));
+
+            &:hover {
+                color: var(--ws-text, rgba(255, 255, 255, 0.92));
+            }
+        }
     }
 }
 

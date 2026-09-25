@@ -1,16 +1,15 @@
 import {
     ChangeDetectorRef,
     Component,
-    ElementRef,
     EventEmitter,
     Inject,
     Input,
-    NgZone,
     OnDestroy,
     OnInit,
     Output
 } from '@angular/core';
-import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
+import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
 import {FormSize} from "../../../../erupt/model/erupt.enum";
 import {FlowApiService} from "@flow/service/flow-api.service";
 import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
@@ -23,6 +22,7 @@ import {StartNode} from "@flow/model/flow-approval.model";
 import {KV} from "../../../../erupt/model/util.model";
 import {EruptUser} from "../../../../cube/model/dashboard.model";
 import {forkJoin} from "rxjs";
+import {finalize} from "rxjs/operators";
 import {I18NService} from "@core";
 
 @Component({
@@ -45,6 +45,8 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
 
     loading: boolean = false;
 
+    submitting: boolean = false;
+
     eruptBuild: EruptBuildModel;
 
     selfSelectNodes: KV<string, string>[] = [];
@@ -53,47 +55,15 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
 
     selectedNodeUserIds: { [key: string]: number[] } = {};
 
-    private resizing = false;
-    private startX = 0;
-    private startWidth = 0;
-    private drawerElement: HTMLElement | null = null;
-
     constructor(private msg: NzMessageService,
                 private dataHandlerService: DataHandlerService,
                 private cdr: ChangeDetectorRef,
                 @Inject(NzDrawerService)
                 private drawerService: NzDrawerService,
-                private drawerRef: NzDrawerRef,
-                private el: ElementRef,
-                private ngZone: NgZone,
                 private flowApiService: FlowApiService,
                 private flowInstanceApiService: FlowInstanceApiService,
                 private i18n: I18NService) {
 
-    }
-
-    onMouseDown(event: MouseEvent): void {
-        this.resizing = true;
-        this.startX = event.clientX;
-        this.startWidth = parseInt(this.drawerRef.nzWidth as string) || 520;
-        this.drawerElement = this.drawerElement || this.el.nativeElement.closest('.ant-drawer-content-wrapper');
-
-        this.ngZone.runOutsideAngular(() => {
-            const moveHandler = (moveEvent: MouseEvent) => {
-                if (!this.resizing) return;
-                const newWidth = Math.max(300, Math.min(window.innerWidth * 0.9, this.startX - moveEvent.clientX + this.startWidth));
-                if (this.drawerElement) this.drawerElement.style.width = `${newWidth}px`;
-            };
-            const upHandler = (upEvent: MouseEvent) => {
-                this.resizing = false;
-                document.removeEventListener('mousemove', moveHandler);
-                document.removeEventListener('mouseup', upHandler);
-                this.ngZone.run(() => this.drawerRef.nzWidth = this.drawerElement?.style.width);
-            };
-            document.addEventListener('mousemove', moveHandler);
-            document.addEventListener('mouseup', upHandler);
-        });
-        event.preventDefault();
     }
 
     ngOnInit() {
@@ -147,7 +117,7 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
     }
 
     onViewFlow() {
-        this.drawerService.create({
+        openResizableDrawer(this.drawerService, {
             nzTitle: this.i18n.fanyi('flow.action.view_flow'),
             nzContent: EruptFlowComponent,
             nzContentParams: {
@@ -162,10 +132,13 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
             nzPlacement: 'bottom',
             nzHeight: '85%',
             nzFooter: null
-        })
+        }, "flow-view")
     }
 
     onSubmit(): void {
+        if (this.submitting) {
+            return;
+        }
         for (let node of this.selfSelectNodes) {
             if (!this.selectedNodeUserIds[node.key] || this.selectedNodeUserIds[node.key].length == 0) {
                 this.msg.warning(this.i18n.fanyi('flow.warning.select_approver_prefix') + node.value + this.i18n.fanyi('flow.warning.select_approver_suffix'));
@@ -177,10 +150,14 @@ export class CreateInstanceComponent implements OnInit, OnDestroy {
             selfSelectNodeUsers[key] = this.selectedNodeUserIds[key];
         }
         let data = this.dataHandlerService.eruptValueToObject(this.eruptBuild);
+        this.submitting = true;
         this.flowInstanceApiService.create(this.flow.id, {
             data: data,
             selfSelectNodeUsers: selfSelectNodeUsers
-        }).subscribe(res => {
+        }).pipe(finalize(() => {
+            this.submitting = false;
+            this.cdr.markForCheck();
+        })).subscribe(res => {
             if (res.success) {
                 this.msg.success(this.i18n.fanyi('flow.success.start_approval'));
                 this.close.emit();

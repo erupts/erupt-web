@@ -1,5 +1,8 @@
 <!-- ── Appearance ──────────────────────────────────────────────── -->
+<!-- With the appearance locked by the site config, only light/dark and compact stay:
+     they are per-user comfort settings, not branding. -->
 <div class="setting-group-title">{{'setting.group.appearance' | translate}}</div>
+@if (appearanceCustomizable) {
 <div class="setting-item setting-item--stack">
     <span>{{'setting.theme-color' | translate}}</span>
     <div class="theme-color-picker">
@@ -20,6 +23,8 @@
         </span>
     </div>
 </div>
+<!-- The brutalist band always follows the theme color: no picker there -->
+@if (!brutalistTheme) {
 <div class="setting-item setting-item--stack">
     <span>{{'setting.header-color' | translate}}</span>
     <div class="theme-color-picker">
@@ -46,6 +51,8 @@
         </label>
     </div>
 </div>
+}
+}
 <div class="setting-item">
     <span>{{'setting.color-scheme' | translate}}</span>
     <nz-radio-group [(ngModel)]="darkMode" (ngModelChange)="setDarkMode($event)"
@@ -60,19 +67,135 @@
     <nz-switch nzSize="small" [(ngModel)]="compactTheme"
                (ngModelChange)="toggleCompactTheme($event)"></nz-switch>
 </div>
-<div class="setting-item">
+@if (appearanceCustomizable) {
+<div class="setting-item setting-item--stack">
     <span>{{'setting.skin' | translate}}</span>
-    <!-- same solid radio group as the color scheme row, so the active skin is visible at a glance -->
-    <nz-radio-group [(ngModel)]="skin" (ngModelChange)="setSkin($event)"
-                    nzSize="small" nzButtonStyle="solid">
-        <label nz-radio-button nzValue="default">{{'setting.skin-default' | translate}}</label>
-        <label nz-radio-button nzValue="brutalist">Brutalist</label>
-        <label nz-radio-button nzValue="liquid-glass">Liquid Glass</label>
-    </nz-radio-group>
+    <!-- skin tiles, same grammar as the menu-mode picker: a miniature of each skin's shell -->
+    <div class="menu-mode-picker menu-mode-picker--skins">
+        <!-- default: white bar and column on the gray canvas, brand-colored current row -->
+        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="skin === Skin.DEFAULT"
+             (click)="setSkin(Skin.DEFAULT)">
+            <svg viewBox="0 0 44 32">
+                <rect width="44" height="32" rx="3" fill="#f0f2f5"/>
+                <path d="M0 3a3 3 0 0 1 3-3h11v32H3a3 3 0 0 1-3-3V3Z" fill="#fff"/>
+                <rect x="14" y="0" width="30" height="6" fill="#fff"/>
+                <path d="M14 6h30" stroke="#e5e7eb" stroke-width="1"/>
+                <path d="M14 0v32" stroke="#e5e7eb" stroke-width="1"/>
+                <rect x="3" y="9" width="8" height="2" rx="1" fill="#1677ff"/>
+                <rect x="3" y="14" width="8" height="2" rx="1" fill="#bfbfbf"/>
+                <rect x="3" y="19" width="8" height="2" rx="1" fill="#d9d9d9"/>
+                <rect x="18" y="10" width="22" height="18" rx="1.5" fill="#fff"/>
+            </svg>
+            <span>{{'setting.skin-default' | translate}}</span>
+        </div>
+        <!-- classic: the Ant Design Pro navy column beside a white bar -->
+        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="skin === Skin.CLASSIC"
+             (click)="setSkin(Skin.CLASSIC)">
+            <svg viewBox="0 0 44 32">
+                <rect width="44" height="32" rx="3" fill="#f0f2f5"/>
+                <path d="M0 3a3 3 0 0 1 3-3h11v32H3a3 3 0 0 1-3-3V3Z" fill="#001529"/>
+                <rect x="14" y="0" width="30" height="6" fill="#fff"/>
+                <path d="M14 6h30" stroke="#e5e7eb" stroke-width="1"/>
+                <rect x="3" y="3" width="8" height="2" rx="1" fill="#fff" opacity=".9"/>
+                <rect x="0" y="9" width="14" height="4" fill="#1677ff"/>
+                <rect x="3" y="10" width="8" height="2" rx="1" fill="#fff"/>
+                <rect x="3" y="16" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="3" y="21" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="18" y="10" width="22" height="18" rx="1.5" fill="#fff"/>
+            </svg>
+            <span>Classic</span>
+        </div>
+        <!-- workspace: one deep frame for bar and column, the content as a rounded card -->
+        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="skin === Skin.WORKSPACE"
+             (click)="setSkin(Skin.WORKSPACE)">
+            <svg viewBox="0 0 44 32">
+                <defs>
+                    <linearGradient id="skinWorkspaceFrame" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#4a154b"/>
+                        <stop offset="1" stop-color="#1e3a8a"/>
+                    </linearGradient>
+                </defs>
+                <rect width="44" height="32" rx="3" fill="url(#skinWorkspaceFrame)"/>
+                <rect x="2.5" y="8.5" width="9" height="3" rx="1" fill="#fff" opacity=".28"/>
+                <rect x="3" y="14" width="8" height="2" rx="1" fill="#fff" opacity=".7"/>
+                <rect x="3" y="19" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="3" y="24" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="14" y="8" width="28" height="22" rx="2" fill="#f0f2f5"/>
+                <rect x="17" y="12" width="22" height="14" rx="1.5" fill="#fff"/>
+            </svg>
+            <span>Workspace</span>
+        </div>
+        <!-- liquid glass: ambient color field, translucent rounded panels -->
+        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="skin === Skin.LIQUID_GLASS"
+             (click)="setSkin(Skin.LIQUID_GLASS)">
+            <svg viewBox="0 0 44 32">
+                <defs>
+                    <linearGradient id="skinGlassField" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#78aaff"/>
+                        <stop offset=".55" stop-color="#ff8cbe"/>
+                        <stop offset="1" stop-color="#6ee6d2"/>
+                    </linearGradient>
+                </defs>
+                <rect width="44" height="32" rx="3" fill="url(#skinGlassField)"/>
+                <rect x="2" y="7" width="11" height="23" rx="2" fill="#fff" fill-opacity=".55" stroke="#fff" stroke-opacity=".8" stroke-width=".8"/>
+                <rect x="15" y="7" width="27" height="23" rx="2" fill="#fff" fill-opacity=".4" stroke="#fff" stroke-opacity=".7" stroke-width=".8"/>
+                <rect x="4" y="10" width="7" height="2" rx="1" fill="#fff" opacity=".95"/>
+                <rect x="4" y="15" width="7" height="2" rx="1" fill="#fff" opacity=".6"/>
+                <rect x="4" y="20" width="7" height="2" rx="1" fill="#fff" opacity=".6"/>
+            </svg>
+            <span>Liquid Glass</span>
+        </div>
+        <!-- brutalist: cream paper, ink rules, hard offset shadows, a candy current row -->
+        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="skin === Skin.BRUTALIST"
+             (click)="setSkin(Skin.BRUTALIST)">
+            <svg viewBox="0 0 44 32">
+                <rect width="44" height="32" rx="3" fill="#e3ebee"/>
+                <rect x="0" y="0" width="14" height="32" fill="#f5f5f0"/>
+                <rect x="0" y="0" width="44" height="6" fill="#f5f5f0"/>
+                <path d="M14 0v32M0 6h44" stroke="#14120b" stroke-width="1.5"/>
+                <rect x="2.5" y="9" width="9" height="3" fill="#ffd440" stroke="#14120b" stroke-width="1"/>
+                <rect x="3" y="15" width="8" height="1.5" fill="#14120b"/>
+                <rect x="3" y="19" width="8" height="1.5" fill="#14120b" opacity=".45"/>
+                <rect x="19.5" y="11" width="20" height="15" fill="#14120b"/>
+                <rect x="18" y="9.5" width="20" height="15" fill="#fff" stroke="#14120b" stroke-width="1"/>
+            </svg>
+            <span>Brutalist</span>
+        </div>
+    </div>
+    <!-- sub-option of the workspace skin only: the navigation frame gradient -->
+    @if (skin === Skin.WORKSPACE) {
+        <div class="skin-sub">
+            <span>{{'setting.workspace-frame' | translate}}</span>
+            <div class="theme-color-picker">
+                <!-- derived from the theme color -->
+                <span class="theme-color-picker__swatch"
+                      [style.background]="autoWorkspaceFrame"
+                      [class.theme-color-picker__swatch--active]="!workspaceFrame"
+                      (click)="setWorkspaceFrame(null)"
+                      nz-tooltip [nzTooltipTitle]="'global.reset' | translate"></span>
+            </div>
+            <!-- one captioned row each for the light and the dark frames -->
+            @for (g of workspaceFrameGroups; track g.key) {
+                <span class="skin-sub__caption">{{ g.key | translate }}</span>
+                <div class="theme-color-picker">
+                    @for (p of g.presets; track p.key) {
+                        <span class="theme-color-picker__swatch theme-color-picker__swatch--framed"
+                              [style.background]="p.frame"
+                              [class.theme-color-picker__swatch--active]="workspaceFrame === p.key"
+                              (click)="setWorkspaceFrame(p.key)"
+                              nz-tooltip [nzTooltipTitle]="p.label"></span>
+                    }
+                </div>
+            }
+        </div>
+    }
 </div>
+}
 
 <!-- ── Navigation ──────────────────────────────────────────────── -->
 <div class="setting-group-title">{{'setting.group.navigation' | translate}}</div>
+<!-- menu mode (and its sub-options) is locked together with the appearance -->
+@if (appearanceCustomizable) {
 <div class="setting-item setting-item--stack">
     <span>{{'setting.menu-mode' | translate}}</span>
     <div class="menu-mode-picker">
@@ -89,21 +212,21 @@
             </svg>
             <span>{{'menu.normal_mode' | translate}}</span>
         </div>
-        <!-- split: top-level categories as tabs in the header -->
-        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="menuMode === MenuMode.SPLIT"
-             (click)="setMenuMode(MenuMode.SPLIT)">
+        <!-- group: first-level items as flat group titles, children listed underneath -->
+        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="menuMode === MenuMode.GROUP"
+             (click)="setMenuMode(MenuMode.GROUP)">
             <svg viewBox="0 0 44 32">
                 <rect width="44" height="32" rx="3" fill="#f0f2f5"/>
-                <path d="M0 3a3 3 0 0 1 3-3h38a3 3 0 0 1 3 3v3H0V3Z" fill="#273142"/>
-                <rect x="16" y="2" width="7" height="2.5" rx="1" fill="#fff" opacity=".85"/>
-                <rect x="25" y="2" width="7" height="2.5" rx="1" fill="#fff" opacity=".45"/>
-                <rect x="34" y="2" width="7" height="2.5" rx="1" fill="#fff" opacity=".45"/>
-                <path d="M0 6h14v26H3a3 3 0 0 1-3-3V6Z" fill="#fff"/>
-                <rect x="3" y="10" width="8" height="2" rx="1" fill="#bfbfbf"/>
-                <rect x="3" y="15" width="8" height="2" rx="1" fill="#d9d9d9"/>
-                <rect x="3" y="20" width="8" height="2" rx="1" fill="#d9d9d9"/>
+                <path d="M0 3a3 3 0 0 1 3-3h11v32H3a3 3 0 0 1-3-3V3Z" fill="#273142"/>
+                <rect x="3" y="4" width="4" height="1.5" rx=".75" fill="#fff" opacity=".35"/>
+                <rect x="3" y="7.5" width="8" height="2" rx="1" fill="#fff" opacity=".85"/>
+                <rect x="3" y="11.5" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="3" y="17" width="4" height="1.5" rx=".75" fill="#fff" opacity=".35"/>
+                <rect x="3" y="20.5" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="3" y="24.5" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="14" y="0" width="30" height="6" fill="#fff"/>
             </svg>
-            <span>{{'setting.split-menu' | translate}}</span>
+            <span>{{'menu.group_mode' | translate}}</span>
         </div>
         <!-- dual: first-level rail + submenu column inside the sidebar -->
         <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="menuMode === MenuMode.DUAL"
@@ -122,6 +245,22 @@
             </svg>
             <span>{{'menu.dual_mode' | translate}}</span>
         </div>
+        <!-- split: top-level categories as tabs in the header -->
+        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="menuMode === MenuMode.SPLIT"
+             (click)="setMenuMode(MenuMode.SPLIT)">
+            <svg viewBox="0 0 44 32">
+                <rect width="44" height="32" rx="3" fill="#f0f2f5"/>
+                <path d="M0 3a3 3 0 0 1 3-3h38a3 3 0 0 1 3 3v3H0V3Z" fill="#273142"/>
+                <rect x="16" y="2" width="7" height="2.5" rx="1" fill="#fff" opacity=".85"/>
+                <rect x="25" y="2" width="7" height="2.5" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="34" y="2" width="7" height="2.5" rx="1" fill="#fff" opacity=".45"/>
+                <path d="M0 6h14v26H3a3 3 0 0 1-3-3V6Z" fill="#fff"/>
+                <rect x="3" y="10" width="8" height="2" rx="1" fill="#bfbfbf"/>
+                <rect x="3" y="15" width="8" height="2" rx="1" fill="#d9d9d9"/>
+                <rect x="3" y="20" width="8" height="2" rx="1" fill="#d9d9d9"/>
+            </svg>
+            <span>{{'setting.split-menu' | translate}}</span>
+        </div>
         <!-- top: the whole menu in the header, no sidebar -->
         <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="menuMode === MenuMode.TOP"
              (click)="setMenuMode(MenuMode.TOP)">
@@ -136,6 +275,24 @@
             </svg>
             <span>{{'menu.top_mode' | translate}}</span>
         </div>
+        <!-- top-split: first-level tabs in the header, second level in a sub-nav row, no sidebar -->
+        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="menuMode === MenuMode.TOP_SPLIT"
+             (click)="setMenuMode(MenuMode.TOP_SPLIT)">
+            <svg viewBox="0 0 44 32">
+                <rect width="44" height="32" rx="3" fill="#f0f2f5"/>
+                <path d="M0 3a3 3 0 0 1 3-3h38a3 3 0 0 1 3 3v3H0V3Z" fill="#273142"/>
+                <rect x="3" y="2" width="5" height="2.5" rx="1" fill="#fff" opacity=".85"/>
+                <rect x="12" y="2" width="7" height="2.5" rx="1" fill="#fff" opacity=".85"/>
+                <rect x="21" y="2" width="7" height="2.5" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="30" y="2" width="7" height="2.5" rx="1" fill="#fff" opacity=".45"/>
+                <rect x="0" y="6" width="44" height="6" fill="#fff"/>
+                <rect x="4" y="8" width="6" height="2" rx="1" fill="#bfbfbf"/>
+                <rect x="12" y="8" width="6" height="2" rx="1" fill="#d9d9d9"/>
+                <rect x="20" y="8" width="6" height="2" rx="1" fill="#d9d9d9"/>
+                <rect x="4" y="15" width="36" height="13" rx="1.5" fill="#fff" opacity=".6"/>
+            </svg>
+            <span>{{'menu.top_split_mode' | translate}}</span>
+        </div>
     </div>
     <!-- sub-option of the menu block: show menu names in the collapsed sidebar -->
     <div class="menu-mode-sub">
@@ -143,7 +300,16 @@
         <nz-switch nzSize="small" [(ngModel)]="layout['collapsedText']"
                    (ngModelChange)="setLayout('collapsedText', layout['collapsedText'])"></nz-switch>
     </div>
+    <!-- sub-option of the dual mode only: labels under the first-level rail icons -->
+    @if (menuMode === MenuMode.DUAL) {
+        <div class="menu-mode-sub">
+            <span>{{'setting.dual-rail-text' | translate}}</span>
+            <nz-switch nzSize="small" [(ngModel)]="dualRailText"
+                       (ngModelChange)="setLayout('dualRailText', dualRailText)"></nz-switch>
+        </div>
+    }
 </div>
+}
 <div class="setting-item">
     <span>{{'setting.tab-reuse' | translate}}</span>
     <nz-switch nzSize="small" [(ngModel)]="layout['reuse']" (ngModelChange)="changeReuse(layout['reuse'])"></nz-switch>
@@ -171,9 +337,18 @@
     </nz-select>
 </div>
 <div class="setting-item">
-    <span>{{'setting.detail-drawer' | translate}}</span>
-    <nz-switch nzSize="small" [(ngModel)]="layout['drawDraw']"
-               (ngModelChange)="setLayout('drawDraw', layout['drawDraw'])"></nz-switch>
+    <span>{{'setting.form-panel-mode' | translate}}</span>
+    <nz-radio-group [ngModel]="formPanelMode" (ngModelChange)="setFormPanelMode($event)"
+                    nzSize="small" nzButtonStyle="solid">
+        <label nz-radio-button [nzValue]="FormPanelMode.CENTER">{{'form.panel.center' | translate}}</label>
+        <label nz-radio-button [nzValue]="FormPanelMode.SIDE">{{'form.panel.side' | translate}}</label>
+        <label nz-radio-button [nzValue]="FormPanelMode.FULL">{{'global.fullscreen' | translate}}</label>
+    </nz-radio-group>
+</div>
+<div class="setting-item">
+    <span>{{'setting.row-click-view' | translate}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout['rowClickView']"
+               (ngModelChange)="setLayout('rowClickView', layout['rowClickView'])"></nz-switch>
 </div>
 
 <!-- ── Others ──────────────────────────────────────────────────── -->

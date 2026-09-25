@@ -1,5 +1,6 @@
 import {
     AttachmentEnum,
+    BoolEnum,
     ChoiceEnum,
     DateEnum,
     EditType,
@@ -114,6 +115,7 @@ export interface DesignerView {
     column?: string;
     show?: boolean;
     sortable?: boolean;
+    group?: string;
 }
 
 export interface DesignerEdit {
@@ -131,8 +133,9 @@ export interface DesignerEdit {
     sliderType?: { min?: number; max?: number; step?: number; dots?: boolean };
     rateType?: { count?: number; allowHalf?: boolean };
     dateType?: { type?: DateEnum; pickerMode?: PickerMode };
-    boolType?: { trueText?: string; falseText?: string };
+    boolType?: { trueText?: string; falseText?: string; type?: BoolEnum };
     choiceType?: { type?: ChoiceEnum; vl?: DesignerVL[] };
+    keyValueType?: { keyPlaceholder?: string; valuePlaceholder?: string; max?: number; keys?: string[] };
     multiChoiceType?: { vl?: DesignerVL[] };
     tagsType?: { tags?: string[]; joinSeparator?: string; maxTagCount?: number; allowExtension?: boolean };
     autoCompleteType?: { values?: string[]; triggerLength?: number };
@@ -141,6 +144,7 @@ export interface DesignerEdit {
     referenceTreeType?: { id?: string; label?: string; pid?: string };
     referenceTableType?: { id?: string; label?: string };
     checkboxType?: { id?: string; label?: string };
+    transferType?: { id?: string; label?: string };
     groupType?: { fields?: string[]; collapsed?: boolean };
     calloutType?: { value?: string; style?: string };
     tplType?: { path?: string; engine?: string; enable?: boolean };
@@ -182,7 +186,8 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
                 edit: {
                     boolType: {
                         trueText: I18NService.instance?.fanyi('designer.bool.true'),
-                        falseText: I18NService.instance?.fanyi('designer.bool.false')
+                        falseText: I18NService.instance?.fanyi('designer.bool.false'),
+                        type: BoolEnum.AUTO
                     }
                 }
             },
@@ -190,6 +195,8 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
             {type: EditType.SLIDER, label: "designer.type.slider", icon: "sliders", edit: {sliderType: {min: 0, max: 100, step: 1}}},
             {type: EditType.RATE, label: "designer.type.rate", icon: "star", edit: {rateType: {count: 5}}},
             {type: EditType.COLOR, label: "designer.type.color", icon: "bg-colors"},
+            {type: EditType.ICON, label: "designer.type.icon", icon: "smile"},
+            {type: EditType.KEY_VALUE, label: "designer.type.key_value", icon: "table", edit: {keyValueType: {max: 0, keys: []}}},
             {type: EditType.HIDDEN, label: "designer.type.hidden", icon: "eye-invisible"}
         ]
     },
@@ -305,6 +312,15 @@ export const PALETTE_GROUPS: PaletteGroup[] = [
                 icon: "check-square",
                 needLink: true,
                 edit: {checkboxType: {}},
+                disabled: true,
+                disabledTip: "designer.reference.disabled_tip"
+            },
+            {
+                type: EditType.TRANSFER,
+                label: "designer.type.transfer",
+                icon: "swap",
+                needLink: true,
+                edit: {transferType: {}},
                 disabled: true,
                 disabledTip: "designer.reference.disabled_tip"
             },

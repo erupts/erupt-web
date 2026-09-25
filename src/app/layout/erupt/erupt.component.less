@@ -121,11 +121,12 @@
         border-bottom: none;
     }
 
-    // ── Card style: pill tabs (default skin only, brutalist keeps its own look) ──
+    // ── Card style: pill tabs (every skin; brutalist.less excludes the
+    //    multi-tab bar from its framed card-tab rules so this look wins there too) ──
     .reuse-tab__card {
         padding-top: 0;
-        padding-left: 0;
-        padding-right: 0;
+        padding-left: 8px;
+        padding-right: 8px;
         background: var(--erupt-bg-container, #fff);
         border-bottom: 1px solid var(--ant-border-color-split);
 
@@ -136,57 +137,50 @@
         .ant-tabs-nav-container {
             padding: 0 !important;
         }
-    }
 
-    html:not(.brutalist-theme) {
-        .reuse-tab__card {
-            padding-left: 8px;
-            padding-right: 8px;
+        .ant-tabs-tab {
+            height: 28px !important;
+            line-height: 26px !important;
+            margin: 5px 4px 5px 0 !important;
+            padding: 0 12px !important;
+            border: none !important;
+            border-radius: 1px !important;
+            background: transparent !important;
+            color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+            font-size: 13px;
+            transition: color 0.2s, background 0.2s;
 
-            .ant-tabs-tab {
-                height: 28px !important;
-                line-height: 26px !important;
-                margin: 5px 4px 5px 0 !important;
-                padding: 0 12px !important;
-                border: none !important;
-                border-radius: 1px !important;
-                background: transparent !important;
-                color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
-                font-size: 13px;
-                transition: color 0.2s, background 0.2s;
+            &:hover {
+                background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.045)) !important;
+                color: var(--erupt-text, rgba(0, 0, 0, 0.88));
+            }
+
+            .ant-tabs-tab-remove {
+                margin-left: 4px;
+                margin-right: -4px;
+                color: inherit;
+                opacity: 0.45;
+                transition: opacity 0.2s;
 
                 &:hover {
-                    background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.045)) !important;
-                    color: var(--erupt-text, rgba(0, 0, 0, 0.88));
-                }
-
-                .ant-tabs-tab-remove {
-                    margin-left: 4px;
-                    margin-right: -4px;
-                    color: inherit;
-                    opacity: 0.45;
-                    transition: opacity 0.2s;
-
-                    &:hover {
-                        opacity: 1;
-                    }
+                    opacity: 1;
                 }
             }
+        }
 
-            .ant-tabs-tab-active {
-                background: var(--ant-primary-1, #e6f4ff) !important;
-                font-weight: 500;
+        .ant-tabs-tab-active {
+            background: var(--ant-primary-1, #e6f4ff) !important;
+            font-weight: 500;
 
-                .ant-tabs-tab-btn {
-                    color: var(--ant-primary-color, #1677ff);
-                }
+            .ant-tabs-tab-btn {
+                color: var(--ant-primary-color, #1677ff);
             }
+        }
 
-            .ant-tabs-nav-operations {
-                background: transparent;
-                border-left: none;
-                padding: 0 4px;
-            }
+        .ant-tabs-nav-operations {
+            background: transparent;
+            border-left: none;
+            padding: 0 4px;
         }
     }
 
@@ -224,6 +218,22 @@
         .ltr .alain-default__top-menu .erupt_content,
         .ltr .alain-default__top-menu.alain-default__collapsed .erupt_content {
             margin-left: 0;
+        }
+
+        // Top-split: content and the fixed tab bar start below the 40px sub-nav row
+        @subnav-h: 40px;
+
+        // (specific enough to beat the .ltr/.rtl defaults below, not the liquid-glass
+        // skin, which re-derives everything from its own --lg-header-h)
+        .ltr .alain-default__sub-nav .erupt_content,
+        .rtl .alain-default__sub-nav .erupt_content {
+            margin-top: @header-h + @subnav-h;
+            height: calc(100vh - @header-h - @subnav-h);
+        }
+
+        // !important — @delon/abc pins the fixed tab bar with `top: 44px !important`
+        .alain-default__sub-nav.alain-default__fixed .reuse-tab {
+            top: @header-h + @subnav-h !important;
         }
 
         .rtl .alain-default__top-menu .erupt_content,
@@ -311,6 +321,17 @@
 
     .erupt-header_fixed {
         position: fixed;
+    }
+
+    // Installed app with the window controls overlay: the header is the title
+    // bar, so it clears the OS controls on either side (macOS traffic lights on
+    // the left, the browser's overlay / Windows caption buttons on the right).
+    // Drag behavior lives in src/styles/pwa.less.
+    @media (display-mode: window-controls-overlay) {
+        .erupt-header {
+            padding-left: calc(16px + env(titlebar-area-x, 0px));
+            padding-right: calc(16px + 100% - env(titlebar-area-x, 0px) - env(titlebar-area-width, 100%));
+        }
     }
 
     footer.licence {

@@ -19,3 +19,6 @@
 <nz-float-button-top></nz-float-button-top>
 <ng-template #settingHost></ng-template>
 <footer class="licence">Powered by Erupt © 2018 - {{ nowYear }}</footer>
+@if (session.locked) {
+    <lock-screen></lock-screen>
+}

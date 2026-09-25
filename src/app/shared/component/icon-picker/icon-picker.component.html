@@ -1,0 +1,62 @@
+<nz-input-wrapper class="erupt-input erupt-icon-picker" #field>
+    @if (cls) {
+        <span nzInputPrefix class="eip-preview"><i [class]="value" aria-hidden="true"></i></span>
+    }
+    <input nz-input autocomplete="off" spellcheck="false" [nzSize]="size"
+           [ngModel]="value" (ngModelChange)="typed($event)"
+           [name]="name" [placeholder]="placeholder || ('icon_picker.placeholder' | translate)" [disabled]="disabled" (blur)="touched()">
+    <span nzInputSuffix class="eip-suffix">
+        @if (value && !disabled) {
+            <span nz-icon nzType="close-circle" nzTheme="fill" class="eip-clear" (click)="clear()"></span>
+        }
+        <span nz-icon nzType="appstore" nzTheme="outline" class="eip-open" [class.disabled]="disabled" [class.active]="open"
+              nz-popover nzPopoverTrigger="click" nzPopoverPlacement="bottomRight"
+              nzPopoverOverlayClassName="erupt-icon-picker-popover"
+              [nzPopoverContent]="disabled ? null : panel"
+              [nzPopoverVisible]="open" (nzPopoverVisibleChange)="onOpenChange($event)"></span>
+    </span>
+</nz-input-wrapper>
+
+<ng-template #panel>
+    <div class="eip-panel" [style.width.px]="panelWidth">
+        <nz-input-wrapper class="eip-search">
+            <span nzInputPrefix nz-icon nzType="search" class="eip-search-icon"></span>
+            <input nz-input autofocus [(ngModel)]="keyword" (ngModelChange)="filter()" name="eip-keyword"
+                   [placeholder]="'icon_picker.search' | translate">
+        </nz-input-wrapper>
+        <div class="eip-tabs">
+            <button type="button" class="eip-tab" [class.active]="style === ''" (click)="setStyle('')">{{ 'icon_picker.all' | translate }}</button>
+            @for (s of styles; track s) {
+                <button type="button" class="eip-tab" [class.active]="style === s" (click)="setStyle(s)">{{ ('icon_picker.' + s) | translate }}</button>
+            }
+            <span class="eip-count">{{ total }}</span>
+        </div>
+        <div class="eip-grid" (scroll)="onGridScroll($event)">
+            @if (loading) {
+                <div class="eip-msg"><nz-spin nzSimple nzSize="small"></nz-spin></div>
+            } @else if (error) {
+                <div class="eip-msg eip-error">{{ 'icon_picker.missing' | translate }}<br><code>{{ error }}</code></div>
+            } @else if (results.length === 0) {
+                <div class="eip-msg">{{ 'icon_picker.empty' | translate }}</div>
+            }
+            @for (o of results; track o.cls) {
+                <button type="button" class="eip-cell" [class.active]="o.cls === cls" [title]="o.cls" (click)="pick(o)">
+                    <i [class]="o.cls" [style.color]="color?.css || null" aria-hidden="true"></i>
+                </button>
+            }
+        </div>
+        <div class="eip-foot">
+            @if (showColors) {
+                <div class="eip-colors">
+                    <button type="button" class="eip-swatch none" [class.active]="!color"
+                            [title]="'icon_picker.color_default' | translate" (click)="setColor(null)"></button>
+                    @for (c of colors; track c.cls) {
+                        <button type="button" class="eip-swatch" [class.active]="color?.cls === c.cls" [style.background]="c.css"
+                                [title]="c.cls === 'icon-primary' ? ('icon_picker.color_primary' | translate) : c.cls" (click)="setColor(c)"></button>
+                    }
+                </div>
+            }
+            <span class="eip-version">Font Awesome {{ version }}</span>
+        </div>
+    </div>
+</ng-template>

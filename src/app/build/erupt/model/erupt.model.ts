@@ -111,6 +111,8 @@ interface Layout {
     refreshTime: number;
     tableWidth: string;
     tableOperatorWidth: string;
+    // false lets an overflowing cell wrap instead of being cut off with an ellipsis
+    tableTruncate: boolean;
     collapseActionButton: boolean;
 }
 
@@ -163,6 +165,7 @@ export interface Tree {
     label: string;
     pid: string;
     expandLevel: number;
+    maxLevel: number;
     level: number;
     linkTable: Link[];
     children?: Tree[];
@@ -207,6 +210,7 @@ export interface Power {
     copy: boolean;
     ai: boolean;
     cellEdit: boolean;      // in-place cell editing, on unless the model opts out
+    comment: boolean;       // record comment stream (erupt-comment module), on unless the model opts out
 }
 
 export interface Row {

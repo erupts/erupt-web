@@ -23,7 +23,10 @@
     "scripts": {
         "ng-high-memory": "node --max_old_space_size=6000 ./node_modules/@angular/cli/bin/ng",
         "ng": "ng",
+        "fa-icons": "node scripts/fa-icons.js",
+        "prestart": "npm run fa-icons",
         "start": "ng s -o",
+        "prebuild": "npm run fa-icons",
         "build": "npm run ng-high-memory build",
         "analyze": "npm run ng-high-memory build -- --source-map",
         "analyze:view": "source-map-explorer dist/**/*.js",

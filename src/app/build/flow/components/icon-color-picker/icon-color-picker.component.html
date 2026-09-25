@@ -1,55 +1,32 @@
 <div class="icon-selector-content">
-  <!-- Preview area -->
-  <div class="preview-section">
-    <div class="preview-display">
-      <div class="preview-icon" [style]="getPreviewIconStyle()">
-        <i class="{{ previewIcon }}"></i>
-      </div>
+  <!-- Live preview beside the color swatches; the icon itself comes from erupt-icon-picker below -->
+  <div class="pick-row">
+    <div class="preview-icon" [style]="getPreviewIconStyle()">
+      <i class="{{ previewIcon }}"></i>
+    </div>
+    <div class="color-grid">
+      @for (color of bgColors; track color) {
+        <div class="color-item"
+          [class.selected]="previewColor === color"
+          [style]="getIconOptionStyle(color)"
+          [title]="color"
+          (click)="selectColor(color, $event)">
+        </div>
+      }
     </div>
   </div>
 
-  <!-- Selection area -->
-  <div class="selection-section">
-    <!-- Color selection -->
-    <div class="color-section">
-      <h4>{{ 'flow.icon.select_color' | translate }}</h4>
-      <div class="color-grid">
-        @for (color of bgColors; track color) {
-          <div class="color-item"
-            [class.selected]="previewColor === color"
-            [style]="getIconOptionStyle(color)"
-            (click)="selectColor(color, $event)">
-          </div>
-        }
-      </div>
-    </div>
-
-    <!-- Icon selection -->
-    <div class="icon-section">
-      <h4>{{ 'flow.icon.select_icon' | translate }}</h4>
-      <div class="icon-grid">
-        @for (icon of icons; track icon) {
-          <div class="icon-item"
-            [class.selected]="previewIcon === icon"
-            (click)="selectIcon(icon, $event)">
-            <div class="icon-square" style="color:#000">
-              <i class="{{ icon }}"></i>
-            </div>
-          </div>
-        }
-      </div>
-    </div>
+  <div class="icon-row">
+    <erupt-icon-picker [ngModel]="previewIcon" (ngModelChange)="selectIcon($event)" name="flowIcon" [showColors]="false"
+                       [placeholder]="'flow.icon.select_icon' | translate"></erupt-icon-picker>
   </div>
 
-  <!-- Action buttons -->
   <div class="action-buttons">
-    <div class="buttons">
-      <button nz-button nzType="default" (click)="cancelSelection()">
-        {{ 'global.cancel' | translate }}
-      </button>
-      <button nz-button nzType="primary" (click)="confirmSelection()">
-        {{ 'flow.icon.confirm_select' | translate }}
-      </button>
-    </div>
+    <button nz-button nzType="default" nzSize="small" (click)="cancelSelection()">
+      {{ 'global.cancel' | translate }}
+    </button>
+    <button nz-button nzType="primary" nzSize="small" (click)="confirmSelection()">
+      {{ 'flow.icon.confirm_select' | translate }}
+    </button>
   </div>
 </div>

@@ -7,7 +7,7 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {I18NService, leaveReuseTab, setReuseTabTitle} from "@core";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
-import {AttachmentEnum, ChoiceEnum, DateEnum, EditType, FormSize, PagingType, Scene} from "../erupt/model/erupt.enum";
+import {AttachmentEnum, BoolEnum, ChoiceEnum, DateEnum, EditType, FormSize, PagingType, Scene} from "../erupt/model/erupt.enum";
 import {EruptBuildModel} from "../erupt/model/erupt-build.model";
 import {KV} from "../erupt/model/util.model";
 import {DataHandlerService} from "../erupt/service/data-handler.service";
@@ -45,6 +45,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
     ];
     readonly dateEnum = DateEnum;
     readonly choiceEnum = ChoiceEnum;
+    readonly boolEnum = BoolEnum;
     readonly attachmentEnum = AttachmentEnum;
     readonly Scene = Scene;
     readonly formSize = FormSize;
@@ -280,6 +281,10 @@ export class DesignerComponent implements OnInit, OnDestroy {
                 e.checkboxType.id = "id";
                 e.checkboxType.label = undefined;
             }
+            if (e.transferType) {
+                e.transferType.id = "id";
+                e.transferType.label = undefined;
+            }
         }
     }
 
@@ -293,6 +298,9 @@ export class DesignerComponent implements OnInit, OnDestroy {
         }
         if (e.type === EditType.CHECKBOX) {
             e.checkboxType = e.checkboxType || {};
+        }
+        if (e.type === EditType.TRANSFER) {
+            e.transferType = e.transferType || {};
         }
         if (e.type === EditType.TEXTAREA) {
             e.textareaType = e.textareaType || {};
@@ -583,9 +591,9 @@ export class DesignerComponent implements OnInit, OnDestroy {
     // aligned with edit-type render rules: these types are always full-width
     private static readonly FULL_LINE_TYPES = new Set<EditType>([
         EditType.DIVIDE, EditType.GROUP, EditType.CALLOUT, EditType.COMBINE, EditType.TEXTAREA, EditType.MARKDOWN,
-        EditType.TAGS, EditType.CHECKBOX, EditType.ATTACHMENT, EditType.HTML_EDITOR, EditType.MAP,
+        EditType.TAGS, EditType.CHECKBOX, EditType.TRANSFER, EditType.ATTACHMENT, EditType.HTML_EDITOR, EditType.MAP,
         EditType.CODE_EDITOR, EditType.SIGNATURE, EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE,
-        EditType.TPL, EditType.MULTI_FORM
+        EditType.TPL, EditType.MULTI_FORM, EditType.KEY_VALUE
     ]);
 
     // whether a canvas field occupies a full row: FULL_LINE form size, naturally full-width types, or INPUT with fullSpan
@@ -602,7 +610,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
 
     // only reference-type components require a linked model config
     private static readonly LINK_TYPES = new Set<EditType>([
-        EditType.REFERENCE_TABLE, EditType.REFERENCE_TREE, EditType.CHECKBOX,
+        EditType.REFERENCE_TABLE, EditType.REFERENCE_TREE, EditType.CHECKBOX, EditType.TRANSFER,
         EditType.TAB_TABLE_ADD, EditType.TAB_TABLE_REFER, EditType.TAB_TREE, EditType.COMBINE, EditType.MULTI_FORM
     ]);
 
@@ -660,7 +668,8 @@ export class DesignerComponent implements OnInit, OnDestroy {
                 && (!e.referenceTableType?.id || !e.referenceTableType?.label)
                 || (e.type === EditType.REFERENCE_TREE || e.type === EditType.TAB_TREE)
                 && (!e.referenceTreeType?.id || !e.referenceTreeType?.label)
-                || e.type === EditType.CHECKBOX && (!e.checkboxType?.id || !e.checkboxType?.label);
+                || e.type === EditType.CHECKBOX && (!e.checkboxType?.id || !e.checkboxType?.label)
+                || e.type === EditType.TRANSFER && (!e.transferType?.id || !e.transferType?.label);
             if (missingRefField) {
                 this.msg.warning(this.i18n.fanyi("designer.ref_field_required") + ": " + field.edit.title);
                 this.select(field);

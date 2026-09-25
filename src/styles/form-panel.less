@@ -1,0 +1,74 @@
+// Record form panel: one nz-modal, three presentations (FormPanelMode, see FormModalService).
+// Width / top / mask are bound inline by the service; the wrap class owns the rest.
+.erupt-form-panel {
+    &--full,
+    &--side {
+        overflow: hidden;
+
+        .ant-modal {
+            height: 100%;
+            // drop any drag offset left over from the centered form; also disables the zoom-in
+            transform: none !important;
+        }
+
+        .ant-modal-content {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border-radius: 0;
+        }
+
+        .ant-modal-body {
+            flex: 1;
+            min-height: 0;
+            overflow: auto;
+        }
+    }
+
+    &--side .ant-modal-content {
+        box-shadow: -6px 0 16px rgba(0, 0, 0, 0.08);
+    }
+
+    // Resize handle: the form body is nz-resizable, but the grip must span the whole panel
+    // edge, so the body stays static and the handle positions against .ant-modal-content.
+    &--side {
+        .ant-modal-body {
+            position: static;
+        }
+
+        .erupt-form-body {
+            position: static !important;
+        }
+
+        .nz-resizable-handle-left {
+            left: -5px;
+            z-index: 2;
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 4px;
+                width: 2px;
+                background: var(--ant-primary-color);
+                opacity: 0;
+                transition: opacity 0.2s;
+            }
+
+            &:hover::after,
+            .nz-resizable-resizing &::after {
+                opacity: 1;
+            }
+        }
+    }
+
+    // read-only side panel: the list behind stays clickable so records can be switched
+    &--passthrough {
+        pointer-events: none;
+
+        .ant-modal {
+            pointer-events: auto;
+        }
+    }
+}

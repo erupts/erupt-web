@@ -1,0 +1,469 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.erupt-comments {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: var(--erupt-bg-layout, #f5f5f5);
+
+    &__list {
+        flex: 1;
+        min-height: 0;
+        overflow: auto;
+        padding: 16px 16px 8px;
+        scroll-behavior: smooth;
+    }
+
+    &__skeleton {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 8px 4px;
+    }
+
+    // ---- empty state ----
+    &__empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        min-height: 220px;
+        text-align: center;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+
+        > .anticon {
+            font-size: 40px;
+            color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
+            margin-bottom: 12px;
+        }
+    }
+
+    &__empty-title {
+        font-size: 14px;
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+    }
+
+    &__empty-hint {
+        margin-top: 4px;
+        font-size: 12px;
+    }
+
+    // ---- composer ----
+    &__composer {
+        flex-shrink: 0;
+        padding: 12px 16px 14px;
+        background: var(--erupt-bg-container, #fff);
+        border-top: 1px solid var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
+    }
+
+    &__replying {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        padding: 6px 10px;
+        font-size: 12px;
+        line-height: 18px;
+        border-radius: 6px;
+        background: var(--ant-primary-1, #e6f4ff);
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+    }
+
+    &__replying-icon {
+        color: var(--ant-primary-color);
+        transform: scaleX(-1);
+    }
+
+    &__replying-text {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        gap: 4px;
+        white-space: nowrap;
+
+        b {
+            color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+        }
+    }
+
+    &__replying-quote {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+
+        &::before {
+            content: "“";
+        }
+
+        &::after {
+            content: "”";
+        }
+    }
+
+    &__replying-close {
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+
+        &:hover {
+            color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+        }
+    }
+
+    &__box {
+        border: 1px solid var(--erupt-border, #d9d9d9);
+        border-radius: 8px;
+        background: var(--erupt-bg-container, #fff);
+        transition: border-color 0.2s, box-shadow 0.2s;
+
+        &:focus-within {
+            border-color: var(--ant-primary-color);
+            box-shadow: 0 0 0 2px var(--ant-primary-1, rgba(22, 119, 255, 0.12));
+        }
+
+        textarea {
+            padding: 8px 12px 4px;
+            font-size: 13px;
+            line-height: 1.6;
+            resize: none;
+            background: transparent;
+        }
+    }
+
+    &__bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 4px 8px 8px 12px;
+    }
+
+    &__hint {
+        font-size: 11px;
+        color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
+
+        kbd {
+            display: inline-block;
+            padding: 0 4px;
+            font-family: inherit;
+            font-size: 11px;
+            line-height: 16px;
+            border: 1px solid var(--erupt-fill-secondary, rgba(0, 0, 0, 0.1));
+            border-bottom-width: 2px;
+            border-radius: 3px;
+            background: var(--erupt-bg-layout, #fafafa);
+        }
+    }
+}
+
+// ---- threads ----
+.erupt-thread {
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: var(--erupt-bg-container, #fff);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+    & + & {
+        margin-top: 10px;
+    }
+
+    &__replies {
+        margin: 10px 0 0 14px;
+        padding-left: 14px;
+        border-left: 2px solid var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
+
+        .erupt-comment + .erupt-comment {
+            margin-top: 10px;
+        }
+
+        .erupt-comment__avatar {
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            font-size: 11px;
+        }
+    }
+}
+
+.erupt-comment {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+
+    &__avatar {
+        flex-shrink: 0;
+        color: #fff;
+    }
+
+    &__body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__meta {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        line-height: 20px;
+    }
+
+    &__name {
+        font-weight: 500;
+        color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__me {
+        flex-shrink: 0;
+        padding: 0 5px;
+        font-size: 10px;
+        line-height: 14px;
+        border-radius: 3px;
+        color: var(--ant-primary-color);
+        background: var(--ant-primary-1, #e6f4ff);
+    }
+
+    &__time {
+        flex-shrink: 0;
+        color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
+        font-variant-numeric: tabular-nums;
+    }
+
+    &__ops {
+        margin-left: auto;
+        display: inline-flex;
+        gap: 2px;
+        opacity: 0;
+        transition: opacity 0.15s;
+
+        a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+
+            &:hover {
+                color: var(--ant-primary-color);
+                background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.04));
+            }
+
+            .anticon-enter {
+                transform: scaleX(-1);
+            }
+        }
+
+        .erupt-comment__delete:hover {
+            color: var(--ant-error-color, #ff4d4f);
+        }
+    }
+
+    &:hover &__ops,
+    &:focus-within &__ops {
+        opacity: 1;
+    }
+
+    &__content {
+        margin-top: 2px;
+        font-size: 13px;
+        line-height: 1.65;
+        color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+}
+
+// touch devices have no hover: keep the actions visible
+@media (hover: none) {
+    .erupt-comment__ops {
+        opacity: 1;
+    }
+}
+
+// ---- thread flags: pinned / resolved ----
+.erupt-thread {
+    position: relative;
+
+    &--pinned {
+        border: 1px solid var(--ant-primary-3, #91caff);
+    }
+
+    &--resolved {
+        background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.02));
+        box-shadow: none;
+
+        .erupt-comment__content {
+            color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+        }
+    }
+
+    &--collapsed {
+        padding: 8px 12px;
+    }
+
+    &__flags {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 8px;
+    }
+
+    &__flag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 0 6px;
+        font-size: 11px;
+        line-height: 18px;
+        border-radius: 4px;
+
+        &--pinned {
+            color: var(--ant-primary-color);
+            background: var(--ant-primary-1, #e6f4ff);
+        }
+
+        &--resolved {
+            color: var(--ant-success-color, #52c41a);
+            background: rgba(82, 196, 26, 0.1);
+        }
+    }
+
+    // folded resolved thread: one line, click to open
+    &__summary {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        cursor: pointer;
+        font-size: 12px;
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+
+        .ant-avatar {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            font-size: 11px;
+            color: #fff;
+        }
+
+        > .anticon {
+            flex-shrink: 0;
+            color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
+        }
+
+        &:hover > .anticon {
+            color: var(--ant-primary-color);
+        }
+    }
+
+    &__summary-name {
+        flex-shrink: 0;
+        font-weight: 500;
+        color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+    }
+
+    &__summary-text {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__summary-count {
+        flex-shrink: 0;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+    }
+
+    &__toggle {
+        display: block;
+        margin-top: 6px;
+        text-align: center;
+        font-size: 12px;
+        color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
+
+        &:hover {
+            color: var(--ant-primary-color);
+        }
+    }
+}
+
+.erupt-comment {
+    &__ops .erupt-comment__op--on {
+        color: var(--ant-primary-color);
+    }
+
+    // highlighted @name inside the content
+    &__mention {
+        padding: 0 3px;
+        border-radius: 3px;
+        color: var(--ant-primary-color);
+        background: var(--ant-primary-1, #e6f4ff);
+        font-weight: 500;
+    }
+}
+
+// ---- @ completion popup, above the composer ----
+.erupt-comments__box {
+    position: relative;
+}
+
+.erupt-mention {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(100% + 6px);
+    max-height: 240px;
+    overflow: auto;
+    padding: 4px;
+    border-radius: 8px;
+    background: var(--erupt-bg-elevated, #fff);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12), 0 0 0 1px var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
+    z-index: 10;
+
+    &__status {
+        padding: 8px 12px;
+        font-size: 12px;
+        text-align: center;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 8px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+
+        .ant-avatar {
+            flex-shrink: 0;
+            width: 22px;
+            height: 22px;
+            line-height: 22px;
+            font-size: 11px;
+            color: #fff;
+        }
+
+        &--active {
+            background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
+        }
+    }
+
+    &__name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}

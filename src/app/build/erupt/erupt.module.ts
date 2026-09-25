@@ -19,6 +19,8 @@ import {EruptRoutingModule} from "./erupt-routing.module";
 import {TreeComponent} from "./view/tree/tree.component";
 import {TableViewComponent} from "./view/table-view/table-view.component";
 import {EditComponent} from "./view/edit/edit.component";
+import {FormModalService} from "./service/form-modal.service";
+import {RecordCommentComponent} from "./components/record-comment/record-comment.component";
 import {TableComponent} from './view/table/table.component';
 import {LayoutTreeComponent} from './view/layout-tree/layout-tree.component';
 import {FormViewComponent} from './view/form-view/form-view.component';
@@ -26,6 +28,8 @@ import {CodeEditorComponent} from './components/code-editor/code-editor.componen
 import {EruptUeditorComponent} from './components/ueditor/erupt-ueditor.component';
 import {TabTreeComponent} from './components/tab-tree/tab-tree.component';
 import {CheckboxComponent} from './components/checkbox/checkbox.component';
+import {TransferComponent} from './components/transfer/transfer.component';
+import {NzResizableModule} from 'ng-zorro-antd/resizable';
 import {SafeTemplateComponent} from './components/safe-template/safe-template.component';
 import {DateComponent} from './components/date/date.component';
 import {MarkdownComponent} from './components/markdown/markdown.component';
@@ -33,6 +37,7 @@ import {AiAssistComponent} from './components/ai-assist/ai-assist.component';
 import {UiBuildService} from "./service/ui-build.service";
 import {ChoiceComponent} from "./components/choice/choice.component";
 import {TagsComponent} from "./components/tags/tags.component";
+import {KeyValueComponent} from "./components/key-value/key-value.component";
 import {TextareaComponent} from "./components/textarea/textarea.component";
 import {CardComponent} from './vis/card/card.component';
 import {BoardComponent} from './vis/board/board.component';
@@ -64,6 +69,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
 
 @NgModule({
     imports: [
+        NzResizableModule,
         CommonModule,
         SharedModule,
         HttpClientModule,
@@ -92,7 +98,8 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
     ],
     providers: [
         DataHandlerService,
-        UiBuildService
+        UiBuildService,
+        FormModalService
     ],
     exports: [
         EditTypeComponent,
@@ -102,6 +109,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         SmartSearchComponent
     ],
     declarations: [
+        RecordCommentComponent,
         EditTypeComponent,
         PrintTypeComponent,
         TreeSelectComponent,
@@ -120,12 +128,14 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         EruptUeditorComponent,
         TabTreeComponent,
         CheckboxComponent,
+        TransferComponent,
         SafeTemplateComponent,
         DateComponent,
         MarkdownComponent,
         AiAssistComponent,
         ChoiceComponent,
         TagsComponent,
+        KeyValueComponent,
         TextareaComponent,
         CardComponent,
         BoardComponent,

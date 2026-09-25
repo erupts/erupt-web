@@ -60,7 +60,7 @@
                 }
                 <!-- MULTI_CHOICE -->
                 @case (editType.MULTI_CHOICE) {
-                    @if (field.eruptFieldJson.edit.multiChoiceType.type == multiChoiceEnum.CHECKBOX) {
+                    @if (field.eruptFieldJson.edit.multiChoiceType.type != multiChoiceEnum.SELECT) {
                         <div nz-col [nzXs]="24">
                             <sv [label]="field.eruptFieldJson.edit.title">
                                 {{ getDisplayValue(field) }}
@@ -79,7 +79,12 @@
                         {{ getDisplayValue(field) }}
                     </sv>
                 }
-                <!-- CHECKBOX -->
+                <!-- CHECKBOX / TRANSFER -->
+                @case (editType.TRANSFER) {
+                    <sv [label]="field.eruptFieldJson.edit.title" [col]="1">
+                        {{ getDisplayValue(field) }}
+                    </sv>
+                }
                 @case (editType.CHECKBOX) {
                     <sv [label]="field.eruptFieldJson.edit.title" [col]="1">
                         {{ getDisplayValue(field) }}

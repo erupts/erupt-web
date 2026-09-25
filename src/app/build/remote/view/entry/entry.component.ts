@@ -15,7 +15,7 @@ import {leaveReuseTab, setReuseTabTitle} from '@core';
     selector: 'app-remote-entry',
     template: `
         @if (protocol === 'SSH') {
-            <app-remote-ssh [hostId]="hostId" [hostName]="hostName" [initialTicket]="ticket"></app-remote-ssh>
+            <app-remote-ssh [hostId]="hostId" [hostName]="hostName" [initialTicket]="ticket" [fileTransfer]="fileTransfer"></app-remote-ssh>
         } @else if (protocol) {
             <app-remote-desktop [hostId]="hostId" [hostName]="hostName" [initialTicket]="ticket"></app-remote-desktop>
         } @else {
@@ -45,6 +45,7 @@ export class RemoteEntryComponent implements OnInit {
     hostId!: string;
     hostName = '';
     protocol = '';
+    fileTransfer = false;
     ticket = '';
     error = '';
 
@@ -70,6 +71,7 @@ export class RemoteEntryComponent implements OnInit {
                 setReuseTabTitle(this.reuseTab, this.route, this.hostName);
                 this.ticket = res.data.ticket;
                 this.protocol = res.data.protocol;
+                this.fileTransfer = !!res.data.fileTransfer;
             },
             error: () => this.error = 'Failed to obtain a session ticket'
         });

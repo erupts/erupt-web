@@ -1,25 +1,11 @@
 <div class="notice-container">
-  <!-- Header -->
-  <div class="notice-header">
-    <div class="header-title">
-      <span nz-icon nzType="bell" nzTheme="outline"></span>
-      <span class="title-text">{{ 'notice.center' | translate }}</span>
-    </div>
-    <div class="header-actions">
-      @if (selectedChannelIndex === 0 && notices.length > 0) {
-          <button nz-button
-                  nzType="link"
-                  nzSize="small"
-                  (click)="markAllAsRead()"
-                  class="read-all-btn">
-              {{ 'notice.readAll' | translate }}
-          </button>
-      }
-      <button nz-button nzType="text" nzSize="small" (click)="close()" class="close-btn">
-        <span nz-icon nzType="close"></span>
+  <erupt-drawer-header icon="bell" [title]="'notice.center' | translate">
+    @if (selectedChannelIndex === 0 && notices.length > 0) {
+      <button nz-button nzType="link" nzSize="small" (click)="markAllAsRead()">
+        {{ 'notice.readAll' | translate }}
       </button>
-    </div>
-  </div>
+    }
+  </erupt-drawer-header>
 
   <!-- Message list view -->
   <div class="notice-content">
@@ -70,31 +56,27 @@
       @if (selectedChannelIndex === 0) {
         @for (item of notices; track item) {
           <nz-list-item (click)="viewMessageDetail(item)" class="message-item">
-            <div style="width: 100%">
-              <div class="message-header">
-                <h3 class="message-title">
-                  <div style="display: flex;align-items: center;">
-                    @if (item.status == NoticeStatus.UNREAD) {
-                      <nz-badge nzStatus="error"></nz-badge>
-                    }
-                    <span>{{ item.noticeLog?.title }}</span>
-                    @if (item.noticeLog?.url) {
-                      <span nz-icon
-                        nzType="link"
-                        nzTheme="outline"
-                        (click)="openUrl(item.noticeLog.url, item.noticeLog.title || ''); $event.stopPropagation()"
-                        style="margin-left: 8px; cursor: pointer; color: var(--ant-primary-color);"
-                        nz-tooltip>
-                      </span>
-                    }
-                    <span style="font-size: .7em;margin-left: auto">
-                      {{ item.noticeLog?.createTime | date:'yyyy-MM-dd HH:mm:ss' }}
-                    </span>
-                  </div>
-                </h3>
+            <div class="message-body">
+              <div class="message-row">
+                @if (item.status == NoticeStatus.UNREAD) {
+                  <nz-badge nzStatus="error"></nz-badge>
+                }
+                <span class="message-title">{{ item.noticeLog?.title }}</span>
+                <span class="message-time">{{ item.noticeLog?.createTime | date:'yyyy-MM-dd HH:mm' }}</span>
               </div>
               @if (item.noticeLog?.content) {
                 <div class="rich-content-html message-content" [innerHTML]="item.noticeLog.content | safeHtml"></div>
+              }
+              @if (item.noticeLog?.noticeScene?.name || item.noticeLog?.url) {
+                <div class="message-footer">
+                  <span class="message-scene">{{ item.noticeLog?.noticeScene?.name }}</span>
+                  @if (item.noticeLog?.url) {
+                    <a class="message-link" (click)="openUrl(item.noticeLog.url); $event.stopPropagation()">
+                      <span nz-icon nzType="link" nzTheme="outline"></span>
+                      {{ 'notice.openLink' | translate }}
+                    </a>
+                  }
+                </div>
               }
             </div>
           </nz-list-item>
@@ -102,20 +84,11 @@
       } @else {
         @for (item of announcements; track item) {
           <nz-list-item (click)="viewAnnouncementDetail(item)" class="message-item">
-            <div style="width: 100%">
-              <div class="message-header">
-                <h3 class="message-title" style="margin: 4px 0;">
-                  <div style="display: flex;align-items: center;">
-                    <span>{{ item.title }}</span>
-                    <span style="font-size: .7em;margin-left: auto">
-                      {{ item.createTime | date:'yyyy-MM-dd HH:mm:ss' }}
-                    </span>
-                  </div>
-                </h3>
+            <div class="message-body">
+              <div class="message-row">
+                <span class="message-title">{{ item.title }}</span>
+                <span class="message-time">{{ item.createTime | date:'yyyy-MM-dd HH:mm' }}</span>
               </div>
-<!--              @if (item.content) {-->
-<!--                <div class="rich-content-html message-content" [innerHTML]="item.content | safeHtml"></div>-->
-<!--              }-->
             </div>
           </nz-list-item>
         }

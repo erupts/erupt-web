@@ -30,7 +30,7 @@
                                 <nz-collapse-panel [nzActive]="!divideCollapsed[field.fieldName]"
                                                    [nzHeader]="field.eruptFieldJson.edit.title"
                                                    (nzActiveChange)="divideCollapsed[field.fieldName] = !$event">
-                                    <div nz-row [nzGutter]="16">
+                                    <div nz-row [nzGutter]="16" class="group-fields">
                                         @for (gf of divideGroupFields.get(field.fieldName); track gf.fieldName) {
                                             @if (gf.eruptFieldJson.edit?.show && gf.eruptFieldJson.edit?.title) {
                                                 <ng-container [ngTemplateOutlet]="fieldRenderer"
@@ -294,6 +294,20 @@
                         </se>
                     </div>
                 }
+                @case (editType.ICON) {
+                    <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
+                         [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
+                        <se [label]="field.eruptFieldJson.edit.title"
+                            [required]="field.eruptFieldJson.edit.notNull"
+                            [optionalHelp]="field.eruptFieldJson.edit.desc">
+                            <erupt-icon-picker [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [name]="field.fieldName"
+                                               [size]="size"
+                                               [placeholder]="field.eruptFieldJson.edit.placeHolder"
+                                               [disabled]="isReadonly(field)"></erupt-icon-picker>
+                        </se>
+                    </div>
+                }
                 @case (editType.COLOR) {
                     <div nz-col [nzXs]="col.xs" [nzSm]="col.sm" [nzMd]="col.md"
                          [nzLg]="col.lg" [nzXl]="col.xl" [nzXXl]="col.xxl">
@@ -362,7 +376,7 @@
                     }
                 }
                 @case (editType.MULTI_CHOICE) {
-                    @if (field.eruptFieldJson.edit.multiChoiceType?.type === multiChoiceEnum.CHECKBOX) {
+                    @if (field.eruptFieldJson.edit.multiChoiceType?.type !== multiChoiceEnum.SELECT) {
                         <div nz-col [nzXs]="24">
                             <ng-container [ngTemplateOutlet]="multiChoiceSe"
                                           [ngTemplateOutletContext]="{$implicit: field}"></ng-container>
@@ -374,6 +388,15 @@
                                           [ngTemplateOutletContext]="{$implicit: field}"></ng-container>
                         </div>
                     }
+                }
+                @case (editType.KEY_VALUE) {
+                    <div nz-col [nzSpan]="24">
+                        <se [label]="field.eruptFieldJson.edit.title"
+                            [required]="field.eruptFieldJson.edit.notNull"
+                            [optionalHelp]="field.eruptFieldJson.edit.desc">
+                            <erupt-key-value [eruptField]="field" [size]="size" [readonly]="isReadonly(field)"></erupt-key-value>
+                        </se>
+                    </div>
                 }
                 @case (editType.TAGS) {
                     <div nz-col [nzSpan]="24">
@@ -395,6 +418,17 @@
                             <erupt-checkbox [eruptBuildModel]="eruptBuildModel" [onlyRead]="isReadonly(field)"
                                             [eruptParentName]="parentEruptName"
                                             [eruptFieldModel]="field" style="max-height: 20px"></erupt-checkbox>
+                        </se>
+                    </div>
+                }
+                @case (editType.TRANSFER) {
+                    <div nz-col [nzSpan]="24">
+                        <se [label]="field.eruptFieldJson.edit.title"
+                            [required]="field.eruptFieldJson.edit.notNull"
+                            [optionalHelp]="field.eruptFieldJson.edit.desc">
+                            <erupt-transfer [eruptBuildModel]="eruptBuildModel" [eruptFieldModel]="field"
+                                            [eruptParentName]="parentEruptName"
+                                            [disabled]="isReadonly(field)"></erupt-transfer>
                         </se>
                     </div>
                 }
@@ -475,25 +509,36 @@
                         <se [label]="field.eruptFieldJson.edit.title"
                             [required]="field.eruptFieldJson.edit.notNull"
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
-                            <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
-                                            [name]="field.fieldName" [nzSize]="size"
-                                            [nzDisabled]="isReadonly(field)"
-                                            class="erupt-input">
-                                <div nz-row>
-                                    <div nz-col [nzSpan]="12">
-                                        <label nz-radio [nzValue]="true"
-                                               class="ellipsis-radio stander-line-height">
-                                            {{ field.eruptFieldJson.edit.boolType.trueText | translate }}
-                                        </label>
-                                    </div>
-                                    <div nz-col [nzSpan]="12">
-                                        <label nz-radio [nzValue]="false"
-                                               class="ellipsis-radio stander-line-height">
-                                            {{ field.eruptFieldJson.edit.boolType.falseText | translate }}
-                                        </label>
-                                    </div>
+                            @if (isBoolSwitch(field)) {
+                                <div class="bool-switch stander-line-height">
+                                    <nz-switch [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                               [name]="field.fieldName"
+                                               [nzSize]="size === 'small' ? 'small' : 'default'"
+                                               [nzDisabled]="isReadonly(field)"
+                                               [nzCheckedChildren]="field.eruptFieldJson.edit.boolType.trueText | translate"
+                                               [nzUnCheckedChildren]="field.eruptFieldJson.edit.boolType.falseText | translate"></nz-switch>
                                 </div>
-                            </nz-radio-group>
+                            } @else {
+                                <nz-radio-group [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                                [name]="field.fieldName" [nzSize]="size"
+                                                [nzDisabled]="isReadonly(field)"
+                                                class="erupt-input">
+                                    <div nz-row>
+                                        <div nz-col [nzSpan]="12">
+                                            <label nz-radio [nzValue]="true"
+                                                   class="ellipsis-radio stander-line-height">
+                                                {{ field.eruptFieldJson.edit.boolType.trueText | translate }}
+                                            </label>
+                                        </div>
+                                        <div nz-col [nzSpan]="12">
+                                            <label nz-radio [nzValue]="false"
+                                                   class="ellipsis-radio stander-line-height">
+                                                {{ field.eruptFieldJson.edit.boolType.falseText | translate }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                </nz-radio-group>
+                            }
                         </se>
                     </div>
                 }
@@ -696,7 +741,7 @@
     </form>
 
     @if (tabErupts.length && (!formSteps || currentStep === steps.length - 1)) {
-        <nz-tabs [nzType]="'card'" style="margin-top: 5px">
+        <nz-tabs class="erupt-tab-panel">
             @for (item of tabErupts; track item) {
                 @if (eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.show) {
                     <nz-tab [nzTitle]="tabTitle"
@@ -729,7 +774,7 @@
                 <ng-template #tabTitle>
                     {{ eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.title }}
                     @if (eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.desc) {
-                        <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip
+                        <i nz-icon nzType="question-circle" nzTheme="outline" nz-tooltip class="erupt-tab-desc"
                            [nzTooltipTitle]="eruptModel.eruptFieldModelMap.get(item.key).eruptFieldJson.edit.desc"></i>
                     }
                 </ng-template>

@@ -2,7 +2,7 @@ import {Inject, Injectable} from "@angular/core";
 import {_HttpClient} from "@delon/theme";
 import {HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Announcement, LoginModel, NoticeChannel, NoticeMessageDetail, NoticeScene, Userinfo} from "../model/user.model";
+import {Announcement, LoginModel, MfaStatus, NoticeChannel, NoticeMessageDetail, NoticeScene, SsoProvider, Userinfo} from "../model/user.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
@@ -16,6 +16,7 @@ import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {R, SimplePage} from "@shared/model/api.model";
+import {MentionUser, RecordComment} from "../../build/erupt/model/record-comment.model";
 import {NoticeStatus} from "@shared/model/notice.model";
 
 @Injectable()
@@ -68,6 +69,13 @@ export class DataService {
             drillSourceErupt: drillInput.eruptParent,
             drillValue: drillInput.val
         }
+    }
+
+    // An avatar is either an absolute URL (SSO provider) or an uploaded path; only the latter goes through the attachment endpoint,
+    // so the session token never travels to a third-party host
+    static resolveAvatar(path: string): string {
+        if (!path) return null;
+        return /^https?:\/\//.test(path) ? path : DataService.previewAttachment(path);
     }
 
     static previewAttachment(path: string, download: boolean = false): string {
@@ -306,11 +314,13 @@ export class DataService {
     }
 
     //BUTTON component click, passes all current form values to the backend handler
-    execEruptButton(eruptName: string, field: string, formData: object): Observable<EruptApiModel> {
+    execEruptButton(eruptName: string, field: string, formData: object, eruptParentName?: string): Observable<EruptApiModel> {
         return this._http.post(RestPath.comp + "/button/" + eruptName + "/" + field, formData, null, {
             observe: "body",
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                // a button inside a nested form (a row operation dialog) is authorized by its host menu
+                eruptParent: eruptParentName || ''
             }
         });
     }
@@ -482,6 +492,49 @@ export class DataService {
         );
     }
 
+    //second step of a two factor login, exchanges the ticket for a session token
+    loginMfa(mfaTicket: string, code: string): Observable<LoginModel> {
+        return this._http.post(RestPath.erupt + "/login-mfa", {mfaTicket, code});
+    }
+
+    //single sign-on providers offered on the login page
+    ssoProviders(): Observable<SsoProvider[]> {
+        return this._http.get<SsoProvider[]>(RestPath.erupt + "/sso/providers");
+    }
+
+    //the callback redirect carries a one-time ticket, never the session token itself
+    ssoExchange(ssoTicket: string): Observable<LoginModel> {
+        return this._http.post(RestPath.erupt + "/sso/exchange", {ssoTicket});
+    }
+
+    //a full page navigation, the provider has to see the browser
+    static ssoAuthorizeUrl(code: string): string {
+        return RestPath.erupt + "/sso/authorize/" + encodeURIComponent(code);
+    }
+
+    mfaStatus(): Observable<MfaStatus> {
+        return this._http.get<MfaStatus>(RestPath.erupt + "/mfa/status");
+    }
+
+    mfaEnroll(): Observable<EruptApiModel> {
+        return this._http.post(RestPath.erupt + "/mfa/enroll", {});
+    }
+
+    mfaEnrollConfirm(code: string): Observable<EruptApiModel> {
+        return this._http.post(RestPath.erupt + "/mfa/enroll-confirm", {code});
+    }
+
+    mfaRecoveryCodes(code: string): Observable<EruptApiModel> {
+        return this._http.post(RestPath.erupt + "/mfa/recovery-codes", {code});
+    }
+
+    mfaUnbind(pwd: string, code: string): Observable<EruptApiModel> {
+        return this._http.post(RestPath.erupt + "/mfa/unbind", {
+            pwd: EruptAppData.get().pwdTransferEncrypt ? this.pwdEncode(pwd, 3) : pwd,
+            code
+        });
+    }
+
     tenantLogin(tenantCode: string, account: string, pwd: string, verifyCode?: any, verifyCodeMark?: any): Observable<LoginModel> {
         return this._http.post(RestPath.erupt + "/tenant/login", {
                 tenantCode, account, pwd, verifyCode,
@@ -517,6 +570,13 @@ export class DataService {
     }
 
 
+    //re-check the current user's password without issuing a new session (screen unlock)
+    verifyPwd(pwd: string): Observable<EruptApiModel> {
+        return this._http.post(RestPath.erupt + "/verify-pwd", {
+            pwd: EruptAppData.get().pwdTransferEncrypt ? this.pwdEncode(pwd, 3) : pwd
+        });
+    }
+
     changePwd(pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
         const encode = (p: string) => EruptAppData.get().pwdTransferEncrypt ? this.pwdEncode(p, 3) : p;
         return this._http.post(RestPath.erupt + "/change-pwd", {
@@ -534,6 +594,10 @@ export class DataService {
         return this._http.get<MenuVo[]>(RestPath.erupt + path, flush ? {flush: true} : null, {
             observe: "body"
         });
+    }
+
+    updateProfile(name: string, avatar: string): Observable<EruptApiModel> {
+        return this._http.post(RestPath.erupt + "/profile", {name, avatar});
     }
 
     userinfo(): Observable<Userinfo> {
@@ -658,6 +722,42 @@ export class DataService {
 
     printVars() {
         return this._http.get<R<VL[]>>(RestPath.erupt + "/print/vars");
+    }
+
+    // ---------- record comments (erupt-comment module) ----------
+
+    commentList(eruptName: string, id: any) {
+        return this._http.get<R<RecordComment[]>>(RestPath.comment + "/" + eruptName + "/" + encodeURIComponent(id), null, {
+            observe: "body", headers: {erupt: eruptName}
+        });
+    }
+
+    commentAdd(eruptName: string, id: any, content: string, parentId?: number, mentions?: number[]) {
+        return this._http.post<R<RecordComment>>(RestPath.comment + "/" + eruptName + "/" + encodeURIComponent(id),
+            {content, parentId, mentions}, null, {observe: "body", headers: {erupt: eruptName}});
+    }
+
+    // comment count per record id for the rows of one table page
+    commentCounts(eruptName: string, ids: any[]) {
+        return this._http.post<R<Record<string, number>>>(RestPath.comment + "/" + eruptName + "/counts",
+            ids.map(id => String(id)), null, {observe: "body", headers: {erupt: eruptName}});
+    }
+
+    commentMentionUsers(eruptName: string, keyword: string) {
+        return this._http.get<R<MentionUser[]>>(RestPath.comment + "/" + eruptName + "/mention-users", {keyword}, {
+            observe: "body", headers: {erupt: eruptName}
+        });
+    }
+
+    commentFlag(eruptName: string, id: any, commentId: number, flag: "resolved" | "pinned", value: boolean) {
+        return this._http.put(RestPath.comment + "/" + eruptName + "/" + encodeURIComponent(id)
+            + "/" + commentId + "/" + flag, null, {value}, {headers: {erupt: eruptName}}) as Observable<R<RecordComment>>;
+    }
+
+    commentDelete(eruptName: string, id: any, commentId: number) {
+        return this._http.delete<R<void>>(RestPath.comment + "/" + eruptName + "/" + encodeURIComponent(id) + "/" + commentId, null, {
+            observe: "body", headers: {erupt: eruptName}
+        });
     }
 
     printConfigList(eruptName: string) {

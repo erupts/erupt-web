@@ -1,5 +1,6 @@
 import {Direction, Directionality} from '@angular/cdk/bidi';
 import {StatusService} from "@shared/service/status.service";
+import {selectedTopMenu, topLevelMenus} from "@shared/model/erupt-menu";
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {DOCUMENT} from '@angular/common';
 import {
@@ -29,6 +30,10 @@ import type {NzSafeAny} from 'ng-zorro-antd/core/types';
 export interface Nav extends MenuInner {
     _needIcon?: boolean;
     _text?: SafeHtml;
+    // sidebar keyword filter: true hides the row (neither it nor a descendant matches)
+    _filtered?: boolean;
+    // open state before the filter forced the trail open, restored when it clears
+    _openBeforeFilter?: boolean;
 }
 
 const SHOWCLS = 'sidebar-nav__floating-show';
@@ -68,30 +73,75 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     @Input() recursivePath = true;
 
-    @Input()
-    set openStrictly(value: boolean) {
-        this.menuSrv.openStrictly = value;
-    }
-
     @Input() maxLevelIcon = 3;
 
     @Output() readonly select = new EventEmitter<Menu>();
 
-    static readonly MENU_ORDER_KEY = 'erupt_menu_order';
     static readonly FAVORITES_KEY = 'erupt_menu_favorites';
 
     favorites: Nav[] = [];
 
     splitTopItems: Nav[] = [];
 
-    get selectedTopItem(): Nav | null {
-        const key = this.settings.layout['splitMenuKey'];
-        if (!this.splitTopItems.length) return null;
-        if (key) {
-            const found = this.splitTopItems.find(i => (i.key === key || i.text === key) && !i['_hidden']);
-            if (found) return found;
+    // ── In-place keyword filter (sidebar utility bar) ─────────────────
+    // Rows that neither match nor contain a match are hidden; the trail above
+    // a match is opened so it is visible. A matching category keeps all of its
+    // children. Open states are snapshotted on the first keystroke and put back
+    // when the keyword is cleared, so filtering never rearranges the tree.
+    filterKeyword = '';
+
+    filterMatches = 0;
+
+    setFilter(keyword: string): void {
+        const kw = (keyword || '').trim().toLowerCase();
+        const wasFiltering = !!this.filterKeyword;
+        this.filterKeyword = kw;
+        if (!kw) {
+            this.menuSrv.visit(this.list, (i: Nav) => {
+                i._filtered = false;
+                if (wasFiltering && i._openBeforeFilter !== undefined) {
+                    i.open = i._openBeforeFilter;
+                    i._openBeforeFilter = undefined;
+                }
+            });
+            this.filterMatches = 0;
+            this.cdr.detectChanges();
+            return;
         }
-        return this.splitTopItems[0] ?? null;
+        let matches = 0;
+        const showAll = (items: Nav[]) => this.menuSrv.visit(items, (i: Nav) => i._filtered = false);
+        const mark = (items: Nav[]): boolean => {
+            let any = false;
+            for (const i of items) {
+                if (!wasFiltering) {
+                    i._openBeforeFilter = i.open;
+                }
+                const self = (i.text || '').toLowerCase().includes(kw);
+                const children = (i.children || []) as Nav[];
+                const inChildren = children.length ? mark(children) : false;
+                if (self && children.length) {
+                    showAll(children);
+                }
+                i._filtered = !(self || inChildren);
+                if (inChildren) {
+                    i.open = true;
+                }
+                if (!i._filtered) {
+                    any = true;
+                }
+                if (self && !children.length) {
+                    matches++;
+                }
+            }
+            return any;
+        };
+        mark(this.list);
+        this.filterMatches = matches;
+        this.cdr.detectChanges();
+    }
+
+    get selectedTopItem(): Nav | null {
+        return selectedTopMenu(this.splitTopItems, this.settings.layout) as Nav | null;
     }
 
     get collapsed(): boolean {
@@ -106,14 +156,26 @@ export class MenuComponent implements OnInit, OnDestroy {
         return !!this.settings.layout['dualMenu'];
     }
 
+    // Labels under the dual-mode rail icons. Off by default (icon-only rail);
+    // only an explicit true shows them.
+    get dualRailText(): boolean {
+        return this.settings.layout['dualRailText'] === true;
+    }
+
+    get groupMenu(): boolean {
+        return !!this.settings.layout['groupMenu'];
+    }
+
+    get topSplitMenu(): boolean {
+        return !!this.settings.layout['topSplitMenu'];
+    }
+
     private computeSplitItems(): void {
-        this.splitTopItems = this.list.flatMap(g =>
-            (g.children as Nav[] || []).filter((i: Nav) => !i['_hidden'])
-        );
+        this.splitTopItems = topLevelMenus(this.list) as Nav[];
     }
 
     private autoSelectTopItem(): void {
-        if ((!this.splitMenu && !this.dualMenu) || !this.splitTopItems.length) return;
+        if ((!this.splitMenu && !this.dualMenu && !this.topSplitMenu) || !this.splitTopItems.length) return;
         const active = this.splitTopItems.find(i => i['_open'] || i['_selected']);
         if (active) {
             const key = active.key || active.text;
@@ -294,12 +356,15 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     private openByUrl(url: string | null): void {
         const {menuSrv, recursivePath} = this;
-        this.menuSrv.open(menuSrv.find({url, recursive: recursivePath}));
+        menuSrv.open(menuSrv.find({url, recursive: recursivePath}));
     }
 
     ngOnInit(): void {
         const {doc, router, destroy$, menuSrv, settings, cdr} = this;
         this.bodyEl = doc.querySelector('body');
+        // Whole-tree drag sorting was removed: the menu follows the server order
+        // again. Drop the per-browser order older builds saved.
+        localStorage.removeItem('erupt_menu_order');
         menuSrv.change.pipe(takeUntil(destroy$)).subscribe(data => {
             menuSrv.visit(data, (i: Nav, _p, depth) => {
                 i._text = this.sanitizer.bypassSecurityTrustHtml(i.text!);
@@ -319,7 +384,6 @@ export class MenuComponent implements OnInit, OnDestroy {
             this.fixHide(data);
             this.loading = false;
             this.list = data.filter((w: Nav) => w._hidden !== true);
-            this.restoreMenuOrder();
             this.loadFavorites();
             this.computeSplitItems();
             this.autoSelectTopItem();
@@ -335,10 +399,13 @@ export class MenuComponent implements OnInit, OnDestroy {
         settings.notify
             .pipe(
                 takeUntil(destroy$),
-                filter(t => t.type === 'layout' && (t.name === 'collapsed' || t.name === 'splitMenu' || t.name === 'dualMenu' || t.name === 'splitMenuKey'))
+                filter(t => t.type === 'layout' && ['collapsed', 'splitMenu', 'dualMenu', 'dualRailText', 'groupMenu', 'topSplitMenu', 'splitMenuKey'].includes(t.name!))
             )
-            .subscribe(() => {
+            .subscribe(t => {
                 this.clearFloating();
+                // entering a category-tab mode: the header tab must show the active route
+                // (not on splitMenuKey itself, or a click on a header tab is undone at once)
+                if (t.name !== 'splitMenuKey') this.autoSelectTopItem();
                 cdr.detectChanges();
             });
         this.underPad();
@@ -406,56 +473,6 @@ export class MenuComponent implements OnInit, OnDestroy {
         moveItemInArray(this.favorites, event.previousIndex, event.currentIndex);
         this.saveFavorites();
         this.cdr.detectChanges();
-    }
-
-    // #endregion
-
-    // #region Drag & Drop
-
-    drop(event: CdkDragDrop<Nav[]>, siblings: Nav[]): void {
-        moveItemInArray(siblings, event.previousIndex, event.currentIndex);
-        this.saveMenuOrder();
-        this.cdr.detectChanges();
-    }
-
-    private saveMenuOrder(): void {
-        const order: Record<string, number> = {};
-        const collect = (items: Nav[], prefix: string) => {
-            items.forEach((item, idx) => {
-                const key = prefix + (item.text || item.link || idx);
-                order[key] = idx;
-                if (item.children?.length) {
-                    collect(item.children, key + '/');
-                }
-            });
-        };
-        collect(this.list, '');
-        localStorage.setItem(MenuComponent.MENU_ORDER_KEY, JSON.stringify(order));
-    }
-
-    private restoreMenuOrder(): void {
-        const raw = localStorage.getItem(MenuComponent.MENU_ORDER_KEY);
-        if (!raw) return;
-        try {
-            const order: Record<string, number> = JSON.parse(raw);
-            const sort = (items: Nav[], prefix: string) => {
-                items.sort((a, b) => {
-                    const ka = prefix + (a.text || a.link || '');
-                    const kb = prefix + (b.text || b.link || '');
-                    const oa = order[ka] ?? 999;
-                    const ob = order[kb] ?? 999;
-                    return oa - ob;
-                });
-                items.forEach((item, idx) => {
-                    const key = prefix + (item.text || item.link || idx);
-                    if (item.children?.length) {
-                        sort(item.children, key + '/');
-                    }
-                });
-            };
-            sort(this.list, '');
-        } catch {
-        }
     }
 
     // #endregion

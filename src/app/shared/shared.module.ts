@@ -9,6 +9,9 @@ import {SHARED_DELON_MODULES} from './shared-delon.module';
 import {SHARED_ZORRO_MODULES} from './shared-zorro.module';
 import {RipperDirective} from "@shared/directive/ripper.directive";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
+import {ResizableDrawerComponent} from "@shared/component/resizable-drawer.component";
+import {DrawerHeaderComponent} from "@shared/component/drawer-header.component";
+import {NzResizableModule} from "ng-zorro-antd/resizable";
 import {SafeHtmlPipe} from "@shared/pipe/safe-html.pipe";
 import {SafeScriptPipe} from "@shared/pipe/safe-script.pipe";
 import {SafeUrlPipe} from "@shared/pipe/safe-url.pipe";
@@ -19,6 +22,7 @@ import {NzAffixModule} from "ng-zorro-antd/affix";
 import {HeaderI18nComponent} from "@shared/component/i18n.component";
 import {EruptStorageService} from "@shared/service/erupt-storage.service";
 import {StProgressComponent} from "@shared/component/st-progress/st-progress.component";
+import {IconPickerComponent} from "@shared/component/icon-picker/icon-picker.component";
 import {STWidgetRegistry} from "@delon/abc/st";
 import {UEditorComponent} from "@shared/component/ueditor/ueditor.component";
 import {CkeditorComponent} from "../build/erupt/components/ckeditor/ckeditor.component";
@@ -33,14 +37,15 @@ import {EnumToArrayPipe} from "@shared/pipe/enum-array.pipe";
 import {KeysPipe} from "@shared/pipe/keys.pipe";
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {LocalPipe} from "@shared/pipe/local.pipe";
+import {AvatarPipe} from "@shared/pipe/avatar.pipe";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS: any[] = [EruptIframeComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent, CkeditorComponent, PageDescComponent];
-const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, EnumToArrayPipe, I18nPipe, LocalPipe, SyncVirtualScrollDirective, InjectorRefDirective, KeysPipe];
+const COMPONENTS: any[] = [EruptIframeComponent, ResizableDrawerComponent, DrawerHeaderComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent, CkeditorComponent, PageDescComponent, IconPickerComponent];
+const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, EnumToArrayPipe, I18nPipe, LocalPipe, AvatarPipe, SyncVirtualScrollDirective, InjectorRefDirective, KeysPipe];
 
 // #endregion
 
@@ -56,6 +61,7 @@ const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUr
         ...SHARED_ZORRO_MODULES,
         // third libs
         NzAffixModule,
+        NzResizableModule,
         DragDropModule
     ],
     providers: [

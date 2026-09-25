@@ -158,7 +158,10 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                         this.divideCollapsed[model.fieldName] = true;
                     }
                 }
-            } else if (currentDivide && model.eruptFieldJson.edit?.show && model.eruptFieldJson.edit?.title) {
+            } else if (currentDivide && model.eruptFieldJson.edit?.title) {
+                // membership follows declaration order alone: a field a @Dynamic rule hid in an
+                // earlier form still belongs to this divide, and would otherwise land in step 0
+                // the next time the rule shows it
                 this.divideGroupMap.set(model.fieldName, currentDivide);
             }
         }
@@ -219,7 +222,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             for (let k of Object.keys(vo.formData)) {
                 let eruptFieldModel: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(k);
                 if (eruptFieldModel) {
-                    eruptFieldModel.eruptFieldJson.edit.$value = vo.formData[k];
+                    // the handler returns stored values, the editors hold their own shapes
+                    this.dataHandlerService.objectToEruptFieldValue(eruptFieldModel, vo.formData);
                 }
             }
         }
@@ -301,7 +305,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     clickEruptButton(field: EruptFieldModel) {
         this.buttonLoading[field.fieldName] = true;
         let formData = this.dataHandlerService.eruptValueToObject(this.eruptBuildModel);
-        this.dataService.execEruptButton(this.eruptModel.eruptName, field.fieldName, formData).subscribe({
+        this.dataService.execEruptButton(this.eruptModel.eruptName, field.fieldName, formData, this.parentEruptName).subscribe({
             next: (res) => {
                 this.buttonLoading[field.fieldName] = false;
                 if (res.status === Status.SUCCESS) {
@@ -322,6 +326,10 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 this.buttonLoading[field.fieldName] = false;
             }
         });
+    }
+
+    isBoolSwitch(eruptFieldModel: EruptFieldModel): boolean {
+        return this.dataHandlerService.isBoolSwitch(eruptFieldModel.eruptFieldJson.edit);
     }
 
     isReadonly(eruptFieldModel: EruptFieldModel): boolean {

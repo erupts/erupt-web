@@ -169,6 +169,19 @@
                                     @case (editType.COLOR) {
                                         <div class="mock-color-block"></div>
                                     }
+                                    @case (editType.KEY_VALUE) {
+                                        <div class="mock-kv">
+                                            <input nz-input disabled [placeholder]="'key_value.key' | translate"/>
+                                            <span>=</span>
+                                            <input nz-input disabled [placeholder]="'key_value.value' | translate"/>
+                                        </div>
+                                    }
+                                    @case (editType.ICON) {
+                                        <nz-input-group nzSuffixIcon="appstore">
+                                            <input nz-input disabled
+                                                   [placeholder]="field.edit.placeHolder || ('icon_picker.placeholder' | translate)"/>
+                                        </nz-input-group>
+                                    }
                                     @case (editType.CHOICE) {
                                         @if (field.edit.choiceType?.type === choiceEnum.RADIO) {
                                             <nz-radio-group [ngModel]="null" nzDisabled>
@@ -212,6 +225,10 @@
                                             A</label>
                                         <label nz-checkbox nzDisabled>{{ 'designer.option_label' | translate }}
                                             B</label>
+                                    }
+                                    @case (editType.TRANSFER) {
+                                        <nz-select nzDisabled style="width: 100%"
+                                                   [nzPlaceHolder]="'designer.type.transfer' | translate"></nz-select>
                                     }
                                     @case (editType.HIDDEN) {
                                         <div class="mock-block">
@@ -290,6 +307,12 @@
                                 <label>{{ 'designer.field_desc' | translate }}</label>
                                 <input nz-input [(ngModel)]="selected.edit.desc"/>
                             </div>
+                            @if (selected.view) {
+                                <div class="prop-item">
+                                    <label>{{ 'designer.column_group' | translate }}</label>
+                                    <input nz-input [(ngModel)]="selected.view.group" (ngModelChange)="saveDraft()"/>
+                                </div>
+                            }
                             @if (needLink(selected.edit.type)) {
                                 <div class="prop-item">
                                     <label><span style="color:#ff4d4f">*</span> {{ 'designer.link_erupt' | translate }}</label>
@@ -415,6 +438,15 @@
                                     <div class="prop-item">
                                         <label>{{ 'designer.false_text' | translate }}</label>
                                         <input nz-input [(ngModel)]="selected.edit.boolType!.falseText"/>
+                                    </div>
+                                    <div class="prop-item">
+                                        <label>{{ 'designer.choice_style' | translate }}</label>
+                                        <nz-radio-group [(ngModel)]="selected.edit.boolType!.type"
+                                                        (ngModelChange)="saveDraft()" nzSize="small">
+                                            <label nz-radio-button [nzValue]="boolEnum.AUTO">AUTO</label>
+                                            <label nz-radio-button [nzValue]="boolEnum.RADIO">RADIO</label>
+                                            <label nz-radio-button [nzValue]="boolEnum.SWITCH">SWITCH</label>
+                                        </nz-radio-group>
                                     </div>
                                 }
                                 @case (editType.CHOICE) {
@@ -593,6 +625,30 @@
                                     <div class="prop-item">
                                         <label><span style="color:#ff4d4f">*</span> {{ 'designer.ref_label' | translate }}</label>
                                         <nz-select [(ngModel)]="selected.edit.checkboxType!.label"
+                                                   (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
+                                                   style="width:100%" [nzPlaceHolder]="'name'">
+                                            @for (f of linkedEruptFields; track f.key) {
+                                                <nz-option [nzValue]="f.key" [nzLabel]="f.value ? f.value + ' (' + f.key + ')' : f.key"></nz-option>
+                                            }
+                                        </nz-select>
+                                    </div>
+                                }
+                                @case (editType.TRANSFER) {
+                                    <nz-divider [nzText]="'designer.ref_config' | translate"
+                                                nzOrientation="left" nzPlain></nz-divider>
+                                    <div class="prop-item">
+                                        <label><span style="color:#ff4d4f">*</span> {{ 'designer.ref_id' | translate }}</label>
+                                        <nz-select [(ngModel)]="selected.edit.transferType!.id"
+                                                   (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
+                                                   style="width:100%" [nzPlaceHolder]="'id'">
+                                            @for (f of linkedEruptFields; track f.key) {
+                                                <nz-option [nzValue]="f.key" [nzLabel]="f.value ? f.value + ' (' + f.key + ')' : f.key"></nz-option>
+                                            }
+                                        </nz-select>
+                                    </div>
+                                    <div class="prop-item">
+                                        <label><span style="color:#ff4d4f">*</span> {{ 'designer.ref_label' | translate }}</label>
+                                        <nz-select [(ngModel)]="selected.edit.transferType!.label"
                                                    (ngModelChange)="saveDraft()" nzShowSearch nzAllowClear
                                                    style="width:100%" [nzPlaceHolder]="'name'">
                                             @for (f of linkedEruptFields; track f.key) {

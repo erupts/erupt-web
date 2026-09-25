@@ -21,3 +21,203 @@
 .overlay.light {
     background: rgba(21, 22, 27, 0.55);
 }
+
+.term-area {
+    display: flex;
+    gap: 8px;
+}
+
+.term-wrap {
+    flex: 1;
+    min-width: 0;
+}
+
+// ---------------------------------------------------------------- SFTP file panel
+
+.file-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 340px;
+    min-width: 260px;
+    max-width: 45%;
+    background: #1c1d22;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 12px;
+
+    &.drag-over {
+        border-color: #6cb2ff;
+    }
+}
+
+.fp-bar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+    &.actions {
+        gap: 6px;
+    }
+}
+
+.fp-path {
+    flex: 1;
+    min-width: 0;
+    height: 26px;
+    padding: 0 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    background: #15161b;
+    color: #d6d6d6;
+    font: inherit;
+    font-family: "JetBrains Mono", Menlo, Monaco, monospace;
+    outline: none;
+
+    &:focus {
+        border-color: #6cb2ff;
+    }
+}
+
+.fp-icon {
+    height: 26px;
+    min-width: 26px;
+    padding: 0 6px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: #b8b8bd;
+    font: inherit;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+        background: #3e3f45;
+        color: #fff;
+    }
+
+    &:disabled {
+        opacity: .3;
+        cursor: default;
+    }
+
+    &.danger:hover:not(:disabled) {
+        background: #ff5f57;
+    }
+}
+
+.fp-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 4px 0;
+}
+
+.fp-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 8px;
+    user-select: none;
+
+    &:hover {
+        background: #26272d;
+
+        .fp-ops { visibility: visible; }
+        .fp-size { display: none; }
+    }
+
+    &.dir .fp-name {
+        color: #8ac2ff;
+    }
+}
+
+.fp-ico {
+    width: 12px;
+    color: #7a7a80;
+    text-align: center;
+}
+
+.fp-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.fp-size {
+    color: #7a7a80;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.fp-ops {
+    display: inline-flex;
+    visibility: hidden;
+}
+
+.fp-confirm {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #ff8580;
+}
+
+.fp-msg {
+    padding: 24px 12px;
+    text-align: center;
+    color: #7a7a80;
+
+    &.error { color: #ff8580; }
+}
+
+.fp-uploads {
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.fp-upload {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 26px;
+    padding: 0 8px;
+
+    .fp-progress {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 2px;
+        background: #6cb2ff;
+        transition: width .2s;
+    }
+
+    &.done .fp-progress { background: #a2c95c; }
+    &.error { color: #ff8580; }
+    &.error .fp-progress { display: none; }
+}
+
+.fp-loading,
+.fp-drop {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(28, 29, 34, 0.7);
+    pointer-events: none;
+}
+
+.fp-drop {
+    color: #8ac2ff;
+    border: 2px dashed #6cb2ff;
+    border-radius: 8px;
+    background: rgba(108, 178, 255, 0.08);
+}

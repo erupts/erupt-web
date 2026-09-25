@@ -1,10 +1,10 @@
 <nz-spin [nzSpinning]="loading">
   @if (!editorError) {
-    <div style="background: #eee;">
-      <div id="toolbar-container"></div>
-      <div id="editor" [style.height.px]="height"
-           style="padding: 5px 10px;overflow-y: auto;background: #fff;border: 1px solid #c4c4c4;border-top: none">
-      </div>
+    <div class="erupt-ck" [class.erupt-ck-readonly]="readonly">
+      <!-- Hidden (not removed) in read-only mode: the toolbar element is appended here
+           once by the editor instance, and every command it drives is force-disabled. -->
+      <div id="toolbar-container" [hidden]="readonly"></div>
+      <div id="editor" [style.height.px]="height"></div>
     </div>
   }
   @if (editorError) {

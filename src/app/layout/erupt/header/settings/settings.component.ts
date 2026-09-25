@@ -7,17 +7,24 @@ import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {NzConfigService} from "ng-zorro-antd/core/config";
 import {TableSize} from "../../../../build/erupt/model/erupt.enum";
 import {WindowModel} from "@shared/model/window.model";
-import {MenuMode} from "@shared/model/erupt-menu";
+import {isHeaderMenuMode, MenuMode, menuModeFlags, menuModeOf} from "@shared/model/erupt-menu";
+import {FORM_PANEL_MODE_KEY, FormPanelMode, formPanelModeOf} from "@shared/model/form-panel";
 import {
     applyHeaderColor,
     applyThemeColor,
+    applyWorkspaceFrame,
+    WORKSPACE_FRAME_PRESETS,
     BRUTALIST_PRESET_COLORS,
-    DEFAULT_THEME_COLOR,
+    currentSkin,
+    resolveHeaderColor, resolveThemeColor,
+    savedWorkspaceFrame,
+    Skin,
+    switchSkin,
     THEME_PRESET_COLORS,
-    toHexColor
+    toHexColor,
+    WorkspaceFrame,
+    workspaceFrameGroups
 } from "@shared/util/theme.util";
-
-type Skin = 'default' | 'brutalist' | 'liquid-glass';
 
 @Component({
     standalone: false,
@@ -40,14 +47,43 @@ export class SettingsComponent implements OnInit {
     // Visual skin layered over the light/dark theme — at most one is active, so
     // it is a single choice rather than independent toggles. Reflects the class
     // index.html applied before bootstrap.
-    skin: Skin = document.documentElement.classList.contains("brutalist-theme")
-        ? "brutalist"
-        : document.documentElement.classList.contains("liquid-glass")
-            ? "liquid-glass"
-            : "default";
+    readonly Skin = Skin;
+
+    // Site config may lock the appearance (theme.customizable = false): the
+    // whole appearance group is then left out of the drawer.
+    readonly appearanceCustomizable: boolean = WindowModel.appearanceCustomizable();
+
+    skin: Skin = currentSkin();
 
     get brutalistTheme(): boolean {
-        return this.skin === "brutalist";
+        return this.skin === Skin.BRUTALIST;
+    }
+
+    // Workspace skin: the frame gradient. null = derived from the theme color
+    // (the site default, if one is configured, is applied by startup.service).
+    workspaceFrameGroups: { key: string; presets: WorkspaceFrame[] }[] = workspaceFrameGroups();
+
+    workspaceFrame: string | null = savedWorkspaceFrame();
+
+    // Swatch for the derived frame — the same mix as workspace.less, live
+    readonly autoWorkspaceFrame = "color-mix(in srgb, var(--ant-primary-color) 42%, #151a26)";
+
+    // A preset brings its accent along as the theme color, so the frame and the
+    // controls on the content card share one palette in a single click. Clearing
+    // the preset keeps the current theme color: the derived frame then follows it.
+    setWorkspaceFrame(key: string | null) {
+        this.workspaceFrame = key;
+        if (key) {
+            applyWorkspaceFrame(key);
+            const preset = WORKSPACE_FRAME_PRESETS.find(p => p.key === key);
+            if (preset) {
+                this.setThemeColor(preset.accent);
+            }
+        } else {
+            // clear the saved choice, then fall back to the site default
+            applyWorkspaceFrame(null);
+            applyWorkspaceFrame(WindowModel.theme?.workspaceFrame || null, false);
+        }
     }
 
     // Color scheme: light / dark / auto (follow the OS). index.html applied the
@@ -75,14 +111,25 @@ export class SettingsComponent implements OnInit {
         return this.brutalistTheme ? this.brutalistPresetColors : this.presetColors;
     }
 
-    themeColor: string = localStorage.getItem("theme-color") || WindowModel.theme?.primaryColor || DEFAULT_THEME_COLOR;
+    // The active skin's own color (the brutalist skin keeps a separate slot)
+    themeColor: string = resolveThemeColor();
 
     setThemeColor(color: string) {
         this.themeColor = applyThemeColor(this.nzConfigService, color);
+        this.refreshHeaderColor();
     }
 
     resetThemeColor() {
         this.themeColor = applyThemeColor(this.nzConfigService, null);
+        this.refreshHeaderColor();
+    }
+
+    // Re-resolve the top bar whenever what it follows can have changed: the
+    // theme color it may be tracking, or the skin that decides whether it
+    // tracks at all. The resolved theme color is passed explicitly because
+    // ng-zorro has not written --ant-primary-color yet at this point.
+    private refreshHeaderColor() {
+        applyHeaderColor(resolveHeaderColor(), toHexColor(this.themeColor));
     }
 
     // Header (top bar) color: "" = follow theme, "primary" = theme color, or a literal color.
@@ -107,8 +154,9 @@ export class SettingsComponent implements OnInit {
         } else {
             localStorage.removeItem("header-color");
         }
-        // Empty = back to the site default (theme.headerColor, or follow the theme)
-        applyHeaderColor(value || WindowModel.theme?.headerColor || null);
+        // Empty = back to the site default (theme.headerColor), then to whatever
+        // the active skin defaults to (the brutalist band follows the theme color)
+        this.refreshHeaderColor();
     }
 
     get themeColorHex(): string {
@@ -138,45 +186,57 @@ export class SettingsComponent implements OnInit {
         window["eruptApplyCompactTheme"](value);
     }
 
-    // Both flags are still written on every change: index.html reads them
-    // pre-bootstrap, and eruptSiteConfig.brutalistTheme / .liquidGlass remain
-    // the documented site-config switches, so the storage contract is unchanged.
+    // Entering the brutalist skin brings its own pastel accent (last one picked
+    // there, else signal yellow); leaving it restores the normal theme color.
     setSkin(value: Skin) {
         this.skin = value;
-        const root = document.documentElement;
-        root.classList.toggle("brutalist-theme", value === "brutalist");
-        root.classList.toggle("liquid-glass", value === "liquid-glass");
-        localStorage.setItem("brutalist-theme", String(value === "brutalist"));
-        localStorage.setItem("liquid-glass", String(value === "liquid-glass"));
+        this.themeColor = switchSkin(this.nzConfigService, value);
     }
 
     setLayout(name: string, value: any) {
         this.settingSrv.setLayout(name, value);
     }
 
-    // Menu layout mode radio: normal single-column, split (top-level tabs in the
-    // header), dual-column (first-level rail inside the sidebar) or top (whole
-    // menu in the header, no sidebar). Split and top modes take the header space,
-    // so they replace the breadcrumbs.
+    // How record forms open (FormPanelMode); the modal title bar changes it too, so read live.
+    readonly FormPanelMode = FormPanelMode;
+
+    get formPanelMode(): FormPanelMode {
+        return formPanelModeOf(this.settingSrv.layout);
+    }
+
+    setFormPanelMode(mode: FormPanelMode) {
+        this.settingSrv.setLayout(FORM_PANEL_MODE_KEY, mode);
+    }
+
+    // Menu layout mode radio (see MenuMode). Split and top modes take the header
+    // space, so they replace the breadcrumbs.
     readonly MenuMode = MenuMode;
 
     get menuMode(): MenuMode {
-        if (this.layout['splitMenu']) return MenuMode.SPLIT;
-        if (this.layout['dualMenu']) return MenuMode.DUAL;
-        if (this.layout['topMenu']) return MenuMode.TOP;
-        return MenuMode.NORMAL;
+        return menuModeOf(this.layout);
+    }
+
+    // Two-way bound by the dual-mode sub-switch. Stored as a layout flag, but
+    // the switch needs a real boolean: an unset flag means "never chosen", and
+    // the rail is icon-only by default, so it reads back as false.
+    get dualRailText(): boolean {
+        return this.layout['dualRailText'] === true;
+    }
+
+    set dualRailText(value: boolean) {
+        this.layout['dualRailText'] = value;
     }
 
     setMenuMode(mode: MenuMode) {
-        if (mode === MenuMode.SPLIT || mode === MenuMode.TOP) {
+        if (isHeaderMenuMode(mode)) {
             this.settingSrv.setLayout('breadcrumbs', false);
-        } else if (this.layout['splitMenu'] || this.layout['topMenu']) {
+        } else if (isHeaderMenuMode(this.menuMode)) {
             // restore breadcrumbs only when leaving a header-menu mode
             this.settingSrv.setLayout('breadcrumbs', true);
         }
-        this.settingSrv.setLayout('splitMenu', mode === MenuMode.SPLIT);
-        this.settingSrv.setLayout('dualMenu', mode === MenuMode.DUAL);
-        this.settingSrv.setLayout('topMenu', mode === MenuMode.TOP);
+        for (const [flag, on] of Object.entries(menuModeFlags(mode))) {
+            this.settingSrv.setLayout(flag, on);
+        }
     }
 
     toggleBreadcrumbs(value: boolean) {

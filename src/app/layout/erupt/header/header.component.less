@@ -24,6 +24,62 @@
         }
     }
 
+    // ── Top-split mode: second nav row hanging under the 44px header, on the
+    // content surface (not the header color) like a repository tab bar ──
+    .erupt-subnav {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        height: 40px;
+        padding: 0 12px;
+        display: flex;
+        align-items: center;
+        background: var(--erupt-bg-container, #fff);
+        border-bottom: 1px solid var(--ant-border-color-split);
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        &::-webkit-scrollbar { display: none; }
+    }
+
+    ::ng-deep .subnav-menu.ant-menu-horizontal {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        height: 40px;
+        line-height: 40px;
+        border-bottom: 0;
+        background: transparent;
+        font-size: 13px;
+
+        > .ant-menu-item,
+        > .ant-menu-submenu {
+            top: 0;
+            margin: 0;
+            padding: 0 12px;
+            white-space: nowrap;
+
+            &::after {
+                right: 12px;
+                left: 12px;
+            }
+        }
+
+        > .ant-menu-item-selected,
+        > .ant-menu-submenu-selected {
+            font-weight: 500;
+        }
+
+        > .ant-menu-submenu > .ant-menu-submenu-title {
+            padding: 0;
+        }
+
+        .top-nav-icon {
+            margin-right: 6px;
+        }
+    }
+
     // ── Top-menu mode: antd horizontal menu recolored to the header tokens ──
     // The <ul>/<li> are in this template; ng-zorro renders the submenu title
     // and the ::after underline, hence ::ng-deep for those parts.
@@ -226,11 +282,17 @@
             }
         }
 
+        // Brand block after the VitePress / vuejs.org nav: a small mark, a
+        // quiet medium-weight name, air around both, centred in the column.
+        // The mark is 24px tall and as wide as its proportions say, so a
+        // square mark and a banner both fit.
         .header-logo-img {
-            box-sizing: border-box;
-            vertical-align: top;
-            height: 44px;
-            padding: 5px 0;
+            flex: none;
+            display: block;
+            height: 24px;
+            width: auto;
+            max-width: 140px;
+            object-fit: contain;
         }
 
         .alain-default__header-logo {
@@ -248,25 +310,46 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
             height: 44px;
             padding: 0 6px;
         }
 
+        // Placeholder brand mark for the collapsed header, used when no logo
+        // was configured. The site's own initial in a framed square: it fills
+        // the slot without borrowing another product's mark.
+        .header-logo-mark {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border: 1.5px solid currentColor;
+            border-radius: 4px;
+            color: var(--erupt-header-text, #000);
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        // Brand name: the app's own sans at a medium weight, the size of the
+        // nav text rather than a headline, so the mark and the name read as
+        // one quiet unit (vuejs.org: 16px / 500 / 0.2px beside a 24px mark)
         .header-logo-text {
             color: var(--erupt-header-text, #000);
             line-height: 44px;
-            font-size: 1.8em;
-            letter-spacing: 2px;
-            margin-left: 6px;
-            font-family: 'Courier New', Arial, Helvetica, sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            flex: 0 1 auto;
             min-width: 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
 
             &--long {
-                font-size: 1.15em;
-                letter-spacing: 0;
+                font-size: 14px;
+                letter-spacing: 1.2px;
             }
         }
 
@@ -297,6 +380,8 @@
                 min-width: 0;
                 max-width: none;
                 padding: 0 10px;
+                // No sidebar edge to divide from: drop the logo/sidebar separator
+                border-right: none;
             }
 
             &.alain-default__collapsed .header-logo-text {
@@ -345,7 +430,8 @@
             }
 
             img {
-                width: 36px;
+                width: auto;
+                max-width: 36px;
             }
 
             @media (max-width: 767px) {
@@ -355,4 +441,52 @@
             }
         }
     }
+}
+
+// ── Websocket-pushed notice toast ─────────────────────────────────────
+// Rendered in the notification overlay, so these rules sit outside :host
+// (the template is declared here, so it still carries this component's scope).
+.notice-push {
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--erupt-text, rgba(0, 0, 0, 0.88));
+
+        [nz-icon] {
+            color: var(--ant-primary-color);
+        }
+    }
+
+    &__content {
+        margin-top: 6px;
+        max-height: 120px;
+        overflow: auto;
+        font-size: 13px;
+        line-height: 1.6;
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+        word-break: break-word;
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 4px;
+
+        button {
+            padding: 0;
+
+            [nz-icon] {
+                font-size: 11px;
+            }
+        }
+    }
+}
+
+// Avatar dropdown (renders in the cdk overlay): the menu sizes to its longest label
+// so a translated entry plus its badge stays on one line instead of wrapping
+::ng-deep .header-user-menu .ant-dropdown-menu-item {
+    white-space: nowrap;
 }

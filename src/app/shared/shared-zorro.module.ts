@@ -39,6 +39,7 @@ import {NzSkeletonModule} from "ng-zorro-antd/skeleton";
 import {NzCarouselModule} from "ng-zorro-antd/carousel";
 import {NzTransferModule} from "ng-zorro-antd/transfer";
 import {NzMentionModule} from "ng-zorro-antd/mention";
+import {NzQRCodeModule} from "ng-zorro-antd/qr-code";
 import {NzStepsModule} from "ng-zorro-antd/steps";
 import {NzColorPickerModule} from "ng-zorro-antd/color-picker";
 
@@ -84,6 +85,7 @@ export const SHARED_ZORRO_MODULES = [
     NzBreadCrumbModule,
     NzTransferModule,
     NzMentionModule,
+    NzQRCodeModule,
     NzStepsModule,
     NzColorPickerModule
 ];

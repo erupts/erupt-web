@@ -1,4 +1,5 @@
-import {Component, Inject, Input, NgZone, OnDestroy, OnInit} from "@angular/core";
+import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
+import {AfterViewInit, Component, Inject, Input, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {Menu, MenuInner, MenuService, SettingsService} from "@delon/theme";
 import {Subject, takeUntil} from "rxjs";
 import screenfull from 'screenfull';
@@ -6,7 +7,7 @@ import {CustomerTool, WindowModel} from "@shared/model/window.model";
 import {Router} from "@angular/router";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {HeaderSearchComponent} from "./components/search.component";
-import {MenuVo} from "@shared/model/erupt-menu";
+import {MenuVo, selectedTopMenu, topLevelMenus} from "@shared/model/erupt-menu";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {EruptTenantInfoData} from "../../../build/erupt/model/erupt-tenant";
 import {DataService} from "@shared/service/data.service";
@@ -14,9 +15,18 @@ import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {NoticeComponent} from "../component/notice/notice.component";
 import {UtilsService} from "@shared/service/utils.service";
-import {NzNotificationService} from "ng-zorro-antd/notification";
+import {NzNotificationComponent, NzNotificationService} from "ng-zorro-antd/notification";
 import {AnnouncementDetailComponent} from "../component/announcement-detail/announcement-detail.component";
+import {NoticeDetailComponent} from "../component/notice-detail/notice-detail.component";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
+import {I18NService} from "@core";
+
+/** Payload of a notice pushed over the websocket. */
+export interface NoticePush {
+    id: number;
+    title: string;
+    content: string;
+}
 
 @Component({
     standalone: false,
@@ -26,9 +36,11 @@ import {ReuseTabService} from "@delon/abc/reuse-tab";
         "./header.component.less"
     ]
 })
-export class HeaderComponent implements OnInit, OnDestroy {
+export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     @Input() menu: MenuVo[];
+
+    @ViewChild("noticeTpl", {static: true}) noticeTpl: TemplateRef<{ $implicit: NzNotificationComponent; data: NoticePush }>;
 
     private destroy$ = new Subject<void>();
 
@@ -36,6 +48,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     get splitMenu(): boolean {
         return !!this.settings.layout['splitMenu'];
+    }
+
+    // ── Top-split mode: first-level tabs in the header (same tabs as split mode),
+    // the selected category's children in a sub-nav row under the header ──
+    get topSplitMenu(): boolean {
+        return !!this.settings.layout['topSplitMenu'];
+    }
+
+    // Category whose children fill the sidebar (split) or the sub-nav row (top-split):
+    // the persisted splitMenuKey, else the first one.
+    get selectedTopItem(): Menu | null {
+        return selectedTopMenu(this.splitTopItems, this.settings.layout);
     }
 
     isActiveSplitItem(item: Menu): boolean {
@@ -95,6 +119,26 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     logoText: string = WindowModel.logoText;
 
+    // Whether the brand block is actually standing over a collapsed sidebar.
+    // The header-menu layouts have no sidebar at all, so the persisted
+    // `collapsed` flag says nothing there and the block stays full width —
+    // mirrors the `alain-default__top-menu` condition in erupt.component.
+    get sidebarCollapsed(): boolean {
+        if (!this.settings.layout.collapsed) {
+            return false;
+        }
+        if (this.topMenu || this.topSplitMenu) {
+            return false;
+        }
+        return !(this.splitMenu && !this.selectedTopItem?.children?.length);
+    }
+
+    // Stands in for the collapsed brand mark when no logo was configured:
+    // the site's own first character, which is never another product's mark.
+    get logoInitial(): string {
+        return (this.logoText || WindowModel.title || "").trim().charAt(0).toUpperCase();
+    }
+
     r_tools: CustomerTool[] = WindowModel.r_tools;
 
     drawerVisible: boolean = false;
@@ -134,21 +178,31 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 private dataService: DataService,
                 private menuSrv: MenuService,
                 private utilsService: UtilsService,
+                private i18n: I18NService,
                 @Inject(NzDrawerService) private drawer: NzDrawerService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzNotificationService) private notification: NzNotificationService,
                 @Inject(ReuseTabService) private reuseTabSrv: ReuseTabService) {
-        if (this.tenantDomainInfo) {
-            if (this.tenantDomainInfo.logo) {
-                this.logoPath = DataService.previewAttachment(this.tenantDomainInfo.logo)
+        if (this.tenantDomainInfo && this.tenantDomainInfo.logo) {
+            this.logoPath = DataService.previewAttachment(this.tenantDomainInfo.logo);
+            // The tenant's logo is its own brand, so it also stands in for the
+            // collapsed mark; only an explicitly configured fold logo beats it.
+            if (!WindowModel.config["logoFoldPath"]) {
+                this.logoFoldPath = this.logoPath;
             }
         }
     }
 
+    // The browser chrome color (<meta name="theme-color">, owned by index.html) is read
+    // off the painted bar, which only exists from here on
+    ngAfterViewInit() {
+        window["eruptSyncThemeColor"]?.();
+    }
+
     ngOnInit() {
         this.menuSrv.change.pipe(takeUntil(this.destroy$)).subscribe(data => {
-            this.splitTopItems = data.flatMap(g => (g.children || []).filter(i => !i['_hidden']));
+            this.splitTopItems = topLevelMenus(data);
         });
         this.r_tools.forEach(tool => {
             tool.load && tool.load();
@@ -192,15 +246,28 @@ export class HeaderComponent implements OnInit, OnDestroy {
         })
     }
 
+    /** Pushed over the websocket by the backend notice channel (window.eruptNotice). */
     eruptNotice(id: number, title: string, content: string) {
         this.unreadCount++;
-        this.notification.create(
-            'blank',
-            title,
-            content, {
-                nzDuration: -1
-            }
-        );
+        this.notification.template(this.noticeTpl, {
+            nzDuration: -1,
+            nzData: {id, title, content}
+        });
+    }
+
+    /** Opens the pushed notice in the same detail modal the notice center uses; that read marks it read. */
+    viewPushedNotice(notice: NoticePush, toast: NzNotificationComponent) {
+        toast.close();
+        const ref = this.modal.create({
+            nzDraggable: true,
+            nzWrapClassName: "modal-lg",
+            nzTitle: notice.title,
+            nzBodyStyle: {padding: '0'},
+            nzFooter: null,
+            nzContent: NoticeDetailComponent
+        });
+        ref.componentInstance.messageId = notice.id;
+        ref.afterClose.subscribe(() => this.getNoticeUnreadCount());
     }
 
     renderTool(tool: CustomerTool): string {
@@ -220,12 +287,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
         // otherwise every async operation inside the drawer misses change detection.
         this.ngZone.run(() => {
             this.aiLoading = false;
-            this.drawer.create({
-                nzTitle: "AI Chat",
+            openResizableDrawer(this.drawer, {
+                nzTitle: null,
                 nzContent: AiChatComponent,
                 nzWidth: "520px",
                 nzMask: false,
-                nzClosable: true,
+                nzClosable: false,
                 nzKeyboard: true,
                 nzPlacement: "right",
                 nzBodyStyle: {
@@ -233,14 +300,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
                     overflow: "hidden"
                 },
                 nzContentParams: {
-                    embedded: true
+                    embedded: true,
+                    drawerTitle: this.i18n.fanyi('ai.chat.title')
                 }
-            });
+            }, "header-ai");
         });
     }
 
     openEruptNotice() {
-        this.drawer.create({
+        openResizableDrawer(this.drawer, {
             nzTitle: null,
             nzContent: NoticeComponent,
             nzWidth: "360px",
@@ -252,7 +320,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
             nzBodyStyle: {
                 padding: "0"
             },
-        }).afterClose.subscribe(res => {
+        }, "notice").afterClose.subscribe(res => {
             this.getNoticeUnreadCount();
         });
     }
@@ -315,6 +383,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+        // The bar is gone (e.g. back to the login page): let the chrome color follow whatever
+        // surface replaces it
+        window["eruptSyncThemeColor"]?.();
     }
 
 }

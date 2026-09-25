@@ -1,0 +1,256 @@
+/* Conversation panel: title header with icon actions (search expands in place), quiet grouped list, rows reveal actions on hover */
+@radius: 8px;
+@row-radius: 6px;
+@ctrl-h: 32px;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+}
+
+.conv-panel {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0 10px 8px;
+    gap: 6px;
+}
+
+/* ---- header: title + icon actions; the search field takes the title's place while open ---- */
+.conv-header {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 44px;
+    margin: 0 -10px;
+    padding: 0 8px 0 14px;
+    border-bottom: 1px solid var(--ant-border-color-split, #f0f0f0);
+}
+
+.conv-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--ant-text-color-secondary, #8c8c8c);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.conv-icon-btn {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    padding: 0 !important;
+    border-radius: @row-radius;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--ant-text-color-secondary, #8c8c8c);
+
+    &:hover {
+        color: var(--ant-text-color, #1f1f1f);
+        background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
+    }
+}
+
+.conv-new {
+    margin: 0 2px;
+
+    &:hover {
+        color: var(--ant-primary-color);
+        background: var(--ant-primary-1, #e6f4ff);
+    }
+}
+
+.conv-search {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    margin: 0 4px 0 -6px;
+    padding: 0 8px;
+    border-radius: @row-radius;
+    border: 1px solid var(--ant-primary-color);
+    background: var(--erupt-bg-container, #fff);
+    color: var(--ant-text-color-secondary, #bfbfbf);
+    cursor: text;
+    animation: conv-search-in 0.15s ease;
+
+    .conv-search-icon {
+        flex-shrink: 0;
+        font-size: 13px;
+        color: var(--ant-primary-color);
+    }
+
+    .conv-search-input {
+        flex: 1;
+        min-width: 0;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 13px;
+        color: var(--ant-text-color, #1f1f1f);
+
+        &::placeholder {
+            color: var(--ant-text-color-secondary, #bfbfbf);
+        }
+    }
+
+    .conv-search-clear {
+        flex-shrink: 0;
+        cursor: pointer;
+        font-size: 12px;
+        opacity: 0.45;
+        transition: opacity 0.15s ease;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+@keyframes conv-search-in {
+    from {
+        opacity: 0;
+        transform: translateX(6px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ---- grouped list ---- */
+.conv-list {
+    flex: 1;
+    min-height: 0;
+    margin: 0 -4px;
+    padding: 0 4px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+
+    &:hover {
+        scrollbar-color: var(--ant-border-color-base, #d9d9d9) transparent;
+    }
+}
+
+.conv-group-label {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: 10px 8px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: var(--ant-text-color-secondary, #8c8c8c);
+    background: var(--erupt-bg-spotlight, #fafafa);
+}
+
+.conv-group:first-child .conv-group-label {
+    padding-top: 2px;
+}
+
+.conv-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: @ctrl-h;
+    padding: 0 3px 0 8px;
+    margin-bottom: 1px;
+    border-radius: @row-radius;
+    cursor: pointer;
+    transition: background 0.15s ease;
+
+    .conv-item-title {
+        flex: 1;
+        min-width: 0;
+        font-size: 13px;
+        color: var(--ant-text-color-secondary, #595959);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transition: color 0.15s ease;
+    }
+
+    .conv-item-more {
+        width: 22px;
+        height: 22px;
+        opacity: 0;
+        transition: opacity 0.15s ease;
+    }
+
+    &:hover {
+        background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.04));
+
+        .conv-item-title {
+            color: var(--ant-text-color, #1f1f1f);
+        }
+
+        .conv-item-more {
+            opacity: 1;
+        }
+    }
+
+    &.active {
+        background: var(--ant-primary-1, #e6f4ff);
+
+        .conv-item-title {
+            color: var(--ant-primary-color);
+            font-weight: 500;
+        }
+
+        .conv-item-more {
+            opacity: 1;
+            color: var(--ant-primary-color);
+
+            &:hover {
+                background: var(--ant-primary-2, #bae0ff);
+            }
+        }
+    }
+}
+
+.conv-status {
+    display: flex;
+    justify-content: center;
+    padding: 12px 0;
+}
+
+.conv-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 48px 12px;
+    font-size: 12px;
+    color: var(--ant-text-color-secondary, #8c8c8c);
+
+    .anticon {
+        font-size: 24px;
+        opacity: 0.5;
+    }
+}
+
+/* Dropdown menu renders in the overlay container: keep the selector global */
+::ng-deep .conv-action-menu {
+    min-width: 120px;
+    border-radius: @radius;
+
+    .ant-dropdown-menu-item .anticon {
+        margin-right: 8px;
+    }
+}

@@ -45,6 +45,12 @@ export class ViewTypeComponent implements OnInit, AfterViewInit {
                     this.loading = false;
                 });
                 break
+            case ViewType.AVATAR:
+                // one picture, possibly a third-party URL from an SSO provider that must not carry the token
+                if (this.value) {
+                    this.paths.push(DataService.resolveAvatar(this.value));
+                }
+                break;
             case ViewType.ATTACHMENT_DIALOG:
             case ViewType.ATTACHMENT:
             case ViewType.DOWNLOAD:

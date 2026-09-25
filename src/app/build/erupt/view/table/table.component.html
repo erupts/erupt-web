@@ -302,7 +302,7 @@
                                     [style.border-color]="showAiPanel ? 'var(--ant-primary-color-hover)' : null"
                                     [style.color]="showAiPanel ? 'var(--ant-primary-color)' : null"
                                     (click)="toggleAiPanel()">
-                                <i nz-icon nzType="comment" nzTheme="outline"></i>
+                                <i nz-icon nzType="bulb" nzTheme="outline"></i>
                             </button>
                         }
                         <button nz-button nzSize="small"
@@ -530,12 +530,12 @@
     }
 }
 <ng-template #eruptTable>
-    <div [syncVirtualScroll]="dataPage.data.length >= 100 && !extraRows?.length && !dragSortField"
-         [class.erupt-drag-sort]="dragSortAllowed()">
-        <st #st resizable [loading]="dataPage.querying" [widthMode]="{strictBehavior:'truncate'}"
-            [body]="bodyTpl" [data]="dataPage.data" [columns]="columns"
+    <div [syncVirtualScroll]="dataPage.data.length >= 100 && !extraRows?.length && !dragSortField && !wrapCells"
+         [class.erupt-drag-sort]="dragSortAllowed()" [class.erupt-row-click-view]="rowClickViewEnabled">
+        <st #st resizable [loading]="dataPage.querying" [widthMode]="widthMode"
+            [body]="bodyTpl" [data]="dataPage.data" [columns]="stColumns"
             [drag]="dragSortAllowed() ? dragOptions : null"
-            [virtualScroll]="dataPage.data.length >= 100 && !extraRows?.length && !dragSortField"
+            [virtualScroll]="dataPage.data.length >= 100 && !extraRows?.length && !dragSortField && !wrapCells"
             [virtualItemSize]="47"
             [scroll]="{x: (clientWidth > 768 ? tableWidth : '0px'), y: tableScrollY}"
             (change)="tableDataChange($event)" [bordered]="settingSrv.layout['bordered']"
@@ -598,7 +598,7 @@
 </ng-template>
 <ng-template #cellEditTpl let-item let-col="column">
     <div class="erupt-cell" [class.erupt-cell-editable]="cellEditAllowed(item)"
-         [class.erupt-cell-center]="cellCentered(col)"
+         [class.erupt-cell-center]="cellCentered(col)" [class.erupt-cell-wrap]="wrapCells"
          (dblclick)="beginCellEdit(item, col, $event)">
         @switch (cellKind(col)) {
             @case ("bool") {
@@ -620,6 +620,14 @@
                     @if (cellDisplay(item, col)) {
                         <i class="fa fa-square erupt-cell-swatch" [style.color]="cellDisplay(item, col)"
                            aria-hidden="true"></i>
+                    }
+                </span>
+            }
+            @case ("icon") {
+                <span class="erupt-cell-text">
+                    @if (cellDisplay(item, col)) {
+                        <!-- a class binding, never markup: the stored value is a class list such as "fa fa-house icon-red" -->
+                        <i class="erupt-cell-fa" [class]="cellDisplay(item, col)" [title]="cellDisplay(item, col)" aria-hidden="true"></i>
                     }
                 </span>
             }

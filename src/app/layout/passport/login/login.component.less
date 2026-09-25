@@ -41,6 +41,118 @@
         padding: 26px 24px 30px;
     }
 
+    // ── Second factor ────────────────────────────────────────────
+    // The account is shown, never re-typed: the password step already passed.
+    .lf-mfa-account {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 18px;
+        font-size: 13px;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+
+        span {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    // ── Delegated sign-on ────────────────────────────────────────
+    // The buttons sit under the password form, never instead of it: an identity
+    // provider that is down must not lock the local accounts out.
+    .lf-sso {
+        margin-top: 18px;
+    }
+
+    .lf-sso-rule {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        font-size: 12px;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.38));
+
+        &::before,
+        &::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--erupt-fill, rgba(0, 0, 0, 0.09));
+        }
+    }
+
+    .lf-sso-list {
+        display: grid; // the column count is set inline from the provider count
+        gap: 10px;
+
+        &.lf-sso-compact {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+    }
+
+    .lf-sso-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        min-width: 0;
+        margin: 0 !important; // ant adds a left margin between sibling buttons, the grid gap already spaces them
+        overflow: hidden;
+
+        span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+
+    // three abreast leaves about 100px per button: trim the padding and type so a
+    // short name still fits, a long one gets an ellipsis and the tooltip
+    .lf-sso-list:not(.lf-sso-compact) .lf-sso-btn {
+        padding: 0 8px;
+        font-size: 14px;
+    }
+
+    .lf-sso-btn-round {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    // Shown while the ticket from the callback is being cashed in; the form is hidden
+    // meanwhile, there is nothing left for the user to fill in.
+    .lf-sso-pending {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 150px;
+        font-size: 13px;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+    }
+
+    ::ng-deep .lf-otp {
+        text-align: center;
+        font-size: 20px;
+        letter-spacing: 0.6em;
+        text-indent: 0.6em; // balance the trailing letter-spacing so digits stay centred
+        font-variant-numeric: tabular-nums;
+
+        &.lf-otp-recovery {
+            font-size: 15px;
+            letter-spacing: 0.12em;
+            text-indent: 0.12em;
+        }
+    }
+
     ::ng-deep {
         input:-webkit-autofill,
         input:-webkit-autofill:hover,
@@ -209,6 +321,56 @@
         font-size: 13px;
         color: var(--lf-muted);
         line-height: 1.45;
+    }
+
+    .lf-mfa-account {
+        font-family: var(--lf-mono);
+        font-size: 12px;
+        color: var(--lf-ink);
+        border: 1.5px solid var(--lf-ink);
+        padding: 8px 10px;
+    }
+
+    ::ng-deep .lf-otp {
+        font-family: var(--lf-mono);
+        font-weight: 600;
+    }
+
+    .lf-sso-rule {
+        font-family: var(--lf-mono);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--lf-muted);
+
+        &::before,
+        &::after {
+            background: var(--lf-hair);
+        }
+    }
+
+    .lf-sso-btn {
+        border-radius: 0 !important;
+        border: 1.5px solid var(--lf-ink) !important;
+        background: var(--lf-paper, #fff) !important;
+        color: var(--lf-ink) !important;
+        font-family: var(--lf-mono);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        transition: box-shadow 0.15s;
+
+        &:not([disabled]):hover {
+            box-shadow: 3px 3px 0 var(--lf-ink);
+        }
+    }
+
+    .lf-sso-pending {
+        font-family: var(--lf-mono);
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--lf-ink);
     }
 
     .lf-body {
