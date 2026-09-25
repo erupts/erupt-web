@@ -2,19 +2,7 @@ import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, Vi
 import {ActivatedRoute, Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService} from "@shared/service/data.service";
-import {
-    Alert,
-    Drill,
-    DrillInput,
-    EruptModel,
-    FieldVisibility,
-    Page,
-    Power,
-    Row,
-    RowOperation,
-    Vis,
-    VisType
-} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, FieldVisibility, Page, Power, Row, RowOperation, Vis, VisType} from "../../model/erupt.model";
 
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -1512,7 +1500,7 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     clearCondition() {
-        this.dataHandler.emptyEruptValue({eruptModel: this.searchErupt});
+        this.dataHandler.emptyEruptValue({eruptModel: this.searchErupt}, true);
         this.dataHandler.resetSearchOperators(this.searchErupt);
         this.selectedSorts = [];
         this.query(1);

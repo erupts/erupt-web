@@ -723,7 +723,12 @@ export class DataHandlerService {
         }
     }
 
-    emptyEruptValue(eruptBuildModel: EruptBuildModel) {
+    /**
+     * Clear every editor. `search` marks the search form: there a boolean is a clearable
+     * filter (true / false / no filter), not a switch that has to submit something, so it is
+     * left empty instead of being pushed to false.
+     */
+    emptyEruptValue(eruptBuildModel: EruptBuildModel, search: boolean = false) {
         eruptBuildModel.eruptModel.eruptFieldModels.forEach(ef => {
             if (!ef.eruptFieldJson.edit) {
                 return;
@@ -750,7 +755,7 @@ export class DataHandlerService {
                     break;
                 case EditType.BOOLEAN:
                     // An untouched switch must still submit a value, otherwise notNull rejects the form
-                    if (this.isBoolSwitch(ef.eruptFieldJson.edit)) {
+                    if (!search && this.isBoolSwitch(ef.eruptFieldJson.edit)) {
                         ef.eruptFieldJson.edit.$value = false;
                     }
                     break;
@@ -767,7 +772,7 @@ export class DataHandlerService {
         for (let key in eruptBuildModel.combineErupts) {
             this.emptyEruptValue({
                 eruptModel: eruptBuildModel.combineErupts[key]
-            });
+            }, search);
         }
     }
 
