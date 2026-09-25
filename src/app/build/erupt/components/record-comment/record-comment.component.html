@@ -87,7 +87,7 @@
           @for (u of mentionOptions; track u.id; let i = $index) {
             <div class="erupt-mention__item" [class.erupt-mention__item--active]="i === mentionIndex"
                  (mousedown)="$event.preventDefault(); pickMention(u)" (mouseenter)="mentionIndex = i">
-              <nz-avatar nzSize="small" [nzSrc]="u.avatar" [nzText]="initial(u.name)"
+              <nz-avatar nzSize="small" [nzSrc]="u.avatar | avatar" [nzText]="initial(u.name)"
                          [style.background-color]="u.avatar ? null : avatarColor(u.name)"></nz-avatar>
               <span class="erupt-mention__name">{{u.name}}</span>
             </div>

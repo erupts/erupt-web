@@ -39,7 +39,7 @@
                     <div class="submitter-info-large">
                         <nz-avatar [nzText]="selectedInstance?.initiatorUser?.name?.substring(0,1)"
                                    [ngStyle]="{backgroundColor: getAvatarColor(selectedInstance?.initiatorUser?.name?.substring(0,1))}"
-                                   [nzSrc]="selectedInstance?.initiatorUser?.avatar"
+                                   [nzSrc]="selectedInstance?.initiatorUser?.avatar | avatar"
                                    nzSize="small"></nz-avatar>
                         <div class="submitter-details">
                             <span class="submitter-name-large">{{ selectedInstance?.initiatorUser?.name }}</span>
@@ -111,7 +111,7 @@
                                                                 @if (task.assigneeUser?.id) {
                                                                     <nz-avatar [nzText]="task?.assigneeUser?.name?.substring(0,1)"
                                                                                [ngStyle]="{backgroundColor: getAvatarColor(task?.assigneeUser?.name?.substring(0,1))}"
-                                                                               [nzSrc]="task?.assigneeUser.avatar||null"
+                                                                               [nzSrc]="task?.assigneeUser?.avatar | avatar"
                                                                                nzSize="small" class="mr-sm"></nz-avatar>
                                                                 }
                                                                 <span class="approval-name">{{ task.assigneeUser?.name || '-' }}</span>
@@ -120,7 +120,7 @@
                                                                     @if (task.parentTask.assigneeUser?.id) {
                                                                         <nz-avatar [nzText]="task.parentTask.assigneeUser?.name?.substring(0,1)"
                                                                                    [ngStyle]="{backgroundColor: getAvatarColor(task.parentTask.assigneeUser?.name?.substring(0,1))}"
-                                                                                   [nzSrc]="task.parentTask.assigneeUser.avatar||null"
+                                                                                   [nzSrc]="task.parentTask.assigneeUser?.avatar | avatar"
                                                                                    nzSize="small" class="mr-sm"></nz-avatar>
                                                                     }
                                                                     <span class="approval-name">{{ task.parentTask.assigneeUser?.name || '-' }}</span>
@@ -197,7 +197,7 @@
                                                     <div class="comment-user">
                                                         <nz-avatar [nzText]="comment.createUser?.name?.substring(0,1)"
                                                                    [ngStyle]="{backgroundColor: getAvatarColor(comment.createUser?.name?.substring(0,1))}"
-                                                                   [nzSrc]="comment.createUser.avatar||null"
+                                                                   [nzSrc]="comment.createUser?.avatar | avatar"
                                                                    nzSize="small"></nz-avatar>
                                                         <span class="comment-username">{{ comment.createUser?.name || '-' }}</span>
                                                     </div>
@@ -243,7 +243,7 @@
                                                             @if (history.createUser?.id) {
                                                                 <nz-avatar [nzText]="history.createUser?.name?.substring(0,1)"
                                                                            [ngStyle]="{backgroundColor: getAvatarColor(history.createUser?.name?.substring(0,1))}"
-                                                                           [nzSrc]="history.createUser.avatar || null"
+                                                                           [nzSrc]="history.createUser?.avatar | avatar"
                                                                            nzSize="small" class="mr-sm"></nz-avatar>
                                                             }
                                                             <span class="approval-name">{{ history.createUser?.name || '-' }}</span>

@@ -93,7 +93,7 @@
                                 <div class="submitter-info">
                                     <nz-avatar [nzText]="item?.initiatorUser?.name.substring(0,1)"
                                                [ngStyle]="{backgroundColor: getAvatarColor(item?.initiatorUser.name?.substring(0,1))}"
-                                               [nzSrc]="item?.initiatorUser?.avatar"
+                                               [nzSrc]="item?.initiatorUser?.avatar | avatar"
                                                nzSize="small"></nz-avatar>
                                     <span class="submitter-name">{{ item?.initiatorUser?.name }}</span>
                                 </div>
