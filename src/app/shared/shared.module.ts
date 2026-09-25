@@ -37,6 +37,7 @@ import {EnumToArrayPipe} from "@shared/pipe/enum-array.pipe";
 import {KeysPipe} from "@shared/pipe/keys.pipe";
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {LocalPipe} from "@shared/pipe/local.pipe";
+import {AvatarPipe} from "@shared/pipe/avatar.pipe";
 
 // #region third libs
 // import { NgxTinymceModule } from 'ngx-tinymce';
@@ -44,7 +45,7 @@ import {LocalPipe} from "@shared/pipe/local.pipe";
 
 // #region your componets & directives
 const COMPONENTS: any[] = [EruptIframeComponent, ResizableDrawerComponent, DrawerHeaderComponent, EruptMicroAppComponent, NavComponent, HeaderI18nComponent, StProgressComponent, UEditorComponent, CkeditorComponent, PageDescComponent, IconPickerComponent];
-const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, EnumToArrayPipe, I18nPipe, LocalPipe, SyncVirtualScrollDirective, InjectorRefDirective, KeysPipe];
+const DIRECTIVES: any[] = [RipperDirective, SafeHtmlPipe, SafeScriptPipe, SafeUrlPipe, EnumToArrayPipe, I18nPipe, LocalPipe, AvatarPipe, SyncVirtualScrollDirective, InjectorRefDirective, KeysPipe];
 
 // #endregion
 
