@@ -282,11 +282,17 @@
             }
         }
 
+        // Brand block after the VitePress / vuejs.org nav: a small mark, a
+        // quiet medium-weight name, air around both, centred in the column.
+        // The mark is 24px tall and as wide as its proportions say, so a
+        // square mark and a banner both fit.
         .header-logo-img {
-            box-sizing: border-box;
-            vertical-align: top;
-            height: 44px;
-            padding: 5px 0;
+            flex: none;
+            display: block;
+            height: 24px;
+            width: auto;
+            max-width: 140px;
+            object-fit: contain;
         }
 
         .alain-default__header-logo {
@@ -304,6 +310,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
             height: 44px;
             padding: 0 6px;
         }
@@ -315,8 +322,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 26px;
-            height: 26px;
+            width: 24px;
+            height: 24px;
             border: 1.5px solid currentColor;
             border-radius: 4px;
             color: var(--erupt-header-text, #000);
@@ -325,23 +332,24 @@
             line-height: 1;
         }
 
-        // Brand wordmark: the app's own sans, set bold and slightly tracked —
-        // no display face, so it sits with the rest of the bar and any script
+        // Brand name: the app's own sans at a medium weight, the size of the
+        // nav text rather than a headline, so the mark and the name read as
+        // one quiet unit (vuejs.org: 16px / 500 / 0.2px beside a 24px mark)
         .header-logo-text {
             color: var(--erupt-header-text, #000);
             line-height: 44px;
-            font-size: 19px;
+            font-size: 16px;
             font-weight: 700;
-            letter-spacing: 0.3px;
-            margin-left: 8px;
+            letter-spacing: 1.2px;
+            flex: 0 1 auto;
             min-width: 0;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
 
             &--long {
-                font-size: 15px;
-                letter-spacing: 0;
+                font-size: 14px;
+                letter-spacing: 1.2px;
             }
         }
 
@@ -422,7 +430,8 @@
             }
 
             img {
-                width: 36px;
+                width: auto;
+                max-width: 36px;
             }
 
             @media (max-width: 767px) {
