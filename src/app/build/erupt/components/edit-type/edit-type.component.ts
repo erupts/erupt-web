@@ -158,7 +158,10 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                         this.divideCollapsed[model.fieldName] = true;
                     }
                 }
-            } else if (currentDivide && model.eruptFieldJson.edit?.show && model.eruptFieldJson.edit?.title) {
+            } else if (currentDivide && model.eruptFieldJson.edit?.title) {
+                // membership follows declaration order alone: a field a @Dynamic rule hid in an
+                // earlier form still belongs to this divide, and would otherwise land in step 0
+                // the next time the rule shows it
                 this.divideGroupMap.set(model.fieldName, currentDivide);
             }
         }
