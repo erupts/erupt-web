@@ -45,7 +45,7 @@ window.eruptSiteConfig = {
         // formPanelMode: "center"  // "center" (floating dialog) | "side" (right panel) | "full" (fullscreen) — how record forms open
         // loginLayout: "center",   // login page layout: "center" (card on the artwork) | "cover" (form docked right) | "wide" (one wide card, brand left)
         //                          //   | "wallpaper" (full-screen picture, frosted card) | "poster" (headline brand, small card)
-        loginBackground: "https://oos.erupt.xyz/test/2026-09-20/login-bg-2.jpg", // login page picture, replaces the stock artwork in every layout ("wallpaper" adds the frosted card)
+        // loginBackground: "https://oos.erupt.xyz/test/2026-09-20/login-bg-2.jpg", // login page picture, replaces the stock artwork in every layout ("wallpaper" adds the frosted card)
     },
     r_tools: [{
         mobileHidden: true,
