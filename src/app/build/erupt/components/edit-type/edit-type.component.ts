@@ -219,7 +219,8 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             for (let k of Object.keys(vo.formData)) {
                 let eruptFieldModel: EruptFieldModel = this.eruptModel.eruptFieldModelMap.get(k);
                 if (eruptFieldModel) {
-                    eruptFieldModel.eruptFieldJson.edit.$value = vo.formData[k];
+                    // the handler returns stored values, the editors hold their own shapes
+                    this.dataHandlerService.objectToEruptFieldValue(eruptFieldModel, vo.formData);
                 }
             }
         }

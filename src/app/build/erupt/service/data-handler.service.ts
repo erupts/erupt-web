@@ -550,145 +550,7 @@ export class DataHandlerService {
     objectToEruptValue(object: any, eruptBuild: EruptBuildModel) {
         this.emptyEruptValue(eruptBuild);
         for (let field of eruptBuild.eruptModel.eruptFieldModels) {
-            const edit = field.eruptFieldJson.edit;
-            if (edit) {
-                switch (edit.type) {
-                    case EditType.INPUT:
-                        const inputType = edit.inputType;
-                        //handle prefix and suffix data
-                        if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
-                            if (isNotNull(object[field.fieldName])) {
-                                let str = String(object[field.fieldName]);
-                                for (let pre of inputType.prefix) {
-                                    if (str.startsWith(pre.value)) {
-                                        edit.inputType.prefixValue = pre.value;
-                                        str = str.substr(pre.value.length);
-                                        break;
-                                    }
-                                }
-                                for (let suf of inputType.suffix) {
-                                    if (str.endsWith(suf.value)) {
-                                        edit.inputType.suffixValue = suf.value;
-                                        str = str.substr(0, str.length - suf.value.length);
-                                        break;
-                                    }
-                                }
-                                edit.$value = str;
-                            }
-                        } else {
-                            edit.$value = object[field.fieldName];
-                        }
-                        break;
-                    case EditType.PASSWORD:
-                        edit.$value = object[field.fieldName];
-                        break;
-                    case EditType.DATE:
-                        if (object[field.fieldName]) {
-                            switch (edit.dateType.type) {
-                                case DateEnum.DATE_TIME:
-                                case DateEnum.DATE:
-                                    edit.$value = object[field.fieldName];
-                                    break;
-                                case DateEnum.TIME:
-                                    edit.$value = moment(object[field.fieldName], "HH:mm:ss").toDate();
-                                    break;
-                                case DateEnum.WEEK:
-                                    edit.$value = moment(object[field.fieldName], "yyyy-ww").toDate();
-                                    break;
-                                case DateEnum.MONTH:
-                                    edit.$value = moment(object[field.fieldName], "yyyy-MM").toDate();
-                                    break;
-                                case DateEnum.YEAR:
-                                    edit.$value = moment(object[field.fieldName], "yyyy").toDate();
-                                    break;
-                            }
-                        }
-                        break;
-                    case EditType.REFERENCE_TREE:
-                        if (object[field.fieldName]) {
-                            edit.$value = {
-                                id: object[field.fieldName][edit.referenceTreeType.id],
-                                label: object[field.fieldName][edit.referenceTreeType.label]
-                            };
-                        }
-                        break;
-                    case EditType.REFERENCE_TABLE:
-                        if (object[field.fieldName]) {
-                            edit.$value = {
-                                [edit.referenceTableType.id]: object[field.fieldName][edit.referenceTableType.id],
-                                [edit.referenceTableType.label]: object[field.fieldName][edit.referenceTableType.label]
-                            };
-                        }
-                        break;
-                    case EditType.TAB_TREE:
-                        if (!object[field.fieldName]) {
-                            edit.$value = [];
-                        } else {
-                            edit.$value = object[field.fieldName];
-                        }
-                        break;
-                    case EditType.ATTACHMENT:
-                        edit.$viewValue = [];
-                        if (object[field.fieldName]) {
-                            (<string>object[field.fieldName]).split(edit.attachmentType.fileSeparator)
-                                .forEach(str => {
-                                    (<NzUploadFile[]>edit.$viewValue).push({
-                                        uid: str,
-                                        name: str,
-                                        size: 1,
-                                        type: "",
-                                        url: DataService.previewAttachment(str),
-                                        response: {
-                                            data: str
-                                        }
-                                    });
-                                });
-                            edit.$value = object[field.fieldName];
-                        }
-                        break;
-                    case EditType.CHOICE:
-                        edit.$value = isNotNull(object[field.fieldName]) ? object[field.fieldName] + '' : null;
-                        break;
-                    case EditType.TAGS:
-                        if (object[field.fieldName]) {
-                            const raw = String(object[field.fieldName]);
-                            if (edit.tagsType.joinSeparator === '[]') {
-                                try {
-                                    edit.$value = JSON.parse(raw);
-                                } catch {
-                                    edit.$value = raw ? [raw] : [];
-                                }
-                            } else {
-                                edit.$value = raw.split(edit.tagsType.joinSeparator);
-                            }
-                        } else {
-                            edit.$value = [];
-                        }
-                        break;
-                    case EditType.CODE_EDITOR:
-                    case EditType.HTML_EDITOR:
-                        edit.$value = object[field.fieldName] || '';
-                        break;
-                    case EditType.TAB_TABLE_ADD:
-                    case EditType.TAB_TABLE_REFER:
-                        edit.$value = object[field.fieldName] || [];
-                        // edit.$value.forEach(val => this.objectToEruptValue(val, eruptBuild.tabErupts[field.fieldName]))
-                        break;
-                    case EditType.MULTI_FORM:
-                        edit.$value = object[field.fieldName] || [];
-                        edit.$tempValue = null;
-                        break;
-                    case EditType.BOOLEAN:
-                        // A switch cannot show null: legacy rows saved before the field became
-                        // required load as off and are submitted as false
-                        edit.$value = isNotNull(object[field.fieldName]) ? object[field.fieldName]
-                            : (this.isBoolSwitch(edit) ? false : null);
-                        break;
-                    default:
-                        edit.$value = object[field.fieldName];
-                        break;
-                }
-            }
+            this.objectToEruptFieldValue(field, object);
         }
         if (eruptBuild.combineErupts) {
             for (let key in eruptBuild.combineErupts) {
@@ -697,7 +559,151 @@ export class DataHandlerService {
                 }
             }
         }
+    }
 
+    // One field's stored value into the shape its editor holds: a tags string becomes an
+    // array, a choice becomes a string, a date string becomes a Date. Shared by loading a
+    // record and by an onchange handler populating part of the form, so both agree.
+    objectToEruptFieldValue(field: EruptFieldModel, object: any) {
+        const edit = field.eruptFieldJson.edit;
+        if (edit) {
+            switch (edit.type) {
+                case EditType.INPUT:
+                    const inputType = edit.inputType;
+                    //handle prefix and suffix data
+                    if (inputType.prefix.length > 0 || inputType.suffix.length > 0) {
+                        if (isNotNull(object[field.fieldName])) {
+                            let str = String(object[field.fieldName]);
+                            for (let pre of inputType.prefix) {
+                                if (str.startsWith(pre.value)) {
+                                    edit.inputType.prefixValue = pre.value;
+                                    str = str.substr(pre.value.length);
+                                    break;
+                                }
+                            }
+                            for (let suf of inputType.suffix) {
+                                if (str.endsWith(suf.value)) {
+                                    edit.inputType.suffixValue = suf.value;
+                                    str = str.substr(0, str.length - suf.value.length);
+                                    break;
+                                }
+                            }
+                            edit.$value = str;
+                        }
+                    } else {
+                        edit.$value = object[field.fieldName];
+                    }
+                    break;
+                case EditType.PASSWORD:
+                    edit.$value = object[field.fieldName];
+                    break;
+                case EditType.DATE:
+                    if (object[field.fieldName]) {
+                        switch (edit.dateType.type) {
+                            case DateEnum.DATE_TIME:
+                            case DateEnum.DATE:
+                                edit.$value = object[field.fieldName];
+                                break;
+                            case DateEnum.TIME:
+                                edit.$value = moment(object[field.fieldName], "HH:mm:ss").toDate();
+                                break;
+                            case DateEnum.WEEK:
+                                edit.$value = moment(object[field.fieldName], "yyyy-ww").toDate();
+                                break;
+                            case DateEnum.MONTH:
+                                edit.$value = moment(object[field.fieldName], "yyyy-MM").toDate();
+                                break;
+                            case DateEnum.YEAR:
+                                edit.$value = moment(object[field.fieldName], "yyyy").toDate();
+                                break;
+                        }
+                    }
+                    break;
+                case EditType.REFERENCE_TREE:
+                    if (object[field.fieldName]) {
+                        edit.$value = {
+                            id: object[field.fieldName][edit.referenceTreeType.id],
+                            label: object[field.fieldName][edit.referenceTreeType.label]
+                        };
+                    }
+                    break;
+                case EditType.REFERENCE_TABLE:
+                    if (object[field.fieldName]) {
+                        edit.$value = {
+                            [edit.referenceTableType.id]: object[field.fieldName][edit.referenceTableType.id],
+                            [edit.referenceTableType.label]: object[field.fieldName][edit.referenceTableType.label]
+                        };
+                    }
+                    break;
+                case EditType.TAB_TREE:
+                    if (!object[field.fieldName]) {
+                        edit.$value = [];
+                    } else {
+                        edit.$value = object[field.fieldName];
+                    }
+                    break;
+                case EditType.ATTACHMENT:
+                    edit.$viewValue = [];
+                    if (object[field.fieldName]) {
+                        (<string>object[field.fieldName]).split(edit.attachmentType.fileSeparator)
+                            .forEach(str => {
+                                (<NzUploadFile[]>edit.$viewValue).push({
+                                    uid: str,
+                                    name: str,
+                                    size: 1,
+                                    type: "",
+                                    url: DataService.previewAttachment(str),
+                                    response: {
+                                        data: str
+                                    }
+                                });
+                            });
+                        edit.$value = object[field.fieldName];
+                    }
+                    break;
+                case EditType.CHOICE:
+                    edit.$value = isNotNull(object[field.fieldName]) ? object[field.fieldName] + '' : null;
+                    break;
+                case EditType.TAGS:
+                    if (object[field.fieldName]) {
+                        const raw = String(object[field.fieldName]);
+                        if (edit.tagsType.joinSeparator === '[]') {
+                            try {
+                                edit.$value = JSON.parse(raw);
+                            } catch {
+                                edit.$value = raw ? [raw] : [];
+                            }
+                        } else {
+                            edit.$value = raw.split(edit.tagsType.joinSeparator);
+                        }
+                    } else {
+                        edit.$value = [];
+                    }
+                    break;
+                case EditType.CODE_EDITOR:
+                case EditType.HTML_EDITOR:
+                    edit.$value = object[field.fieldName] || '';
+                    break;
+                case EditType.TAB_TABLE_ADD:
+                case EditType.TAB_TABLE_REFER:
+                    edit.$value = object[field.fieldName] || [];
+                    // edit.$value.forEach(val => this.objectToEruptValue(val, eruptBuild.tabErupts[field.fieldName]))
+                    break;
+                case EditType.MULTI_FORM:
+                    edit.$value = object[field.fieldName] || [];
+                    edit.$tempValue = null;
+                    break;
+                case EditType.BOOLEAN:
+                    // A switch cannot show null: legacy rows saved before the field became
+                    // required load as off and are submitted as false
+                    edit.$value = isNotNull(object[field.fieldName]) ? object[field.fieldName]
+                        : (this.isBoolSwitch(edit) ? false : null);
+                    break;
+                default:
+                    edit.$value = object[field.fieldName];
+                    break;
+            }
+        }
     }
 
 
