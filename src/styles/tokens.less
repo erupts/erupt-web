@@ -41,6 +41,16 @@ html {
     --erupt-header-active-bg: var(--ant-primary-1);
     --erupt-header-active-text: var(--ant-primary-color);
     --erupt-header-border: var(--ant-border-color-split);
+
+    // Type. System UI faces only, nothing is downloaded: the Latin face of
+    // each platform first (its Latin beats any CJK face's), then that
+    // platform's CJK face (PingFang / 微软雅黑 / Noto CJK), so Chinese never
+    // falls to the browser's own default, which on a non-Chinese Windows
+    // locale is SimSun. Note 微软雅黑 has no 500 / 600: on Windows a medium
+    // weight renders regular, so emphasise Chinese with 600 or 700.
+    --erupt-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC",
+        "WenQuanYi Micro Hei", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
 }
 
 html.dark {

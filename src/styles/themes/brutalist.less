@@ -82,9 +82,14 @@ html.brutalist-theme {
     --raft-sh: 4px 4px 0 var(--raft-ink);         /* cards, popovers, hover  */
     --raft-sh-lg: 6px 6px 0 var(--raft-ink);      /* modal / drawer          */
 
-    --raft-font: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI",
-                 "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    /* The grotesk is not bundled (a deployment may install it); otherwise
+     * the shared stack from tokens.less, CJK faces included. --erupt-font
+     * follows so the body-level re-anchor in theme.less wears the skin. */
+    --raft-font: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+        "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC",
+        "WenQuanYi Micro Hei", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
     --raft-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --erupt-font: var(--raft-font);
 
     /* Re-point erupt's own semantic tokens so custom (non-antd) markup lands
      * on the same paper without every component needing a rule here. */
