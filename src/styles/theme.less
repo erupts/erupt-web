@@ -48,3 +48,23 @@ body.color-weak {
     scrollbar-width: thin;
     scrollbar-color: var(--erupt-scrollbar-thumb, #888888) var(--erupt-scrollbar-track, #f1f1f1);
 }
+
+// Ant ships precompiled css whose font stack names no CJK face, and these
+// rules restate that stack instead of inheriting it (body plus a handful of
+// components that pin their own). Re-anchor them all to --erupt-font. The
+// `html` prefix outranks the same rules in the lazy dark / compact bundles,
+// whose <link> follows this one.
+html body,
+html .ant-pagination-item,
+html .ant-pagination-prev,
+html .ant-pagination-next,
+html .ant-pagination-jump-prev,
+html .ant-pagination-jump-next,
+html .ant-select-multiple.ant-select .ant-select-selection-search-input,
+html .ant-select-multiple.ant-select .ant-select-selection-search-mirror,
+html .ant-splitter,
+html .ant-statistic-content,
+html .ant-steps-item-icon,
+html .ant-float-btn-group {
+    font-family: var(--erupt-font);
+}
