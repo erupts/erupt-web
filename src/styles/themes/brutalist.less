@@ -1246,7 +1246,10 @@ html.brutalist-theme {
         font-size: 14px;
         font-weight: 400;
         line-height: 20px;
-        color: var(--raft-text-2);
+        /* Full ink, not the secondary tint: a whole column of 60% text reads
+         * as washed out, and the quiet weight already keeps rows from
+         * competing with the selected block. */
+        color: var(--raft-text);
         transition: background-color .1s ease, color .1s ease, border-color .1s ease;
 
         /* Hover is a faint wash of the accent: the row sits on paper, so a
