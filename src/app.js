@@ -9,7 +9,7 @@ window.eruptSiteConfig = {
     copyright: true, // whether to show the copyright footer
     tabReuse: false, // enable multi-tab route reuse by default (the user's choice in the settings drawer takes precedence)
     // Logos: leave a key out to use the default, set it to null to show nothing there.
-    logoPath: null,  // expanded header logo (default: the bundled erupt mark)
+    // logoPath: null,  // expanded header logo (default: the bundled erupt mark)
     // logoFoldPath: null,           // collapsed header logo (default: follows logoPath)
     // loginLogoPath: null,          // login page logo (default: follows logoPath)
     logoText: null,
