@@ -63,6 +63,25 @@ const SKIN_CLASS: Record<Exclude<Skin, Skin.DEFAULT>, string> = {
     [Skin.CLASSIC]: "classic"
 };
 
+// A skin as the pickers list it (settings drawer, login page, lock screen):
+// the label is an i18n key, so every picker renders `label | translate`.
+export interface SkinOption {
+    value: Skin;
+    label: string;
+    // only restyles the app's sidebar: nothing to preview outside the shell,
+    // so the login page leaves it out
+    shellOnly?: boolean;
+}
+
+// The one list every picker iterates; order is display order
+export const SKINS: SkinOption[] = [
+    {value: Skin.DEFAULT, label: "setting.skin-default"},
+    {value: Skin.CLASSIC, label: "setting.skin-classic", shellOnly: true},
+    {value: Skin.WORKSPACE, label: "setting.skin-workspace"},
+    {value: Skin.LIQUID_GLASS, label: "setting.skin-liquid-glass"},
+    {value: Skin.BRUTALIST, label: "setting.skin-brutalist"}
+];
+
 // The skin whose class index.html (or a previous applySkin) put on <html>
 export function currentSkin(): Skin {
     const root = document.documentElement.classList;

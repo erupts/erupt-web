@@ -19,6 +19,8 @@ import {
     resolveHeaderColor, resolveThemeColor,
     savedWorkspaceFrame,
     Skin,
+    SkinOption,
+    SKINS,
     switchSkin,
     THEME_PRESET_COLORS,
     toHexColor,
@@ -48,6 +50,8 @@ export class SettingsComponent implements OnInit {
     // it is a single choice rather than independent toggles. Reflects the class
     // index.html applied before bootstrap.
     readonly Skin = Skin;
+
+    skins: SkinOption[] = SKINS;
 
     // Site config may lock the appearance (theme.customizable = false): the
     // whole appearance group is then left out of the drawer.

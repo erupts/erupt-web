@@ -108,7 +108,133 @@
     }
 }
 
+// ── Appearance pill (top-right) ──
+.lock-tools {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--erupt-bg-container, #fff) 70%, transparent);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    animation: lock-screen-in 0.3s ease-out both;
+}
+
+.lock-tool {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    font-size: 15px;
+    color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.55));
+    cursor: pointer;
+    transition: color 0.18s, background 0.18s;
+
+    &:hover,
+    &--on {
+        color: var(--ant-primary-color);
+        background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
+    }
+}
+
+// unfolds under the pill; anchored to its right edge
+.lock-panel {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    border-radius: 8px;
+    background: var(--erupt-bg-elevated, #fff);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12);
+    animation: lock-screen-in 0.2s ease-out both;
+}
+
+.lock-skin-panel {
+    min-width: 140px;
+    padding: 4px;
+}
+
+.lock-skin {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: nowrap;
+    color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover {
+        background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
+    }
+
+    &--active {
+        color: var(--ant-primary-color);
+        background: var(--ant-primary-1);
+    }
+}
+
+.lock-color-panel {
+    display: grid;
+    grid-template-columns: repeat(10, 22px);
+    gap: 8px;
+    padding: 12px;
+}
+
+.lock-swatch {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+
+    &:hover {
+        transform: scale(1.15);
+    }
+
+    &--active {
+        box-shadow: 0 0 0 2px var(--erupt-bg-elevated, #fff), 0 0 0 4px var(--ant-primary-color);
+    }
+
+    // custom color: rainbow tile hiding a native color input
+    &--custom {
+        position: relative;
+        overflow: hidden;
+        background: conic-gradient(#f5222d, #faad14, #52c41a, #13c2c2, #1677ff, #722ed1, #f5222d);
+
+        input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+    }
+
+    &--reset {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+        border: 1px dashed var(--erupt-border, #d9d9d9);
+
+        &:hover {
+            transform: none;
+            color: var(--ant-primary-color);
+            border-color: var(--ant-primary-color);
+        }
+    }
+}
+
 @media (max-width: 576px) {
+    .lock-color-panel {
+        grid-template-columns: repeat(5, 22px);
+    }
+
     .lock-screen {
         gap: 32px;
     }
