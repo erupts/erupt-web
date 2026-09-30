@@ -11,6 +11,8 @@ import {
     currentSkin,
     resolveThemeColor,
     Skin,
+    SkinOption,
+    SKINS,
     switchSkin,
     THEME_PRESET_COLORS,
     toHexColor
@@ -98,17 +100,12 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     // Visual skin — at most one is active, so it is a single choice rather than a
     // toggle. Reflects the class index.html applied before bootstrap. Kept in
-    // step with the settings drawer: same enum, same apply path (theme.util).
-    // Classic is left out: it only restyles the app's sidebar, so on this page
-    // it looks exactly like the default.
+    // step with the settings drawer: same list, same apply path (theme.util).
+    // Shell-only skins (Classic) are left out: on this page they look exactly
+    // like the default.
     readonly Skin = Skin;
 
-    skins: { value: Skin; label: string }[] = [
-        {value: Skin.DEFAULT, label: "Default"},
-        {value: Skin.WORKSPACE, label: "Workspace"},
-        {value: Skin.LIQUID_GLASS, label: "Liquid Glass"},
-        {value: Skin.BRUTALIST, label: "Brutalist"}
-    ];
+    skins: SkinOption[] = SKINS.filter(s => !s.shellOnly);
 
     skin: Skin = currentSkin();
 

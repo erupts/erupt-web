@@ -72,95 +72,93 @@
     <span>{{'setting.skin' | translate}}</span>
     <!-- skin tiles, same grammar as the menu-mode picker: a miniature of each skin's shell -->
     <div class="menu-mode-picker menu-mode-picker--skins">
-        <!-- default: white bar and column on the gray canvas, brand-colored current row -->
-        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="skin === Skin.DEFAULT"
-             (click)="setSkin(Skin.DEFAULT)">
-            <svg viewBox="0 0 44 32">
-                <rect width="44" height="32" rx="3" fill="#f0f2f5"/>
-                <path d="M0 3a3 3 0 0 1 3-3h11v32H3a3 3 0 0 1-3-3V3Z" fill="#fff"/>
-                <rect x="14" y="0" width="30" height="6" fill="#fff"/>
-                <path d="M14 6h30" stroke="#e5e7eb" stroke-width="1"/>
-                <path d="M14 0v32" stroke="#e5e7eb" stroke-width="1"/>
-                <rect x="3" y="9" width="8" height="2" rx="1" fill="#1677ff"/>
-                <rect x="3" y="14" width="8" height="2" rx="1" fill="#bfbfbf"/>
-                <rect x="3" y="19" width="8" height="2" rx="1" fill="#d9d9d9"/>
-                <rect x="18" y="10" width="22" height="18" rx="1.5" fill="#fff"/>
-            </svg>
-            <span>{{'setting.skin-default' | translate}}</span>
+        @for (item of skins; track item.value) {
+        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="skin === item.value"
+             (click)="setSkin(item.value)">
+            @switch (item.value) {
+                @case (Skin.DEFAULT) {
+                    <!-- default: white bar and column on the gray canvas, brand-colored current row -->
+                    <svg viewBox="0 0 44 32">
+                        <rect width="44" height="32" rx="3" fill="#f0f2f5"/>
+                        <path d="M0 3a3 3 0 0 1 3-3h11v32H3a3 3 0 0 1-3-3V3Z" fill="#fff"/>
+                        <rect x="14" y="0" width="30" height="6" fill="#fff"/>
+                        <path d="M14 6h30" stroke="#e5e7eb" stroke-width="1"/>
+                        <path d="M14 0v32" stroke="#e5e7eb" stroke-width="1"/>
+                        <rect x="3" y="9" width="8" height="2" rx="1" fill="#1677ff"/>
+                        <rect x="3" y="14" width="8" height="2" rx="1" fill="#bfbfbf"/>
+                        <rect x="3" y="19" width="8" height="2" rx="1" fill="#d9d9d9"/>
+                        <rect x="18" y="10" width="22" height="18" rx="1.5" fill="#fff"/>
+                    </svg>
+                }
+                @case (Skin.CLASSIC) {
+                    <!-- classic: the Ant Design Pro navy column beside a white bar -->
+                    <svg viewBox="0 0 44 32">
+                        <rect width="44" height="32" rx="3" fill="#f0f2f5"/>
+                        <path d="M0 3a3 3 0 0 1 3-3h11v32H3a3 3 0 0 1-3-3V3Z" fill="#001529"/>
+                        <rect x="14" y="0" width="30" height="6" fill="#fff"/>
+                        <path d="M14 6h30" stroke="#e5e7eb" stroke-width="1"/>
+                        <rect x="3" y="3" width="8" height="2" rx="1" fill="#fff" opacity=".9"/>
+                        <rect x="0" y="9" width="14" height="4" fill="#1677ff"/>
+                        <rect x="3" y="10" width="8" height="2" rx="1" fill="#fff"/>
+                        <rect x="3" y="16" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
+                        <rect x="3" y="21" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
+                        <rect x="18" y="10" width="22" height="18" rx="1.5" fill="#fff"/>
+                    </svg>
+                }
+                @case (Skin.WORKSPACE) {
+                    <!-- workspace: one deep frame for bar and column, the content as a rounded card -->
+                    <svg viewBox="0 0 44 32">
+                        <defs>
+                        <linearGradient id="skinWorkspaceFrame" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#4a154b"/>
+                            <stop offset="1" stop-color="#1e3a8a"/>
+                        </linearGradient>
+                        </defs>
+                        <rect width="44" height="32" rx="3" fill="url(#skinWorkspaceFrame)"/>
+                        <rect x="2.5" y="8.5" width="9" height="3" rx="1" fill="#fff" opacity=".28"/>
+                        <rect x="3" y="14" width="8" height="2" rx="1" fill="#fff" opacity=".7"/>
+                        <rect x="3" y="19" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
+                        <rect x="3" y="24" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
+                        <rect x="14" y="8" width="28" height="22" rx="2" fill="#f0f2f5"/>
+                        <rect x="17" y="12" width="22" height="14" rx="1.5" fill="#fff"/>
+                    </svg>
+                }
+                @case (Skin.LIQUID_GLASS) {
+                    <!-- liquid glass: ambient color field, translucent rounded panels -->
+                    <svg viewBox="0 0 44 32">
+                        <defs>
+                        <linearGradient id="skinGlassField" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#78aaff"/>
+                            <stop offset=".55" stop-color="#ff8cbe"/>
+                            <stop offset="1" stop-color="#6ee6d2"/>
+                        </linearGradient>
+                        </defs>
+                        <rect width="44" height="32" rx="3" fill="url(#skinGlassField)"/>
+                        <rect x="2" y="7" width="11" height="23" rx="2" fill="#fff" fill-opacity=".55" stroke="#fff" stroke-opacity=".8" stroke-width=".8"/>
+                        <rect x="15" y="7" width="27" height="23" rx="2" fill="#fff" fill-opacity=".4" stroke="#fff" stroke-opacity=".7" stroke-width=".8"/>
+                        <rect x="4" y="10" width="7" height="2" rx="1" fill="#fff" opacity=".95"/>
+                        <rect x="4" y="15" width="7" height="2" rx="1" fill="#fff" opacity=".6"/>
+                        <rect x="4" y="20" width="7" height="2" rx="1" fill="#fff" opacity=".6"/>
+                    </svg>
+                }
+                @case (Skin.BRUTALIST) {
+                    <!-- brutalist: cream paper, ink rules, hard offset shadows, a candy current row -->
+                    <svg viewBox="0 0 44 32">
+                        <rect width="44" height="32" rx="3" fill="#e3ebee"/>
+                        <rect x="0" y="0" width="14" height="32" fill="#f5f5f0"/>
+                        <rect x="0" y="0" width="44" height="6" fill="#f5f5f0"/>
+                        <path d="M14 0v32M0 6h44" stroke="#14120b" stroke-width="1.5"/>
+                        <rect x="2.5" y="9" width="9" height="3" fill="#ffd440" stroke="#14120b" stroke-width="1"/>
+                        <rect x="3" y="15" width="8" height="1.5" fill="#14120b"/>
+                        <rect x="3" y="19" width="8" height="1.5" fill="#14120b" opacity=".45"/>
+                        <rect x="19.5" y="11" width="20" height="15" fill="#14120b"/>
+                        <rect x="18" y="9.5" width="20" height="15" fill="#fff" stroke="#14120b" stroke-width="1"/>
+                    </svg>
+                }
+            }
+            <span>{{ item.label | translate }}</span>
         </div>
-        <!-- classic: the Ant Design Pro navy column beside a white bar -->
-        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="skin === Skin.CLASSIC"
-             (click)="setSkin(Skin.CLASSIC)">
-            <svg viewBox="0 0 44 32">
-                <rect width="44" height="32" rx="3" fill="#f0f2f5"/>
-                <path d="M0 3a3 3 0 0 1 3-3h11v32H3a3 3 0 0 1-3-3V3Z" fill="#001529"/>
-                <rect x="14" y="0" width="30" height="6" fill="#fff"/>
-                <path d="M14 6h30" stroke="#e5e7eb" stroke-width="1"/>
-                <rect x="3" y="3" width="8" height="2" rx="1" fill="#fff" opacity=".9"/>
-                <rect x="0" y="9" width="14" height="4" fill="#1677ff"/>
-                <rect x="3" y="10" width="8" height="2" rx="1" fill="#fff"/>
-                <rect x="3" y="16" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
-                <rect x="3" y="21" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
-                <rect x="18" y="10" width="22" height="18" rx="1.5" fill="#fff"/>
-            </svg>
-            <span>Classic</span>
-        </div>
-        <!-- workspace: one deep frame for bar and column, the content as a rounded card -->
-        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="skin === Skin.WORKSPACE"
-             (click)="setSkin(Skin.WORKSPACE)">
-            <svg viewBox="0 0 44 32">
-                <defs>
-                    <linearGradient id="skinWorkspaceFrame" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0" stop-color="#4a154b"/>
-                        <stop offset="1" stop-color="#1e3a8a"/>
-                    </linearGradient>
-                </defs>
-                <rect width="44" height="32" rx="3" fill="url(#skinWorkspaceFrame)"/>
-                <rect x="2.5" y="8.5" width="9" height="3" rx="1" fill="#fff" opacity=".28"/>
-                <rect x="3" y="14" width="8" height="2" rx="1" fill="#fff" opacity=".7"/>
-                <rect x="3" y="19" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
-                <rect x="3" y="24" width="8" height="2" rx="1" fill="#fff" opacity=".45"/>
-                <rect x="14" y="8" width="28" height="22" rx="2" fill="#f0f2f5"/>
-                <rect x="17" y="12" width="22" height="14" rx="1.5" fill="#fff"/>
-            </svg>
-            <span>Workspace</span>
-        </div>
-        <!-- liquid glass: ambient color field, translucent rounded panels -->
-        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="skin === Skin.LIQUID_GLASS"
-             (click)="setSkin(Skin.LIQUID_GLASS)">
-            <svg viewBox="0 0 44 32">
-                <defs>
-                    <linearGradient id="skinGlassField" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0" stop-color="#78aaff"/>
-                        <stop offset=".55" stop-color="#ff8cbe"/>
-                        <stop offset="1" stop-color="#6ee6d2"/>
-                    </linearGradient>
-                </defs>
-                <rect width="44" height="32" rx="3" fill="url(#skinGlassField)"/>
-                <rect x="2" y="7" width="11" height="23" rx="2" fill="#fff" fill-opacity=".55" stroke="#fff" stroke-opacity=".8" stroke-width=".8"/>
-                <rect x="15" y="7" width="27" height="23" rx="2" fill="#fff" fill-opacity=".4" stroke="#fff" stroke-opacity=".7" stroke-width=".8"/>
-                <rect x="4" y="10" width="7" height="2" rx="1" fill="#fff" opacity=".95"/>
-                <rect x="4" y="15" width="7" height="2" rx="1" fill="#fff" opacity=".6"/>
-                <rect x="4" y="20" width="7" height="2" rx="1" fill="#fff" opacity=".6"/>
-            </svg>
-            <span>Liquid Glass</span>
-        </div>
-        <!-- brutalist: cream paper, ink rules, hard offset shadows, a candy current row -->
-        <div class="menu-mode-picker__item" [class.menu-mode-picker__item--active]="skin === Skin.BRUTALIST"
-             (click)="setSkin(Skin.BRUTALIST)">
-            <svg viewBox="0 0 44 32">
-                <rect width="44" height="32" rx="3" fill="#e3ebee"/>
-                <rect x="0" y="0" width="14" height="32" fill="#f5f5f0"/>
-                <rect x="0" y="0" width="44" height="6" fill="#f5f5f0"/>
-                <path d="M14 0v32M0 6h44" stroke="#14120b" stroke-width="1.5"/>
-                <rect x="2.5" y="9" width="9" height="3" fill="#ffd440" stroke="#14120b" stroke-width="1"/>
-                <rect x="3" y="15" width="8" height="1.5" fill="#14120b"/>
-                <rect x="3" y="19" width="8" height="1.5" fill="#14120b" opacity=".45"/>
-                <rect x="19.5" y="11" width="20" height="15" fill="#14120b"/>
-                <rect x="18" y="9.5" width="20" height="15" fill="#fff" stroke="#14120b" stroke-width="1"/>
-            </svg>
-            <span>Brutalist</span>
-        </div>
+        }
     </div>
     <!-- sub-option of the workspace skin only: the navigation frame gradient -->
     @if (skin === Skin.WORKSPACE) {
