@@ -1,0 +1,16 @@
+<div class="vis-map-wrap">
+    <nz-spin [nzSpinning]="loading" class="vis-map-spin">
+        <div #mapEl class="vis-map-canvas"></div>
+    </nz-spin>
+    @if (!loading && !points.length) {
+        <div class="vis-map-empty">
+            <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="'map.no_location' | translate"/>
+        </div>
+    }
+    @if (points.length) {
+        <button nz-button nzSize="small" class="vis-map-fit" (click)="fit()"
+                nz-tooltip [nzTooltipTitle]="'map.fit' | translate">
+            <i nz-icon nzType="fullscreen" nzTheme="outline"></i>
+        </button>
+    }
+</div>

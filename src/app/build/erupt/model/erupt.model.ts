@@ -39,7 +39,10 @@ export interface Vis {
     boardView: BoardView
     ganttView: GanttView;
     calendarView: CalendarView;
-    tplView: Tpl
+    tplView: Tpl;
+    timelineView: TimelineView;
+    mapView: MapView;
+    cubeView: CubeView;
 }
 
 export enum VisType {
@@ -48,6 +51,9 @@ export enum VisType {
     CARD = "CARD",
     BOARD = "BOARD",
     CALENDAR = "CALENDAR",
+    TIMELINE = "TIMELINE",
+    MAP = "MAP",
+    CUBE = "CUBE",
     TPL = "TPL"
 }
 
@@ -64,6 +70,58 @@ export interface CalendarView {
     dateField: string;
     endDateField: string;
     colorField: string;
+}
+
+export interface TimelineView {
+    dateField: string;
+    colorField: string;
+    descending: boolean;
+    mode: TimelineMode;
+}
+
+export enum TimelineMode {
+    LEFT = "LEFT",
+    ALTERNATE = "ALTERNATE",
+    RIGHT = "RIGHT"
+}
+
+export interface MapView {
+    // EditType.MAP field whose JSON carries lng / lat; empty uses lngField / latField
+    locationField: string;
+    lngField: string;
+    latField: string;
+    colorField: string;
+    cluster: boolean;
+}
+
+export interface CubeView {
+    // simple name of the @EruptCube class; "Void" = the model itself
+    cube: string;
+    explore: string;
+    linkSearch: boolean;
+    // search field -> cube field; unmapped fields keep their own name
+    searchMapping: KVMap;
+    columns: number;
+    height: number;
+    charts: CubeChart[];
+}
+
+export interface CubeChart {
+    title: string;
+    // one of erupt-cube's ReportType names
+    type: string;
+    x: string[];
+    y: string[];
+    series: string;
+    span: number;
+    ui: KVMap;
+}
+
+// what a @ToMap(key = "key") KV[] attribute serializes to
+export type KVMap = Record<string, { value: string; desc?: string }>;
+
+export function kvValues(map: KVMap): Record<string, string> {
+    return Object.fromEntries(Object.entries(map || {}).map(([k, v]) => [k, v?.value]));
 }
 
 export interface CardView {

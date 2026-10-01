@@ -1,0 +1,40 @@
+:host {
+    display: block;
+}
+
+.vis-cube-empty {
+    background: var(--erupt-bg-container, #fff);
+    padding: 32px;
+}
+
+.vis-cube-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 0 2px 10px;
+
+    .vis-cube-clear {
+        color: var(--erupt-text-tertiary, #8a94a6);
+        font-size: 13px;
+        line-height: 1;
+
+        &:hover {
+            color: var(--erupt-text, #1e2330);
+        }
+    }
+}
+
+.vis-cube-grid {
+    display: grid;
+    gap: 12px;
+    align-items: stretch;
+}
+
+.vis-cube-cell {
+    min-width: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--erupt-bg-container, #fff);
+    border: 1px solid var(--ant-border-color-split);
+}

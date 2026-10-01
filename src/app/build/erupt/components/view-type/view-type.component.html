@@ -60,7 +60,7 @@
       </div>
     }
     @case (viewType.MAP) {
-      <amap [value]="value" [readonly]="true" [zoom]="18"></amap>
+      <map-edit [value]="value" [readonly]="true" [zoom]="18"></map-edit>
     }
     @case (viewType.IMAGE_BASE64) {
       <img class="full-max-width" [src]="value" style="display: inline-block;"/>

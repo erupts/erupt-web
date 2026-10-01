@@ -666,8 +666,8 @@
                             [required]="field.eruptFieldJson.edit.notNull"
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
                             @if (!loading) {
-                                <amap [(value)]="field.eruptFieldJson.edit.$value"
-                                      [mapType]="field.eruptFieldJson.edit.mapType"></amap>
+                                <map-edit [(value)]="field.eruptFieldJson.edit.$value"
+                                          [mapType]="field.eruptFieldJson.edit.mapType"></map-edit>
                             }
                         </se>
                     </div>
