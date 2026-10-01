@@ -1,0 +1,32 @@
+:host {
+    display: block;
+    position: relative;
+
+    .search-container {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        z-index: 999;
+    }
+
+    .map-edit-canvas {
+        min-height: 550px;
+        border: 1px solid var(--ant-border-color-split, #d9d9d9);
+        border-radius: 4px;
+        outline: none;
+    }
+
+    ::ng-deep {
+        // vendor branding in the corner
+        .amap-copyright, .anchorBL {
+            opacity: 0;
+            display: none !important;
+        }
+    }
+}
+
+.map-edit-address {
+    margin-left: 6px;
+    font-size: 12px;
+    color: var(--erupt-text-tertiary, #8c8c8c);
+}

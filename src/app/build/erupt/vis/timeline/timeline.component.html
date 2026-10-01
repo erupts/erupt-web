@@ -1,0 +1,37 @@
+@if (!days.length) {
+    <div class="tl-empty">
+        <nz-empty nzNotFoundImage="simple"/>
+    </div>
+} @else {
+    <nz-timeline [nzMode]="nzMode" class="tl-wrap">
+        @for (day of days; track trackDay($index, day)) {
+            <nz-timeline-item [nzDot]="dayDot" nzPosition="left">
+                <span class="tl-day">{{ day.label }}</span>
+            </nz-timeline-item>
+            @for (entry of day.entries; track trackEntry($index, entry)) {
+                <nz-timeline-item [nzColor]="entry.color" [nzLabel]="nzMode === 'left' ? undefined : entry.label">
+                    <div class="tl-card" [style.--tl-color]="entry.color" (click)="onEdit.emit(entry.pk)">
+                        <div class="tl-card-head">
+                            <span class="tl-title" [innerHTML]="entry.title | safeHtml"></span>
+                            <span class="tl-time">{{ entry.label }}</span>
+                        </div>
+                        @if (entry.fields.length) {
+                            <div class="tl-meta">
+                                @for (field of entry.fields; track field.title) {
+                                    <div class="tl-meta-row">
+                                        <span class="tl-meta-key">{{ field.title }}</span>
+                                        <span class="tl-meta-val" [innerHTML]="(field.html || '—') | safeHtml"></span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </nz-timeline-item>
+            }
+        }
+    </nz-timeline>
+}
+
+<ng-template #dayDot>
+    <span class="tl-day-dot"><i nz-icon nzType="calendar" nzTheme="outline"></i></span>
+</ng-template>

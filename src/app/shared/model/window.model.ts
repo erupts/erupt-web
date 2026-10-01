@@ -1,3 +1,5 @@
+import {MapConfig, MapProvider} from "@shared/model/map.model";
+
 export class WindowModel {
 
     public static VIS_TPL_DATA_KEY: string = "visTplData";
@@ -19,9 +21,8 @@ export class WindowModel {
         }
     }
 
-    public static amapKey: string;
-
-    public static amapSecurityJsCode: string;
+    // eruptSiteConfig.map — the map vendor and its key (MapService loads that vendor's SDK on demand)
+    public static map: MapConfig;
 
     public static title: string;
 
@@ -94,8 +95,13 @@ export class WindowModel {
     public static init() {
         WindowModel.r_tools = WindowModel.config["r_tools"] || [];
         WindowModel.userTools = WindowModel.config["userTools"] || [];
-        WindowModel.amapKey = WindowModel.config["amapKey"];
-        WindowModel.amapSecurityJsCode = WindowModel.config["amapSecurityJsCode"];
+        // the legacy top-level amapKey / amapSecurityJsCode still configure the amap vendor
+        WindowModel.map = {
+            provider: MapProvider.AMAP,
+            key: WindowModel.config["amapKey"],
+            securityJsCode: WindowModel.config["amapSecurityJsCode"],
+            ...(WindowModel.config["map"] || {})
+        };
         WindowModel.title = WindowModel.config["title"] === null ? 'Erupt Engine' : WindowModel.config["title"];
         WindowModel.desc = WindowModel.config["desc"] || undefined;
         // Logo keys: leaving one out means the default, setting it to null or ''

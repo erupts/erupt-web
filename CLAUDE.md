@@ -83,6 +83,10 @@ The app supports a runtime dark theme (settings drawer → 夜间模式, persist
 - Theme color and header color are user-configurable in the settings drawer: `localStorage["theme-color"]` (primary palette via NzConfigService) and `localStorage["header-color"]` (`"primary"` or a literal color; `resolveHeaderColor()` in `@shared/util/theme.util` is the one resolver, and pins the brutalist skin to `"primary"` with its picker hidden; `applyHeaderColor()` sets `--erupt-header-*` inline on `<html>`, with luminance-based foreground). Header styles must use the `--erupt-header-*` tokens, not `--erupt-text`/`--erupt-bg-container`.
 - **Never hard-code light-theme colors in less files** (`#fff` surfaces, black-based text, light borders/fills). Use the tokens with the original value as fallback, e.g. `background: var(--erupt-bg-container, #fff)`. Colors on brand/colored/intentionally-dark surfaces (white text on primary buttons, node card headers, terminal) stay literal. Charts/editors follow `document.documentElement.classList.contains('dark')` (see bi chart, cube report, code-editor, markdown components).
 
+### Maps
+
+`EditType.MAP` (`components/map-edit`) and the map view (`vis/map`) never touch a vendor SDK directly. They call `MapService` (`@shared/service/map/map.service`), which picks the adapter for `eruptSiteConfig.map.provider` (`MapProvider` enum in `@shared/model/map.model`: `amap` / `baidu` / `tencent` / `tianditu` / `google` / `osm`; the last two ride one Leaflet adapter) via a dynamic `import()`, and the adapter loads the vendor SDK from its CDN at runtime, so nothing map-related is bundled. Every adapter implements the `EruptMap` interface (markers with an svg pin shared through `sdk.util`, clustering, info window, click, place search, reverse geocoding); add a vendor by adding one adapter file and one `ADAPTERS` entry. Stored locations are `{id?, name, address, lng, lat}` JSON; `toMapPlace()` also reads the raw AMap tips older versions stored.
+
 ### Icons
 
 This project uses **static icon tree-shaking** via `src/style-icons-auto.ts`. Only icons listed in `ICONS_AUTO` are bundled.

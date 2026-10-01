@@ -14,7 +14,7 @@ import {MultiFormComponent} from "./components/multi-form/multi-form.component";
 import {TreeSelectComponent} from "./components/tree-select/tree-select.component";
 import {ExcelImportComponent} from "./components/excel-import/excel-import.component";
 import {ReferenceTableComponent} from "./components/reference-table/reference-table.component";
-import {AmapComponent} from "./components/amap/amap.component";
+import {MapEditComponent} from "./components/map-edit/map-edit.component";
 import {EruptRoutingModule} from "./erupt-routing.module";
 import {TreeComponent} from "./view/tree/tree.component";
 import {TableViewComponent} from "./view/table-view/table-view.component";
@@ -58,7 +58,11 @@ import {SignaturePadComponent} from './components/signature-pad/signature-pad.co
 import {SmartSearchComponent} from './components/smart-search/smart-search.component';
 import {NzSegmentedModule} from "ng-zorro-antd/segmented";
 import {CalendarComponent} from "./vis/calendar/calendar.component";
+import {TimelineComponent} from "./vis/timeline/timeline.component";
+import {MapComponent} from "./vis/map/map.component";
+import {CubeReportModule} from "../cube/cube-report.module";
 import {NzCalendarModule} from "ng-zorro-antd/calendar";
+import {NzTimelineModule} from "ng-zorro-antd/timeline";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzSpaceModule} from "ng-zorro-antd/space";
 import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
@@ -84,6 +88,8 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         NzEmptyModule,
         NzSegmentedModule,
         NzCalendarModule,
+        NzTimelineModule,
+        CubeReportModule,
         NzButtonModule,
         NzSpaceModule,
         NzTooltipDirective,
@@ -115,7 +121,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         TreeSelectComponent,
         TabTableComponent,
         MultiFormComponent,
-        AmapComponent,
+        MapEditComponent,
         ExcelImportComponent,
         ReferenceTableComponent,
         ViewTypeComponent,
@@ -160,6 +166,8 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         SignaturePadComponent,
         SmartSearchComponent,
         CalendarComponent,
+        TimelineComponent,
+        MapComponent,
         FormViewComponent
     ]
 })

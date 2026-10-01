@@ -42,7 +42,7 @@ import {CodeEditorComponent} from "../../components/code-editor/code-editor.comp
 import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
 import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
 import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
-import {TableStyle} from "../../model/erupt.vo";
+import {QueryCondition, TableStyle} from "../../model/erupt.vo";
 import {colRules} from "@shared/model/util.model";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {WindowModel} from "@shared/model/window.model";
@@ -188,6 +188,9 @@ export class TableComponent implements OnInit, OnDestroy {
     };
 
     vis: Vis[];
+
+    // current search, forwarded to a CUBE view as chart filters
+    cubeConditions: QueryCondition[] = [];
 
     selectedVisIndex: number = 0;
 
@@ -595,14 +598,15 @@ export class TableComponent implements OnInit, OnDestroy {
     visChange(e: number) {
         this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {visIndex: e});
         this.st?.resetColumns();
-        const vis = this.vis[e];
-        if (vis?.type === VisType.BOARD) {
-            const savedPs = this.dataPage.ps;
-            this.query(1, 1000);
-            this.dataPage.ps = savedPs;
-        } else {
-            this.query(1);
-        }
+        this.query(1);
+    }
+
+    // Views that lay every row out at once (board columns, calendar cells, map markers) fetch
+    // one big page and hide the pager; cube charts query the cube instead of the rows.
+    private static readonly FULL_LOAD_VIS = [VisType.BOARD, VisType.CALENDAR, VisType.MAP, VisType.CUBE];
+
+    fullLoadVis(): boolean {
+        return TableComponent.FULL_LOAD_VIS.includes(this.vis[this.selectedVisIndex]?.type);
     }
 
     toggleCondition() {
@@ -614,7 +618,7 @@ export class TableComponent implements OnInit, OnDestroy {
         const body: any = {
             condition: this.dataHandler.buildSearchConditions(this.searchErupt),
             pageIndex: this.dataPage.pi,
-            pageSize: this.dataPage.ps,
+            pageSize: this.fullLoadVis() ? 1000 : this.dataPage.ps,
             vis: this.vis[this.selectedVisIndex]?.code,
             sort: null
         };
@@ -645,6 +649,8 @@ export class TableComponent implements OnInit, OnDestroy {
         this.selectedRows = [];
         this.dataPage.querying = true;
         this.setVisTplData(null)
+        // a fresh array each query so the cube view re-runs its charts on the new search
+        this.cubeConditions = this.dataHandler.buildSearchConditions(this.searchErupt);
         const loaded = new Promise<any[]>(resolve => {
             this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url,
                 this.buildQueryBody(), this.header).subscribe(page => {

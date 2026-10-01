@@ -473,6 +473,18 @@
                                                    [selectionMode]="_reference ? _reference.mode : null"
                                                    [vis]="vis[selectedVisIndex]"/>
                                     }
+                                    @case (VisType.TIMELINE) {
+                                        <vis-timeline [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
+                                                      (onEdit)="onEdit($event)" [vis]="vis[selectedVisIndex]"/>
+                                    }
+                                    @case (VisType.MAP) {
+                                        <vis-map [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
+                                                 (onEdit)="onEdit($event)" [vis]="vis[selectedVisIndex]"/>
+                                    }
+                                    @case (VisType.CUBE) {
+                                        <vis-cube [eruptBuildModel]="eruptBuildModel" [conditions]="cubeConditions"
+                                                  [vis]="vis[selectedVisIndex]"/>
+                                    }
                                     @case (VisType.TPL) {
                                         <nz-spin [nzSpinning]="!getVisTplData()"
                                                  [ngStyle]="{height: vis[selectedVisIndex].tplView.height || ((525 + (clientHeight - 814)) + 'px')}">
@@ -492,7 +504,7 @@
                                 <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
                             }
                         </div>
-                        @if (dataPage.showPagination && dataPage?.total > 0 && vis[selectedVisIndex]?.type !== VisType.BOARD && (vis.length || eruptBuildModel.eruptModel.eruptJson.visRawTable !== false)) {
+                        @if (dataPage.showPagination && dataPage?.total > 0 && !fullLoadVis() && (vis.length || eruptBuildModel.eruptModel.eruptJson.visRawTable !== false)) {
                             <div class="tc-pagination">
                                 <nz-pagination nzShowSizeChanger nzShowQuickJumper
                                                [nzPageIndex]="dataPage.pi" [nzShowTotal]="totalTemplate"
