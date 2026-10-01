@@ -18,6 +18,14 @@
     height: 100%;
 }
 
+// vendor SDKs stack their own layers inside the canvas (Tencent's event layer is at 1000);
+// isolating the canvas keeps the fit button and the empty state above them
+.vis-map-canvas {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+}
+
 .vis-map-spin ::ng-deep .ant-spin-container {
     height: 100%;
 }

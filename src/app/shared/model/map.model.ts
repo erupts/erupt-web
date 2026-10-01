@@ -1,3 +1,5 @@
+import {convertCrs, Crs, LEGACY_CRS} from "./crs";
+
 /**
  * Vendor-neutral map contract shared by the EditType.MAP editor and the map view.
  * The vendor SDK is loaded from its CDN at runtime; only the adapter code ships with the app.
@@ -33,11 +35,29 @@ export interface LngLat {
     lat: number;
 }
 
-// what an EditType.MAP field stores
+// what an EditType.MAP field stores (the Java side is xyz.erupt.annotation.model.Location)
 export interface MapPlace extends LngLat {
     id?: string;
     name: string;
     address?: string;
+    // coordinate system of lng / lat; absent on legacy AMap values
+    crs?: Crs;
+}
+
+/**
+ * The coordinate system a vendor's SDK speaks.
+ */
+export function providerCrs(provider: MapProvider): Crs {
+    switch (provider) {
+        case MapProvider.BAIDU:
+            return Crs.BD09;
+        case MapProvider.GOOGLE:
+        case MapProvider.OSM:
+        case MapProvider.TIANDITU:
+            return Crs.WGS84;
+        default:
+            return Crs.GCJ02;
+    }
 }
 
 export interface MarkerItem {
@@ -80,10 +100,11 @@ export interface MapAdapter {
 }
 
 /**
- * Reads a stored location: the current {lng, lat, name, address} shape, the raw AMap tip
- * older versions stored ({location: {lng, lat}, district}), or a JSON string of either.
+ * Reads a stored location: the current {lng, lat, name, address, crs} shape, the raw AMap
+ * tip older versions stored ({location: {lng, lat}, district}), or a JSON string of either.
+ * With a target system the coordinates are converted into it.
  */
-export function toMapPlace(raw: any): MapPlace | null {
+export function toMapPlace(raw: any, target?: Crs): MapPlace | null {
     if (!raw) return null;
     if (typeof raw === 'string') {
         try {
@@ -96,5 +117,11 @@ export function toMapPlace(raw: any): MapPlace | null {
     const lat = Number(raw.lat ?? raw.location?.lat);
     if (!isFinite(lng) || !isFinite(lat) || (lng === 0 && lat === 0)) return null;
     const address = typeof raw.address === 'string' ? raw.address : raw.district;
-    return {id: raw.id, name: raw.name || address || `${lng},${lat}`, address, lng, lat};
+    const crs: Crs = Crs[raw.crs as keyof typeof Crs] || LEGACY_CRS;
+    const place: MapPlace = {id: raw.id, name: raw.name || address || `${lng},${lat}`, address, lng, lat, crs};
+    // a stored point is re-expressed in the system the active vendor draws in
+    if (target && target !== crs) {
+        return {...place, ...convertCrs(place, crs, target), crs: target};
+    }
+    return place;
 }

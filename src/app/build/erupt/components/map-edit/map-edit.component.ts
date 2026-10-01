@@ -1,9 +1,9 @@
 import {Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from "@angular/core";
 import {NzMessageService} from "ng-zorro-antd/message";
-import {Subject} from "rxjs";
-import {debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
+import {from, of, Subject} from "rxjs";
+import {catchError, debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
 import {I18NService} from "@core";
-import {EruptMap, LngLat, MapPlace, toMapPlace} from "@shared/model/map.model";
+import {EruptMap, LngLat, MapPlace} from "@shared/model/map.model";
 import {MapService} from "@shared/service/map/map.service";
 import {MapType} from "../../model/erupt-field.model";
 
@@ -65,10 +65,16 @@ export class MapEditComponent implements OnInit, OnDestroy {
         this.keyword$.pipe(
             debounceTime(300),
             distinctUntilChanged(),
-            switchMap(kw => kw.trim() ? this.map.search(kw.trim()) : Promise.resolve([]))
+            // a failing vendor search is reported once and keeps the stream alive
+            switchMap(kw => kw.trim()
+                ? from(this.map.search(kw.trim())).pipe(catchError(e => {
+                    this.msg.warning(e?.message || String(e));
+                    return of([] as MapPlace[]);
+                }))
+                : of([] as MapPlace[]))
         ).subscribe(places => this.places = places);
         this.map.onClick(pos => this.pointSelectMode && !this.readonly && this.pick(pos));
-        const place = toMapPlace(this.value);
+        const place = this.mapService.toPlace(this.value);
         if (place) {
             this.show(place, this.zoom);
         }
@@ -93,7 +99,7 @@ export class MapEditComponent implements OnInit, OnDestroy {
 
     select(place: MapPlace) {
         this.show(place, 15);
-        this.valueChange.emit(JSON.stringify(place));
+        this.valueChange.emit(JSON.stringify(this.mapService.stamp(place)));
     }
 
     // confirms the typed keyword with its first suggestion

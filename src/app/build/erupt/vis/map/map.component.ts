@@ -2,7 +2,7 @@ import {Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, Output
 import {NzMessageService} from "ng-zorro-antd/message";
 import {STColumn} from "@delon/abc/st";
 import {I18NService} from "@core";
-import {EruptMap, MapPlace, MarkerItem, toMapPlace} from "@shared/model/map.model";
+import {EruptMap, MapPlace, MarkerItem} from "@shared/model/map.model";
 import {MapService} from "@shared/service/map/map.service";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {FieldVisibility, Vis} from "../../model/erupt.model";
@@ -92,8 +92,9 @@ export class MapComponent implements OnChanges, OnDestroy {
         const points: MapPoint[] = [];
         for (const row of this.data || []) {
             const place: MapPlace | null = mv.locationField
-                ? toMapPlace(row[mv.locationField])
-                : toMapPlace({lng: row[mv.lngField], lat: row[mv.latField]});
+                ? this.mapService.toPlace(row[mv.locationField])
+                // bare lng / lat columns carry no system: read as legacy AMap (GCJ-02) values
+                : this.mapService.toPlace({lng: row[mv.lngField], lat: row[mv.latField]});
             if (!place) continue;
             points.push({
                 pk: row[pkCol],
