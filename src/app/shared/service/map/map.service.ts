@@ -1,5 +1,6 @@
 import {Injectable} from "@angular/core";
-import {EruptMap, MapAdapter, MapOptions, MapProvider} from "@shared/model/map.model";
+import {EruptMap, MapAdapter, MapOptions, MapPlace, MapProvider, providerCrs, toMapPlace} from "@shared/model/map.model";
+import {Crs} from "@shared/model/crs";
 import {WindowModel} from "@shared/model/window.model";
 
 // each adapter is its own lazy chunk: only the configured vendor's code is ever fetched
@@ -29,6 +30,27 @@ export class MapService {
             default:
                 return !!cfg.key;
         }
+    }
+
+    /**
+     * The coordinate system of the configured vendor: what its SDK expects and returns.
+     */
+    crs(): Crs {
+        return providerCrs(WindowModel.map?.provider);
+    }
+
+    /**
+     * A stored location expressed in the configured vendor's coordinate system.
+     */
+    toPlace(raw: any): MapPlace | null {
+        return toMapPlace(raw, this.crs());
+    }
+
+    /**
+     * A place the vendor produced, tagged with its coordinate system for storage.
+     */
+    stamp(place: MapPlace): MapPlace {
+        return {...place, crs: this.crs()};
     }
 
     async create(el: HTMLElement, options: MapOptions = {}): Promise<EruptMap> {

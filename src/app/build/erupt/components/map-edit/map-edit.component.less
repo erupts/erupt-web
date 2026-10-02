@@ -2,14 +2,20 @@
     display: block;
     position: relative;
 
+    // Vendor SDKs stack their own layers inside the canvas (Tencent's event layer sits at
+    // z-index 1000), so the toolbar and the canvas get separate stacking contexts: the
+    // canvas is isolated at 0 and the toolbar sits above it whatever the SDK uses inside.
     .search-container {
         position: absolute;
         top: 10px;
         left: 20px;
-        z-index: 999;
+        z-index: 2;
     }
 
     .map-edit-canvas {
+        position: relative;
+        z-index: 1;
+        isolation: isolate;
         min-height: 550px;
         border: 1px solid var(--ant-border-color-split, #d9d9d9);
         border-radius: 4px;

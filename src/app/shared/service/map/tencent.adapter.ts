@@ -153,8 +153,10 @@ class TencentMap implements EruptMap {
             return (data || []).filter(d => d.location).map(d => ({
                 id: d.id, name: d.title, address: d.address, lng: d.location.lng, lat: d.location.lat
             }));
-        } catch {
-            return [];
+        } catch (e) {
+            // the WebService side of the key is a separate permission (status 199 when missing):
+            // surface Tencent's own message instead of an empty list the user cannot explain
+            throw new Error(e?.message || String(e));
         }
     }
 
