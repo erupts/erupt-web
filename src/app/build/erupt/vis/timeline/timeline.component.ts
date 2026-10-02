@@ -34,6 +34,7 @@ interface TimelineEntry {
 interface TimelineDay {
     key: string;
     label: string;
+    weekday: string;
     entries: TimelineEntry[];
 }
 
@@ -87,10 +88,11 @@ export class TimelineComponent implements OnChanges {
                 pk: row[pkCol],
                 row,
                 time: time?.isValid() ? time : null,
-                label: this.formatDate(raw, time),
+                // the day is the section heading, so an entry only carries its time of day
+                label: this.formatClock(raw, time),
                 color: (tv.colorField && row[tv.colorField]) || DEFAULT_COLOR,
                 title: titleView ? this.render(row, titleView) : '',
-                fields: rest.map(v => ({title: v.title, html: this.render(row, v)}))
+                fields: rest.map(v => ({title: v.title, html: this.render(row, v)})).filter(f => !!f.html)
             };
         });
 
@@ -108,7 +110,7 @@ export class TimelineComponent implements OnChanges {
         for (const entry of entries) {
             const key = entry.time ? entry.time.format('YYYY-MM-DD') : '';
             if (!current || current.key !== key) {
-                current = {key, label: entry.time ? entry.time.format('YYYY-MM-DD dddd') : '—', entries: []};
+                current = {key, label: entry.time ? entry.time.format('YYYY-MM-DD') : '—', weekday: entry.time ? entry.time.format('dddd') : '', entries: []};
                 this.days.push(current);
             }
             current.entries.push(entry);
@@ -144,12 +146,12 @@ export class TimelineComponent implements OnChanges {
     }
 
     /**
-     * A date-time value keeps its minutes on the axis, a plain date shows only the day.
+     * The time of day of a date-time value; a plain date has none, the day heading says it all.
      */
-    private formatDate(raw: any, time: moment.Moment | null): string {
-        if (!time?.isValid()) return raw == null ? '' : String(raw);
-        const hasTime = typeof raw === 'string' ? /\d{1,2}:\d{2}/.test(raw) : (time.hours() || time.minutes());
-        return time.format(hasTime ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD');
+    private formatClock(raw: any, time: moment.Moment | null): string {
+        if (!time?.isValid()) return '';
+        const hasTime = typeof raw === 'string' ? /\d{1,2}:\d{2}/.test(raw) : !!(time.hours() || time.minutes());
+        return hasTime ? time.format('HH:mm') : '';
     }
 
     trackDay(_: number, day: TimelineDay) {
