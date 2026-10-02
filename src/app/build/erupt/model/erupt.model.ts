@@ -40,6 +40,7 @@ export interface Vis {
     ganttView: GanttView;
     calendarView: CalendarView;
     tplView: Tpl;
+    tableView: TableView;
     timelineView: TimelineView;
     mapView: MapView;
     cubeView: CubeView;
@@ -64,12 +65,31 @@ export enum FieldVisibility {
 
 export interface BoardView {
     groupField: string;
+    // second grouping: one horizontal lane per value
+    swimlaneField: string;
+    // numeric field summed in every column header
+    sumField: string;
+    // cards per column before the header turns red, 0 = no limit
+    wipLimit: number;
 }
 
 export interface CalendarView {
     dateField: string;
     endDateField: string;
     colorField: string;
+    mode: CalendarMode;
+}
+
+export enum CalendarMode {
+    MONTH = "MONTH",
+    WEEK = "WEEK",
+    YEAR = "YEAR"
+}
+
+export interface TableView {
+    // rows are split into collapsible groups by this field; empty = plain table
+    groupField: string;
+    collapsed: boolean;
 }
 
 export interface TimelineView {

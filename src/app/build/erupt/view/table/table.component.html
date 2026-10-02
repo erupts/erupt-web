@@ -456,7 +456,14 @@
                                                   [vis]="vis[selectedVisIndex]"/>
                                     }
                                     @case (VisType.TABLE) {
-                                        <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
+                                        @if (vis[selectedVisIndex].tableView?.groupField) {
+                                            <vis-table-group [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
+                                                             [columns]="stColumns" [loading]="dataPage.querying"
+                                                             (change)="tableDataChange($event)"
+                                                             [vis]="vis[selectedVisIndex]"/>
+                                        } @else {
+                                            <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
+                                        }
                                     }
                                     @case (VisType.BOARD) {
                                         <vis-board [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
@@ -568,6 +575,18 @@
                 }
             </ng-template>
         </st>
+        <!-- totals arrive on their own request and render outside st, so the rows never wait or re-render for them -->
+        @if (statChips.length) {
+            <div class="erupt-stat-bar">
+                <i nz-icon nzType="calculator" nzTheme="outline" class="erupt-stat-icon"></i>
+                @for (chip of statChips; track chip.title) {
+                    <span class="erupt-stat-chip">
+                        <span class="erupt-stat-key">{{ chip.title }}</span>
+                        <span class="erupt-stat-val">{{ chip.value }}</span>
+                    </span>
+                }
+            </div>
+        }
     </div>
 </ng-template>
 <ng-template #printSelectTpl>

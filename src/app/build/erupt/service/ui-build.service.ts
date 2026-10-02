@@ -11,7 +11,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzImageService} from "ng-zorro-antd/image";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
-import {EruptFieldModel, OpenWay, PageEmbedType, Tpl, View} from "../model/erupt-field.model";
+import {EruptFieldModel, OpenWay, PageEmbedType, Statistic, Tpl, View} from "../model/erupt-field.model";
 import {AttachmentSelectComponent} from "../components/attachment-select/attachment-select.component";
 import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
@@ -21,6 +21,11 @@ import {Router} from "@angular/router";
 
 @Injectable()
 export class UiBuildService {
+
+    // st column property carrying @View.statistic; the total itself comes from the server,
+    // so st's own page-scoped `statistical` footer is not used
+    static readonly STATISTIC_KEY = "eruptStatistic";
+
 
     private static measureCtx: CanvasRenderingContext2D;
 
@@ -518,14 +523,13 @@ export class UiBuildService {
                     obj.width = titleWidth + 30;
                     obj.format = (item: any) => {
                         // a person silhouette stands in for a missing avatar; a picture glyph would read as "broken image"
-                        // resolveAvatar rather than previewAttachment: an SSO user's picture is a third-party URL that must not carry the token
                         return item[view.column]
-                            ? `<img class="e-table-avatar" src="${DataService.resolveAvatar(item[view.column])}" alt=""/>`
+                            ? `<img class="e-table-avatar" src="${DataService.previewAttachment(item[view.column])}" alt=""/>`
                             : `<img class="e-table-avatar e-table-avatar-empty" src="./assets/image/avatar.svg" alt=""/>`;
                     };
                     obj.click = (item) => {
                         if (!item[view.column]) return;
-                        this.imageService.preview([{src: DataService.resolveAvatar(item[view.column])}]);
+                        this.imageService.preview([{src: DataService.previewAttachment(item[view.column])}]);
                     };
                     break;
                 case ViewType.HTML:
@@ -785,6 +789,9 @@ export class UiBuildService {
                 // itself and needs to know which view type it is standing in for
                 obj[UiBuildService.VIEW_TYPE_KEY] = view.type;
                 obj[UiBuildService.FIELD_NAME_KEY] = view.eruptFieldModel.fieldName;
+            }
+            if (view.statistic && view.statistic !== Statistic.NONE) {
+                obj[UiBuildService.STATISTIC_KEY] = view.statistic;
             }
             cols.push(obj);
             i++;

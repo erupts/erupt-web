@@ -3,6 +3,64 @@
     user-select: none;
 }
 
+// ── Swimlane ─────────────────────────────────────────────────────────────────
+.board-lane-titled {
+    border: 1px solid var(--ant-border-color-split);
+    border-radius: 0;
+    background: var(--erupt-bg-layout, #f7f8fa);
+    margin-bottom: 12px;
+
+    .board-wrap {
+        padding: 10px;
+    }
+
+    // per-lane column bodies stay shorter so several lanes fit on screen
+    .board-col-body {
+        max-height: 44vh;
+    }
+}
+
+.board-lane-header {
+    position: sticky;
+    left: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--ant-border-color-split);
+    background: var(--erupt-bg-container, #fff);
+    border-radius: 0;
+}
+
+.board-lane-indicator {
+    width: 4px;
+    height: 16px;
+    border-radius: 0;
+    background: var(--lane-color);
+    flex-shrink: 0;
+}
+
+.board-lane-title {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--erupt-text, #1e2330);
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.board-lane-count {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--erupt-text-tertiary, #8a94a6);
+    background: var(--erupt-fill-secondary, #f0f2f5);
+    border-radius: 0;
+    padding: 2px 8px;
+    line-height: 16px;
+}
+
 // ── Board horizontal scroll container ────────────────────────────────────────
 .board-wrap {
     display: flex;
@@ -19,7 +77,7 @@
     }
     &::-webkit-scrollbar-thumb {
         background: var(--erupt-fill, #d1d5db);
-        border-radius: 3px;
+        border-radius: 0;
     }
 }
 
@@ -29,10 +87,15 @@
     width: 268px;
     display: flex;
     flex-direction: column;
-    border-radius: 10px;
+    border-radius: 0;
     background: var(--erupt-bg-container, #fff);
     border: 1px solid var(--ant-border-color-split);
     overflow: hidden;
+
+    // over the WIP limit
+    &.board-col-over {
+        border-top: 2px solid #ff4d4f;
+    }
 }
 
 // ── Column header ───────────────────────────────────────────────────
@@ -48,7 +111,7 @@
 .board-col-indicator {
     width: 10px;
     height: 10px;
-    border-radius: 50%;
+    border-radius: 0;
     background: var(--col-color);
     flex-shrink: 0;
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--col-color) 18%, transparent);
@@ -72,11 +135,33 @@
     font-weight: 500;
     color: var(--erupt-text-tertiary, #8a94a6);
     background: var(--erupt-fill-secondary, #f0f2f5);
-    border-radius: 20px;
+    border-radius: 0;
     padding: 2px 7px;
     line-height: 16px;
     min-width: 20px;
     text-align: center;
+
+    &.board-col-count-over {
+        color: #fff;
+        background: #ff4d4f;
+    }
+}
+
+.board-col-limit {
+    opacity: 0.7;
+}
+
+.board-col-sum {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: var(--erupt-text-secondary, #4a5568);
+    background: color-mix(in srgb, var(--col-color) 12%, transparent);
+    border-radius: 0;
+    padding: 2px 7px;
+    line-height: 16px;
+    white-space: nowrap;
 }
 
 // ── Column body ─────────────────────────────────────────────────
@@ -93,7 +178,7 @@
     }
     &::-webkit-scrollbar-thumb {
         background: var(--erupt-fill, #dde1e7);
-        border-radius: 2px;
+        border-radius: 0;
     }
 }
 
@@ -114,7 +199,7 @@
         top: 8px;
         bottom: 8px;
         width: 3px;
-        border-radius: 0 2px 2px 0;
+        border-radius: 0;
         background: var(--col-color);
         opacity: 0.7;
         transition: opacity 0.15s;
@@ -194,7 +279,7 @@
 ::ng-deep {
     // Drag preview card (follows the cursor)
     .cdk-drag-preview {
-        border-radius: 8px;
+        border-radius: 0;
         border: 1px solid var(--erupt-border, #cdd3db);
         box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16), 0 4px 8px rgba(0, 0, 0, 0.08);
         background: var(--erupt-bg-elevated, #fff);
@@ -206,7 +291,7 @@
     .cdk-drag-placeholder {
         background: color-mix(in srgb, var(--col-color, #94a3b8) 8%, var(--erupt-bg-container, #f8f9fb));
         border: 1.5px dashed color-mix(in srgb, var(--col-color, #94a3b8) 55%, transparent);
-        border-radius: 8px;
+        border-radius: 0;
         min-height: 52px;
 
         > * {
@@ -228,6 +313,6 @@
         background: color-mix(in srgb, var(--col-color, #94a3b8) 6%, var(--erupt-bg-container, #f8f9fb)) !important;
         outline: 2px dashed color-mix(in srgb, var(--col-color, #94a3b8) 40%, transparent);
         outline-offset: -2px;
-        border-radius: 10px;
+        border-radius: 0;
     }
 }

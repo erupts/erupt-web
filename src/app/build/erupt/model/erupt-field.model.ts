@@ -67,6 +67,16 @@ export enum FormCtrl {
     READONLY = "READONLY",
 }
 
+export enum Statistic {
+    NONE = "NONE",
+    COUNT = "COUNT",
+    DISTINCT_COUNT = "DISTINCT_COUNT",
+    SUM = "SUM",
+    AVG = "AVG",
+    MAX = "MAX",
+    MIN = "MIN"
+}
+
 export interface View {
     className: string;
     column: string;
@@ -79,6 +89,8 @@ export interface View {
     sortable: boolean;
     // adjacent columns sharing a group render under one merged header cell
     group: string;
+    // aggregate shown in the table footer and in group headers
+    statistic: Statistic;
     tpl: Tpl;
     //extra
     eruptFieldModel?: EruptFieldModel;

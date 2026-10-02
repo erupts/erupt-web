@@ -635,3 +635,39 @@
         white-space: nowrap;
     }
 }
+
+// server-side column totals, a bar under the table that fills in when its request returns
+.erupt-stat-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 14px;
+    padding: 6px 12px;
+    border-top: 1px solid var(--ant-border-color-split);
+    background: var(--erupt-fill-secondary, #fafafa);
+    font-size: 12px;
+}
+
+.erupt-stat-icon {
+    color: var(--erupt-text-tertiary, #8a94a6);
+}
+
+.erupt-stat-chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+}
+
+.erupt-stat-key {
+    color: var(--erupt-text-tertiary, #8a94a6);
+
+    &::after {
+        content: ':';
+    }
+}
+
+.erupt-stat-val {
+    font-weight: 600;
+    color: var(--erupt-text, #1e2330);
+    font-variant-numeric: tabular-nums;
+}

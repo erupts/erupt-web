@@ -192,6 +192,9 @@ export class TableComponent implements OnInit, OnDestroy {
     // current search, forwarded to a CUBE view as chart filters
     cubeConditions: QueryCondition[] = [];
 
+    // server-side totals of the @View(statistic) columns, one chip per column; empty = none
+    statChips: { title: string; value: string }[] = [];
+
     selectedVisIndex: number = 0;
 
     visOptions: any[] = [];
@@ -606,7 +609,9 @@ export class TableComponent implements OnInit, OnDestroy {
     private static readonly FULL_LOAD_VIS = [VisType.BOARD, VisType.CALENDAR, VisType.MAP, VisType.CUBE];
 
     fullLoadVis(): boolean {
-        return TableComponent.FULL_LOAD_VIS.includes(this.vis[this.selectedVisIndex]?.type);
+        const vis = this.vis[this.selectedVisIndex];
+        // a grouped table splits rows by field, which only makes sense over the whole result
+        return TableComponent.FULL_LOAD_VIS.includes(vis?.type) || (vis?.type === VisType.TABLE && !!vis.tableView?.groupField);
     }
 
     toggleCondition() {
@@ -670,7 +675,29 @@ export class TableComponent implements OnInit, OnDestroy {
             });
         });
         this.extraRowFun(this.buildQueryBody());
+        this.loadAggregate(this.buildQueryBody());
         return loaded;
+    }
+
+    // Totals cover every row the query matches, not the page, so they come from the server;
+    // the chips are prepared here once per response, never recomputed during change detection.
+    private loadAggregate(query: Page) {
+        const statColumns = (this.columns || []).filter(c => !!c[UiBuildService.STATISTIC_KEY]);
+        if (!statColumns.length) {
+            this.statChips = [];
+            return;
+        }
+        this.dataService.aggregate(this.eruptBuildModel.eruptModel.eruptName, query, this.header).subscribe(result => {
+            this.statChips = statColumns.map(col => {
+                const index = Array.isArray(col.index) ? col.index[0] : col.index as string;
+                const value = result?.[index];
+                return {
+                    title: typeof col.title === 'string' ? col.title : (col.title as any)?.text ?? index,
+                    value: value == null ? '-' : typeof value === 'number'
+                        ? value.toLocaleString(undefined, {maximumFractionDigits: 2}) : String(value)
+                };
+            });
+        }, () => this.statChips = []);
     }
 
     setVisTplData(data: any[]) {
