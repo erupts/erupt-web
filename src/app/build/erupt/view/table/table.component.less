@@ -427,7 +427,8 @@
         // the pagination bar (border-top: none + its own bottom/side borders)
         // then closes the box. With no pagination the table keeps its own bottom
         // border so it never renders with an open bottom edge.
-        .tc-body:has(+ .tc-pagination) st .ant-table .ant-table-container {
+        .tc-body:has(+ .tc-pagination) st .ant-table .ant-table-container,
+        .tc-body:has(.erupt-stat-bar) st .ant-table .ant-table-container {
             border-bottom: none;
         }
 
@@ -637,14 +638,17 @@
 }
 
 // server-side column totals, a bar under the table that fills in when its request returns
+// same frame as .tc-pagination: side and bottom borders, the table above supplies the top edge
 .erupt-stat-bar {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 6px 14px;
-    padding: 6px 12px;
-    border-top: 1px solid var(--ant-border-color-split);
-    background: var(--erupt-fill-secondary, #fafafa);
+    min-height: 39px;
+    padding: 4px 12px;
+    border: 1px solid var(--ant-border-color-split);
+    border-top: none;
+    background: var(--erupt-bg-container, #fff);
     font-size: 12px;
 }
 
