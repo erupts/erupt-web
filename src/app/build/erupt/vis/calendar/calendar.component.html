@@ -1,16 +1,85 @@
-<nz-calendar [nzDateCell]="dateCellTpl" [nzMonthCell]="monthCellTpl">
-    <ng-template #dateCellTpl let-date>
-        @for (event of getEventsForDate(date); track getPk(event)) {
-            <div class="cal-event"
-                 [style.background]="getEventColor(event)"
-                 (click)="onEdit.emit(getPk(event)); $event.stopPropagation()">
-                <span [innerHTML]="getEventLabel(event) | safeHtml"></span>
-            </div>
-        }
-    </ng-template>
-    <ng-template #monthCellTpl let-date>
-        @if (getEventsForDate(date).length) {
-            <nz-badge [nzCount]="getEventsForDate(date).length" nzSize="small"/>
-        }
-    </ng-template>
-</nz-calendar>
+<div class="cal-toolbar">
+    <div class="cal-toolbar-nav">
+        <button nz-button nzSize="small" (click)="shift(-1)"><i nz-icon nzType="left"></i></button>
+        <button nz-button nzSize="small" (click)="today()">{{ 'calendar.today' | translate }}</button>
+        <button nz-button nzSize="small" (click)="shift(1)"><i nz-icon nzType="right"></i></button>
+        <span class="cal-period">{{ periodLabel() }}</span>
+    </div>
+    <nz-segmented [nzOptions]="modeOptions" [ngModel]="mode" (ngModelChange)="setMode($event)" nzSize="small"/>
+</div>
+
+<ng-template #eventTpl let-event>
+    <div class="cal-event" [style.background]="getEventColor(event)"
+         (click)="onEdit.emit(getPk(event)); $event.stopPropagation()">
+        <span [innerHTML]="getEventLabel(event) | safeHtml"></span>
+    </div>
+</ng-template>
+
+@switch (mode) {
+    @case (CalendarMode.MONTH) {
+        <div cdkDropListGroup>
+            <nz-calendar [ngModel]="current" (ngModelChange)="onCurrentChange($event)" nzMode="month"
+                         [nzCustomHeader]="noHeaderTpl" [nzDateCell]="dateCellTpl">
+                <ng-template #noHeaderTpl></ng-template>
+                <ng-template #dateCellTpl let-date>
+                    @let key = dayKey(date);
+                    <div class="cal-cell" cdkDropList [cdkDropListData]="key" (cdkDropListDropped)="drop($event)">
+                        @for (event of visibleEvents(key); track getPk(event)) {
+                            <div cdkDrag [cdkDragData]="event">
+                                <ng-container *ngTemplateOutlet="eventTpl; context: {$implicit: event}"/>
+                            </div>
+                        }
+                        @if (eventsOf(key).length > cellLimit) {
+                            <a class="cal-more" (click)="toggleCell(key, $event)">
+                                {{ expandedCells.has(key) ? '−' : '+' + (eventsOf(key).length - cellLimit) }}
+                            </a>
+                        }
+                    </div>
+                </ng-template>
+            </nz-calendar>
+        </div>
+    }
+    @case (CalendarMode.WEEK) {
+        <div class="cal-week" cdkDropListGroup>
+            @for (day of weekDays; track day.key) {
+                <div class="cal-week-col" [class.cal-today]="day.today">
+                    <div class="cal-week-head">
+                        <span class="cal-week-dow">{{ day.date | date: 'EEE' }}</span>
+                        <span class="cal-week-date">{{ day.date | date: 'M/d' }}</span>
+                    </div>
+                    <div class="cal-week-body" cdkDropList [cdkDropListData]="day.key" (cdkDropListDropped)="drop($event)">
+                        @for (event of eventsOf(day.key); track getPk(event)) {
+                            <div cdkDrag [cdkDragData]="event">
+                                <ng-container *ngTemplateOutlet="eventTpl; context: {$implicit: event}"/>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    @case (CalendarMode.YEAR) {
+        <div class="cal-year">
+            @for (month of yearMonths; track month.key) {
+                <div class="cal-year-month">
+                    <div class="cal-year-head" (click)="openMonth(month.date)">
+                        <span class="cal-year-title">{{ month.label }}</span>
+                        @if (month.count) {
+                            <span class="cal-year-count">{{ month.count }}</span>
+                        }
+                    </div>
+                    <div class="cal-year-grid">
+                        @for (day of month.days; track day.key) {
+                            <div class="cal-year-day" [class.cal-year-out]="!day.inMonth" [class.cal-today]="day.today"
+                                 [style.--heat]="day.heat" [style.--ev-color]="day.color"
+                                 nz-tooltip [nzTooltipTitle]="day.count ? day.key + ' · ' + day.count : null"
+                                 (click)="day.inMonth && openMonth(dateOf(day.key))">
+                                {{ day.inMonth ? day.day : '' }}
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}

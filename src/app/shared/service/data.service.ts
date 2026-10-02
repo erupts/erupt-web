@@ -113,6 +113,17 @@ export class DataService {
     }
 
     //custom rows
+    // totals of the @View(statistic) columns over everything the query matches
+    aggregate(eruptName: string, query: Page, header?: object): Observable<Record<string, any>> {
+        return this._http.post(RestPath.data + "/aggregate/" + eruptName, query, null, {
+            observe: 'body',
+            headers: {
+                erupt: eruptName,
+                ...header
+            }
+        });
+    }
+
     extraRow(eruptName: string, condition?: object): Observable<Row[]> {
         return this._http.post(RestPath.data + "/extra-row/" + eruptName, condition, null, {
             observe: 'body',
@@ -200,9 +211,12 @@ export class DataService {
         });
     }
 
-    updateBoardGroup(eruptName: string, visCode: string, pk: any, groupValue: any): Observable<any> {
+    // swimlane is only sent when the card moved to another lane; its value may be null (lane "unset")
+    updateBoardGroup(eruptName: string, visCode: string, pk: any, groupValue: any, swimlane?: { value: any }): Observable<any> {
         return this._http.post(RestPath.dataModify + "/board/" + eruptName + "/update_group", {
-            visCode, pk, groupValue
+            visCode, pk, groupValue,
+            swimlaneChanged: !!swimlane,
+            swimlaneValue: swimlane?.value ?? null
         }, {}, {
             observe: "body",
             headers: {erupt: eruptName}

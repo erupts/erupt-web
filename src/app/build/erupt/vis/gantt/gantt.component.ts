@@ -77,7 +77,7 @@ export class GanttComponent implements OnChanges, OnInit {
     ngOnInit(): void {
         this.columnMap = new Map<string, STColumn>()
         for (let col of this.uiBuildService.viewToAlainTableConfig(this.eruptBuildModel, true)) {
-            this.columnMap.set(col.index, col);
+            this.columnMap.set(String(col.index), col);
         }
     }
 

@@ -60,6 +60,7 @@ import {NzSegmentedModule} from "ng-zorro-antd/segmented";
 import {CalendarComponent} from "./vis/calendar/calendar.component";
 import {TimelineComponent} from "./vis/timeline/timeline.component";
 import {MapComponent} from "./vis/map/map.component";
+import {TableGroupComponent} from "./vis/table-group/table-group.component";
 import {CubeReportModule} from "../cube/cube-report.module";
 import {NzCalendarModule} from "ng-zorro-antd/calendar";
 import {NzTimelineModule} from "ng-zorro-antd/timeline";
@@ -168,6 +169,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         CalendarComponent,
         TimelineComponent,
         MapComponent,
+        TableGroupComponent,
         FormViewComponent
     ]
 })

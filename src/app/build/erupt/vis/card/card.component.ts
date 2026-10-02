@@ -41,7 +41,7 @@ export class CardComponent implements OnInit, OnChanges {
     ngOnInit() {
         this.columnMap = new Map<string, STColumn>()
         for (let col of this.uiBuildService.viewToAlainTableConfig(this.eruptBuildModel, true)) {
-            this.columnMap.set(col.index, col);
+            this.columnMap.set(String(col.index), col);
         }
     }
 

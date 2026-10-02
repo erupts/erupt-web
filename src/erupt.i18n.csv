@@ -1393,3 +1393,12 @@ setting.skin-classic,Classic,Classic,Classic,Classic,Classic,Classic,Classic,Cla
 setting.skin-workspace,Workspace,Workspace,Workspace,Workspace,Workspace,Workspace,Workspace,Workspace,Workspace,Workspace,Workspace,Workspace
 setting.skin-liquid-glass,Liquid Glass,Liquid Glass,Liquid Glass,Liquid Glass,Liquid Glass,Liquid Glass,Liquid Glass,Liquid Glass,Liquid Glass,Liquid Glass,Liquid Glass,Liquid Glass
 setting.skin-brutalist,Brutalist,Brutalist,Brutalist,Brutalist,Brutalist,Brutalist,Brutalist,Brutalist,Brutalist,Brutalist,Brutalist,Brutalist
+calendar.month,月,月,Month,Mois,月,월,Месяц,Mes,Monat,Mês,Bulan,شهر
+calendar.week,周,週,Week,Semaine,週,주,Неделя,Semana,Woche,Semana,Minggu,أسبوع
+calendar.year,年,年,Year,Année,年,년,Год,Año,Jahr,Ano,Tahun,سنة
+calendar.today,今天,今天,Today,Aujourd'hui,今日,오늘,Сегодня,Hoy,Heute,Hoje,Hari ini,اليوم
+board.sum,合计,合計,Sum,Total,合計,합계,Сумма,Suma,Summe,Soma,Jumlah,المجموع
+board.wip_over,超出在制上限,超出在製上限,Over WIP limit,Limite WIP dépassée,WIP上限超過,WIP 한도 초과,Превышен лимит WIP,Límite WIP superado,WIP-Limit überschritten,Limite WIP excedido,Melebihi batas WIP,تجاوز حد العمل الجاري
+group.expand_all,全部展开,全部展開,Expand all,Tout développer,すべて展開,모두 펼치기,Развернуть все,Expandir todo,Alle aufklappen,Expandir tudo,Perluas semua,توسيع الكل
+group.collapse_all,全部折叠,全部折疊,Collapse all,Tout réduire,すべて折りたたむ,모두 접기,Свернуть все,Contraer todo,Alle zuklappen,Recolher tudo,Lipat semua,طي الكل
+group.unset,未分组,未分組,Ungrouped,Non groupé,未分類,미분류,Без группы,Sin grupo,Ohne Gruppe,Sem grupo,Tanpa grup,بدون مجموعة
