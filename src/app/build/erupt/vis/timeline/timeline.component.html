@@ -3,25 +3,34 @@
         <nz-empty nzNotFoundImage="simple"/>
     </div>
 } @else {
-    <nz-timeline [nzMode]="nzMode" class="tl-wrap">
+    <nz-timeline [nzMode]="nzMode" class="tl-wrap" [class.tl-alternate]="nzMode !== 'left'">
         @for (day of days; track trackDay($index, day)) {
+            <!-- day heading: a section marker on the axis, cards of that day follow it -->
             <nz-timeline-item [nzDot]="dayDot" nzPosition="left">
-                <span class="tl-day">{{ day.label }}</span>
+                <div class="tl-day">
+                    <span class="tl-day-date">{{ day.label }}</span>
+                    @if (day.weekday) {
+                        <span class="tl-day-week">{{ day.weekday }}</span>
+                    }
+                    <span class="tl-day-count">{{ day.entries.length }}</span>
+                </div>
             </nz-timeline-item>
             @for (entry of day.entries; track trackEntry($index, entry)) {
-                <nz-timeline-item [nzColor]="entry.color" [nzLabel]="nzMode === 'left' ? undefined : entry.label">
+                <nz-timeline-item [nzColor]="entry.color" [nzLabel]="nzMode === 'left' ? undefined : (entry.label || null)">
                     <div class="tl-card" [style.--tl-color]="entry.color" (click)="onEdit.emit(entry.pk)">
                         <div class="tl-card-head">
                             <span class="tl-title" [innerHTML]="entry.title | safeHtml"></span>
-                            <span class="tl-time">{{ entry.label }}</span>
+                            @if (nzMode === 'left' && entry.label) {
+                                <span class="tl-time"><i nz-icon nzType="clock-circle" nzTheme="outline"></i>{{ entry.label }}</span>
+                            }
                         </div>
                         @if (entry.fields.length) {
                             <div class="tl-meta">
                                 @for (field of entry.fields; track field.title) {
-                                    <div class="tl-meta-row">
+                                    <span class="tl-meta-item">
                                         <span class="tl-meta-key">{{ field.title }}</span>
-                                        <span class="tl-meta-val" [innerHTML]="(field.html || '—') | safeHtml"></span>
-                                    </div>
+                                        <span class="tl-meta-val" [innerHTML]="field.html | safeHtml"></span>
+                                    </span>
                                 }
                             </div>
                         }
