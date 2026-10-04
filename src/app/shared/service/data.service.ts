@@ -17,6 +17,7 @@ import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {R, SimplePage} from "@shared/model/api.model";
 import {MentionUser, RecordComment} from "../../build/erupt/model/record-comment.model";
+import {RecordRevision} from "../../build/erupt/model/record-revision.model";
 import {NoticeStatus} from "@shared/model/notice.model";
 
 @Injectable()
@@ -233,6 +234,14 @@ export class DataService {
                 erupt: eruptName
             }
         });
+    }
+
+            visCode, pks
+        }, {}, {observe: "body", headers: {erupt: eruptName}});
+    }
+
+            visCode, pk, predecessorPk, remove
+        }, {}, {observe: "body", headers: {erupt: eruptName}});
     }
 
     updateCalendarDate(eruptName: string, visCode: string, pk: any, date: string, endDate?: string): Observable<any> {
@@ -780,6 +789,20 @@ export class DataService {
                 observe: "body", headers: {erupt: eruptName}
             });
     }
+    // ---------- record revisions (erupt-revision module) ----------
+
+    revisionList(eruptName: string, id: any) {
+        return this._http.get<R<RecordRevision[]>>(RestPath.revision + "/" + eruptName + "/" + encodeURIComponent(id), null, {
+            observe: "body", headers: {erupt: eruptName}
+        });
+    }
+
+    // put the values a revision replaced back onto the record; runs the regular update pipeline
+    revisionRollback(eruptName: string, id: any, revisionId: number) {
+        return this._http.post<R<void>>(RestPath.revision + "/" + eruptName + "/" + encodeURIComponent(id) + "/" + revisionId + "/rollback",
+            null, null, {observe: "body", headers: {erupt: eruptName}});
+    }
+
 
     printConfigAdd(eruptName: string, config: any) {
         return this._http.post<R<void>>(
