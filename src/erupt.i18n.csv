@@ -1402,3 +1402,11 @@ board.wip_over,超出在制上限,超出在製上限,Over WIP limit,Limite WIP d
 group.expand_all,全部展开,全部展開,Expand all,Tout développer,すべて展開,모두 펼치기,Развернуть все,Expandir todo,Alle aufklappen,Expandir tudo,Perluas semua,توسيع الكل
 group.collapse_all,全部折叠,全部折疊,Collapse all,Tout réduire,すべて折りたたむ,모두 접기,Свернуть все,Contraer todo,Alle zuklappen,Recolher tudo,Lipat semua,طي الكل
 group.unset,未分组,未分組,Ungrouped,Non groupé,未分類,미분류,Без группы,Sin grupo,Ohne Gruppe,Sem grupo,Tanpa grup,بدون مجموعة
+form.revisions,历史版本,歷史版本,History,Historique,履歴,변경 이력,История,Historial,Verlauf,Histórico,Riwayat,السجل
+revision.empty,还没有变更记录,還沒有變更記錄,No changes yet,Aucune modification,変更履歴はまだありません,아직 변경 이력이 없습니다,Изменений пока нет,Aún no hay cambios,Noch keine Änderungen,Ainda sem alterações,Belum ada perubahan,لا توجد تغييرات بعد
+revision.empty_hint,保存这条记录后，每次变更都会记录在这里,儲存這條記錄後，每次變更都會記錄在這裡,Every change saved on this record will show up here,Chaque modification de cet enregistrement apparaîtra ici,このレコードの変更はここに記録されます,이 레코드의 모든 변경 사항이 여기에 표시됩니다,Каждое изменение этой записи появится здесь,Cada cambio guardado en este registro aparecerá aquí,Jede gespeicherte Änderung dieses Datensatzes erscheint hier,Cada alteração guardada neste registo aparecerá aqui,Setiap perubahan pada data ini akan muncul di sini,ستظهر هنا كل التغييرات المحفوظة على هذا السجل
+revision.op.ADD,新增,新增,Added,Ajouté,追加,추가,Добавлено,Añadido,Hinzugefügt,Adicionado,Ditambahkan,أُضيف
+revision.op.UPDATE,修改,修改,Updated,Modifié,更新,수정,Изменено,Modificado,Geändert,Alterado,Diubah,عُدّل
+revision.op.DELETE,删除,刪除,Deleted,Supprimé,削除,삭제,Удалено,Eliminado,Gelöscht,Eliminado,Dihapus,حُذف
+revision.rollback,回滚,回滾,Roll back,Restaurer,ロールバック,롤백,Откатить,Revertir,Zurücksetzen,Reverter,Kembalikan,تراجع
+revision.rollback_hint,将这次变更的字段恢复为变更前的值？,將這次變更的欄位恢復為變更前的值？,Restore the fields of this change to their previous values?,Restaurer les champs de cette modification à leurs valeurs précédentes ?,この変更のフィールドを変更前の値に戻しますか？,이 변경의 필드를 이전 값으로 되돌릴까요?,Вернуть полям этого изменения прежние значения?,¿Restaurar los campos de este cambio a sus valores anteriores?,Die Felder dieser Änderung auf ihre vorherigen Werte zurücksetzen?,Repor os campos desta alteração para os valores anteriores?,Kembalikan kolom perubahan ini ke nilai sebelumnya?,هل تريد استعادة حقول هذا التغيير إلى قيمها السابقة؟

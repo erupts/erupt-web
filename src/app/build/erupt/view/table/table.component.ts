@@ -9,6 +9,7 @@ import {EditTypeComponent} from "../../components/edit-type/edit-type.component"
 import {EditComponent} from "../edit/edit.component";
 import {FormAction, FormModalService, FormNavigator} from "../../service/form-modal.service";
 import {RecordCommentComponent} from "../../components/record-comment/record-comment.component";
+import {RecordRevisionComponent} from "../../components/record-revision/record-revision.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
 import {
@@ -376,6 +377,12 @@ export class TableComponent implements OnInit, OnDestroy {
     get isCommentEnabled(): boolean {
         return !!EruptAppData.get().properties["erupt-comment"]
             && this.eruptBuildModel.eruptModel.eruptJson.power.comment !== false;
+    }
+
+    // erupt-revision module present and the model has not opted out via @Power(revision = false)
+    get isRevisionEnabled(): boolean {
+        return !!EruptAppData.get().properties["erupt-revision"]
+            && this.eruptBuildModel.eruptModel.eruptJson.power.revision !== false;
     }
 
     // comment count per record id of the current page, shown as a badge on the row button
@@ -1093,6 +1100,7 @@ export class TableComponent implements OnInit, OnDestroy {
             link: this.recordLink(record),
             ai: this.recordAi(),
             comment: this.recordComment(record),
+            revision: this.recordRevision(record),
             remove: this.recordRemove(record, (r, ref) => this.openView(r, ref)),
             more: this.recordActions(record),
             footer: ref => [
@@ -1137,6 +1145,7 @@ export class TableComponent implements OnInit, OnDestroy {
             link: this.recordLink(record),
             ai: this.recordAi(),
             comment: this.recordComment(record),
+            revision: this.recordRevision(record),
             remove: this.recordRemove(record, (r, ref) => this.openEdit(r, ref)),
             more: this.recordActions(record),
             footer: ref => [
@@ -1163,6 +1172,8 @@ export class TableComponent implements OnInit, OnDestroy {
                 {
                     label: this.i18n.fanyi("global.save_close"),
                     type: "primary",
+                    // runs through nzOnOk, whose progress nz-modal tracks on the config
+                    loading: () => ref.getConfig().nzOkLoading,
                     onClick: () => ref.triggerOk()
                 },
             ],
@@ -1224,6 +1235,25 @@ export class TableComponent implements OnInit, OnDestroy {
             nzWidth: window.innerWidth <= 768 ? "100%" : 420,
             nzBodyStyle: {padding: "0", height: "100%"}
         }, "form-comment").afterClose.subscribe(() => this.loadCommentCounts());
+    }
+
+    // Change history of the record in a drawer, opened from the record panel's title bar only (the
+    // table rows carry no entry); only when the erupt-revision module is present. A rollback edits
+    // the record, so the page is re-queried afterwards.
+    private recordRevision(record: any): ((ref: NzModalRef<EditComponent>) => void) | undefined {
+        if (!this.isRevisionEnabled) return undefined;
+        return () => openResizableDrawer(this.drawerService, {
+            nzContent: RecordRevisionComponent,
+            nzContentParams: {
+                eruptName: this.eruptBuildModel.eruptModel.eruptName,
+                id: record[this.pkCol],
+                canRollback: !!this.eruptBuildModel.eruptModel.eruptJson.power.edit,
+                onRolledBack: () => this.query()
+            },
+            nzTitle: this.i18n.fanyi("form.revisions"),
+            nzWidth: window.innerWidth <= 768 ? "100%" : 460,
+            nzBodyStyle: {padding: "0", height: "100%"}
+        }, "form-revision");
     }
 
     // AI chat in a drawer, primed with the module context plus the record currently in the panel.

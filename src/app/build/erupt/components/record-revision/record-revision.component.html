@@ -1,0 +1,66 @@
+<div class="erupt-revisions">
+  @if (initializing) {
+    <div class="erupt-revisions__skeleton">
+      @for (i of [1, 2, 3]; track i) {
+        <nz-skeleton nzActive [nzAvatar]="{size: 'small', shape: 'circle'}" [nzTitle]="{width: '30%'}"
+                     [nzParagraph]="{rows: 2, width: ['80%', '60%']}"></nz-skeleton>
+      }
+    </div>
+  } @else if (!revisions.length) {
+    <div class="erupt-revisions__empty">
+      <i nz-icon nzType="history" nzTheme="outline"></i>
+      <div class="erupt-revisions__empty-title">{{'revision.empty' | translate}}</div>
+      <div class="erupt-revisions__empty-hint">{{'revision.empty_hint' | translate}}</div>
+    </div>
+  } @else {
+    <div class="erupt-timeline">
+      @for (r of revisions; track r.id; let last = $last) {
+        <div class="erupt-revision" [class.erupt-revision--last]="last">
+          <div class="erupt-revision__rail">
+            <nz-avatar class="erupt-revision__avatar" nzSize="small" [nzSrc]="r.userAvatar | avatar" [nzText]="initial(r.userName)"
+                       [style.background-color]="r.userAvatar ? null : avatarColor(r.userName)"></nz-avatar>
+          </div>
+          <div class="erupt-revision__body">
+            <div class="erupt-revision__meta">
+              <span class="erupt-revision__name">{{r.userName || '—'}}</span>
+              <nz-tag class="erupt-revision__op" [nzColor]="r.operation === 'ADD' ? 'green' : r.operation === 'DELETE' ? 'red' : 'blue'">
+                {{('revision.op.' + r.operation) | translate}}
+              </nz-tag>
+              <span class="erupt-revision__version">v{{r.version}}</span>
+              <span class="erupt-revision__time" [title]="r.createTime | date:'yyyy-MM-dd HH:mm:ss'">{{timeText(r.createTime)}}</span>
+              @if (canRollback && r.operation === 'UPDATE') {
+                <a class="erupt-revision__rollback" nz-popconfirm [nzPopconfirmTitle]="'revision.rollback_hint' | translate"
+                   nzPopconfirmPlacement="left" (nzOnConfirm)="rollback(r)">
+                  @if (rollingBack === r.id) {
+                    <i nz-icon nzType="loading"></i>
+                  } @else {
+                    <i nz-icon nzType="rollback"></i>
+                  }
+                  {{'revision.rollback' | translate}}
+                </a>
+              }
+            </div>
+            <div class="erupt-revision__changes">
+              @for (c of changesOf(r); track c.field) {
+                <div class="erupt-change">
+                  <span class="erupt-change__title" [title]="c.field">{{c.title}}</span>
+                  <span class="erupt-change__values">
+                    @if (r.operation === 'ADD') {
+                      <span class="erupt-change__after">{{display(c.after)}}</span>
+                    } @else if (r.operation === 'DELETE') {
+                      <span class="erupt-change__before erupt-change__before--gone">{{display(c.before)}}</span>
+                    } @else {
+                      <span class="erupt-change__before" [class.erupt-change__none]="isEmpty(c.before)">{{display(c.before)}}</span>
+                      <i nz-icon nzType="arrow-right" class="erupt-change__arrow"></i>
+                      <span class="erupt-change__after" [class.erupt-change__none]="isEmpty(c.after)">{{display(c.after)}}</span>
+                    }
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

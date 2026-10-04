@@ -164,6 +164,10 @@ export interface GanttView {
 
     groupField: string;
 
+    // predecessors of a row: a reference or a collection of references to this same model
+
+    // boolean field: true rows are drawn as a milestone diamond on their start date
+
 }
 
 export interface DrillInput {
@@ -291,6 +295,7 @@ export interface Power {
     comment: boolean;       // record comment stream (erupt-comment module), on unless the model opts out
 }
 
+    revision: boolean;      // record change history with rollback (erupt-revision module), on unless the model opts out
 export interface Row {
     className?: string;
     columns: Column[];
