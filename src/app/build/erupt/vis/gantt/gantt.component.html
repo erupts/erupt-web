@@ -4,8 +4,17 @@
                [toolbarOptions]="{viewTypes:[GanttViewType.day, GanttViewType.week, GanttViewType.month,GanttViewType.quarter, GanttViewType.year]}"
                [ngStyle]="{height: (44 * 13) + 'px'}"
                [virtualScrollEnabled]="true"
+               [linkable]="linkable"
+               [linkOptions]="{showArrow: true}"
                (dragEnded)="dragEnded($event)"
+               (linkDragEnded)="linkDragEnded($event)"
+               (lineClick)="lineClick($event)"
                (viewChange)="onViewChange()">
+        <ng-template #bar let-item="item">
+            @if (isMilestone(item.origin)) {
+                <div class="erupt-milestone" nz-tooltip [nzTooltipTitle]="item.origin[vis.ganttView.startDateField]"></div>
+            }
+        </ng-template>
         <ngx-gantt-table>
             @if (editColumnWidth) {
                 <ngx-gantt-column [width]="editColumnWidth">
