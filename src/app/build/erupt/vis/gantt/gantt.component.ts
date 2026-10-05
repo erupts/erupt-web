@@ -6,6 +6,8 @@ import {
     GanttGroup,
     GanttItem,
     GanttItemType,
+    GanttLineClickEvent,
+    GanttLinkDragEvent,
     GanttViewType,
     NgxGanttComponent,
     NgxGanttModule,
@@ -15,12 +17,15 @@ import {SharedModule} from "@shared/shared.module";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {FieldVisibility, Vis} from "../../model/erupt.model";
 import moment from 'moment';
+import {lastValueFrom} from "rxjs";
 import {EruptField} from "../../model/erupt-field.model";
 import {STColumn} from "@delon/abc/st";
 import {UiBuildService} from "../../service/ui-build.service";
 import {DataService} from "@shared/service/data.service";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {NzModalService} from "ng-zorro-antd/modal";
 import {EditType, SelectMode} from "../../model/erupt.enum";
+import {I18NService} from "@core";
 
 // Standalone and reached only through a dynamic import in GanttHostComponent, which
 // keeps @worktile/gantt (126 KB) out of the erupt CRUD chunk and fetches it the first
@@ -67,11 +72,64 @@ export class GanttComponent implements OnChanges, OnInit {
 
     selectedItemIds: Set<string> = new Set<string>(); // stores the IDs of selected items
 
+    // predecessor ids per row id, from the view's dependencyField; drawn as finish-to-start links
+    links: Record<string, string[]> = {};
+
     protected readonly GanttViewType = GanttViewType;
 
     constructor(private uiBuildService: UiBuildService,
                 private msg: NzMessageService,
+                private modal: NzModalService,
+                private i18n: I18NService,
                 public dataService: DataService) {
+    }
+
+    // links may be drawn by hand only when the model is editable and the view names a dependency field
+    get linkable(): boolean {
+        return !!this.vis.ganttView.dependencyField && this.eruptBuildModel.eruptModel.eruptJson.power.edit;
+    }
+
+    isMilestone(row: any): boolean {
+        const field = this.vis.ganttView.milestoneField;
+        return !!field && !!row?.[field];
+    }
+
+    // a link drawn from source to target makes the target depend on the source
+    linkDragEnded(e: GanttLinkDragEvent) {
+        if (!e.target || e.source.id === e.target.id) return;
+        const eruptName = this.eruptBuildModel.eruptModel.eruptName;
+        this.dataService.updateGanttLink(eruptName, this.vis.code, e.target.id, e.source.id, false).subscribe(() => {
+            const deps = this.links[e.target.id] || (this.links[e.target.id] = []);
+            if (deps.indexOf(e.source.id) === -1) deps.push(e.source.id);
+            this.convertDataToGanttItems();
+        });
+    }
+
+    lineClick(e: GanttLineClickEvent) {
+        if (!this.linkable) return;
+        this.modal.confirm({
+            nzTitle: this.i18n.fanyi("gantt.remove_link"),
+            nzContent: `${this.rowTitle(e.source)} → ${this.rowTitle(e.target)}`,
+            nzOkDanger: true,
+            nzOnOk: () => lastValueFrom(this.dataService.updateGanttLink(this.eruptBuildModel.eruptModel.eruptName, this.vis.code,
+                e.target.id, e.source.id, true)).then(() => {
+                this.links[e.target.id] = (this.links[e.target.id] || []).filter(id => id !== e.source.id);
+                this.convertDataToGanttItems();
+            })
+        });
+    }
+
+    // first visible column of the row, falling back to its id
+    private rowTitle(item: GanttItem): string {
+        for (let field of this.eruptBuildModel.eruptModel.eruptFieldModels) {
+            for (let view of field.eruptFieldJson.views) {
+                const visible = this.vis.fieldVisibility == FieldVisibility.EXCLUDE
+                    ? this.vis.fields.indexOf(view.column) === -1 : this.vis.fields.indexOf(view.column) !== -1;
+                const value = (item.origin as any)?.[view.column];
+                if (visible && value != null && value !== "") return String(value);
+            }
+        }
+        return item.id;
     }
 
     ngOnInit(): void {
@@ -239,11 +297,25 @@ export class GanttComponent implements OnChanges, OnInit {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['data']) {
-            this.convertDataToGanttItems();
+            this.loadLinks();
             // clear selection state when data changes
             this.selectedItemIds.clear();
             this.emitSelectionChange();
         }
+    }
+
+    // predecessors are not part of the list rows, so they are fetched for the rows on screen
+    private loadLinks() {
+        const pks = (this.data || []).map(row => row[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol]).filter(pk => pk != null);
+        if (!this.vis.ganttView.dependencyField || !pks.length) {
+            this.links = {};
+            this.convertDataToGanttItems();
+            return;
+        }
+        this.dataService.ganttLinks(this.eruptBuildModel.eruptModel.eruptName, this.vis.code, pks).subscribe(res => {
+            this.links = res.data || {};
+            this.convertDataToGanttItems();
+        });
     }
 
     scrollToToday(): void {
@@ -318,6 +390,13 @@ export class GanttComponent implements OnChanges, OnInit {
             if (ganttView.groupField) {
                 item.group_id = row[ganttView.groupField];
             }
+            if (this.isMilestone(row)) {
+                // a diamond on the start date: a zero-length bar whose own paint is hidden, see the #bar template
+                item.end = item.start;
+                item.draggable = false;
+                item.progress = undefined;
+                item.color = "transparent";
+            }
             if (row) {
                 Object.keys(row).forEach(key => {
                     if (this.eruptBuildModel.eruptModel.eruptFieldModelMap
@@ -329,6 +408,11 @@ export class GanttComponent implements OnChanges, OnInit {
             itemMap.set(id, item);
             allItems.push(item);
         });
+        // the library draws a link from an item to the ids it lists, so every predecessor lists its successors
+        Object.keys(this.links).forEach(id => this.links[id].forEach(pre => {
+            const predecessor = itemMap.get(String(pre));
+            if (predecessor && itemMap.has(id)) (predecessor.links || (predecessor.links = [])).push(id);
+        }));
         let pidField = ganttView.pidField;
         if (pidField) {
             pidField = pidField.replace(/\./g, '_');

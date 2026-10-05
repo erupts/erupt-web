@@ -236,10 +236,16 @@ export class DataService {
         });
     }
 
+    // predecessor ids of the given gantt rows, keyed by row id
+    ganttLinks(eruptName: string, visCode: string, pks: any[]): Observable<R<Record<string, string[]>>> {
+        return this._http.post<R<Record<string, string[]>>>(RestPath.dataModify + "/gantt/" + eruptName + "/links", {
             visCode, pks
         }, {}, {observe: "body", headers: {erupt: eruptName}});
     }
 
+    // add (remove = false) or remove one predecessor of a gantt row
+    updateGanttLink(eruptName: string, visCode: string, pk: any, predecessorPk: any, remove: boolean): Observable<any> {
+        return this._http.post(RestPath.dataModify + "/gantt/" + eruptName + "/link", {
             visCode, pk, predecessorPk, remove
         }, {}, {observe: "body", headers: {erupt: eruptName}});
     }
@@ -783,12 +789,6 @@ export class DataService {
         });
     }
 
-    printConfigList(eruptName: string) {
-        return this._http.get<R<{ id: number, erupt: string, title: string, content: string, pageConfig: any }[]>>(
-            RestPath.erupt + "/print/config/" + eruptName + "/list", null, {
-                observe: "body", headers: {erupt: eruptName}
-            });
-    }
     // ---------- record revisions (erupt-revision module) ----------
 
     revisionList(eruptName: string, id: any) {
@@ -803,6 +803,12 @@ export class DataService {
             null, null, {observe: "body", headers: {erupt: eruptName}});
     }
 
+    printConfigList(eruptName: string) {
+        return this._http.get<R<{ id: number, erupt: string, title: string, content: string, pageConfig: any }[]>>(
+            RestPath.erupt + "/print/config/" + eruptName + "/list", null, {
+                observe: "body", headers: {erupt: eruptName}
+            });
+    }
 
     printConfigAdd(eruptName: string, config: any) {
         return this._http.post<R<void>>(
