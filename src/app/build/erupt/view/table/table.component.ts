@@ -394,8 +394,10 @@ export class TableComponent implements OnInit, OnDestroy {
         this.dataService.commentCounts(this.eruptBuildModel.eruptModel.eruptName, ids).subscribe(res => {
             if (!res.success) return;
             this.commentCounts = res.data || {};
-            // button texts are computed when st optimizes the rows, so rebuild them with the counts in
-            this.st?.resetColumns();
+            // button texts are computed when st optimizes the rows, so re-run that over the current
+            // page. Not resetColumns(): it rebuilds the columns from a deep copy, which drops the
+            // header's sort state and makes the next click restart at "ascend" (#167).
+            this.st?.reload();
         });
     }
 
