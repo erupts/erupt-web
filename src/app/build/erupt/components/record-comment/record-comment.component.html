@@ -48,7 +48,7 @@
           } @else {
             <!-- resolved thread, folded to one line: author, a preview and the reply count -->
             <div class="erupt-thread__summary" (click)="toggleThread(t)">
-              <nz-avatar nzSize="small" [nzSrc]="t.head.userAvatar" [nzText]="initial(t.head.userName)"
+              <nz-avatar nzSize="small" [nzSrc]="t.head.userAvatar | avatar" [nzText]="initial(t.head.userName)"
                          [style.background-color]="t.head.userAvatar ? null : avatarColor(t.head.userName)"></nz-avatar>
               <span class="erupt-thread__summary-name">{{t.head.userName}}</span>
               <span class="erupt-thread__summary-text">{{t.head.content}}</span>
@@ -113,7 +113,7 @@
 
 <ng-template #item let-c let-head="head" let-thread="thread">
   <div class="erupt-comment" [class.erupt-comment--mine]="c.mine">
-    <nz-avatar class="erupt-comment__avatar" nzSize="small" [nzSrc]="c.userAvatar" [nzText]="initial(c.userName)"
+    <nz-avatar class="erupt-comment__avatar" nzSize="small" [nzSrc]="c.userAvatar | avatar" [nzText]="initial(c.userName)"
                [style.background-color]="c.userAvatar ? null : avatarColor(c.userName)"></nz-avatar>
     <div class="erupt-comment__body">
       <div class="erupt-comment__meta">

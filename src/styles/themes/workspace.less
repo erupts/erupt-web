@@ -325,12 +325,11 @@ html.workspace {
         }
     }
 
-    /* Bottom utility bar — the deeper wash; the blur is what hides the menu
-     * rows scrolling underneath, the wash alone would let them read through */
+    /* Bottom utility bar — the frame itself, not a darker wash: it samples the
+     * same fixed sheet as the sidebar, so it reads as part of the chrome and
+     * only the hairline divides it from the rows scrolling underneath */
     .alain-default__aside .fold {
-        background: var(--ws-frame-deep);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
+        .ws-frame-paint();
         border-top: 1px solid var(--ws-divider);
         border-right: 0;
         color: var(--ws-text-muted);
