@@ -142,22 +142,39 @@
                         }
                         @if (eruptBuildModel.eruptModel.eruptJson.power.export) {
                             <nz-badge [nzCount]="selectedRows.length" [nzShowZero]="false" nzSize="small">
-                                <button nz-button nzSize="small" (click)="exportExcel()"
-                                        id="erupt-btn-export" [nzLoading]="downloading">
-                                    <i nz-icon nzType="download" nzTheme="outline"></i>{{ 'table.download'|translate }}
-                                </button>
+                                <!-- compact space joins the two buttons (flex, so no whitespace line box pushes them down) -->
+                                <nz-space-compact nzSize="small">
+                                    <button nz-button nzSize="small" (click)="exportExcel()"
+                                            id="erupt-btn-export" [nzLoading]="downloading">
+                                        <i nz-icon nzType="download" nzTheme="outline"></i>{{ 'table.download'|translate }}
+                                    </button>
+                                    @if (tableFormats.length > 1) {
+                                        <button nz-button nzSize="small" nz-dropdown [nzDropdownMenu]="exportMenu" nzPlacement="bottomRight">
+                                            <i nz-icon nzType="ellipsis"></i>
+                                        </button>
+                                    }
+                                </nz-space-compact>
                             </nz-badge>
+                            <nz-dropdown-menu #exportMenu="nzDropdownMenu">
+                                <ul nz-menu>
+                                    @for (f of tableFormats; track f.format) {
+                                        <li nz-menu-item (click)="exportExcel(f.format)">
+                                            <i nz-icon nzType="file" nzTheme="outline"></i>
+                                            &nbsp;{{ f.name }}
+                                        </li>
+                                    }
+                                </ul>
+                            </nz-dropdown-menu>
                         }
                         @if (eruptBuildModel.eruptModel.eruptJson.power.importable) {
-                            <span>
+                            <nz-space-compact nzSize="small">
                                 <button nz-button nzSize="small" (click)="importableExcel()" id="erupt-btn-importable">
                                     <i nz-icon nzType="import" nzTheme="outline"></i>{{ 'table.import'|translate }}
                                 </button>
-                                <button nz-button nzSize="small" nz-dropdown [nzDropdownMenu]="menu1"
-                                        nzPlacement="bottomRight" style="margin-left:-1px">
+                                <button nz-button nzSize="small" nz-dropdown [nzDropdownMenu]="menu1" nzPlacement="bottomRight">
                                     <i nz-icon nzType="ellipsis"></i>
                                 </button>
-                            </span>
+                            </nz-space-compact>
                             <nz-dropdown-menu #menu1="nzDropdownMenu">
                                 <ul nz-menu>
                                     <li nz-menu-item (click)="downloadExcelTemplate()">

@@ -1,7 +1,7 @@
 import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
-import {DataService} from "@shared/service/data.service";
+import {DataService, TableFormat} from "@shared/service/data.service";
 import {Alert, Drill, DrillInput, EruptModel, FieldVisibility, Page, Power, Row, RowOperation, Vis, VisType} from "../../model/erupt.model";
 
 import {MenuService, SettingsService} from "@delon/theme";
@@ -158,6 +158,9 @@ export class TableComponent implements OnInit, OnDestroy {
     showTable: boolean = true;
 
     downloading: boolean = false;
+
+    // import/export formats offered by the server; Excel first, the rest behind the caret
+    tableFormats: TableFormat[] = [];
 
     _drill: DrillInput;
 
@@ -552,6 +555,9 @@ export class TableComponent implements OnInit, OnDestroy {
                 this.dataHandler.initErupt(eb);
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
+                if (eb.eruptModel.eruptJson.power.export) {
+                    this.dataService.tableFormats(formats => this.tableFormats = formats);
+                }
                 const _menuPath = this.menuSrv.getPathByUrl(this.router.url.split('?')[0]);
                 const _menuName = _menuPath.length ? _menuPath[_menuPath.length - 1].text : null;
                 const _m = eb.eruptModel;
@@ -1639,8 +1645,8 @@ export class TableComponent implements OnInit, OnDestroy {
         this.dataService.downloadExcelTemplate(this.eruptBuildModel.eruptModel.eruptName);
     }
 
-    // export to Excel
-    exportExcel() {
+    // export in a server format; Excel when none is given
+    exportExcel(format?: string) {
         const ids = this.selectedRows.length > 0
             ? this.selectedRows.map(r => r[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])
             : null;
@@ -1651,7 +1657,8 @@ export class TableComponent implements OnInit, OnDestroy {
                 this.downloading = false;
                 if (err?.message) this.msg.warning(err.message);
             },
-            ids
+            ids,
+            format
         );
     }
 
