@@ -20,6 +20,11 @@ import {MentionUser, RecordComment} from "../../build/erupt/model/record-comment
 import {RecordRevision} from "../../build/erupt/model/record-revision.model";
 import {NoticeStatus} from "@shared/model/notice.model";
 
+export interface TableFormat {
+    format: string;
+    name: string;
+}
+
 @Injectable()
 export class DataService {
 
@@ -633,6 +638,20 @@ export class DataService {
         return this._http.get<Userinfo>(RestPath.erupt + "/userinfo");
     }
 
+    // the import/export formats the server offers; one call per session
+    private static formatsCache: TableFormat[] = null;
+
+    tableFormats(callback: (formats: TableFormat[]) => void) {
+        if (DataService.formatsCache) {
+            callback(DataService.formatsCache);
+            return;
+        }
+        this._http.get(RestPath.excel + "/formats").subscribe((formats: TableFormat[]) => {
+            DataService.formatsCache = formats;
+            callback(formats);
+        });
+    }
+
     downloadExcelTemplate(eruptName: string, callback?) {
         this._http.get(RestPath.excel + "/template/" + eruptName, null, {
             responseType: "arraybuffer",
@@ -652,11 +671,11 @@ export class DataService {
         });
     }
 
-    downloadExcel(eruptName: string, body: any, header: any, callback: Function, ids?: any[]) {
-        let url = RestPath.excel + "/export/" + eruptName;
-        if (ids && ids.length > 0) {
-            url += "?" + ids.map(id => "ids=" + id).join("&");
-        }
+    downloadExcel(eruptName: string, body: any, header: any, callback: Function, ids?: any[], format?: string) {
+        let params: string[] = [];
+        if (ids && ids.length > 0) params.push(...ids.map(id => "ids=" + id));
+        if (format) params.push("format=" + format);
+        let url = RestPath.excel + "/export/" + eruptName + (params.length ? "?" + params.join("&") : "");
         this._http.post(url, body, null, {
             responseType: "arraybuffer",
             observe: 'events',
