@@ -2573,9 +2573,9 @@ export class TableComponent implements OnInit, OnDestroy {
         modal.getContentComponent().eruptBuildModel = printBuildModel;
     }
 
-    private doTemplatePrint(eruptName: string, pk: any, config: { content: string, pageConfig: any }) {
+    private doTemplatePrint(eruptName: string, pk: any, config: { id: number, pageConfig: any }) {
         const msgLoading = this.msg.loading(this.i18n.fanyi("global.print"), {nzDuration: 0});
-        this.dataService.renderPrint(eruptName, pk, config.content).subscribe({
+        this.dataService.renderPrint(eruptName, pk, config.id).subscribe({
             next: res => {
                 this.msg.remove(msgLoading.messageId);
                 const pc = config.pageConfig || {};
