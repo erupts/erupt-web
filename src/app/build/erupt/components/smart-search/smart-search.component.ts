@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
 import {EruptModel} from "../../model/erupt.model";
+import {EruptFieldModel} from "../../model/erupt-field.model";
 import {EditType} from "../../model/erupt.enum";
 import {
     EruptSearchModel,
@@ -13,6 +14,7 @@ import {
 import {NzMessageService} from "ng-zorro-antd/message";
 import {UpmsData, UpmsScope} from "../../model/upms.model";
 import {I18NService} from "@core";
+import {DataService} from "@shared/service/data.service";
 
 @Component({
     standalone: false,
@@ -53,12 +55,16 @@ export class SmartSearchComponent implements OnInit {
         [EditType.BOOLEAN]: OperatorType.BOOLEAN,
         [EditType.CHOICE]: OperatorType.CHOICE,
         [EditType.MULTI_CHOICE]: OperatorType.CHOICE,
+        [EditType.CHECKBOX]: OperatorType.CHOICE,
+        [EditType.TRANSFER]: OperatorType.CHOICE,
+        [EditType.TAGS]: OperatorType.CHOICE,
         [EditType.REFERENCE_TABLE]: OperatorType.REFERENCE,
         [EditType.REFERENCE_TREE]: OperatorType.REFERENCE,
     };
 
     constructor(@Inject(NzMessageService) private msg: NzMessageService,
-                private i18n: I18NService) {
+                private i18n: I18NService,
+                private dataService: DataService) {
     }
 
 
@@ -86,6 +92,8 @@ export class SmartSearchComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        // a saved condition on a relation field needs its options before the picker can show labels
+        this.search?.flat().forEach(condition => this.loadRelationOptions(this.eruptModel.eruptFieldModelMap.get(condition.field)));
         if (this.requiredHasCondition) {
             if (!this.search || this.search.length === 0) {
                 this.search = [[this.createEmptyCondition()]];
@@ -103,7 +111,9 @@ export class SmartSearchComponent implements OnInit {
             condition.operator = OperatorStringType.EQ;
             return;
         }
-        condition.operatorType = this.searchTypeMapping[this.eruptModel.eruptFieldModelMap.get(condition.field)?.eruptFieldJson.edit.type] || OperatorType.STRING;
+        const fieldModel = this.eruptModel.eruptFieldModelMap.get(condition.field);
+        condition.operatorType = this.searchTypeMapping[fieldModel?.eruptFieldJson.edit.type] || OperatorType.STRING;
+        this.loadRelationOptions(fieldModel);
         switch (condition.operatorType) {
             case OperatorType.STRING:
                 condition.operator = OperatorStringType.EQ;
@@ -123,6 +133,29 @@ export class SmartSearchComponent implements OnInit {
         }
         condition.value = null;
         condition.upmsScope = null;
+    }
+
+    // Multi-valued fields reuse the CHOICE picker, which renders componentValue as {value, label}:
+    // TAGS ship a plain string list in the schema, CHECKBOX / TRANSFER options live in the related erupt
+    private loadRelationOptions(fieldModel: EruptFieldModel): void {
+        const type = fieldModel?.eruptFieldJson.edit.type;
+        if (type === EditType.TAGS) {
+            if (typeof fieldModel.componentValue?.[0] === 'string') {
+                fieldModel.componentValue = (<string[]>fieldModel.componentValue).map(tag => ({value: tag, label: tag}));
+            }
+            return;
+        }
+        if ((type !== EditType.CHECKBOX && type !== EditType.TRANSFER) || fieldModel.componentValue) {
+            return;
+        }
+        this.dataService.findCheckBox(this.eruptModel.eruptName, fieldModel.fieldName).subscribe(options => {
+            fieldModel.componentValue = options.map(option => ({value: option.id, label: option.label}));
+        });
+    }
+
+    // TAGS accept values outside the preset list, so the picker lets the user type them
+    isTags(field: string): boolean {
+        return this.eruptModel.eruptFieldModelMap.get(field)?.eruptFieldJson.edit.type === EditType.TAGS;
     }
 
     onOperatorChange(condition: EruptSearchModel): void {

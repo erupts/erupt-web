@@ -237,7 +237,7 @@
                                                             @if (condition.operator === OperatorReferenceType.EQ || condition.operator === OperatorReferenceType.NEQ) {
                                                                 <nz-select [ngModelOptions]="{standalone: true}"
                                                                            style="width: 100%"
-                                                                           nzMode="multiple"
+                                                                           [nzMode]="isTags(condition.field) ? 'tags' : 'multiple'"
                                                                            [nzPlaceHolder]="'smart_search.select_value' | translate"
                                                                            [(ngModel)]="condition.value">
                                                                     @for (item of eruptModel.eruptFieldModelMap.get(condition.field).componentValue; track item) {
