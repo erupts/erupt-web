@@ -1034,8 +1034,15 @@ export class UiBuildService {
                     // this.query();
                 }
             });
-            ref.getContentComponent().url = url;
-            ref.getContentComponent().height = tpl.height;
+            let content: EruptIframeComponent | EruptMicroAppComponent = ref.getContentComponent();
+            if (content instanceof EruptMicroAppComponent) {
+                // The app name derives from the path, which is the same for every row of an
+                // operation tpl; a kept-alive instance would then collide with the next row's
+                // url ("app name conflict"). A modal is short-lived, so discard it on close.
+                content.options = {'keep-alive': false, destroy: ''};
+            }
+            content.url = url;
+            content.height = tpl.height;
         } else if (tpl.openWay == OpenWay.DRAWER) {
             let placement = tpl.drawerPlacement;
             openResizableDrawer(this.drawerService, {
