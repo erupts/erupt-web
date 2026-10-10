@@ -271,7 +271,6 @@
         justify-content: center;
         padding: 0;
         border: 1px solid var(--ant-border-color-split);
-        border-top: none;
         background: var(--erupt-bg-container, #fff);
         flex-shrink: 0;
     }
@@ -423,12 +422,30 @@
             border-top: none !important;
         }
 
-        // Drop the table's bottom border only when a pagination bar follows it:
-        // the pagination bar (border-top: none + its own bottom/side borders)
-        // then closes the box. With no pagination the table keeps its own bottom
-        // border so it never renders with an open bottom edge.
+        // The container draws the frame; in bordered mode ant also puts a
+        // border-top on the inner header/content tables, which would stack with it.
+        st .ant-table.ant-table-bordered > .ant-table-container > .ant-table-header > table,
+        st .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table {
+            border-top: none;
+        }
+
+        // When a pagination bar (or stat bar) follows the table, its top border
+        // draws the dividing line: drop the table container's bottom border and
+        // let the bar overlap the last row's cell border by 1px (the last <tr> is
+        // st's hidden expanded row, so it cannot be targeted with :last-child).
+        // With nothing below, the table keeps its own bottom edge.
         .tc-body:has(+ .tc-pagination) st .ant-table .ant-table-container,
         .tc-body:has(.erupt-stat-bar) st .ant-table .ant-table-container {
+            border-bottom: none;
+        }
+
+        .tc-body + .tc-pagination,
+        .erupt-stat-bar {
+            margin-top: -1px;
+        }
+
+        // stat bar then pagination bar: the pagination's top border is the only line between them
+        .tc-body:has(+ .tc-pagination) .erupt-stat-bar {
             border-bottom: none;
         }
 
@@ -638,7 +655,7 @@
 }
 
 // server-side column totals, a bar under the table that fills in when its request returns
-// same frame as .tc-pagination: side and bottom borders, the table above supplies the top edge
+// same frame as .tc-pagination: its own top border draws the line under the table
 .erupt-stat-bar {
     display: flex;
     flex-wrap: wrap;
@@ -647,7 +664,6 @@
     min-height: 39px;
     padding: 4px 12px;
     border: 1px solid var(--ant-border-color-split);
-    border-top: none;
     background: var(--erupt-bg-container, #fff);
     font-size: 12px;
 }
