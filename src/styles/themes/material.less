@@ -1,0 +1,528 @@
+/**
+ * Erupt Theme — "Material": the Material 3 / Google Workspace shell (Gmail).
+ *
+ * Design language
+ *   - Tonal layering instead of lines: the top bar, the menu column and the
+ *     gutter are one brand-tinted "surface container"; the page is a bright
+ *     rounded sheet set into it. No borders, no seams — a step in tone is
+ *     the only edge, and every tone is mixed from the runtime brand color,
+ *     the way Material's dynamic color tints its neutrals.
+ *   - Big, soft geometry: 16px page corners, pill menu rows, pill buttons,
+ *     28px dialogs. Elevation stays low; depth is tone first, shadow second.
+ *   - The current menu row is a wide "secondary container" pill: a pale
+ *     brand tint carrying dark brand text, like Gmail's Inbox row. Hover is
+ *     an 8% on-surface state layer.
+ *
+ * Every tone is derived from --ant-primary-color, so picking a theme color
+ * in the settings drawer re-tints the whole shell (blue → Gmail, green →
+ * Keep, red → the Google Calendar look).
+ *
+ * OPTIONAL OVERRIDE
+ *   Every rule is scoped under `html.material`. Toggle at runtime via
+ *       document.documentElement.classList.toggle('material')
+ *   (see `src/app.js` -> `eruptSiteConfig.theme.skin = "material"`). Add
+ *   `dark` as well (`html.material.dark`) for the dark variant. Mutually
+ *   exclusive with the other skins — the settings drawer turns them off.
+ */
+
+/* ------------------------------------------------------------------ *
+ * Design tokens (scoped so they never leak into the default theme)
+ * ------------------------------------------------------------------ */
+html.material {
+    /* Shell geometry — the gutter on the page's free edges, its corner radius */
+    --m3-gap: 12px;
+    --m3-radius: 16px;
+    --m3-header-h: 44px;
+
+    /* Neutral base the tones are mixed on (M3 neutral 98 / 100) */
+    --m3-neutral: #f7f9fc;
+    --m3-bright: #fff;
+
+    /* Tonal surfaces: the chrome + gutter, and the page */
+    --m3-surface-container: color-mix(in srgb, var(--ant-primary-color) 5%, var(--m3-neutral));
+    --m3-surface-container-high: color-mix(in srgb, var(--ant-primary-color) 9%, var(--m3-neutral));
+    --m3-surface: var(--m3-bright);
+
+    /* Foreground */
+    --m3-on-surface: #1f1f1f;
+    --m3-on-surface-variant: #444746;
+    --m3-on-surface-faint: #747775;
+    --m3-outline-variant: #c4c7c5;
+
+    /* The current row: secondary container — a pale brand tint under dark brand text */
+    --m3-secondary-container: color-mix(in srgb, var(--ant-primary-color) 22%, var(--m3-bright));
+    --m3-on-secondary-container: color-mix(in srgb, var(--ant-primary-color) 55%, #000);
+
+    /* State layers (M3: 8% hover, 12% pressed, of on-surface) */
+    --m3-hover: rgba(31, 31, 31, 0.08);
+    --m3-pressed: rgba(31, 31, 31, 0.12);
+
+    /* Shapes for components inside the page */
+    --m3-shape-xs: 8px;
+    --m3-shape-sm: 12px;
+    --m3-shape-lg: 28px;
+    --m3-shape-full: 9999px;
+
+    /* Semantic tokens: the page follows the tonal palette. The page canvas
+     * stays on the bright sheet (a 2% tint, so cards still read against it),
+     * otherwise it would repeat the chrome tone and swallow the sheet. */
+    --erupt-bg-layout: color-mix(in srgb, var(--ant-primary-color) 2%, var(--m3-bright));
+    --erupt-bg-container: var(--m3-surface);
+    --erupt-bg-elevated: var(--m3-surface);
+    --erupt-bg-spotlight: var(--m3-surface-container);
+    --erupt-text: var(--m3-on-surface);
+    --erupt-text-secondary: var(--m3-on-surface-variant);
+    --erupt-text-tertiary: var(--m3-on-surface-faint);
+    --erupt-border: var(--m3-outline-variant);
+    --ant-border-color-split: color-mix(in srgb, var(--m3-outline-variant) 60%, transparent);
+    --erupt-fill-secondary: var(--m3-hover);
+    --erupt-fill-tertiary: rgba(31, 31, 31, 0.05);
+
+    /* The bar is the surface container; its states are the row language */
+    --erupt-header-bg: var(--m3-surface-container);
+    --erupt-header-text: var(--m3-on-surface);
+    --erupt-header-text-secondary: var(--m3-on-surface-variant);
+    --erupt-header-fill: var(--m3-hover);
+    --erupt-header-fill-strong: var(--m3-pressed);
+    --erupt-header-active-bg: var(--m3-secondary-container);
+    --erupt-header-active-text: var(--m3-on-secondary-container);
+    --erupt-header-border: transparent;
+
+    /* never wash the selected <li> — it CONTAINS the expanded submenu <ul> */
+    --alain-default-aside-nav-selected-bg: transparent;
+}
+
+/* Dark — Gmail's dark scheme: the tones sink to near-black, the page is the
+ * compiled dark surface, the current pill a deeper brand tint under pale text */
+html.material.dark {
+    --m3-neutral: #131314;
+    --m3-bright: #1e1f20;
+
+    --m3-surface-container: color-mix(in srgb, var(--ant-primary-color) 6%, var(--m3-neutral));
+    --m3-surface-container-high: color-mix(in srgb, var(--ant-primary-color) 10%, var(--m3-neutral));
+
+    --m3-on-surface: #e3e3e3;
+    --m3-on-surface-variant: #c4c7c5;
+    --m3-on-surface-faint: #8e918f;
+    --m3-outline-variant: #444746;
+
+    --m3-secondary-container: color-mix(in srgb, var(--ant-primary-color) 34%, var(--m3-neutral));
+    --m3-on-secondary-container: color-mix(in srgb, var(--ant-primary-color) 35%, #fff);
+
+    --m3-hover: rgba(227, 227, 227, 0.08);
+    --m3-pressed: rgba(227, 227, 227, 0.12);
+
+    --erupt-bg-elevated: #2a2b2d;
+    --erupt-fill-tertiary: rgba(227, 227, 227, 0.05);
+}
+
+/* ================================================================== *
+ * CANVAS — the surface container: chrome and gutter are one tone
+ * ================================================================== */
+html.material body {
+    background: var(--m3-surface-container);
+    font-family: Roboto, var(--erupt-font);
+}
+
+/* ================================================================== *
+ * TOP BAR — flat on the surface container, no rule, no seam
+ * ================================================================== */
+html.material .erupt-header,
+html.material .alain-default__header {
+    border-bottom-color: transparent;
+    box-shadow: none;
+}
+
+html.material .alain-default__header-logo {
+    border-right-color: transparent;
+}
+
+html.material .alain-default__nav-item {
+    border-radius: var(--m3-shape-full);
+}
+
+/* Top-split mode: the second nav row is surface container too */
+html.material .erupt-header .erupt-subnav {
+    background: var(--m3-surface-container);
+    border-bottom: 0;
+}
+
+html.material .subnav-menu.ant-menu-horizontal {
+    color: var(--m3-on-surface-variant);
+
+    > .ant-menu-item,
+    > .ant-menu-submenu {
+        color: var(--m3-on-surface-variant);
+
+        &::after {
+            border-bottom: 2px solid transparent;
+        }
+
+        &:hover,
+        &.ant-menu-item-active,
+        &.ant-menu-submenu-active,
+        &.ant-menu-item-selected,
+        &.ant-menu-submenu-selected {
+            color: var(--m3-on-secondary-container);
+
+            &::after {
+                border-bottom-color: var(--ant-primary-color);
+            }
+        }
+    }
+
+    > .ant-menu-submenu > .ant-menu-submenu-title {
+        color: inherit;
+    }
+}
+
+/* ================================================================== *
+ * SIDEBAR — the surface container, rows as pills
+ * ================================================================== */
+html.material .alain-default__aside {
+    background: var(--m3-surface-container);
+}
+
+/* the stock 1px right rule would draw a seam through the tone */
+html.material .alain-default__aside::after,
+html.material .erupt-side::after {
+    display: none;
+}
+
+/* delon styles the menu scrollbar itself: an on-surface wash, no track */
+html.material .alain-default__aside .alain-default__aside-inner::-webkit-scrollbar-track {
+    box-shadow: none;
+}
+
+html.material .alain-default__aside .alain-default__aside-inner::-webkit-scrollbar-thumb {
+    background-color: var(--m3-pressed);
+}
+
+html.material {
+
+    /* Breathing room above the first pill. On the scroll container, not the
+     * menu: erupt-menu carries an inline `padding-top: 0 !important`. */
+    .alain-default__aside .alain-default__aside-inner {
+        padding-top: var(--m3-gap);
+    }
+
+    /* drop delon's 3px guide bar; the pill carries the selection */
+    .alain-default__aside .sidebar-nav__item {
+        border-left: 0 !important;
+    }
+
+    .alain-default__aside .sidebar-nav__item-link {
+        margin: 2px 12px;
+        border-radius: var(--m3-shape-full);
+        color: var(--m3-on-surface-variant);
+        transition: background-color 0.15s ease, color 0.15s ease;
+
+        &:hover {
+            background-color: var(--m3-hover);
+            color: var(--m3-on-surface);
+        }
+    }
+
+    /* disclosure chevron follows the row color */
+    .alain-default__aside .sidebar-nav__sub-arrow::before,
+    .alain-default__aside .sidebar-nav__sub-arrow::after {
+        background: currentColor;
+        background-image: none;
+    }
+
+    /* active-trail parents only darken their own title, never the subtree */
+    .alain-default__aside .sidebar-nav__selected {
+        background-color: transparent;
+    }
+
+    .alain-default__aside .sidebar-nav__selected > .sidebar-nav__item-link {
+        color: var(--m3-on-surface);
+        font-weight: 600;
+    }
+
+    /* selected leaf (leaves carry href) — the secondary container pill */
+    .alain-default__aside .sidebar-nav__selected > .sidebar-nav__item-link[href] {
+        background-color: var(--m3-secondary-container);
+        color: var(--m3-on-secondary-container);
+
+        &:hover {
+            background-color: var(--m3-secondary-container);
+            color: var(--m3-on-secondary-container);
+        }
+    }
+
+    /* pin / inline spinner in the row's right slot */
+    .alain-default__aside .sidebar-nav__pin {
+        color: var(--m3-on-surface-faint);
+
+        &:hover,
+        &--active {
+            color: var(--m3-on-surface);
+        }
+    }
+
+    .alain-default__aside .sidebar-nav__loading {
+        color: var(--m3-on-surface);
+    }
+
+    /* menu click ripple — the pressed state layer */
+    .alain-default__aside .sidebar-nav__item span.ripple {
+        background: var(--m3-pressed) !important;
+    }
+
+    .alain-default__aside .sidebar-nav__group-title {
+        color: var(--m3-on-surface-variant);
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+    }
+
+    .alain-default__aside .sidebar-nav--pinned {
+        border-bottom-color: var(--ant-border-color-split);
+    }
+
+    .alain-default__aside .sidebar-nav__divider {
+        background-color: var(--ant-border-color-split);
+    }
+
+    .alain-default__aside .sidebar-nav__drag-placeholder {
+        border-color: var(--ant-primary-color);
+        border-radius: var(--m3-shape-full);
+    }
+
+    /* Collapsed rail — the pill hugs the icon */
+    .alain-default__collapsed .alain-default__aside .sidebar-nav__item-link {
+        margin: 2px 6px;
+        border-radius: var(--m3-shape-sm);
+    }
+
+    /* Dual-column mode fills the column exactly (menu.component sizes it to the
+     * viewport); take the top gap off, or the overflow makes the whole
+     * two-column block scrollable by that much */
+    .alain-default__aside .dual-menu {
+        height: calc(100vh - 44px - 38px - var(--m3-gap));
+    }
+
+    /* Dual-column mode: the first-level rail is one tone higher */
+    .alain-default__aside .dual-menu__rail {
+        background: var(--m3-surface-container-high);
+        border-right-color: transparent;
+    }
+
+    .alain-default__aside .dual-menu__rail-item {
+        border-radius: var(--m3-shape-sm);
+        color: var(--m3-on-surface-variant);
+
+        &:hover {
+            background: var(--m3-hover);
+            color: var(--m3-on-surface);
+        }
+
+        &--active {
+            background: var(--m3-secondary-container);
+            color: var(--m3-on-secondary-container);
+        }
+    }
+
+    /* Bottom utility bar — the surface container, no rules */
+    .alain-default__aside .fold {
+        background: var(--m3-surface-container);
+        border-top: 0;
+        border-right: 0;
+        color: var(--m3-on-surface-variant);
+    }
+
+    .alain-default__aside .fold__btn {
+        border-radius: var(--m3-shape-full);
+    }
+
+    .alain-default__aside .fold__btn:hover {
+        background: var(--m3-hover);
+        color: var(--m3-on-surface);
+    }
+
+    .alain-default__aside .aside-loading-overlay {
+        background: color-mix(in srgb, var(--m3-surface-container) 75%, transparent);
+    }
+}
+
+/* ================================================================== *
+ * PAGE — a bright rounded sheet hanging from the header and the sidebar,
+ * flush on those two edges, the gutter on the two free ones. Components
+ * inside are untouched here; only the area itself changes.
+ * ================================================================== */
+html.material.ltr .erupt_content,
+html.material.rtl .erupt_content {
+    height: calc(100vh - var(--m3-header-h) - var(--m3-gap));
+    overflow: hidden;
+    border-radius: var(--m3-radius);
+    /* short pages never leave a tone-colored hole under them */
+    background: var(--m3-surface);
+}
+
+html.material.ltr .erupt_content {
+    margin: var(--m3-header-h) var(--m3-gap) var(--m3-gap) var(--sidebar-width, 200px);
+}
+
+html.material.ltr .alain-default__collapsed .erupt_content {
+    margin-left: var(--collapsed-width, 48px);
+}
+
+html.material.rtl .erupt_content {
+    margin: var(--m3-header-h) var(--sidebar-width, 200px) var(--m3-gap) var(--m3-gap);
+}
+
+html.material.rtl .alain-default__collapsed .erupt_content {
+    margin-right: var(--collapsed-width, 48px);
+}
+
+/* Under pad the sidebar slides over the content, which keeps only the free-edge gutter */
+@media (max-width: 767px) {
+    html.material.ltr .erupt_content {
+        margin-left: 0;
+    }
+
+    html.material.rtl .erupt_content {
+        margin-right: 0;
+    }
+}
+
+/* Top-split menu mode: the 40px sub-nav row under the header is part of the
+ * surface the sheet hangs from. */
+html.material .alain-default__sub-nav {
+    --m3-header-h: 84px;
+}
+
+/* --- Multi-tab bar: fixed, so it floats ON the sheet. Round its top to match
+ *     and make the tabs pills. ------------------------------------------- */
+html.material .alain-default__fixed .reuse-tab {
+    /* !important — @delon/abc pins the fixed tab bar with `top: 44px !important` */
+    top: var(--m3-header-h) !important;
+    left: var(--sidebar-width, 200px);
+    right: var(--m3-gap);
+    margin-left: 0;
+    margin-right: 0;
+    overflow: hidden;
+    border-radius: var(--m3-radius) var(--m3-radius) 0 0;
+}
+
+html.material .alain-default__collapsed .reuse-tab {
+    left: var(--collapsed-width, 48px);
+}
+
+html.material.rtl .alain-default__fixed .reuse-tab {
+    right: var(--sidebar-width, 200px);
+    left: var(--m3-gap);
+}
+
+html.material.rtl .alain-default__collapsed .reuse-tab {
+    right: var(--collapsed-width, 48px);
+    left: var(--m3-gap);
+}
+
+/* Top-menu mode (no sidebar): the sheet and the tab bar start at the edge.
+ * Out-specifies the sidebar-width rules above and the layout's own
+ * `left/right: 0 !important` for the tab bar. Mobile keeps the drawer. */
+@media (min-width: 768px) {
+    html.material.ltr .alain-default__top-menu .erupt_content,
+    html.material.ltr .alain-default__top-menu.alain-default__collapsed .erupt_content {
+        margin-left: 0;
+    }
+
+    html.material.rtl .alain-default__top-menu .erupt_content,
+    html.material.rtl .alain-default__top-menu.alain-default__collapsed .erupt_content {
+        margin-right: 0;
+    }
+
+    html.material .alain-default__top-menu .reuse-tab,
+    html.material .alain-default__top-menu.alain-default__collapsed .reuse-tab {
+        left: 0 !important;
+        right: var(--m3-gap) !important;
+    }
+}
+
+/* Tabs as pills, the current one the secondary container.
+ * (!important — erupt.component.less pins the pill look the same way.) */
+html.material .reuse-tab__card {
+    .ant-tabs-tab {
+        border-radius: var(--m3-shape-full) !important;
+    }
+
+    .ant-tabs-tab-active {
+        background: var(--m3-secondary-container) !important;
+
+        .ant-tabs-tab-btn {
+            color: var(--m3-on-secondary-container);
+        }
+    }
+}
+
+/* ================================================================== *
+ * COMPONENT SHAPES — Material's rounded scale: pill buttons and chips,
+ * 8px fields, 12px menus and cards, 28px dialogs
+ * ================================================================== */
+html.material {
+
+    .ant-btn:not(.ant-btn-icon-only):not(.ant-btn-circle),
+    .ant-tag,
+    .ant-segmented,
+    .ant-segmented-item,
+    .ant-pagination-item,
+    .ant-pagination-prev .ant-pagination-item-link,
+    .ant-pagination-next .ant-pagination-item-link,
+    .ant-message-notice-content {
+        border-radius: var(--m3-shape-full);
+    }
+
+    .ant-btn-icon-only {
+        border-radius: var(--m3-shape-xs);
+    }
+
+    .ant-input, .ant-input-affix-wrapper, .ant-input-number,
+    .ant-select:not(.ant-select-customize-input) .ant-select-selector,
+    .ant-picker, .ant-alert {
+        border-radius: var(--m3-shape-xs);
+    }
+
+    .ant-card, .ant-dropdown-menu, .ant-popover-inner, .ant-notification-notice,
+    .ant-tooltip-inner, .ant-select-dropdown, .ant-picker-dropdown .ant-picker-panel-container {
+        border-radius: var(--m3-shape-sm);
+    }
+
+    .ant-modal-content {
+        border-radius: var(--m3-shape-lg);
+    }
+
+    .ant-modal-header {
+        border-radius: var(--m3-shape-lg) var(--m3-shape-lg) 0 0;
+    }
+
+    .ant-drawer-left .ant-drawer-content {
+        border-radius: 0 var(--m3-shape-lg) var(--m3-shape-lg) 0;
+    }
+
+    .ant-drawer-right .ant-drawer-content {
+        border-radius: var(--m3-shape-lg) 0 0 var(--m3-shape-lg);
+    }
+
+    /* menus and popovers sit one tone up, with Material's low elevation */
+    .ant-dropdown-menu,
+    .ant-popover-inner,
+    .ant-select-dropdown {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 8px 3px rgba(0, 0, 0, 0.15);
+    }
+
+    .ant-dropdown-menu-item,
+    .ant-dropdown-menu-submenu-title,
+    .ant-select-item {
+        border-radius: var(--m3-shape-xs);
+    }
+}
+
+/* Reduced motion — pills stop animating for users who ask */
+@media (prefers-reduced-motion: reduce) {
+    html.material .alain-default__aside .sidebar-nav__item-link,
+    html.material .alain-default__aside .dual-menu__rail-item {
+        transition: none;
+    }
+}

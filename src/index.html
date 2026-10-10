@@ -372,6 +372,11 @@
         if (_tmPref === "true" && _nbPref !== "true" && _lgPref !== "true" && _wsPref !== "true" && _cpPref !== "true") {
             document.documentElement.classList.add("terminal");
         }
+        // Optional Material skin (Material 3 tonal shell) — same treatment.
+        var _m3Pref = localStorage.getItem("material");
+        if (_m3Pref === "true" && _nbPref !== "true" && _lgPref !== "true" && _wsPref !== "true" && _cpPref !== "true" && _tmPref !== "true") {
+            document.documentElement.classList.add("material");
+        }
         // A saved workspace frame gradient (settings drawer stores the whole
         // preset) tints the preloader the same way the app shell will be.
         var _paintWorkspacePreloader = function () {
@@ -738,17 +743,17 @@
                 // been chosen. Light/dark and compact stay per-user comfort settings.
                 // startup.service reads the same keys afterwards and finds them gone too.
                 if (!look.customizable) {
-                    ["brutalist-theme", "liquid-glass", "workspace", "classic", "terminal",
+                    ["brutalist-theme", "liquid-glass", "workspace", "classic", "terminal", "material",
                         "theme-color", "theme-color-brutalist", "theme-color-terminal", "header-color", "workspace-frame", "login-layout"]
                         .forEach(function (k) { localStorage.removeItem(k); });
-                    document.documentElement.classList.remove("brutalist-theme", "liquid-glass", "workspace", "classic", "terminal");
+                    document.documentElement.classList.remove("brutalist-theme", "liquid-glass", "workspace", "classic", "terminal", "material");
                     _preloaderEl.style.removeProperty("--pl-accent");
                     _preloaderEl.style.removeProperty("background-image");
                     _preloaderEl.style.removeProperty("background-color");
-                    _nbPref = _lgPref = _wsPref = _cpPref = _tmPref = _tcPref = null;
+                    _nbPref = _lgPref = _wsPref = _cpPref = _tmPref = _m3Pref = _tcPref = null;
                 }
-                // No saved skin choice — theme.skin ("default" | "brutalist" | "liquid-glass" | "workspace" | "classic" | "terminal")
-                if (_nbPref === null && _lgPref === null && _wsPref === null && _cpPref === null && _tmPref === null) {
+                // No saved skin choice — theme.skin ("default" | "brutalist" | "liquid-glass" | "workspace" | "classic" | "terminal" | "material")
+                if (_nbPref === null && _lgPref === null && _wsPref === null && _cpPref === null && _tmPref === null && _m3Pref === null) {
                     if (look.skin === "brutalist") {
                         document.documentElement.classList.add("brutalist-theme");
                     } else if (look.skin === "liquid-glass") {
@@ -760,6 +765,8 @@
                         document.documentElement.classList.add("classic");
                     } else if (look.skin === "terminal") {
                         document.documentElement.classList.add("terminal");
+                    } else if (look.skin === "material") {
+                        document.documentElement.classList.add("material");
                     }
                 }
                 // theme.dark: true | false | "auto"
