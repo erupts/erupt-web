@@ -57,7 +57,7 @@ export class WindowModel {
         // false | true | "auto" (follow the OS color scheme)
         dark?: boolean | "auto",
         compact?: boolean,
-        // "default" | "brutalist" | "liquid-glass" | "workspace" | "classic" (Skin in @shared/util/theme.util)
+        // "default" | "brutalist" | "liquid-glass" | "workspace" | "classic" | "terminal" (Skin in @shared/util/theme.util)
         skin?: string,
         // Workspace skin only: a frame gradient preset key (WORKSPACE_FRAME_PRESETS in
         // @shared/util/theme.util); unset = the frame is derived from the primary color

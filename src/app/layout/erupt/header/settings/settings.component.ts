@@ -14,15 +14,15 @@ import {
     applyThemeColor,
     applyWorkspaceFrame,
     WORKSPACE_FRAME_PRESETS,
-    BRUTALIST_PRESET_COLORS,
     currentSkin,
+    headerColorLocked,
     resolveHeaderColor, resolveThemeColor,
+    skinPresetColors,
     savedWorkspaceFrame,
     Skin,
     SkinOption,
     SKINS,
     switchSkin,
-    THEME_PRESET_COLORS,
     toHexColor,
     WorkspaceFrame,
     workspaceFrameGroups
@@ -59,8 +59,9 @@ export class SettingsComponent implements OnInit {
 
     skin: Skin = currentSkin();
 
-    get brutalistTheme(): boolean {
-        return this.skin === Skin.BRUTALIST;
+    // Brutalist / terminal own their bar: no header color picker there
+    get headerColorLocked(): boolean {
+        return headerColorLocked(this.skin);
     }
 
     // Workspace skin: the frame gradient. null = derived from the theme color
@@ -107,12 +108,9 @@ export class SettingsComponent implements OnInit {
 
     // Palettes live in @shared/util/theme.util so this drawer and the login
     // page picker can never drift apart.
-    presetColors: string[] = THEME_PRESET_COLORS;
-
-    brutalistPresetColors: string[] = BRUTALIST_PRESET_COLORS;
-
+    // The swatches follow the active skin's palette (brutalist pastels, terminal phosphors)
     get activePresetColors(): string[] {
-        return this.brutalistTheme ? this.brutalistPresetColors : this.presetColors;
+        return skinPresetColors(this.skin);
     }
 
     // The active skin's own color (the brutalist skin keeps a separate slot)
@@ -190,8 +188,9 @@ export class SettingsComponent implements OnInit {
         window["eruptApplyCompactTheme"](value);
     }
 
-    // Entering the brutalist skin brings its own pastel accent (last one picked
-    // there, else signal yellow); leaving it restores the normal theme color.
+    // Entering a skin with its own palette (brutalist pastels, terminal
+    // phosphors) brings that skin's accent (last one picked there, else its
+    // default); leaving it restores the normal theme color.
     setSkin(value: Skin) {
         this.skin = value;
         this.themeColor = switchSkin(this.nzConfigService, value);

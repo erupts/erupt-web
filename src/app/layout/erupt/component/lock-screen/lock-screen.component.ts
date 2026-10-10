@@ -7,14 +7,13 @@ import {NzConfigService} from "ng-zorro-antd/core/config";
 import {WindowModel} from "@shared/model/window.model";
 import {
     applyThemeColor,
-    BRUTALIST_PRESET_COLORS,
     currentSkin,
     resolveThemeColor,
     Skin,
     SkinOption,
     SKINS,
+    skinPresetColors,
     switchSkin,
-    THEME_PRESET_COLORS,
     toHexColor
 } from "@shared/util/theme.util";
 
@@ -93,7 +92,7 @@ export class LockScreenComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     get activePresetColors(): string[] {
-        return this.skin === Skin.BRUTALIST ? BRUTALIST_PRESET_COLORS : THEME_PRESET_COLORS;
+        return skinPresetColors(this.skin);
     }
 
     get themeColorHex(): string {

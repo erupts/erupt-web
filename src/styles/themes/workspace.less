@@ -5,8 +5,9 @@
  *   - One deep, brand-tinted FRAME holds the whole window: the top bar and the
  *     left menu are the same surface with no seam between them, so the brand
  *     block, the toolbar and the menu read as a single navigation chrome.
- *   - The content is a light, rounded CARD floating inside that frame with a
- *     thin gutter on every side — the frame shows through around it.
+ *   - The content is a light, rounded CARD hanging from the top bar and the
+ *     menu: flush on those two edges, a thin gutter on the two free ones, so
+ *     the frame shows through as an L rather than a ring.
  *   - Menu rows are quiet pills in translucent white; the current row is a
  *     solid brand block. Nothing inside the card changes.
  *
@@ -30,7 +31,7 @@
  * Design tokens (scoped so they never leak into the default theme)
  * ------------------------------------------------------------------ */
 html.workspace {
-    /* Shell geometry — the gutter that separates the card from the frame */
+    /* Shell geometry — the gutter on the card's free edges (right / bottom) */
     --ws-gap: 6px;
     --ws-radius: 8px;
     --ws-row-radius: 6px;
@@ -346,12 +347,13 @@ html.workspace {
 }
 
 /* ================================================================== *
- * CONTENT CARD — a rounded light sheet inset by the gutter. Components
+ * CONTENT CARD — a rounded light sheet flush with the header and the
+ * sidebar, inset by the gutter only on its two free edges. Components
  * inside are untouched; only the area itself changes.
  * ================================================================== */
 html.workspace.ltr .erupt_content,
 html.workspace.rtl .erupt_content {
-    height: calc(100vh - var(--ws-header-h) - var(--ws-gap) * 2);
+    height: calc(100vh - var(--ws-header-h) - var(--ws-gap));
     overflow: hidden;
     border-radius: var(--ws-radius);
     /* short pages never leave a frame-colored hole under them */
@@ -360,29 +362,29 @@ html.workspace.rtl .erupt_content {
 }
 
 html.workspace.ltr .erupt_content {
-    margin: calc(var(--ws-header-h) + var(--ws-gap)) var(--ws-gap) var(--ws-gap)
-        calc(var(--sidebar-width, 200px) + var(--ws-gap));
+    margin: var(--ws-header-h) var(--ws-gap) var(--ws-gap) var(--sidebar-width, 200px);
 }
 
 html.workspace.ltr .alain-default__collapsed .erupt_content {
-    margin-left: calc(var(--collapsed-width, 48px) + var(--ws-gap));
+    margin-left: var(--collapsed-width, 48px);
 }
 
 html.workspace.rtl .erupt_content {
-    margin: calc(var(--ws-header-h) + var(--ws-gap))
-        calc(var(--sidebar-width, 200px) + var(--ws-gap)) var(--ws-gap) var(--ws-gap);
+    margin: var(--ws-header-h) var(--sidebar-width, 200px) var(--ws-gap) var(--ws-gap);
 }
 
 html.workspace.rtl .alain-default__collapsed .erupt_content {
-    margin-right: calc(var(--collapsed-width, 48px) + var(--ws-gap));
+    margin-right: var(--collapsed-width, 48px);
 }
 
-/* Under pad the sidebar slides over the content, which keeps only the gutter */
+/* Under pad the sidebar slides over the content, which keeps only the free-edge gutter */
 @media (max-width: 767px) {
-    html.workspace.ltr .erupt_content,
+    html.workspace.ltr .erupt_content {
+        margin-left: 0;
+    }
+
     html.workspace.rtl .erupt_content {
-        margin-left: var(--ws-gap);
-        margin-right: var(--ws-gap);
+        margin-right: 0;
     }
 }
 
@@ -396,8 +398,8 @@ html.workspace .alain-default__sub-nav {
  *     and keep it on the card surface. ------------------------------------- */
 html.workspace .alain-default__fixed .reuse-tab {
     /* !important — @delon/abc pins the fixed tab bar with `top: 44px !important` */
-    top: calc(var(--ws-header-h) + var(--ws-gap)) !important;
-    left: calc(var(--sidebar-width, 200px) + var(--ws-gap));
+    top: var(--ws-header-h) !important;
+    left: var(--sidebar-width, 200px);
     right: var(--ws-gap);
     margin-left: 0;
     margin-right: 0;
@@ -406,36 +408,36 @@ html.workspace .alain-default__fixed .reuse-tab {
 }
 
 html.workspace .alain-default__collapsed .reuse-tab {
-    left: calc(var(--collapsed-width, 48px) + var(--ws-gap));
+    left: var(--collapsed-width, 48px);
 }
 
 html.workspace.rtl .alain-default__fixed .reuse-tab {
-    right: calc(var(--sidebar-width, 200px) + var(--ws-gap));
+    right: var(--sidebar-width, 200px);
     left: var(--ws-gap);
 }
 
 html.workspace.rtl .alain-default__collapsed .reuse-tab {
-    right: calc(var(--collapsed-width, 48px) + var(--ws-gap));
+    right: var(--collapsed-width, 48px);
     left: var(--ws-gap);
 }
 
-/* Top-menu mode (no sidebar): the card and the tab bar start at the gutter.
+/* Top-menu mode (no sidebar): the card and the tab bar start at the frame edge.
  * Out-specifies the sidebar-width rules above and the layout's own
  * `left/right: 0 !important` for the tab bar. Mobile keeps the drawer. */
 @media (min-width: 768px) {
     html.workspace.ltr .alain-default__top-menu .erupt_content,
     html.workspace.ltr .alain-default__top-menu.alain-default__collapsed .erupt_content {
-        margin-left: var(--ws-gap);
+        margin-left: 0;
     }
 
     html.workspace.rtl .alain-default__top-menu .erupt_content,
     html.workspace.rtl .alain-default__top-menu.alain-default__collapsed .erupt_content {
-        margin-right: var(--ws-gap);
+        margin-right: 0;
     }
 
     html.workspace .alain-default__top-menu .reuse-tab,
     html.workspace .alain-default__top-menu.alain-default__collapsed .reuse-tab {
-        left: var(--ws-gap) !important;
+        left: 0 !important;
         right: var(--ws-gap) !important;
     }
 }

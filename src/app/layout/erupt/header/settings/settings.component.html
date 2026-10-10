@@ -23,8 +23,8 @@
         </span>
     </div>
 </div>
-<!-- The brutalist band always follows the theme color: no picker there -->
-@if (!brutalistTheme) {
+<!-- Skins that own their bar (brutalist band, terminal canvas): no picker there -->
+@if (!headerColorLocked) {
 <div class="setting-item setting-item--stack">
     <span>{{'setting.header-color' | translate}}</span>
     <div class="theme-color-picker">
@@ -139,6 +139,25 @@
                         <rect x="4" y="10" width="7" height="2" rx="1" fill="#fff" opacity=".95"/>
                         <rect x="4" y="15" width="7" height="2" rx="1" fill="#fff" opacity=".6"/>
                         <rect x="4" y="20" width="7" height="2" rx="1" fill="#fff" opacity=".6"/>
+                    </svg>
+                }
+                @case (Skin.TERMINAL) {
+                    <!-- terminal: black canvas, dashed phosphor rules, the current row in inverse video -->
+                    <svg viewBox="0 0 44 32">
+                        <rect width="44" height="32" rx="3" fill="#0a0a0a"/>
+                        <path d="M14 0v32M0 6h44" stroke="#39ff14" stroke-opacity=".45" stroke-width="1" stroke-dasharray="1.5 1.5"/>
+                        <rect x="3" y="2.3" width="6" height="1.4" fill="#e4ece4" opacity=".85"/>
+                        <rect x="9.5" y="2.3" width="1.2" height="1.4" fill="#39ff14"/>
+                        <rect x="0" y="9" width="14" height="4" fill="#39ff14"/>
+                        <rect x="3" y="10.3" width="8" height="1.4" fill="#000"/>
+                        <rect x="3" y="16" width="8" height="1.4" fill="#e4ece4" opacity=".4"/>
+                        <rect x="3" y="20" width="8" height="1.4" fill="#e4ece4" opacity=".4"/>
+                        <rect x="3" y="24" width="8" height="1.4" fill="#e4ece4" opacity=".4"/>
+                        <rect x="18" y="10" width="10" height="1.4" fill="#39ff14"/>
+                        <rect x="18" y="14" width="22" height="1.4" fill="#e4ece4" opacity=".3"/>
+                        <rect x="18" y="18" width="18" height="1.4" fill="#e4ece4" opacity=".3"/>
+                        <rect x="18" y="22" width="20" height="1.4" fill="#e4ece4" opacity=".3"/>
+                        <rect x="18" y="26" width="3" height="1.4" fill="#39ff14"/>
                     </svg>
                 }
                 @case (Skin.BRUTALIST) {
