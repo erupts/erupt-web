@@ -702,6 +702,61 @@
     }
 }
 
+// ── Terminal skin ─────────────────────────────────────────────────
+// Only active when <html> has the .terminal class. The page is the console
+// canvas (--tm-* tokens from styles/themes/terminal.less, swapped under
+// html.terminal.dark), the card a square panel framed by one phosphor rule,
+// no shadow, no artwork, monospace type.
+:host-context(.terminal) ::ng-deep {
+
+    .lp-page {
+        background-color: var(--tm-bg, #0a0a0a);
+        background-image: none;
+        font-family: var(--tm-mono, monospace);
+    }
+
+    .lp-side-brand-name {
+        color: var(--tm-accent, #39ff14);
+        letter-spacing: 0;
+    }
+
+    .lp-side-nav-actions {
+        border-radius: 0;
+        background: transparent;
+        box-shadow: inset 0 0 0 1px var(--tm-rule, rgba(57, 255, 20, 0.35));
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .lp-nav-btn,
+    .lp-nav-lang i[nz-icon] {
+        color: var(--tm-text-muted, rgba(228, 236, 228, 0.58));
+
+        &:hover {
+            color: var(--tm-accent, #39ff14);
+            background: var(--tm-hover, rgba(57, 255, 20, 0.09));
+        }
+    }
+
+    .lp-card {
+        border-radius: 0;
+        background: var(--tm-surface, #0f0f0f);
+        box-shadow: 0 0 0 1px var(--tm-accent, #39ff14);
+    }
+
+    .lp-copyright {
+        color: var(--tm-text-faint, rgba(228, 236, 228, 0.38));
+
+        a {
+            color: var(--tm-text-muted, rgba(228, 236, 228, 0.58));
+
+            &:hover {
+                color: var(--tm-accent, #39ff14);
+            }
+        }
+    }
+}
+
 // ── Workspace skin ────────────────────────────────────────────────
 // Only active when <html> has the .workspace class. The page is the same
 // navigation frame the app shell uses — painted on <body> by

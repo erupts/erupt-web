@@ -7,14 +7,13 @@ import {NzConfigService} from "ng-zorro-antd/core/config";
 import {LOGIN_LAYOUT_KEY, LoginLayout, loginLayoutOf} from "@shared/model/login-layout";
 import {
     applyThemeColor,
-    BRUTALIST_PRESET_COLORS,
     currentSkin,
     resolveThemeColor,
     Skin,
     SkinOption,
     SKINS,
+    skinPresetColors,
     switchSkin,
-    THEME_PRESET_COLORS,
     toHexColor
 } from "@shared/util/theme.util";
 
@@ -116,7 +115,7 @@ export class LayoutPassportComponent implements AfterViewInit {
     themeColor: string = resolveThemeColor();
 
     get activePresetColors(): string[] {
-        return this.skin === Skin.BRUTALIST ? BRUTALIST_PRESET_COLORS : THEME_PRESET_COLORS;
+        return skinPresetColors(this.skin);
     }
 
     get themeColorHex(): string {

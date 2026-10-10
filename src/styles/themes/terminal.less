@@ -1,0 +1,399 @@
+/**
+ * Erupt Theme — "Terminal": the phosphor console.
+ *
+ * Design language
+ *   - Dark first: a near-black canvas and ONE phosphor color, which is the
+ *     runtime theme color (the skin brings its own palette of phosphors:
+ *     green, amber, cyan, white…). Nothing else is colored in the chrome.
+ *   - Monospace type everywhere, square corners, no shadows, no gradients.
+ *     Surfaces are divided by 1px dashed rules in the phosphor at low alpha.
+ *   - Selection is inverse video: the current menu row, tab and header item
+ *     are a solid phosphor block with black text. Hover is a faint wash.
+ *   - A blinking cursor after the brand name and a faint scanline overlay in
+ *     the dark variant; both stop under prefers-reduced-motion.
+ *   - Light variant (html.terminal without .dark): the paper teletype — a
+ *     warm paper canvas with the same phosphor darkened to ink strength, so
+ *     the one accent stays readable without a second color.
+ *
+ * Every alpha below is built on --tm-accent, so a phosphor picked in the
+ * settings drawer repaints the whole console.
+ *
+ * OPTIONAL OVERRIDE
+ *   Every rule is scoped under `html.terminal`. Toggle at runtime via
+ *       document.documentElement.classList.toggle('terminal')
+ *   (see `src/app.js` -> `eruptSiteConfig.theme.skin = "terminal"`). Mutually
+ *   exclusive with the other skins — the settings drawer turns them off.
+ */
+
+/* ------------------------------------------------------------------ *
+ * Design tokens (scoped so they never leak into the default theme)
+ * ------------------------------------------------------------------ */
+html.terminal {
+    /* Monospace first, then each platform's CJK face so Chinese never falls
+     * to the browser default (SimSun on a non-Chinese Windows locale) */
+    --tm-mono: ui-monospace, "SF Mono", Menlo, "JetBrains Mono", "Cascadia Code",
+        Consolas, "Liberation Mono", "PingFang SC", "Hiragino Sans GB",
+        "Microsoft YaHei", "Noto Sans CJK SC", monospace;
+
+    /* The phosphor: the runtime theme color (the skin's own palette) */
+    --tm-accent: var(--ant-primary-color, #39ff14);
+    /* Text on a solid phosphor block */
+    --tm-on-accent: #000;
+
+    /* Light variant defaults — the paper teletype (the phosphor itself is
+     * darkened to ink in the html.terminal:not(.dark) block below) */
+    --tm-on-accent: #fff;
+
+    --tm-bg: #f2f1e9;
+    --tm-surface: #faf9f3;
+    --tm-text: rgba(28, 36, 28, 0.9);
+    --tm-text-muted: rgba(28, 36, 28, 0.62);
+    --tm-text-faint: rgba(28, 36, 28, 0.42);
+    --tm-rule: color-mix(in srgb, var(--tm-accent) 40%, transparent);
+    --tm-hover: color-mix(in srgb, var(--tm-accent) 10%, transparent);
+    --tm-scanlines: none;
+
+    /* Semantic tokens: the page follows the console palette */
+    --erupt-font: var(--tm-mono);
+    --erupt-bg-layout: var(--tm-bg);
+    --erupt-bg-container: var(--tm-surface);
+    --erupt-bg-elevated: var(--tm-surface);
+    --erupt-bg-spotlight: var(--tm-bg);
+    --erupt-text: var(--tm-text);
+    --erupt-text-secondary: var(--tm-text-muted);
+    --erupt-text-tertiary: var(--tm-text-faint);
+    --erupt-border: var(--tm-rule);
+    --ant-border-color-split: color-mix(in srgb, var(--tm-accent) 22%, transparent);
+    --erupt-fill-secondary: var(--tm-hover);
+    --erupt-fill-tertiary: color-mix(in srgb, var(--tm-accent) 6%, transparent);
+    --erupt-fill-quaternary: color-mix(in srgb, var(--tm-accent) 3%, transparent);
+
+    /* The bar is the canvas; the active header item is inverse video */
+    --erupt-header-bg: var(--tm-bg);
+    --erupt-header-text: var(--tm-text);
+    --erupt-header-text-secondary: var(--tm-text-muted);
+    --erupt-header-fill: var(--tm-hover);
+    --erupt-header-fill-strong: color-mix(in srgb, var(--tm-accent) 18%, transparent);
+    --erupt-header-active-bg: var(--tm-accent);
+    --erupt-header-active-text: var(--tm-on-accent);
+    --erupt-header-border: var(--tm-rule);
+    --erupt-header-progress: var(--tm-accent);
+
+    /* never wash the selected <li> — it CONTAINS the expanded submenu <ul> */
+    --alain-default-aside-nav-selected-bg: transparent;
+}
+
+/* Light — the phosphor palette is bright and belongs on black; on paper the
+ * accent is the palette's 9th shade (ng-zorro writes --ant-primary-1..10 on
+ * :root; for P1 green that is a forest #078c00), dark enough to carry white
+ * text as ink. html.terminal out-specifies :root. */
+html.terminal:not(.dark) {
+    --ant-primary-color: var(--ant-primary-9);
+    --ant-primary-color-hover: var(--ant-primary-8);
+    --ant-primary-color-active: var(--ant-primary-10);
+}
+
+/* Dark — the console proper: black canvas, the phosphor at full strength */
+html.terminal.dark {
+    --tm-on-accent: #000;
+
+    --tm-bg: #0a0a0a;
+    --tm-surface: #0f0f0f;
+    --tm-text: rgba(228, 236, 228, 0.86);
+    --tm-text-muted: rgba(228, 236, 228, 0.58);
+    --tm-text-faint: rgba(228, 236, 228, 0.38);
+    --tm-rule: color-mix(in srgb, var(--tm-accent) 35%, transparent);
+    --tm-hover: color-mix(in srgb, var(--tm-accent) 9%, transparent);
+    --tm-scanlines: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.16) 0 1px, transparent 1px 3px);
+
+    --erupt-bg-elevated: #161616;
+    --erupt-bg-spotlight: #111;
+}
+
+/* ================================================================== *
+ * CANVAS — one black (or paper) sheet; the chrome is drawn ON it
+ * ================================================================== */
+html.terminal body {
+    background: var(--tm-bg);
+    font-family: var(--tm-mono);
+}
+
+/* Scanlines: a fixed overlay above everything, never catching the pointer */
+html.terminal body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 2147483000;
+    pointer-events: none;
+    background: var(--tm-scanlines);
+}
+
+/* ================================================================== *
+ * TOP BAR — the canvas, a dashed rule under it, a cursor after the brand
+ * ================================================================== */
+html.terminal .erupt-header,
+html.terminal .alain-default__header {
+    border-bottom: 1px dashed var(--tm-rule);
+    box-shadow: none;
+}
+
+html.terminal .alain-default__header-logo {
+    border-right: 1px dashed var(--tm-rule);
+}
+
+html.terminal .header-logo-text {
+    letter-spacing: 0;
+    font-weight: 600;
+
+    &::after {
+        content: "_";
+        margin-left: 1px;
+        color: var(--tm-accent);
+        animation: tm-cursor-blink 1.1s steps(1, end) infinite;
+    }
+}
+
+@keyframes tm-cursor-blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+html.terminal .alain-default__nav-item {
+    border-radius: 0;
+}
+
+/* Top-split mode: the second row is canvas too, a dashed rule under it */
+html.terminal .erupt-header .erupt-subnav {
+    background: var(--tm-bg);
+    border-bottom: 1px dashed var(--tm-rule);
+}
+
+html.terminal .subnav-menu.ant-menu-horizontal {
+    color: var(--tm-text-muted);
+
+    > .ant-menu-item,
+    > .ant-menu-submenu {
+        color: var(--tm-text-muted);
+
+        &::after {
+            border-bottom: 2px solid transparent;
+        }
+
+        &:hover,
+        &.ant-menu-item-active,
+        &.ant-menu-submenu-active,
+        &.ant-menu-item-selected,
+        &.ant-menu-submenu-selected {
+            color: var(--tm-accent);
+
+            &::after {
+                border-bottom-color: var(--tm-accent);
+            }
+        }
+    }
+
+    > .ant-menu-submenu > .ant-menu-submenu-title {
+        color: inherit;
+    }
+}
+
+/* ================================================================== *
+ * SIDEBAR — the canvas with a dashed rule on its free edge
+ * ================================================================== */
+html.terminal .alain-default__aside {
+    background: var(--tm-bg);
+}
+
+html.terminal .alain-default__aside::after,
+html.terminal .erupt-side::after {
+    border-right: 1px dashed var(--tm-rule);
+}
+
+/* delon styles the menu scrollbar itself: a phosphor wash thumb, no track */
+html.terminal .alain-default__aside .alain-default__aside-inner::-webkit-scrollbar-track {
+    box-shadow: none;
+}
+
+html.terminal .alain-default__aside .alain-default__aside-inner::-webkit-scrollbar-thumb {
+    background-color: color-mix(in srgb, var(--tm-accent) 30%, transparent);
+}
+
+html.terminal {
+
+    /* drop delon's 3px guide bar; inverse video carries the selection */
+    .alain-default__aside .sidebar-nav__item {
+        border-left: 0 !important;
+    }
+
+    .alain-default__aside .sidebar-nav__item-link {
+        border-radius: 0;
+        color: var(--tm-text-muted);
+        transition: background-color 0.1s ease, color 0.1s ease;
+
+        &:hover {
+            background-color: var(--tm-hover);
+            color: var(--tm-accent);
+        }
+    }
+
+    /* disclosure chevron follows the row color */
+    .alain-default__aside .sidebar-nav__sub-arrow::before,
+    .alain-default__aside .sidebar-nav__sub-arrow::after {
+        background: currentColor;
+        background-image: none;
+    }
+
+    /* active-trail parents only light their own title, never the subtree */
+    .alain-default__aside .sidebar-nav__selected {
+        background-color: transparent;
+    }
+
+    .alain-default__aside .sidebar-nav__selected > .sidebar-nav__item-link {
+        color: var(--tm-accent);
+    }
+
+    /* selected leaf (leaves carry href) — inverse video */
+    .alain-default__aside .sidebar-nav__selected > .sidebar-nav__item-link[href] {
+        background-color: var(--tm-accent);
+        color: var(--tm-on-accent);
+
+        &:hover {
+            background-color: var(--tm-accent);
+            color: var(--tm-on-accent);
+        }
+    }
+
+    /* pin / inline spinner in the row's right slot */
+    .alain-default__aside .sidebar-nav__pin {
+        color: var(--tm-text-faint);
+
+        &:hover,
+        &--active {
+            color: var(--tm-accent);
+        }
+    }
+
+    .alain-default__aside .sidebar-nav__loading {
+        color: var(--tm-accent);
+    }
+
+    /* menu click ripple — a phosphor flash */
+    .alain-default__aside .sidebar-nav__item span.ripple {
+        background: color-mix(in srgb, var(--tm-accent) 30%, transparent) !important;
+    }
+
+    /* group titles read as comments */
+    .alain-default__aside .sidebar-nav__group-title {
+        color: var(--tm-text-faint);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+
+        &::before {
+            content: "// ";
+        }
+    }
+
+    .alain-default__aside .sidebar-nav--pinned {
+        border-bottom: 1px dashed var(--tm-rule);
+    }
+
+    .alain-default__aside .sidebar-nav__divider {
+        background: none;
+        border-top: 1px dashed var(--tm-rule);
+    }
+
+    .alain-default__aside .sidebar-nav__drag-placeholder {
+        border-color: var(--tm-accent);
+        border-radius: 0;
+    }
+
+    /* Dual-column mode: the first-level rail is divided by a dashed rule */
+    .alain-default__aside .dual-menu__rail {
+        background: var(--tm-bg);
+        border-right: 1px dashed var(--tm-rule);
+    }
+
+    .alain-default__aside .dual-menu__rail-item {
+        border-radius: 0;
+        color: var(--tm-text-muted);
+
+        &:hover {
+            background: var(--tm-hover);
+            color: var(--tm-accent);
+        }
+
+        &--active {
+            background: var(--tm-accent);
+            color: var(--tm-on-accent);
+        }
+    }
+
+    /* Bottom utility bar — the canvas, a dashed rule above */
+    .alain-default__aside .fold {
+        background: var(--tm-bg);
+        border-top: 1px dashed var(--tm-rule);
+        border-right: 0;
+        color: var(--tm-text-muted);
+    }
+
+    .alain-default__aside .fold__btn:hover {
+        background: var(--tm-hover);
+        color: var(--tm-accent);
+    }
+
+    .alain-default__aside .aside-loading-overlay {
+        background: color-mix(in srgb, var(--tm-bg) 75%, transparent);
+    }
+}
+
+/* ================================================================== *
+ * PAGE FURNITURE — square tabs, the current one inverse video.
+ * (!important — erupt.component.less pins the pill look the same way.)
+ * ================================================================== */
+html.terminal .reuse-tab__card {
+    border-bottom: 1px dashed var(--tm-rule);
+
+    .ant-tabs-tab {
+        border-radius: 0 !important;
+    }
+
+    .ant-tabs-tab-active {
+        background: var(--tm-accent) !important;
+
+        .ant-tabs-tab-btn {
+            color: var(--tm-on-accent);
+        }
+    }
+}
+
+html.terminal reuse-tab .ant-tabs-tab-arrow-show {
+    color: var(--tm-accent);
+}
+
+/* Primary buttons are inverse video too: on black the phosphor is too bright
+ * for white text, so the label is black (the light variant keeps white on
+ * its darkened ink). Scoped above tokens.less's dark/compact re-anchor. */
+html.terminal .ant-btn-primary:not([disabled]) {
+    color: var(--tm-on-accent);
+    border-radius: 0;
+
+    &:hover,
+    &:focus,
+    &:active {
+        color: var(--tm-on-accent);
+    }
+}
+
+/* Reduced motion — the cursor stays lit, rows stop animating */
+@media (prefers-reduced-motion: reduce) {
+    html.terminal .header-logo-text::after {
+        animation: none;
+    }
+
+    html.terminal .alain-default__aside .sidebar-nav__item-link,
+    html.terminal .alain-default__aside .dual-menu__rail-item {
+        transition: none;
+    }
+}

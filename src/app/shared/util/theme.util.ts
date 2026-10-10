@@ -38,6 +38,10 @@ export function resolveHeaderColor(): string | null {
     if (currentSkin() === Skin.BRUTALIST) {
         return "primary";
     }
+    // the console bar is the canvas; a colored bar would break the one-color brief
+    if (currentSkin() === Skin.TERMINAL) {
+        return null;
+    }
     return localStorage.getItem("header-color") || WindowModel.theme?.headerColor || defaultHeaderColor();
 }
 
@@ -52,7 +56,8 @@ export enum Skin {
     BRUTALIST = "brutalist",
     LIQUID_GLASS = "liquid-glass",
     WORKSPACE = "workspace",
-    CLASSIC = "classic"
+    CLASSIC = "classic",
+    TERMINAL = "terminal"
 }
 
 // <html> class (= storage key) per skin; the default skin has none
@@ -60,7 +65,8 @@ const SKIN_CLASS: Record<Exclude<Skin, Skin.DEFAULT>, string> = {
     [Skin.BRUTALIST]: "brutalist-theme",
     [Skin.LIQUID_GLASS]: "liquid-glass",
     [Skin.WORKSPACE]: "workspace",
-    [Skin.CLASSIC]: "classic"
+    [Skin.CLASSIC]: "classic",
+    [Skin.TERMINAL]: "terminal"
 };
 
 // A skin as the pickers list it (settings drawer, login page, lock screen):
@@ -79,7 +85,8 @@ export const SKINS: SkinOption[] = [
     {value: Skin.CLASSIC, label: "setting.skin-classic", shellOnly: true},
     {value: Skin.WORKSPACE, label: "setting.skin-workspace"},
     {value: Skin.LIQUID_GLASS, label: "setting.skin-liquid-glass"},
-    {value: Skin.BRUTALIST, label: "setting.skin-brutalist"}
+    {value: Skin.BRUTALIST, label: "setting.skin-brutalist"},
+    {value: Skin.TERMINAL, label: "setting.skin-terminal"}
 ];
 
 // The skin whose class index.html (or a previous applySkin) put on <html>
@@ -340,17 +347,56 @@ export const BRUTALIST_PRESET_COLORS: string[] = [
     "#d9e0e8"  // cloud
 ];
 
+// The terminal skin's phosphors: bright monochrome CRT colors meant to glow
+// on black (the light variant darkens them to ink via --ant-primary-7).
+export const TERMINAL_PRESET_COLORS: string[] = [
+    "#39ff14", // P1 green
+    "#00ff9c", // mint
+    "#ffb000", // P3 amber
+    "#ff8c1a", // orange
+    "#00e5ff", // cyan
+    "#ff5fd2", // magenta
+    "#ff3b3b", // alert red
+    "#e6e6e6"  // P4 white
+];
+
 export const DEFAULT_THEME_COLOR = "#1677ff";
 
 // The brutalist skin's own default accent: raft's signal yellow
 export const BRUTALIST_DEFAULT_COLOR = "#ffd440";
 
-// The brutalist palette is pastel and belongs UNDER ink borders; the normal
-// palette is mid-tone and belongs UNDER white text. Neither survives in the
-// other's skin, so the brutalist skin keeps its own storage slot for the
-// theme color, and switching skins swaps which slot is live.
+// The terminal skin's own default phosphor: P1 green
+export const TERMINAL_DEFAULT_COLOR = "#39ff14";
+
+// Skins whose brief needs a palette of its own. The brutalist pastels belong
+// UNDER ink borders, the terminal phosphors ON black; the normal mid-tones
+// belong UNDER white text. None survives in another skin, so each of these
+// keeps its own storage slot for the theme color, and switching skins swaps
+// which slot is live. Every other skin shares the normal slot.
+interface SkinPalette {
+    storageKey: string;
+    defaultColor: string;
+    presets: string[];
+}
+
+const SKIN_PALETTES: Partial<Record<Skin, SkinPalette>> = {
+    [Skin.BRUTALIST]: {storageKey: "theme-color-brutalist", defaultColor: BRUTALIST_DEFAULT_COLOR, presets: BRUTALIST_PRESET_COLORS},
+    [Skin.TERMINAL]: {storageKey: "theme-color-terminal", defaultColor: TERMINAL_DEFAULT_COLOR, presets: TERMINAL_PRESET_COLORS}
+};
+
+// The preset swatches a picker offers while `skin` is on
+export function skinPresetColors(skin: Skin = currentSkin()): string[] {
+    return SKIN_PALETTES[skin]?.presets || THEME_PRESET_COLORS;
+}
+
+// Skins whose top bar is part of their own language: no header color picker
+// there, and a saved choice is ignored (kept for the other skins).
+export function headerColorLocked(skin: Skin = currentSkin()): boolean {
+    return skin === Skin.BRUTALIST || skin === Skin.TERMINAL;
+}
+
 export function themeColorStorageKey(): string {
-    return currentSkin() === Skin.BRUTALIST ? "theme-color-brutalist" : "theme-color";
+    return SKIN_PALETTES[currentSkin()]?.storageKey || "theme-color";
 }
 
 // The theme color the active skin should show: the user's choice for that
@@ -360,9 +406,8 @@ export function resolveThemeColor(): string {
     if (saved) {
         return saved;
     }
-    return currentSkin() === Skin.BRUTALIST
-        ? BRUTALIST_DEFAULT_COLOR
-        : WindowModel.theme?.primaryColor || DEFAULT_THEME_COLOR;
+    return SKIN_PALETTES[currentSkin()]?.defaultColor
+        || WindowModel.theme?.primaryColor || DEFAULT_THEME_COLOR;
 }
 
 // <input type="color"> only accepts #rrggbb; the site config may use rgb().

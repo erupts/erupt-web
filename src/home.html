@@ -359,6 +359,15 @@
             background: linear-gradient(#f0f2f5, #f0f2f5) 6px 3px / 5px 8px no-repeat,
                         color-mix(in srgb, var(--accent) 42%, #151a26);
         }
+        /* terminal: black canvas, a dashed phosphor rule, an inverse-video row */
+        .sw.terminal i {
+            border-color: #39ff14;
+            border-style: dashed;
+            background: linear-gradient(#39ff14, #39ff14) 1px 3px / 4px 2px no-repeat, #0a0a0a;
+        }
+        html.dark .sw.terminal i {
+            background: linear-gradient(#39ff14, #39ff14) 1px 3px / 4px 2px no-repeat, #0a0a0a;
+        }
         /* classic: navy column beside a white bar */
         .sw.classic i {
             border-color: #001529;
@@ -435,6 +444,7 @@
                     <button class="sw workspace" data-skin="workspace" type="button"><i></i></button>
                     <button class="sw glass" data-skin="liquid-glass" type="button"><i></i></button>
                     <button class="sw brutalist" data-skin="brutalist" type="button"><i></i></button>
+                    <button class="sw terminal" data-skin="terminal" type="button"><i></i></button>
                 </div>
             </div>
             <div class="who">
@@ -624,7 +634,8 @@
             {value: "classic", cls: "classic", key: "classic", label: "Classic"},
             {value: "workspace", cls: "workspace", key: "workspace", label: "Workspace"},
             {value: "liquid-glass", cls: "liquid-glass", key: "liquid-glass", label: "Liquid Glass"},
-            {value: "brutalist", cls: "brutalist-theme", key: "brutalist-theme", label: "Brutalist"}
+            {value: "brutalist", cls: "brutalist-theme", key: "brutalist-theme", label: "Brutalist"},
+            {value: "terminal", cls: "terminal", key: "terminal", label: "Terminal"}
         ];
         function currentSkin() {
             for (var i = 1; i < SKINS.length; i++) if (parentRoot.classList.contains(SKINS[i].cls)) return SKINS[i];
