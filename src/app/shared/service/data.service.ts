@@ -844,9 +844,10 @@ export class DataService {
             RestPath.erupt + "/print/config/" + eruptName + "/delete?id=" + id, null);
     }
 
-    renderPrint(eruptName: string, id: any, content: string) {
+    // the template is named by id and read server side; its content never travels with the request
+    renderPrint(eruptName: string, id: any, configId: number) {
         return this._http.post<R<string>>(
-            RestPath.erupt + "/print/" + eruptName + "/" + id, content, null, {
+            RestPath.erupt + "/print/" + eruptName + "/" + id, null, {config: configId}, {
                 observe: "body", headers: {erupt: eruptName}
             });
     }
