@@ -56,6 +56,7 @@ export enum Skin {
     BRUTALIST = "brutalist",
     LIQUID_GLASS = "liquid-glass",
     WORKSPACE = "workspace",
+    MATERIAL = "material",
     CLASSIC = "classic",
     TERMINAL = "terminal"
 }
@@ -65,6 +66,7 @@ const SKIN_CLASS: Record<Exclude<Skin, Skin.DEFAULT>, string> = {
     [Skin.BRUTALIST]: "brutalist-theme",
     [Skin.LIQUID_GLASS]: "liquid-glass",
     [Skin.WORKSPACE]: "workspace",
+    [Skin.MATERIAL]: "material",
     [Skin.CLASSIC]: "classic",
     [Skin.TERMINAL]: "terminal"
 };
@@ -84,6 +86,7 @@ export const SKINS: SkinOption[] = [
     {value: Skin.DEFAULT, label: "setting.skin-default"},
     {value: Skin.CLASSIC, label: "setting.skin-classic", shellOnly: true},
     {value: Skin.WORKSPACE, label: "setting.skin-workspace"},
+    {value: Skin.MATERIAL, label: "setting.skin-material"},
     {value: Skin.LIQUID_GLASS, label: "setting.skin-liquid-glass"},
     {value: Skin.BRUTALIST, label: "setting.skin-brutalist"},
     {value: Skin.TERMINAL, label: "setting.skin-terminal"}

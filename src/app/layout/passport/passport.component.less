@@ -702,6 +702,41 @@
     }
 }
 
+// ── Material skin ─────────────────────────────────────────────────
+// Only active when <html> has the .material class. The page is the shell's
+// brand-tinted surface container (--m3-* tokens from
+// styles/themes/material.less, swapped under html.material.dark), the card
+// the bright sheet with Material's 28px dialog corners and low elevation.
+:host-context(.material) ::ng-deep {
+
+    .lp-page {
+        background-color: var(--m3-surface-container, #f0f4f9);
+        background-image: none;
+    }
+
+    .lp-side-nav-actions {
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .lp-nav-btn,
+    .lp-nav-lang i[nz-icon] {
+        border-radius: 9999px;
+
+        &:hover {
+            background: var(--m3-hover, rgba(31, 31, 31, 0.08));
+        }
+    }
+
+    .lp-card {
+        border-radius: var(--m3-shape-lg, 28px);
+        background: var(--m3-surface, #fff);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 4px 8px 3px rgba(0, 0, 0, 0.06);
+    }
+}
+
 // ── Terminal skin ─────────────────────────────────────────────────
 // Only active when <html> has the .terminal class. The page is the console
 // canvas (--tm-* tokens from styles/themes/terminal.less, swapped under
