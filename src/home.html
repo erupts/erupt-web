@@ -740,7 +740,7 @@
     //    has no /notice endpoints at all, so nothing is requested and nothing shown.
     var unread = null, appReady = false, noticeOn = false;
     fetchJson(api + "/erupt-app").then(function (app) {
-        noticeOn = !!(app && app.properties && app.properties["erupt-notice"]) && !isTenant(token);
+        noticeOn = !!(app && app.properties && app.properties["erupt-notice"]);
     }).catch(function () { noticeOn = false; }).then(function () {
         appReady = true;
         renderStats();
