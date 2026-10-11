@@ -330,11 +330,12 @@ html.terminal {
         }
     }
 
-    /* Bottom utility bar — the canvas, a dashed rule above */
+    /* Bottom utility bar — the canvas, dashed rules above and on the free edge
+     * (it sits over the aside's own right rule, so it must redraw it) */
     .alain-default__aside .fold {
         background: var(--tm-bg);
         border-top: 1px dashed var(--tm-rule);
-        border-right: 0;
+        border-right: 1px dashed var(--tm-rule);
         color: var(--tm-text-muted);
     }
 
