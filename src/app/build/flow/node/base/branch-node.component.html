@@ -13,7 +13,7 @@
 
     <div style="flex: 1">
       <div class="p-node-header">
-        <div [style.color]="isDefault ? '#898989' : color">
+        <div [style.color]="isDefault ? 'var(--erupt-text-tertiary, #898989)' : color">
           @if (enableEdit) {
             <input
               #nodeNameInput

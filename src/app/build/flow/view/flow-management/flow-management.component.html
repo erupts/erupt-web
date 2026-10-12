@@ -56,7 +56,7 @@
             <nz-input-group [nzSuffix]="searchSfx" nzBorderless style="width:200px">
                 <input nz-input [(ngModel)]="searchValue" (ngModelChange)="onSearch()" [placeholder]="'flow.placeholder.search_flow' | translate"/>
             </nz-input-group>
-            <ng-template #searchSfx><span nz-icon nzType="search" style="color:#bfbfbf"></span></ng-template>
+            <ng-template #searchSfx><span nz-icon nzType="search" style="color: var(--erupt-text-quaternary, #bfbfbf)"></span></ng-template>
             <nz-divider nzType="vertical"></nz-divider>
             <button nz-button nzType="primary" (click)="onCreateApproval()">
                 <span nz-icon nzType="plus"></span>{{ 'flow.management.create' | translate }}
@@ -107,10 +107,10 @@
                             <button nz-button nzType="text" nzSize="small" [nz-tooltip]="config.enable ? ('flow.management.disable' | translate) : ('flow.management.enable' | translate)"
                                     (click)="onToggleVisibility(config)">
                                 <span nz-icon [nzType]="config.enable ? 'stop' : 'check-circle'" nzTheme="outline"
-                                      [style.color]="config.enable ? '' : '#52c41a'"></span>
+                                      [style.color]="config.enable ? '' : 'var(--ant-success-color, #52c41a)'"></span>
                             </button>
                             <button nz-button nzType="text" nzSize="small" [nz-tooltip]="'global.delete' | translate" (click)="onDelete(config)">
-                                <span nz-icon nzType="delete" nzTheme="outline" style="color:#ff4d4f"></span>
+                                <span nz-icon nzType="delete" nzTheme="outline" style="color: var(--ant-error-color, #ff4d4f)"></span>
                             </button>
                         </div>
                     </div>
