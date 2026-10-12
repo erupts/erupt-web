@@ -1,3 +1,22 @@
+// The "+" affordance between nodes: an elevated disc that reads on both the light and the dark
+// canvas. The stock default button melts into the dark layout background, so the surface,
+// border and halo are pinned to the theme tokens instead of the button defaults.
+.insert-btn {
+    z-index: 1;
+    background: var(--erupt-bg-elevated, #fff);
+    border-color: var(--erupt-border, #d9d9d9);
+    color: var(--erupt-text-secondary, #595959);
+    box-shadow: 0 4px 8px rgba(31, 35, 41, 0.1), 0 0 5px 0 var(--erupt-fill, transparent);
+    transition: color .2s, border-color .2s, box-shadow .2s;
+
+    &:hover,
+    &:focus {
+        color: var(--ant-primary-color);
+        border-color: var(--ant-primary-color);
+        background: var(--erupt-bg-elevated, #fff);
+    }
+}
+
 .node-options {
     display: flex;
     flex-wrap: wrap;
@@ -21,7 +40,7 @@
         transition: .5s all;
 
         &:hover {
-            box-shadow: 0 0 5px 0 #E3E3E3;
+            box-shadow: 0 0 5px 0 var(--erupt-fill, #E3E3E3);
         }
     }
 }
