@@ -126,5 +126,8 @@
         "(src)/**/*.less": [
             "npm run lint:style"
         ]
+    },
+    "resolutions": {
+        "plyr": "3.8.4"
     }
 }
