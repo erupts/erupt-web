@@ -11,9 +11,11 @@ yarn run build        # Production build (allocates 6GB heap - large bundle)
 yarn run analyze      # Build with source maps for bundle analysis
 yarn run analyze:view # View bundle analysis in browser
 yarn run theme        # Regenerate theme CSS
+yarn test             # Run unit tests once (Vitest via @angular/build:unit-test)
+yarn run test:watch   # Re-run unit tests on change
 ```
 
-No test suite is present in this project.
+Unit tests are `*.spec.ts` files next to the code they cover, run by Vitest in jsdom with globals (`describe` / `it` / `expect` / `vi`). They cover pure logic only: schema / search-condition conversion, theme resolution, coordinate conversion, flow graph helpers. Component tests are deliberately left out. The test build runs in memory and never writes to the build `outputPath`.
 
 **Do not run `yarn run build` / `ng build` to verify changes.** Every build (including `--configuration development`) writes into the sibling Java repo's `erupt-web/src/main/resources/public`, overwriting the committed production bundle. Verify with `npx tsc --noEmit -p tsconfig.app.json` and `npx lessc --js <file>.less` instead; the user builds themselves.
 
