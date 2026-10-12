@@ -175,6 +175,14 @@
                     },
                     "defaultConfiguration": "development"
                 },
+                "test": {
+                    "builder": "@angular/build:unit-test",
+                    "options": {
+                        "buildTarget": "erupt:build:development",
+                        "tsConfig": "tsconfig.spec.json",
+                        "runner": "vitest"
+                    }
+                },
                 "extract-i18n": {
                     "builder": "@angular/build:extract-i18n",
                     "options": {
