@@ -1413,3 +1413,7 @@ revision.op.UPDATE,修改,修改,Updated,Modifié,更新,수정,Изменено
 revision.op.DELETE,删除,刪除,Deleted,Supprimé,削除,삭제,Удалено,Eliminado,Gelöscht,Eliminado,Dihapus,حُذف
 revision.rollback,回滚,回滾,Roll back,Restaurer,ロールバック,롤백,Откатить,Revertir,Zurücksetzen,Reverter,Kembalikan,تراجع
 revision.rollback_hint,将这次变更的字段恢复为变更前的值？,將這次變更的欄位恢復為變更前的值？,Restore the fields of this change to their previous values?,Restaurer les champs de cette modification à leurs valeurs précédentes ?,この変更のフィールドを変更前の値に戻しますか？,이 변경의 필드를 이전 값으로 되돌릴까요?,Вернуть полям этого изменения прежние значения?,¿Restaurar los campos de este cambio a sus valores anteriores?,Die Felder dieser Änderung auf ihre vorherigen Werte zurücksetzen?,Repor os campos desta alteração para os valores anteriores?,Kembalikan kolom perubahan ini ke nilai sebelumnya?,هل تريد استعادة حقول هذا التغيير إلى قيمها السابقة؟
+scope.pick,请选择,請選擇,Select,Sélectionner,選択してください,선택하세요,Выберите,Seleccionar,Auswählen,Selecionar,Pilih,اختر
+scope.all,全部,全部,All,Tous,すべて,전체,Все,Todos,Alle,Todos,Semua,الكل
+scope.switch,切换,切換,Switch,Changer,切り替え,전환,Переключить,Cambiar,Wechseln,Mudar,Ganti,تبديل
+scope.switched,已切换到,已切換到,Switched to,Basculé vers,切り替えました：,전환됨:,Переключено на,Cambiado a,Gewechselt zu,Mudado para,Beralih ke,تم التبديل إلى

@@ -10,6 +10,7 @@ import {
     ViewChild,
     ViewContainerRef
 } from "@angular/core";
+import {ScopeService} from "@shared/service/scope.service";
 import {IframeManagerService} from "@shared/service/iframe-manager.service";
 import {StatusService} from "@shared/service/status.service";
 import {DOCUMENT} from "@angular/common";
@@ -124,6 +125,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 private i18n: I18NService,
                 private utilsService: UtilsService,
                 private iframeManager: IframeManagerService,
+                private scopeService: ScopeService,
                 private statusService: StatusService,
                 public session: SessionService,
                 @Optional()
@@ -237,6 +239,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             userinfoObservable = this.data.userinfo();
         }
         userinfoObservable.subscribe(userinfo => {
+            this.scopeService.load(userinfo.account);
             let path = generateMenuPath(userinfo.indexMenuType, userinfo.indexMenuValue);
             const appConfig = EruptAppData.get();
             if (appConfig.waterMark) {
