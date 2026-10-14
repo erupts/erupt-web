@@ -2,12 +2,11 @@ import {Inject, Injectable} from "@angular/core";
 import {_HttpClient} from "@delon/theme";
 import {HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Announcement, LoginModel, MfaStatus, NoticeChannel, NoticeMessageDetail, NoticeScene, SsoProvider, Userinfo} from "../model/user.model";
+import {Announcement, LoginModel, MfaStatus, NoticeChannel, NoticeMessageDetail, NoticeScene, SsoProvider, TenantInfo, Userinfo} from "../model/user.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
-import {UtilsService} from "@shared/service/utils.service";
 import {downloadFile} from "@shared/util/erupt.util";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {VL} from "../../build/erupt/model/erupt-field.model";
@@ -40,7 +39,6 @@ export class DataService {
 
     constructor(private _http: _HttpClient,
                 private i18n: I18NService,
-                private utilsService: UtilsService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         DataService.tokenService = this.tokenService;
     }
@@ -532,8 +530,9 @@ export class DataService {
     }
 
     //single sign-on providers offered on the login page
-    ssoProviders(): Observable<SsoProvider[]> {
-        return this._http.get<SsoProvider[]>(RestPath.erupt + "/sso/providers");
+    //the platform's providers, or with a tenant code the tenant's own
+    ssoProviders(tenantCode?: string): Observable<SsoProvider[]> {
+        return this._http.get<SsoProvider[]>(RestPath.erupt + "/sso/providers", tenantCode ? {tenant: tenantCode} : null);
     }
 
     //the callback redirect carries a one-time ticket, never the session token itself
@@ -542,8 +541,9 @@ export class DataService {
     }
 
     //a full page navigation, the provider has to see the browser
-    static ssoAuthorizeUrl(code: string): string {
-        return RestPath.erupt + "/sso/authorize/" + encodeURIComponent(code);
+    static ssoAuthorizeUrl(code: string, tenantCode?: string): string {
+        const url = RestPath.erupt + "/sso/authorize/" + encodeURIComponent(code);
+        return tenantCode ? url + "?tenant=" + encodeURIComponent(tenantCode) : url;
     }
 
     mfaStatus(): Observable<MfaStatus> {
@@ -577,18 +577,9 @@ export class DataService {
         );
     }
 
-    tenantChangePwd(pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
-        const encode = (p: string) => EruptAppData.get().pwdTransferEncrypt ? this.pwdEncode(p, 3) : p;
-        return this._http.post(RestPath.erupt + "/tenant/change-pwd", {
-                pwd: encode(pwd),
-                newPwd: encode(newPwd),
-                newPwd2: encode(newPwd2)
-            }
-        );
-    }
-
-    tenantUserinfo(): Observable<Userinfo> {
-        return this._http.get<Userinfo>(RestPath.erupt + "/tenant/userinfo");
+    //the tenant of a tenant session; the user itself is the platform's /userinfo
+    tenantInfo(): Observable<TenantInfo> {
+        return this._http.get<TenantInfo>(RestPath.erupt + "/tenant/info");
     }
 
     logout(): Observable<any> {
@@ -622,10 +613,9 @@ export class DataService {
     }
 
     //get menu, pass flush=true to rebuild the menu cache from the database;
-    //tenant sessions use their own endpoint so the flush recomputes tenant menus, never platform ones
+    //a tenant session gets the menus of its packages from the same endpoint
     getMenu(flush?: boolean): Observable<MenuVo[]> {
-        let path = this.utilsService.isTenantToken() ? "/tenant/menu" : "/menu";
-        return this._http.get<MenuVo[]>(RestPath.erupt + path, flush ? {flush: true} : null, {
+        return this._http.get<MenuVo[]>(RestPath.erupt + "/menu", flush ? {flush: true} : null, {
             observe: "body"
         });
     }
