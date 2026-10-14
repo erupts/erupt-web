@@ -1,4 +1,5 @@
 import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
+import {ScopeStore} from "@shared/service/scope.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService, TableFormat} from "@shared/service/data.service";
@@ -100,6 +101,12 @@ export class TableComponent implements OnInit, OnDestroy {
 
     @ViewChild("st", {static: false})
     st: STComponent;
+
+    private scopeFixed(eb: EruptBuildModel, field: string): boolean {
+        if (eb.scope.bind.indexOf(field) === -1) return false;
+        const value = ScopeStore.value(eb.scope.name, field);
+        return value !== null && value !== undefined && value !== "" && !Array.isArray(value);
+    }
 
     @ViewChild("cellEditTpl", {static: true})
     cellEditTpl: TemplateRef<any>;
@@ -553,6 +560,11 @@ export class TableComponent implements OnInit, OnDestroy {
                 if (savedSettings.aiPanelOpen && window.innerWidth > 768) this.showAiPanel = true;
                 if (savedSettings.aiPanelWidth) this.aiPanelWidth = savedSettings.aiPanelWidth;
                 this.dataHandler.initErupt(eb);
+                if (eb.scope) {
+                    // a column the scope pins to one value would repeat it on every row
+                    eb.eruptModel.tableColumns = eb.eruptModel.tableColumns
+                        .filter(v => !this.scopeFixed(eb, v.eruptFieldModel.fieldName));
+                }
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
                 if (eb.eruptModel.eruptJson.power.export) {
@@ -573,6 +585,10 @@ export class TableComponent implements OnInit, OnDestroy {
                 this.searchErupt = <EruptModel>cloneDeep(this.eruptBuildModel.eruptModel);
                 for (let fieldModel of this.searchErupt.eruptFieldModels) {
                     let edit = fieldModel.eruptFieldJson.edit;
+                    // the header scope decides a bound field, so it is not searched here too
+                    if (edit && eb.scope && eb.scope.bind.indexOf(fieldModel.fieldName) !== -1) {
+                        edit.search.value = false;
+                    }
                     if (edit) {
                         if (edit.search.value) {
                             this.hasSearchFields = true;

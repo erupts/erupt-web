@@ -1,4 +1,5 @@
 import {Inject, Injectable, Injector} from "@angular/core";
+import {ScopeStore} from "@shared/service/scope.service";
 import {Router} from "@angular/router";
 import {
     HttpErrorResponse,
@@ -263,9 +264,15 @@ export class DefaultInterceptor implements HttpInterceptor {
         // Receive JSON responses as text and parse them ourselves, so 64-bit ids
         // beyond Number.MAX_SAFE_INTEGER are kept as strings instead of losing precision
         const expectJson = req.responseType === "json";
+        let headers = req.headers.set("lang", this.i18n.currentLang || '');
+        // the scope picks every erupt-api call runs in; the server verifies their signatures
+        const scope = ScopeStore.header();
+        if (scope && url.indexOf("erupt-api") !== -1 && !headers.has(ScopeStore.HEADER)) {
+            headers = headers.set(ScopeStore.HEADER, scope);
+        }
         const newReq = req.clone({
             url: url,
-            headers: req.headers.set("lang", this.i18n.currentLang || ''),
+            headers: headers,
             ...(expectJson ? {responseType: "text" as const} : {})
         });
         return next.handle(newReq).pipe(
