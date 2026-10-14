@@ -1,3 +1,5 @@
+@import "../passport-sso";
+
 :host {
     display: block;
 
@@ -6,6 +8,8 @@
     --lf-muted: rgba(10, 10, 10, 0.55);
     --lf-hair: rgba(10, 10, 10, 0.12);
     --lf-mono: 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', Menlo, Consolas, monospace;
+
+    .lf-sso-soft();
 
     // ── Head (default: soft) ─────────────────────────────────────
     .lf-head {
@@ -151,6 +155,8 @@
 // ── Brutalist skin ────────────────────────────────────────────────
 // Only active when <html> has the .brutalist-theme class.
 :host-context(.brutalist-theme) {
+    .lf-sso-brutalist();
+
 
     // ── Head: eyebrow tag + sharp bottom border ──────────────────
     .lf-head {

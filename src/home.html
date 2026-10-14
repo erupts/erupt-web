@@ -697,13 +697,12 @@
 
     // ── data: who am I ───────────────────────────────────────────────────────
     var user = null, indexNode = null, userReady = false;
-    fetchJson(api + (isTenant(token) ? "/tenant/userinfo" : "/userinfo")).then(function (u) {
+    fetchJson(api + "/userinfo").then(function (u) {
         user = u || {};
         var name = user.nickname || "";
         var hello = $("hello");
         hello.textContent = greeting() + (name ? (lang.indexOf("zh") === 0 ? "，" : ", ") : "");
         if (name) hello.appendChild(el("b", null, name));
-        if (user.tenantName) { $("tenant").textContent = user.tenantName; $("tenant").hidden = false; $("tenantDot").hidden = false; }
         var av = $("avatar");
         if (user.avatar) {
             var src = /^https?:\/\//.test(user.avatar) ? user.avatar : attach + "/" + user.avatar.replace(/^\/+/, "");
@@ -721,7 +720,12 @@
 
     // ── data: what can I reach ──────────────────────────────────────────────
     var leaves = [], tables = 0, menusReady = false;
-    fetchJson(api + (isTenant(token) ? "/tenant/menu" : "/menu")).then(function (menus) {
+    // a tenant session only names its tenant here; the user and the menus are the platform's endpoints
+    if (isTenant(token)) fetchJson(api + "/tenant/info").then(function (t) {
+        if (t && t.tenantName) { $("tenant").textContent = t.tenantName; $("tenant").hidden = false; $("tenantDot").hidden = false; }
+    }).catch(function () {});
+
+    fetchJson(api + "/menu").then(function (menus) {
         if (!Array.isArray(menus)) return;
         var nodes = menus.filter(function (m) { return m.type !== "api" && m.type !== "button"; });
         var byId = {}, hasKids = {};

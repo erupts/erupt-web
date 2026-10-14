@@ -16,8 +16,8 @@ import {StatusService} from "@shared/service/status.service";
 import {DOCUMENT} from "@angular/common";
 import {NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router} from "@angular/router";
 
-import {Observable, Subscription} from "rxjs";
-import {tap} from "rxjs/operators";
+import {forkJoin, Observable, of, Subscription} from "rxjs";
+import {catchError, map, tap} from "rxjs/operators";
 import {ScrollService, updateHostClass} from "@delon/util";
 import {Menu, MenuService, SettingsService} from "@delon/theme";
 import {
@@ -231,12 +231,11 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         this.menuChange$ = this.menuSrv.change.subscribe(() => this.setClass());
         this.setClass();
         this.loadMenu().subscribe();
-        let userinfoObservable: Observable<Userinfo>;
-
+        // the user is the platform's /userinfo for every session; a tenant session adds its tenant's name
+        let userinfoObservable: Observable<Userinfo> = this.data.userinfo();
         if (this.utilsService.isTenantToken()) {
-            userinfoObservable = this.data.tenantUserinfo()
-        } else {
-            userinfoObservable = this.data.userinfo();
+            userinfoObservable = forkJoin([userinfoObservable, this.data.tenantInfo().pipe(catchError(() => of(null)))])
+                .pipe(map(([userinfo, tenant]) => ({...userinfo, tenantName: tenant?.tenantName})));
         }
         userinfoObservable.subscribe(userinfo => {
             this.scopeService.load(userinfo.account);
