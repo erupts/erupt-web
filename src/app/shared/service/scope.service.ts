@@ -1,17 +1,15 @@
-import {Injectable, NgZone} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {Router} from "@angular/router";
 import {_HttpClient} from "@delon/theme";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
-import {Observable, Subject, tap} from "rxjs";
+import {forkJoin, Observable, of, tap} from "rxjs";
+import {catchError} from "rxjs/operators";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 
-/** A signed scope pick, as the server returns it */
+/** A scope pick the server accepted, with the labels of its values */
 export interface ScopeAccepted {
-    token: string;
     values: { [field: string]: any };
     labels: { [field: string]: string };
-    // epoch seconds
-    expireAt: number;
 }
 
 /** A scope offered in the header */
@@ -28,8 +26,9 @@ export interface ScopeView {
 }
 
 /**
- * The picks every request carries. A plain holder with no injection, so the HTTP interceptor can
- * read it without depending on a service that itself needs HttpClient.
+ * The picks this window's requests carry. Each window keeps its own, so a page and the requests it
+ * sends always agree on the scope. A plain holder with no injection, so the HTTP interceptor can read
+ * it without depending on a service that itself needs HttpClient.
  */
 export class ScopeStore {
 
@@ -37,9 +36,10 @@ export class ScopeStore {
 
     static picks: { [scope: string]: ScopeAccepted } = {};
 
+    // {"KubeScope":{"cluster":"orbstack"}}, URL-encoded; the server checks it on every request
     static header(): string {
-        const now = Date.now() / 1000;
-        return Object.values(ScopeStore.picks).filter(p => p && p.expireAt > now).map(p => p.token).join(",");
+        const picks = Object.entries(ScopeStore.picks);
+        return picks.length ? encodeURIComponent(JSON.stringify(Object.fromEntries(picks.map(([k, p]) => [k, p.values])))) : "";
     }
 
     static value(scope: string, field: string): any {
@@ -49,41 +49,32 @@ export class ScopeStore {
 
 }
 
-// Renew a pick this long before it expires, so a page left open keeps its scope
-const RENEW_BEFORE_SECONDS = 300;
-
 @Injectable({providedIn: "root"})
 export class ScopeService {
 
     scopes: ScopeView[] = [];
 
-    readonly change = new Subject<void>();
+    // the last pick of each scope, so a new window starts where the user left off
+    private key: string;
 
-    private storageKey: string;
-
-    private renewTimer: any;
-
-    constructor(private http: _HttpClient, private router: Router, private reuseTab: ReuseTabService, private zone: NgZone) {
-        // Another window of the same user switched: follow it, so no open tab acts on the old scope
-        window.addEventListener("storage", e => {
-            if (this.storageKey && e.key === this.storageKey) {
-                this.zone.run(() => {
-                    this.restore();
-                    this.change.next();
-                    this.refreshTabs();
-                });
-            }
-        });
+    constructor(private http: _HttpClient, private router: Router, private reuseTab: ReuseTabService) {
     }
 
+    /**
+     * After login: the scopes, each from this window's pick, else the last one, else the server's
+     * defaults. A remembered pick is checked again, which also brings its labels.
+     */
     load(account: string): void {
-        this.storageKey = "erupt.scope:" + account;
+        this.key = "erupt.scope:" + account;
+        const last = this.read(sessionStorage) || this.read(localStorage) || {};
         this.http.get<ScopeView[]>(RestPath.erupt + "/scope").subscribe(scopes => {
             this.scopes = scopes || [];
-            this.restore();
-            this.change.next();
-            clearInterval(this.renewTimer);
-            this.renewTimer = setInterval(() => this.renew(), 60 * 1000);
+            const checked = this.scopes.map(s => !last[s.name] ? of(s.defaults)
+                : this.check(s.name, last[s.name]).pipe(catchError(() => of(s.defaults))));
+            forkJoin(checked.length ? checked : [of(null)]).subscribe(picks => {
+                ScopeStore.picks = {};
+                this.scopes.forEach((s, i) => picks[i] && (ScopeStore.picks[s.name] = picks[i]));
+            });
         });
     }
 
@@ -95,62 +86,41 @@ export class ScopeService {
     summary(scope: string): string {
         const pick = ScopeStore.picks[scope];
         const view = this.scopes.find(s => s.name === scope);
-        if (!pick || !view) return "";
-        return view.fields.map(f => pick.labels[f]).filter(l => !!l).join(" / ");
-    }
-
-    pick(scope: string, values: object): Observable<ScopeAccepted> {
-        return this.http.post<ScopeAccepted>(RestPath.erupt + "/scope/" + scope, values).pipe(tap(accepted => {
-            ScopeStore.picks[scope] = accepted;
-            this.save();
-            this.change.next();
-            this.refreshTabs();
-        }));
+        return pick && view ? view.fields.map(f => pick.labels[f]).filter(l => !!l).join(" / ") : "";
     }
 
     /**
-     * Rebuilds every open tab under the new scope: a tab still showing the old one could act on it.
+     * Switches this window's scope and rebuilds its open tabs, which still show the old one.
      */
-    refreshTabs(): void {
-        const url = this.router.url;
-        this.reuseTab.clear(true);
-        this.router.navigateByUrl("/", {skipLocationChange: true}).then(() => this.router.navigateByUrl(url));
+    pick(scope: string, values: object): Observable<ScopeAccepted> {
+        return this.check(scope, values).pipe(tap(accepted => {
+            ScopeStore.picks[scope] = accepted;
+            const remembered = Object.fromEntries(Object.entries(ScopeStore.picks).map(([k, p]) => [k, p.values]));
+            this.write(sessionStorage, remembered);
+            this.write(localStorage, remembered);
+            const url = this.router.url;
+            this.reuseTab.clear(true);
+            this.router.navigateByUrl("/", {skipLocationChange: true}).then(() => this.router.navigateByUrl(url));
+        }));
     }
 
-    // Stored picks that are still valid, else the server's defaults
-    private restore(): void {
-        let stored: { [scope: string]: ScopeAccepted } = {};
+    private check(scope: string, values: object): Observable<ScopeAccepted> {
+        return this.http.post<ScopeAccepted>(RestPath.erupt + "/scope/" + scope, values);
+    }
+
+    private read(storage: Storage): { [scope: string]: object } {
         try {
-            stored = JSON.parse(localStorage.getItem(this.storageKey) || "{}");
+            return JSON.parse(storage.getItem(this.key));
         } catch (e) {
-            stored = {};
-        }
-        const now = Date.now() / 1000;
-        ScopeStore.picks = {};
-        for (const view of this.scopes) {
-            const pick = stored[view.name];
-            const picked = pick && pick.expireAt > now ? pick : view.defaults;
-            if (picked) ScopeStore.picks[view.name] = picked;
+            return null;
         }
     }
 
-    private save(): void {
+    private write(storage: Storage, values: object): void {
         try {
-            localStorage.setItem(this.storageKey, JSON.stringify(ScopeStore.picks));
+            storage.setItem(this.key, JSON.stringify(values));
         } catch (e) {
             // storage unavailable: the pick still holds for this window
-        }
-    }
-
-    private renew(): void {
-        const soon = Date.now() / 1000 + RENEW_BEFORE_SECONDS;
-        for (const [scope, pick] of Object.entries(ScopeStore.picks)) {
-            if (pick && pick.expireAt < soon) {
-                this.http.post<ScopeAccepted>(RestPath.erupt + "/scope/" + scope, pick.values).subscribe(accepted => {
-                    ScopeStore.picks[scope] = accepted;
-                    this.save();
-                });
-            }
         }
     }
 

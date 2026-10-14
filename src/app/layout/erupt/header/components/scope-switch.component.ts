@@ -12,6 +12,8 @@ interface ScopeField {
     name: string;
     title: string;
     notNull: boolean;
+    // a choice is picked from options; any other field is typed
+    choice: boolean;
     multiple: boolean;
     // field whose value narrows this one's options (@ChoiceType.dependField)
     depend: string;
@@ -25,8 +27,8 @@ interface ScopeForm {
 }
 
 /**
- * The scope pickers in the page header. A scope is an erupt form whose fields are all choices, so
- * the form is drawn here with plain selects; a one-field scope switches as soon as a value is picked.
+ * The scope pickers in the page header, drawn with plain controls: a select for a choice, an input
+ * for anything else. A scope of one choice switches as soon as a value is picked.
  */
 @Component({
     standalone: false,
@@ -52,6 +54,10 @@ interface ScopeForm {
                                 }
                                 {{ field.title }}
                             </label>
+                            @if (!field.choice) {
+                                <input nz-input [id]="'scope-' + s.name + '-' + field.name" [(ngModel)]="f.values[field.name]"
+                                       (keydown.enter)="submit(s)">
+                            } @else {
                             <nz-select [nzId]="'scope-' + s.name + '-' + field.name" style="width: 100%" nzShowSearch
                                        [nzMode]="field.multiple ? 'multiple' : 'default'" [nzAllowClear]="!field.notNull"
                                        [nzPlaceHolder]="field.notNull ? '' : ('scope.all' | translate)" [nzLoading]="field.loading"
@@ -60,8 +66,9 @@ interface ScopeForm {
                                     <nz-option [nzValue]="o.value" [nzLabel]="o.label"></nz-option>
                                 }
                             </nz-select>
+                            }
                         }
-                        @if (f.fields.length > 1) {
+                        @if (f.fields.length > 1 || !f.fields[0]?.choice) {
                             <div class="scope-form__actions">
                                 <button nz-button nzSize="small" (click)="open[s.name] = false">{{ 'global.close' | translate }}</button>
                                 <button nz-button nzType="primary" nzSize="small" [nzLoading]="saving" (click)="submit(s)">
@@ -98,12 +105,8 @@ export class ScopeSwitchComponent implements OnInit, OnDestroy {
 
     saving = false;
 
-    // scopes of the model on the current page; other pages have no use for them
-    shown: ScopeView[] = [];
-
+    // the erupt model the current /build/table|tree|form/{name} page shows, lower-cased
     private currentErupt: string;
-
-    private change$: Subscription;
 
     private route$: Subscription;
 
@@ -115,33 +118,25 @@ export class ScopeSwitchComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        // Picks changed elsewhere (another window, a renewal): rebuild the forms from them next time
-        this.change$ = this.scopeService.change.subscribe(() => {
-            this.forms = {};
-            this.filter();
-        });
         this.route$ = this.router.events.pipe(filter(e => e instanceof NavigationEnd))
             .subscribe((e: NavigationEnd) => this.follow(e.urlAfterRedirects));
         this.follow(this.router.url);
     }
 
     ngOnDestroy(): void {
-        this.change$?.unsubscribe();
         this.route$?.unsubscribe();
     }
 
-    // The erupt model a /build/table|tree|form/{name} page shows; none on other pages
+    // scopes of the model on the current page; other pages have no use for them
+    get shown(): ScopeView[] {
+        return this.currentErupt
+            ? this.scopeService.scopes.filter(s => (s.models || [s.parent]).some(m => m.toLowerCase() === this.currentErupt))
+            : [];
+    }
+
     private follow(url: string): void {
         const match = /\/build\/(?:table|tree|form)\/([^/?#;]+)/.exec(url || "");
         this.currentErupt = match ? decodeURIComponent(match[1]).toLowerCase() : null;
-        this.filter();
-    }
-
-    private filter(): void {
-        this.shown = this.currentErupt
-            // a server without the models list still names one declaring model as the parent
-            ? this.scopeService.scopes.filter(s => (s.models || [s.parent]).some(m => m.toLowerCase() === this.currentErupt))
-            : [];
     }
 
     toggle(scope: ScopeView, visible: boolean): void {
@@ -159,6 +154,7 @@ export class ScopeSwitchComponent implements OnInit, OnDestroy {
                     name,
                     title: edit.title,
                     notNull: edit.notNull,
+                    choice: multiple || edit.type === EditType.CHOICE,
                     multiple,
                     depend: (multiple ? edit.multiChoiceType?.dependField : edit.choiceType?.dependField) || null,
                     options: [],
@@ -168,7 +164,7 @@ export class ScopeSwitchComponent implements OnInit, OnDestroy {
             const picked = this.scopeService.current(scope.name);
             const form: ScopeForm = {fields, values: {...(picked ? picked.values : {})}};
             this.forms[scope.name] = form;
-            fields.forEach(f => this.options(scope, f));
+            fields.filter(f => f.choice).forEach(f => this.options(scope, f));
         });
     }
 
@@ -194,7 +190,7 @@ export class ScopeSwitchComponent implements OnInit, OnDestroy {
             form.values[dependent.name] = null;
             this.options(scope, dependent);
         }
-        if (form.fields.length === 1) this.submit(scope);
+        if (form.fields.length === 1 && field.choice) this.submit(scope);
     }
 
     submit(scope: ScopeView): void {
