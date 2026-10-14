@@ -98,12 +98,8 @@ export class ScopeSwitchComponent implements OnInit, OnDestroy {
 
     saving = false;
 
-    // scopes of the model on the current page; other pages have no use for them
-    shown: ScopeView[] = [];
-
+    // the erupt model the current /build/table|tree|form/{name} page shows, lower-cased
     private currentErupt: string;
-
-    private change$: Subscription;
 
     private route$: Subscription;
 
@@ -115,33 +111,25 @@ export class ScopeSwitchComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        // Picks changed elsewhere (another window, a renewal): rebuild the forms from them next time
-        this.change$ = this.scopeService.change.subscribe(() => {
-            this.forms = {};
-            this.filter();
-        });
         this.route$ = this.router.events.pipe(filter(e => e instanceof NavigationEnd))
             .subscribe((e: NavigationEnd) => this.follow(e.urlAfterRedirects));
         this.follow(this.router.url);
     }
 
     ngOnDestroy(): void {
-        this.change$?.unsubscribe();
         this.route$?.unsubscribe();
     }
 
-    // The erupt model a /build/table|tree|form/{name} page shows; none on other pages
+    // scopes of the model on the current page; other pages have no use for them
+    get shown(): ScopeView[] {
+        return this.currentErupt
+            ? this.scopeService.scopes.filter(s => (s.models || [s.parent]).some(m => m.toLowerCase() === this.currentErupt))
+            : [];
+    }
+
     private follow(url: string): void {
         const match = /\/build\/(?:table|tree|form)\/([^/?#;]+)/.exec(url || "");
         this.currentErupt = match ? decodeURIComponent(match[1]).toLowerCase() : null;
-        this.filter();
-    }
-
-    private filter(): void {
-        this.shown = this.currentErupt
-            // a server without the models list still names one declaring model as the parent
-            ? this.scopeService.scopes.filter(s => (s.models || [s.parent]).some(m => m.toLowerCase() === this.currentErupt))
-            : [];
     }
 
     toggle(scope: ScopeView, visible: boolean): void {
