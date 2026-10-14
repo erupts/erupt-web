@@ -6,9 +6,8 @@ import {forkJoin, Observable, of, tap} from "rxjs";
 import {catchError} from "rxjs/operators";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 
-/** A signed scope pick, as the server returns it */
+/** A scope pick the server accepted, with the labels of its values */
 export interface ScopeAccepted {
-    token: string;
     values: { [field: string]: any };
     labels: { [field: string]: string };
 }
@@ -37,8 +36,10 @@ export class ScopeStore {
 
     static picks: { [scope: string]: ScopeAccepted } = {};
 
+    // {"KubeScope":{"cluster":"orbstack"}}, URL-encoded; the server checks it on every request
     static header(): string {
-        return Object.values(ScopeStore.picks).map(p => p.token).join(",");
+        const picks = Object.entries(ScopeStore.picks);
+        return picks.length ? encodeURIComponent(JSON.stringify(Object.fromEntries(picks.map(([k, p]) => [k, p.values])))) : "";
     }
 
     static value(scope: string, field: string): any {
@@ -60,17 +61,17 @@ export class ScopeService {
     }
 
     /**
-     * After login: the scopes, each signed afresh from this window's pick, else the last one, else
-     * the server's defaults. Signing again checks the values against the options once more.
+     * After login: the scopes, each from this window's pick, else the last one, else the server's
+     * defaults. A remembered pick is checked again, which also brings its labels.
      */
     load(account: string): void {
         this.key = "erupt.scope:" + account;
         const last = this.read(sessionStorage) || this.read(localStorage) || {};
         this.http.get<ScopeView[]>(RestPath.erupt + "/scope").subscribe(scopes => {
             this.scopes = scopes || [];
-            const signed = this.scopes.map(s => !last[s.name] ? of(s.defaults)
-                : this.sign(s.name, last[s.name]).pipe(catchError(() => of(s.defaults))));
-            forkJoin(signed.length ? signed : [of(null)]).subscribe(picks => {
+            const checked = this.scopes.map(s => !last[s.name] ? of(s.defaults)
+                : this.check(s.name, last[s.name]).pipe(catchError(() => of(s.defaults))));
+            forkJoin(checked.length ? checked : [of(null)]).subscribe(picks => {
                 ScopeStore.picks = {};
                 this.scopes.forEach((s, i) => picks[i] && (ScopeStore.picks[s.name] = picks[i]));
             });
@@ -92,7 +93,7 @@ export class ScopeService {
      * Switches this window's scope and rebuilds its open tabs, which still show the old one.
      */
     pick(scope: string, values: object): Observable<ScopeAccepted> {
-        return this.sign(scope, values).pipe(tap(accepted => {
+        return this.check(scope, values).pipe(tap(accepted => {
             ScopeStore.picks[scope] = accepted;
             const remembered = Object.fromEntries(Object.entries(ScopeStore.picks).map(([k, p]) => [k, p.values]));
             this.write(sessionStorage, remembered);
@@ -103,7 +104,7 @@ export class ScopeService {
         }));
     }
 
-    private sign(scope: string, values: object): Observable<ScopeAccepted> {
+    private check(scope: string, values: object): Observable<ScopeAccepted> {
         return this.http.post<ScopeAccepted>(RestPath.erupt + "/scope/" + scope, values);
     }
 
