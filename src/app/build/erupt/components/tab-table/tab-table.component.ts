@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnChanges, OnInit, ViewChild} from "@angular/core";
+import {Component, HostListener, Inject, Input, OnChanges, OnInit, ViewChild} from "@angular/core";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
 import {EditTypeComponent} from "../edit-type/edit-type.component";
@@ -42,6 +42,20 @@ export class TabTableComponent implements OnInit, OnChanges {
     @Input() eruptParentName: string;
 
     clientWidth = document.body.clientWidth;
+
+    // false for one tick to rebuild the table: crossing the breakpoint swaps scroll.x, and nz-table
+    // would keep the column widths it measured in the other layout (see TableComponent)
+    stAlive = true;
+
+    @HostListener("window:resize")
+    onWindowResize() {
+        const wide = this.clientWidth > 768;
+        this.clientWidth = document.body.clientWidth;
+        if (wide !== this.clientWidth > 768) {
+            this.stAlive = false;
+            setTimeout(() => this.stAlive = true);
+        }
+    }
 
     column: STColumn[];
 

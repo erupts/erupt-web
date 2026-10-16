@@ -568,6 +568,7 @@
 <ng-template #eruptTable>
     <div [syncVirtualScroll]="dataPage.data.length >= 100 && !extraRows?.length && !dragSortField && !wrapCells"
          [class.erupt-drag-sort]="dragSortAllowed()" [class.erupt-row-click-view]="rowClickViewEnabled">
+        @if (stAlive) {
         <st #st resizable [loading]="dataPage.querying" [widthMode]="widthMode"
             [body]="bodyTpl" [data]="dataPage.data" [columns]="stColumns"
             [drag]="dragSortAllowed() ? dragOptions : null"
@@ -592,6 +593,7 @@
                 }
             </ng-template>
         </st>
+        }
         <!-- totals arrive on their own request and render outside st, so the rows never wait or re-render for them -->
         @if (statChips.length) {
             <div class="erupt-stat-bar">

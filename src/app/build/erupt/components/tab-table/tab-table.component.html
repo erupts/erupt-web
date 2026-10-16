@@ -14,7 +14,7 @@
     </div>
   }
   <nz-spin [nzSpinning]="loading">
-    @if (!loading) {
+    @if (!loading && stAlive) {
       <st #st resizable (change)="stChange($event)"
         [scroll]="{x: (clientWidth > 768 ? tableWidth : '460px')}"
         [size]="'small'" [columns]="column" [ps]="20"

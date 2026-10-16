@@ -1,4 +1,4 @@
-import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
+import {Component, ElementRef, HostListener, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
 import {ScopeStore} from "@shared/service/scope.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
@@ -136,6 +136,24 @@ export class TableComponent implements OnInit, OnDestroy {
     clientWidth: number = document.body.clientWidth;
 
     clientHeight: number = document.body.clientHeight;
+
+    // false for one tick to rebuild the table; see onWindowResize
+    stAlive = true;
+
+    // The scroll box depends on the viewport, so it must follow window resizes (mobile <-> desktop).
+    // Crossing the breakpoint swaps scroll.x, and nz-table keeps the auto column widths it measured
+    // in the other layout (they feed its own colgroup, so a fixed layout measures them back), which
+    // leaves the table wider than it started: a fresh table measures again
+    @HostListener("window:resize")
+    onWindowResize() {
+        const wide = this.clientWidth > 768;
+        this.clientWidth = document.body.clientWidth;
+        this.clientHeight = document.body.clientHeight;
+        if (wide !== this.clientWidth > 768) {
+            this.stAlive = false;
+            setTimeout(() => this.stAlive = true);
+        }
+    }
 
     get tableScrollY(): string {
         if (this.clientWidth > 768) {
