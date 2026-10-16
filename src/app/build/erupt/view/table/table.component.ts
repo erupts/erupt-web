@@ -3,7 +3,7 @@ import {ScopeStore} from "@shared/service/scope.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {DataService, TableFormat} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, FieldVisibility, Page, Power, Row, RowOperation, Vis, VisType} from "../../model/erupt.model";
+import {Alert, Drill, DrillInput, EruptModel, FieldVisibility, Page, Power, Row, RowOperation, Vis, VisType, canPrint} from "../../model/erupt.model";
 
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
@@ -353,7 +353,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
     get hasPrintConfig(): boolean {
         // a model that withholds printing has no layout to configure either
-        return !!(this.eruptBuildModel?.eruptModel?.eruptJson?.power?.print
+        return !!(canPrint(this.eruptBuildModel?.eruptModel?.eruptJson?.power)
             && this.isEruptPrint && null != this.menuSrv.getItem("PRINT_CONFIG"));
     }
 
@@ -1261,7 +1261,7 @@ export class TableComponent implements OnInit, OnDestroy {
     // "More" menu of the panel: printing when the print module is on and the model allows it.
     private recordActions(record: any): FormAction[] {
         const actions: FormAction[] = [];
-        if (this.isEruptPrint && this.eruptBuildModel?.eruptModel?.eruptJson?.power?.print) {
+        if (this.isEruptPrint && canPrint(this.eruptBuildModel?.eruptModel?.eruptJson?.power)) {
             actions.push({label: this.i18n.fanyi("global.print"), icon: "printer", run: () => this.printRecord(record[this.pkCol])});
         }
         return actions;
@@ -2537,6 +2537,8 @@ export class TableComponent implements OnInit, OnDestroy {
     private _printPk: any;
     private _printSelectRef: NzModalRef;
     printLoading: boolean = false;
+
+    readonly canPrint = canPrint;
     printConfigLoading: boolean = false;
 
     printSelectedRows() {
