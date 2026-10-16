@@ -298,6 +298,11 @@ export interface Power {
     revision: boolean;      // record change history with rollback (erupt-revision module), on unless the model opts out
 }
 
+// A printout is the record's details: printing also needs the right to read a record (the server's rule)
+export function canPrint(power: Power): boolean {
+    return !!power?.print && (power.viewDetails || power.edit);
+}
+
 export interface Row {
     className?: string;
     columns: Column[];

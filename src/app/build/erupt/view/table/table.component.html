@@ -127,7 +127,7 @@
                             }
                         }
                         @if (selectedRows.length == 1) {
-                            @if (eruptBuildModel.eruptModel.eruptJson.power.print) {
+                            @if (canPrint(eruptBuildModel.eruptModel.eruptJson.power)) {
                                 <button nz-button nzSize="small" id="erupt-btn-print"
                                         [nzLoading]="printLoading" (click)="printSelectedRows()">
                                     <i nz-icon nzType="printer" nzTheme="outline"></i>{{ 'global.print'|translate }}
