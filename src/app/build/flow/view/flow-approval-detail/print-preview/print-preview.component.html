@@ -1,4 +1,8 @@
-<div class="print-preview-container">
+@if (instance.eruptFlowConfig.setting.printSetting != PrintSetting.CUSTOM) {
+    <erupt-print-config-bar class="print-config-host" [config]="config"/>
+}
+<div class="print-preview-container" [class.print-bordered]="config.bordered"
+     [style.--print-border-color]="config.borderColor" [style.--print-font-size.px]="config.fontSize">
     @if (instance.eruptFlowConfig.setting.printSetting == PrintSetting.CUSTOM) {
         <nz-spin [nzSpinning]="printLoading">
             <div class="rich-content-html" [innerHTML]="(printContent || '')|safeHtml"></div>
@@ -9,9 +13,11 @@
             <span style="float: right">{{ 'flow.print.time' | translate }} {{ currentDate | date:'yyyy-MM-dd HH:mm:ss' }}</span>
         </div>
 
-        <div class="print-header">
-            <h1 class="print-title">{{ instance?.eruptFlowConfig?.name }}</h1>
-        </div>
+        @if (config.showTitle) {
+            <div class="print-header">
+                <h1 class="print-title">{{ instance?.eruptFlowConfig?.name }}</h1>
+            </div>
+        }
 
         <div class="print-info-table">
             <table class="info-table">
@@ -69,7 +75,7 @@
         </div>
         <div class="print-info">
             @if (eruptBuild) {
-                <erupt-print-type [eruptBuildModel]="eruptBuild" [bordered]="false"/>
+                <erupt-print-type [eruptBuildModel]="eruptBuild" [config]="config" [nested]="true"/>
             }
         </div>
     }

@@ -684,8 +684,11 @@ export class FlowApprovalDetailComponent implements OnInit {
             nzWidth: '700px',
             nzStyle: {top: "30px"},
             nzOkText: this.i18n.fanyi("global.print"),
+            // stays open like the built-in preview: closing it while the print dialog blocks the page
+            // would leave its mask behind
             nzOnOk: () => {
                 (modalRef.componentInstance as FlowPrintPreviewComponent).print();
+                return false;
             },
             nzBodyStyle: {
                 maxHeight: "75vh",

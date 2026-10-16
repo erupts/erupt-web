@@ -1,0 +1,49 @@
+<div class="print-config-bar">
+    <div class="print-config-item">
+        <label>{{ 'print.form_style' | translate }}</label>
+        <nz-radio-group nzSize="small" [(ngModel)]="config.layout" (ngModelChange)="save()">
+            <label nz-radio-button [nzValue]="PrintLabelLayout.VERTICAL">{{ 'print.label_top' | translate }}</label>
+            <label nz-radio-button [nzValue]="PrintLabelLayout.HORIZONTAL">{{ 'print.label_left' | translate }}</label>
+        </nz-radio-group>
+    </div>
+    <div class="print-config-item">
+        <label>{{ 'print.columns' | translate }}</label>
+        <nz-radio-group nzSize="small" [(ngModel)]="config.col" (ngModelChange)="save()">
+            @for (n of colOptions; track n) {
+                <label nz-radio-button [nzValue]="n">{{ n }}</label>
+            }
+        </nz-radio-group>
+    </div>
+    <div class="print-config-item">
+        <label>{{ 'print.border' | translate }}</label>
+        <nz-switch nzSize="small" [(ngModel)]="config.bordered" (ngModelChange)="save()"></nz-switch>
+        <nz-color-picker nzSize="small" [(ngModel)]="config.borderColor" (ngModelChange)="save()"
+                         [nzDisabled]="!config.bordered" [nzTitle]="'print.border_color' | translate"></nz-color-picker>
+    </div>
+    <div class="print-config-item">
+        <label>{{ 'print.font_size' | translate }}</label>
+        <nz-input-number nzSize="small" [(ngModel)]="config.fontSize" (ngModelChange)="save()"
+                         [nzMin]="10" [nzMax]="24" [nzStep]="1" style="width: 64px"></nz-input-number>
+    </div>
+    <div class="print-config-item">
+        <label>{{ 'print.show_title' | translate }}</label>
+        <nz-switch nzSize="small" [(ngModel)]="config.showTitle" (ngModelChange)="save()"></nz-switch>
+    </div>
+    <div class="print-config-item">
+        <label>{{ 'print.paper_size' | translate }}</label>
+        <nz-select nzSize="small" [(ngModel)]="config.paperSize" (ngModelChange)="save()" style="width: 84px">
+            @for (p of paperSizes; track p) {
+                <nz-option [nzValue]="p" [nzLabel]="p"></nz-option>
+            }
+        </nz-select>
+        <nz-radio-group nzSize="small" [(ngModel)]="config.orientation" (ngModelChange)="save()">
+            <label nz-radio-button [nzValue]="PaperOrientation.PORTRAIT">{{ 'print.portrait' | translate }}</label>
+            <label nz-radio-button [nzValue]="PaperOrientation.LANDSCAPE">{{ 'print.landscape' | translate }}</label>
+        </nz-radio-group>
+    </div>
+    <div class="print-config-item">
+        <label>{{ 'print.margin' | translate }}</label>
+        <nz-input-number nzSize="small" [(ngModel)]="config.margin" (ngModelChange)="save()"
+                         [nzMin]="0" [nzMax]="50" [nzStep]="1" style="width: 64px"></nz-input-number>
+    </div>
+</div>
