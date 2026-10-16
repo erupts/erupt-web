@@ -1417,3 +1417,4 @@ scope.pick,请选择,請選擇,Select,Sélectionner,選択してください,선
 scope.all,全部,全部,All,Tous,すべて,전체,Все,Todos,Alle,Todos,Semua,الكل
 scope.switch,切换,切換,Switch,Changer,切り替え,전환,Переключить,Cambiar,Wechseln,Mudar,Ganti,تبديل
 scope.switched,已切换到,已切換到,Switched to,Basculé vers,切り替えました：,전환됨:,Переключено на,Cambiado a,Gewechselt zu,Mudado para,Beralih ke,تم التبديل إلى
+scope.required,请先选择,請先選擇,Pick a,Choisissez :,選択してください：,선택하세요:,Выберите:,Seleccione:,Bitte wählen:,Selecione:,Pilih,اختر

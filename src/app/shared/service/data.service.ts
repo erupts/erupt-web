@@ -1,3 +1,4 @@
+import {ScopeStore} from "@shared/service/scope.service";
 import {Inject, Injectable} from "@angular/core";
 import {_HttpClient} from "@delon/theme";
 import {HttpResponse} from "@angular/common/http";
@@ -158,17 +159,27 @@ export class DataService {
 
     getEruptOperationTpl(eruptName: string, operationCode: string, ids: any[]) {
         return RestPath.tpl + "/operation-tpl/" + eruptName + "/" + operationCode +
-            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName + "&ids=" + ids;
+            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName + "&ids=" + ids
+            + DataService.scopeParam();
     }
 
     getEruptVisTpl(eruptName: string, visCode: string) {
         return RestPath.tpl + "/vis-tpl/" + eruptName + "/" + visCode +
-            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName;
+            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName
+            + DataService.scopeParam();
+    }
+
+    // A tpl page is a plain URL, so it cannot send the erupt-scope header: the same value rides as
+    // _scope, encoded once more since the servlet decodes a parameter before the server reads it
+    private static scopeParam(): string {
+        const scope = ScopeStore.header();
+        return scope ? "&_scope=" + encodeURIComponent(scope) : "";
     }
 
     getEruptViewTpl(eruptName: string, field: string, id: any) {
         return RestPath.tpl + "/view-tpl/" + eruptName + "/" + field + "/" + id +
-            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName;
+            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName
+            + DataService.scopeParam();
     }
 
     //paginated data object

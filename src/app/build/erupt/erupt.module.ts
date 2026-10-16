@@ -7,6 +7,8 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
 import {GanttHostComponent} from "./vis/gantt/gantt-host.component";
 import {DataHandlerService} from "./service/data-handler.service";
 import {EditTypeComponent} from "./components/edit-type/edit-type.component";
+import {ScopeFormComponent} from "./components/scope-form/scope-form.component";
+import {ScopeGateComponent} from "./view/scope-gate/scope-gate.component";
 import {PrintTypeComponent} from "./components/print-type/print-type";
 import {ViewTypeComponent} from "./components/view-type/view-type.component";
 import {TabTableComponent} from "./components/tab-table/tab-table.component";
@@ -117,6 +119,8 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         SmartSearchComponent
     ],
     declarations: [
+        ScopeFormComponent,
+        ScopeGateComponent,
         RecordCommentComponent,
         RecordRevisionComponent,
         EditTypeComponent,

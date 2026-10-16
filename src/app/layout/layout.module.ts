@@ -34,6 +34,7 @@ import {HeaderSearchComponent} from "./erupt/header/components/search.component"
 import {HeaderFullScreenComponent} from "./erupt/header/components/fullscreen.component";
 import {HeaderUserComponent} from "./erupt/header/components/user.component";
 import {ScopeSwitchComponent} from "./erupt/header/components/scope-switch.component";
+import {ScopeFormHostComponent} from "./erupt/header/components/scope-form-host.component";
 import {SettingsComponent} from "./erupt/header/settings/settings.component";
 import {NzAlertModule} from "ng-zorro-antd/alert";
 import {NzTableModule} from "ng-zorro-antd/table";
@@ -66,7 +67,8 @@ const HEADER_COMPONENTS = [
     SidebarComponent,
     SettingsComponent,
     HeaderRTLComponent,
-    ScopeSwitchComponent
+    ScopeSwitchComponent,
+    ScopeFormHostComponent
     // SettingsComponent
 ];
 
