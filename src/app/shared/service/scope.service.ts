@@ -5,6 +5,7 @@ import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {forkJoin, Observable, of, ReplaySubject, take, tap} from "rxjs";
 import {catchError} from "rxjs/operators";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
+import {Userinfo} from "@shared/model/user.model";
 
 /** A scope pick the server accepted, with the labels of its values */
 export interface ScopeAccepted {
@@ -62,6 +63,12 @@ export class ScopeService {
     // the last pick of each scope, shared by the user's windows and kept across reloads
     private key: string;
 
+    // account whose scopes are loading or loaded
+    private account: string;
+
+    // ready() is fetching the account itself
+    private asking = false;
+
     constructor(private http: _HttpClient, private router: Router, private reuseTab: ReuseTabService) {
     }
 
@@ -71,6 +78,8 @@ export class ScopeService {
      * labels.
      */
     load(account: string): void {
+        if (this.account === account) return;
+        this.account = account;
         this.key = "erupt.scope:" + account;
         const last = this.read() || {};
         this.http.get<ScopeView[]>(RestPath.erupt + "/scope").pipe(catchError(() => of([]))).subscribe(scopes => {
@@ -96,8 +105,16 @@ export class ScopeService {
         });
     }
 
-    // emits once the scopes and this window's picks are in
+    /**
+     * Emits once the scopes and this window's picks are in. Loading starts here when nothing started
+     * it yet: on a refresh of a model page its guard asks before the layout, which normally loads
+     * the scopes, is even created.
+     */
     ready(): Observable<void> {
+        if (!this.account && !this.asking) {
+            this.asking = true;
+            this.http.get<Userinfo>(RestPath.erupt + "/userinfo").subscribe(u => this.load(u.account));
+        }
         return this.loaded$.pipe(take(1));
     }
 
