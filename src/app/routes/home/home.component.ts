@@ -63,11 +63,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     // a white sheet. The frame stays theme-free; the host just hands it the
     // one property that decides this.
     private syncColorScheme(): void {
-        const doc = this.frame?.nativeElement?.contentDocument;
-        if (!doc) {
+        // an iframe still loading has a document without a root element yet
+        const root = this.frame?.nativeElement?.contentDocument?.documentElement;
+        if (!root) {
             return;
         }
-        doc.documentElement.style.colorScheme =
+        root.style.colorScheme =
             document.documentElement.classList.contains("dark") ? "dark" : "light";
     }
 
