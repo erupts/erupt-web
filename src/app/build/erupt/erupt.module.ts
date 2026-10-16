@@ -10,6 +10,7 @@ import {EditTypeComponent} from "./components/edit-type/edit-type.component";
 import {ScopeFormComponent} from "./components/scope-form/scope-form.component";
 import {ScopeGateComponent} from "./view/scope-gate/scope-gate.component";
 import {PrintTypeComponent} from "./components/print-type/print-type";
+import {PrintConfigBarComponent} from "./components/print-type/print-config-bar";
 import {ViewTypeComponent} from "./components/view-type/view-type.component";
 import {TabTableComponent} from "./components/tab-table/tab-table.component";
 import {MultiFormComponent} from "./components/multi-form/multi-form.component";
@@ -114,6 +115,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
     exports: [
         EditTypeComponent,
         PrintTypeComponent,
+        PrintConfigBarComponent,
         ViewTypeComponent,
         TabTableComponent,
         SmartSearchComponent
@@ -125,6 +127,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         RecordRevisionComponent,
         EditTypeComponent,
         PrintTypeComponent,
+        PrintConfigBarComponent,
         TreeSelectComponent,
         TabTableComponent,
         MultiFormComponent,

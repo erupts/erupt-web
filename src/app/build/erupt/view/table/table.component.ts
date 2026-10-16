@@ -51,7 +51,7 @@ import {WindowModel} from "@shared/model/window.model";
 import {PrintTypeComponent} from "../../components/print-type/print-type";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {eruptToPrintVars, PrintTemplate, PrintVar} from "@shared/component/print-template/print-template";
-import printJS from 'print-js';
+import {printHtml, printPageCss} from "@shared/util/print.util";
 
 
 @Component({
@@ -2574,13 +2574,17 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     onPrintSelect(cfg: any) {
-        this._printSelectRef?.close();
         const eruptName = this.eruptBuildModel.eruptModel.eruptName;
-        if (!cfg) {
-            this.builtinPrint(this._printPk);
-        } else {
-            this.doTemplatePrint(eruptName, this._printPk, cfg);
-        }
+        // go on only once the picker is gone: the print dialog blocks the page, and a modal still
+        // animating out when it opens never finishes, leaving its mask behind
+        this._printSelectRef.afterClose.subscribe(() => {
+            if (!cfg) {
+                this.builtinPrint(this._printPk);
+            } else {
+                this.doTemplatePrint(eruptName, this._printPk, cfg);
+            }
+        });
+        this._printSelectRef.close();
     }
 
     private builtinPrint(pk: any) {
@@ -2620,13 +2624,8 @@ export class TableComponent implements OnInit, OnDestroy {
             next: res => {
                 this.msg.remove(msgLoading.messageId);
                 const pc = config.pageConfig || {};
-                const pageSize = (!pc.paperSize || pc.paperSize === 'Custom') ? 'auto' : `${pc.paperSize} ${pc.orientation || 'portrait'}`;
-                const margin = `${pc.marginTop || 10}mm ${pc.marginRight || 10}mm ${pc.marginBottom || 10}mm ${pc.marginLeft || 10}mm`;
-                printJS({
-                    printable: res.data,
-                    type: 'raw-html',
-                    style: `* { font-family: 'Heiti SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } @page { size: ${pageSize}; margin: ${margin}; }`
-                });
+                printHtml(res.data, printPageCss(pc.paperSize, pc.orientation || 'portrait',
+                    `${pc.marginTop ?? 10}mm ${pc.marginRight ?? 10}mm ${pc.marginBottom ?? 10}mm ${pc.marginLeft ?? 10}mm`));
             },
             error: () => this.msg.remove(msgLoading.messageId)
         });

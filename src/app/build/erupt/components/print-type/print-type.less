@@ -3,34 +3,193 @@
 
     ::ng-deep {
         .print-preview-container {
-            sv-container {
-                width: 100%;
+            --print-border-color: var(--ant-border-color-split);
+            --print-font-size: 13px;
+            font-size: var(--print-font-size);
+            color: var(--erupt-text, #333);
+
+            .print-title {
+                margin-bottom: 12px;
+                font-size: calc(var(--print-font-size) + 6px);
+                font-weight: 600;
+                text-align: center;
+                color: var(--erupt-text, #000);
             }
 
-            sv {
-                .sv__label {
-                    font-weight: 500;
-                    color: var(--erupt-text, #000);
+            .print-grid {
+                display: grid;
+                gap: 0 24px;
+            }
+
+            .print-cell {
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+            }
+
+            .print-label {
+                padding: 6px 0 2px;
+                font-weight: 500;
+                color: var(--erupt-text, #000);
+            }
+
+            .print-value {
+                flex: 1;
+                min-width: 0;
+                padding: 2px 0 8px;
+                word-break: break-word;
+                color: var(--erupt-text-secondary, #666);
+            }
+
+            .print-section .print-value {
+                padding: 8px 0;
+                color: inherit;
+            }
+
+            .print-label-left {
+                .print-cell {
+                    flex-direction: row;
                 }
 
-                .sv__detail {
-                    color: var(--erupt-text-secondary, #666);
-                    word-break: normal;
+                .print-label {
+                    flex: 0 0 110px;
+                    padding: 6px 12px 6px 0;
                 }
+
+                .print-value {
+                    padding: 6px 0;
+                }
+
+                .print-section .print-value {
+                    padding: 8px 0;
+                }
+            }
+
+            // bordered: every cell frames itself, overlapping its upper / left neighbour by the line's
+            // width. The frame is an ::after laid over the content: a border painted under the label's
+            // background loses an edge on paper, where print scaling rounds that background over it
+            &.print-bordered {
+                .print-grid {
+                    gap: 0;
+                    padding: 1px 0 0 1px;
+                }
+
+                .print-cell {
+                    position: relative;
+                    margin: -1px 0 0 -1px;
+
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        inset: 0;
+                        border: 1px solid var(--print-border-color);
+                        pointer-events: none;
+                    }
+                }
+
+                .print-label {
+                    padding: 6px 12px;
+                    background: var(--erupt-bg-spotlight, #fafafa);
+                }
+
+                .print-value, .print-label-left .print-value {
+                    padding: 6px 12px;
+                }
+
+                .print-section .print-value {
+                    padding: 8px;
+                }
+
+                .print-label-left .print-label {
+                    border-right: 1px solid var(--print-border-color);
+                }
+            }
+
+            .print-color {
+                display: inline-block;
+                width: 14px;
+                height: 14px;
+                margin-right: 6px;
+                vertical-align: -2px;
+                border: 1px solid var(--print-border-color);
+                border-radius: 2px;
+            }
+
+            .print-code {
+                margin: 0;
+                padding: 8px;
+                white-space: pre-wrap;
+                background: var(--erupt-bg-spotlight, #f5f5f5);
+                border-radius: 4px;
+            }
+
+            .print-files {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+
+                &.print-images {
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    gap: 8px;
+
+                    img {
+                        width: 100px;
+                        height: 100px;
+                        object-fit: contain;
+                        border: 1px solid var(--print-border-color);
+                        border-radius: 2px;
+                    }
+                }
+            }
+
+            .print-signature {
+                display: block;
+                max-width: 150px;
+                max-height: 80px;
+            }
+
+            .print-divide {
+                font-weight: 600;
+                color: var(--erupt-text, #333);
             }
 
             .print-combine-section {
                 width: 100%;
-                border: 1px solid var(--ant-border-color-split);
+                border: 1px solid var(--print-border-color);
                 border-radius: 4px;
                 overflow: hidden;
 
                 .combine-title {
-                    padding: 10px 12px;
+                    padding: 8px 12px;
                     font-weight: 600;
                     color: var(--erupt-text, #333);
                     background: var(--erupt-bg-spotlight, #f5f5f5);
-                    border-bottom: 1px solid var(--ant-border-color-split);
+                    border-bottom: 1px solid var(--print-border-color);
+                }
+
+                .print-tab-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    // the section frame is the outer edge, so cells only draw the inner grid
+                    border-style: hidden;
+
+                    th, td {
+                        padding: 6px 8px;
+                        text-align: left;
+                        word-break: break-word;
+                        color: var(--erupt-text, #333);
+                        border: 1px solid var(--print-border-color);
+                    }
+
+                    th {
+                        font-weight: 500;
+                        background: var(--erupt-bg-spotlight, #fafafa);
+                    }
+
+                    .print-tab-empty {
+                        text-align: center;
+                    }
                 }
 
                 .combine-content {
@@ -38,35 +197,6 @@
                     background: var(--erupt-bg-container, white);
                 }
             }
-        }
-    }
-}
-
-@media print {
-    :host {
-        display: block;
-    }
-
-    .print-preview-container {
-        .info-table {
-            border: 1px solid #000 !important;
-
-            tr td {
-                border: 1px solid #000 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-
-                &.label-cell {
-                    background-color: #f5f5f5 !important;
-                }
-            }
-        }
-
-        .print-details-title {
-            border: 1px solid #000 !important;
-            background-color: #f5f5f5 !important;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
         }
     }
 }
