@@ -14,7 +14,7 @@ import {
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {SharedModule} from '@shared/shared.module';
 import {AiConversationsComponent} from '../ai-conversations/ai-conversations.component';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {DA_SERVICE_TOKEN, ITokenService} from '@delon/auth';
 import {Subject} from 'rxjs';
 import {throttleTime} from 'rxjs/operators';
@@ -164,6 +164,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         private ngZone: NgZone,
         private cdr: ChangeDetectorRef,
         private route: ActivatedRoute,
+        private router: Router,
         private i18n: I18NService
     ) {
         this.selectLlmId = +this.route.snapshot.queryParams['llm'] || null;
@@ -184,7 +185,18 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             this.sidebarCollapsed = true;
         }
         this.markdown.warmup();
-        this.fetchChats();
+        // ?q= (the home page's prompt box) starts a fresh conversation with that question; the
+        // parameter is dropped from the URL at once so a reload does not ask it again
+        const ask = (this.route.snapshot.queryParams['q'] || '').trim();
+        if (ask && !this.embedded) {
+            this.fetchChats(true, () => {
+                this.createConversation();
+                this.send(ask);
+            });
+            this.router.navigate([], {relativeTo: this.route, queryParams: {q: null}, queryParamsHandling: 'merge', replaceUrl: true}).then();
+        } else {
+            this.fetchChats();
+        }
         this.chatApi.agents().subscribe(res => {
             this.agents = res.data;
         });
