@@ -35,7 +35,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         if (path) {
             this.router.navigateByUrl(path).then();
         } else {
-            let url = "home.html?v=" + EruptAppData.get().hash;
+            // the version busts the browser cache of the page and, through this same parameter, of the
+            // i18n sheet the page loads; both ship with erupt-web and change only with a release
+            let url = "home.html?v=" + encodeURIComponent(EruptAppData.get().version || EruptAppData.get().hash);
             url += "&_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang;
             this.url = url;
         }
