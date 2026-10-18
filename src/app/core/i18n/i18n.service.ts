@@ -215,7 +215,9 @@ export class I18NService implements OnInit {
 
     loadLangData(success) {
         let xhr = new XMLHttpRequest();
-        xhr.open('GET', "erupt.i18n.csv?v=" + EruptAppData.get().hash);
+        // cache-busted by the erupt version: the sheet ships inside the erupt-web jar, so it only
+        // changes with a release (the backend's hash is an identity hashCode and may repeat across restarts)
+        xhr.open('GET', "erupt.i18n.csv?v=" + encodeURIComponent(EruptAppData.get().version || EruptAppData.get().hash));
         xhr.send();
         xhr.onreadystatechange = () => {
             let langMapping = {};
