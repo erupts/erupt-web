@@ -316,6 +316,7 @@
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
                             <nz-color-picker class="erupt-input"
                                              [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                             (ngModelChange)="colorModelChange(field, $event)"
                                              [name]="field.fieldName"
                                              [nzSize]="size"
                                              nzFormat="hex"
