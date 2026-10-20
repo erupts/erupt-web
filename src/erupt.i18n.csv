@@ -1427,6 +1427,25 @@ print.border_color,线框颜色,線框顏色,Border Color,Couleur de bordure,枠
 print.font_size,字号,字號,Font Size,Taille de police,文字サイズ,글꼴 크기,Размер шрифта,Tamaño de fuente,Schriftgröße,Tamanho da fonte,Ukuran Huruf,حجم الخط
 print.show_title,标题,標題,Title,Titre,タイトル,제목,Заголовок,Título,Titel,Título,Judul,العنوان
 print.margin,页边距 (mm),頁邊距 (mm),Margin (mm),Marge (mm),余白 (mm),여백 (mm),Поля (мм),Margen (mm),Rand (mm),Margem (mm),Margin (mm),الهامش (مم)
+file.stores,存储,儲存,Stores,Stockages,ストレージ,저장소,Хранилища,Almacenes,Speicher,Armazenamentos,Penyimpanan,المخازن
+file.upload,上传,上傳,Upload,Téléverser,アップロード,업로드,Загрузить,Subir,Hochladen,Enviar,Unggah,رفع
+file.new_folder,新建文件夹,新建資料夾,New folder,Nouveau dossier,新しいフォルダ,새 폴더,Новая папка,Nueva carpeta,Neuer Ordner,Nova pasta,Folder baru,مجلد جديد
+file.rename,重命名,重新命名,Rename,Renommer,名前を変更,이름 바꾸기,Переименовать,Renombrar,Umbenennen,Renomear,Ganti nama,إعادة تسمية
+file.delete,删除,刪除,Delete,Supprimer,削除,삭제,Удалить,Eliminar,Löschen,Excluir,Hapus,حذف
+file.download,下载,下載,Download,Télécharger,ダウンロード,다운로드,Скачать,Descargar,Herunterladen,Baixar,Unduh,تنزيل
+file.copy_link,复制链接,複製連結,Copy link,Copier le lien,リンクをコピー,링크 복사,Копировать ссылку,Copiar enlace,Link kopieren,Copiar link,Salin tautan,نسخ الرابط
+file.open,新窗口打开,新視窗開啟,Open,Ouvrir,開く,열기,Открыть,Abrir,Öffnen,Abrir,Buka,فتح
+file.search,搜索当前目录,搜尋目前目錄,Search this folder,Rechercher dans ce dossier,このフォルダを検索,이 폴더 검색,Поиск в папке,Buscar en esta carpeta,In diesem Ordner suchen,Pesquisar nesta pasta,Cari di folder ini,بحث في هذا المجلد
+file.empty,空文件夹,空資料夾,Empty folder,Dossier vide,空のフォルダ,빈 폴더,Пустая папка,Carpeta vacía,Leerer Ordner,Pasta vazia,Folder kosong,مجلد فارغ
+file.size,大小,大小,Size,Taille,サイズ,크기,Размер,Tamaño,Größe,Tamanho,Ukuran,الحجم
+file.modified,修改时间,修改時間,Modified,Modifié le,更新日時,수정일,Изменён,Modificado,Geändert,Modificado,Diubah,تاريخ التعديل
+file.type,类型,類型,Type,Type,種類,유형,Тип,Tipo,Typ,Tipo,Jenis,النوع
+file.confirm_delete,确定删除选中的项目？文件夹会连同内容一起删除。,確定刪除所選項目？資料夾會連同內容一起刪除。,Delete the selected item? A folder goes with everything in it.,Supprimer l’élément sélectionné ? Un dossier est supprimé avec son contenu.,選択した項目を削除しますか？フォルダは中身ごと削除されます。,선택한 항목을 삭제할까요? 폴더는 내용과 함께 삭제됩니다.,Удалить выбранный элемент? Папка удаляется со всем содержимым.,¿Eliminar el elemento seleccionado? Una carpeta se elimina con todo su contenido.,Ausgewähltes Element löschen? Ein Ordner wird mit allem Inhalt gelöscht.,Excluir o item selecionado? Uma pasta é excluída com todo o conteúdo.,Hapus item yang dipilih? Folder dihapus beserta isinya.,حذف العنصر المحدد؟ يُحذف المجلد مع كل محتوياته.
+file.name,名称,名稱,Name,Nom,名前,이름,Имя,Nombre,Name,Nome,Nama,الاسم
+file.link_copied,链接已复制,連結已複製,Link copied,Lien copié,リンクをコピーしました,링크가 복사됨,Ссылка скопирована,Enlace copiado,Link kopiert,Link copiado,Tautan disalin,تم نسخ الرابط
+file.items,项,項,items,éléments,件,개,элементов,elementos,Einträge,itens,item,عنصر
+file.read_only,没有写入权限,沒有寫入權限,No write permission,Pas de permission d’écriture,書き込み権限がありません,쓰기 권한 없음,Нет прав на запись,Sin permiso de escritura,Keine Schreibberechtigung,Sem permissão de escrita,Tidak ada izin tulis,لا توجد صلاحية كتابة
+file.too_large,文件太大，不预览,檔案太大，不預覽,Too large to preview,Trop volumineux pour l’aperçu,大きすぎてプレビューできません,미리보기에 너무 큼,Слишком большой для предпросмотра,Demasiado grande para la vista previa,Zu groß für die Vorschau,Grande demais para pré-visualizar,Terlalu besar untuk pratinjau,كبير جدًا للمعاينة
 home.morning,早上好,早上好,Good morning,Bonjour,おはようございます,좋은 아침입니다,Доброе утро,Buenos días,Guten Morgen,Bom dia,Selamat pagi,صباح الخير
 home.noon,中午好,中午好,Good noon,Bon midi,こんにちは,안녕하세요,Добрый день,Buenas tardes,Guten Tag,Boa tarde,Selamat siang,ظهيرة سعيدة
 home.afternoon,下午好,下午好,Good afternoon,Bon après-midi,こんにちは,좋은 오후입니다,Добрый день,Buenas tardes,Guten Nachmittag,Boa tarde,Selamat sore,مساء الخير

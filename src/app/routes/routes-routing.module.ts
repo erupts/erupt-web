@@ -57,6 +57,10 @@ let coreRouter: Routes = [
         loadChildren: () => import("../build/terminal/terminal.module").then(m => m.TerminalModule)
     },
     {
+        path: "file-center",
+        loadChildren: () => import("../build/file-center/file-center.module").then(m => m.FileCenterModule)
+    },
+    {
         path: "remote/:id",
         loadChildren: () => import("../build/remote/remote.module").then(m => m.RemoteModule)
     },
