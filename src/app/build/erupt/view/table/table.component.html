@@ -126,6 +126,11 @@
                                 </button>
                             }
                         }
+                        @if (batchEditPower() && selectedRows.length > 0) {
+                            <button nz-button nzSize="small" id="erupt-btn-batch-edit" (click)="batchEdit()">
+                                <i nz-icon nzType="form" nzTheme="outline"></i>{{ 'table.batch_edit'|translate }}
+                            </button>
+                        }
                         @if (selectedRows.length == 1) {
                             @if (canPrint(eruptBuildModel.eruptModel.eruptJson.power)) {
                                 <button nz-button nzSize="small" id="erupt-btn-print"

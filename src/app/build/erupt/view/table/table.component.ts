@@ -29,6 +29,7 @@ import {
 } from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
+import {BatchEditComponent} from "../../components/batch-edit/batch-edit.component";
 import {Status} from "../../model/erupt-api.model";
 import {EruptFieldModel, View, VL} from "../../model/erupt-field.model";
 import {Observable, Subscription} from "rxjs";
@@ -1562,6 +1563,55 @@ export class TableComponent implements OnInit, OnDestroy {
             ops[field.fieldName] = edit.$operator;
         }
         this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {searchOperators: ops});
+    }
+
+    // on by default: every row runs the cell edit pipeline, so a table that may be edited
+    // offers it unless @Power(batchEdit = false) withdraws it
+    batchEditPower(): boolean {
+        const power = this.eruptBuildModel.eruptModel.eruptJson.power;
+        return power.edit && power.batchEdit;
+    }
+
+    // one field of the selected rows set to the same value; a row that withdrew edit via __power__ is left out
+    batchEdit() {
+        const pk = this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+        const ids = this.selectedRows.filter(row => this.cellEditAllowed(row)).map(row => row[pk]);
+        if (ids.length === 0) {
+            this.msg.warning(this.i18n.fanyi("table.batch_edit.select"));
+            return;
+        }
+        const ref: NzModalRef = this.modal.create({
+            nzDraggable: true,
+            nzKeyboard: true,
+            nzMaskClosable: false,
+            nzTitle: this.i18n.fanyi("table.batch_edit"),
+            nzOkText: this.i18n.fanyi("global.ok"),
+            nzCancelText: this.i18n.fanyi("global.cancel"),
+            nzContent: BatchEditComponent,
+            nzOnOk: async () => {
+                const content = ref.getContentComponent();
+                if (!content.model) {
+                    this.msg.warning(this.i18n.fanyi("table.batch_edit.field"));
+                    return false;
+                }
+                content.saving = true;
+                try {
+                    const res = await this.dataService.updateEruptCells(this.eruptBuildModel.eruptModel.eruptName,
+                        ids, content.fieldName, content.value()).toPromise();
+                    if (res.status !== Status.SUCCESS) {
+                        return false;
+                    }
+                } finally {
+                    content.saving = false;
+                }
+                this.msg.success(this.i18n.fanyi("table.batch_edit.success").replace("{}", ids.length + ""));
+                this.selectedRows = [];
+                this.query();
+                return true;
+            }
+        });
+        ref.getContentComponent().eruptBuildModel = this.eruptBuildModel;
+        ref.getContentComponent().count = ids.length;
     }
 
     //batch delete

@@ -16,6 +16,7 @@ import {TabTableComponent} from "./components/tab-table/tab-table.component";
 import {MultiFormComponent} from "./components/multi-form/multi-form.component";
 import {TreeSelectComponent} from "./components/tree-select/tree-select.component";
 import {ExcelImportComponent} from "./components/excel-import/excel-import.component";
+import {BatchEditComponent} from "./components/batch-edit/batch-edit.component";
 import {ReferenceTableComponent} from "./components/reference-table/reference-table.component";
 import {MapEditComponent} from "./components/map-edit/map-edit.component";
 import {EruptRoutingModule} from "./erupt-routing.module";
@@ -133,6 +134,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         MultiFormComponent,
         MapEditComponent,
         ExcelImportComponent,
+        BatchEditComponent,
         ReferenceTableComponent,
         ViewTypeComponent,
         EditComponent,

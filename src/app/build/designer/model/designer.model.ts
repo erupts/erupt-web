@@ -95,6 +95,7 @@ export interface DesignerPower {
     importable?: boolean;
     print?: boolean;
     cellEdit?: boolean;
+    batchEdit?: boolean;
 }
 
 export interface DesignerField {
