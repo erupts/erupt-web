@@ -294,6 +294,7 @@ export interface Power {
     copy: boolean;
     ai: boolean;
     cellEdit: boolean;      // in-place cell editing, on unless the model opts out
+    batchEdit: boolean;     // one field of the selected rows set at once, on unless the model opts out
     comment: boolean;       // record comment stream (erupt-comment module), on unless the model opts out
     revision: boolean;      // record change history with rollback (erupt-revision module), on unless the model opts out
 }

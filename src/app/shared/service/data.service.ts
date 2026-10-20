@@ -455,6 +455,18 @@ export class DataService {
     }
 
     //in-table cell edit: update a single field of one row
+    updateEruptCells(eruptName: string, ids: any[], field: string, value: any): Observable<EruptApiModel> {
+        return this._http.post(RestPath.dataModify + "/" + eruptName + "/update-cells", {
+            ids: ids,
+            field: field,
+            value: value
+        }, null, {
+            headers: {
+                erupt: eruptName
+            }
+        });
+    }
+
     updateEruptCell(eruptName: string, id: any, field: string, value: any): Observable<EruptApiModel> {
         return this._http.post(RestPath.dataModify + "/" + eruptName + "/update-cell", {
             id: id,
