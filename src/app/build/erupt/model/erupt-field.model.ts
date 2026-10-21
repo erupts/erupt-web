@@ -219,6 +219,7 @@ export interface ReferenceTreeType {
     pid: string;
     dependField: string;
     expandLevel: number;
+    leafOnly: boolean;
 }
 
 export interface ReferenceTableType {

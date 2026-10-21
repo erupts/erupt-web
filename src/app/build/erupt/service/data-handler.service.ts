@@ -104,22 +104,26 @@ export class DataHandlerService {
         });
     }
 
-    dataTreeToZorroTree(nodes: Tree[], expandLevel: number): NzTreeNodeOptions[] {
+    dataTreeToZorroTree(nodes: Tree[], expandLevel: number, leafOnly: boolean = false): NzTreeNodeOptions[] {
         const tempNodes: NzTreeNodeOptions[] = [];
         nodes.forEach(node => {
+            const hasChildren = !!node.children?.length;
             let option: any = {
                 key: node.id,
                 title: node.label,
                 data: node.data,
-                expanded: node.level <= expandLevel
+                expanded: node.level <= expandLevel,
+                isLeaf: !hasChildren
             };
-            if (node.children && node.children.length > 0) {
-                tempNodes.push(option);
-                option.children = this.dataTreeToZorroTree(node.children, expandLevel);
-            } else {
-                option.isLeaf = true;
-                tempNodes.push(option);
+            if (hasChildren) {
+                // leaf-only mode: a parent stays visible for navigation but cannot be picked
+                if (leafOnly) {
+                    option.selectable = false;
+                    option.disableCheckbox = true;
+                }
+                option.children = this.dataTreeToZorroTree(node.children, expandLevel, leafOnly);
             }
+            tempNodes.push(option);
         });
         return tempNodes;
     }
