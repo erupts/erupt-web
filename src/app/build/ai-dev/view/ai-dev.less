@@ -1,0 +1,180 @@
+/* Shared frame of the requirement pool pages, following erupt's own pages (monitor, ai-chat):
+   a flat pinned toolbar over a scrollable body, erupt / ant tokens only, so theme and dark mode follow. */
+
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    background: var(--erupt-bg-layout, #f5f7fa);
+}
+
+/* ---- toolbar (flat, pinned) ---- */
+.ad-toolbar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 6px 15px;
+    background: var(--erupt-bg-container, #fff);
+    border-bottom: 1px solid var(--ant-border-color-split);
+
+    .title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+
+        > i {
+            color: var(--ant-primary-color, #1890ff);
+        }
+
+        span {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .actions {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+}
+
+/* ---- scrollable body ---- */
+.ad-body {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 16px;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: var(--erupt-scrollbar-thumb, #d0d5dd);
+        border-radius: 3px;
+    }
+}
+
+:host ::ng-deep nz-card .ant-card-body {
+    padding: 16px;
+}
+
+:host ::ng-deep nz-card .ant-card-head {
+    min-height: 44px;
+    padding: 0 16px;
+
+    .ant-card-head-title, .ant-card-extra {
+        padding: 10px 0;
+    }
+
+    .ant-card-head-title {
+        font-size: 14px;
+    }
+}
+
+.ad-muted {
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+}
+
+.ad-secondary {
+    color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+}
+
+.ad-mono {
+    font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+    font-size: 12px;
+}
+
+.ad-code {
+    font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+    font-size: 12px;
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+}
+
+/* priority: three bars, lit by level */
+.ad-prio {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    width: 14px;
+    height: 12px;
+    vertical-align: middle;
+
+    i {
+        width: 3px;
+        border-radius: 1px;
+        background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.08));
+
+        &:nth-child(1) { height: 4px; }
+        &:nth-child(2) { height: 8px; }
+        &:nth-child(3) { height: 12px; }
+    }
+
+    &.p-LOW i:nth-child(1) { background: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25)); }
+    &.p-MEDIUM i:nth-child(-n+2) { background: #faad14; }
+    &.p-HIGH i { background: #ff4d4f; }
+}
+
+.ad-empty {
+    padding: 64px 0;
+    text-align: center;
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+
+    > i {
+        font-size: 40px;
+        color: var(--ant-border-color-base, #d9d9d9);
+    }
+
+    p {
+        margin: 12px 0 16px;
+    }
+
+    &.sm {
+        padding: 24px 0;
+    }
+}
+
+.ad-form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    > label, .ad-label {
+        margin-top: 8px;
+        font-weight: 500;
+    }
+
+    .ad-form-row {
+        display: flex;
+        gap: 32px;
+
+        > div {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+    }
+}
+
+// a value that opens a picker on click
+.ad-pick {
+    cursor: pointer;
+
+    .fa-angle-down {
+        margin-left: 2px;
+        opacity: .6;
+    }
+}

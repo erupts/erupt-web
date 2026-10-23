@@ -1,0 +1,439 @@
+@if (!detail) {
+    <div class="ad-empty"><nz-spin nzSimple></nz-spin></div>
+} @else {
+    <div class="ad-toolbar">
+        <button nz-button nzSize="small" nzType="text" (click)="back()" [title]="t('pool')"><i class="fa fa-arrow-left"></i></button>
+        <div class="title">
+            <span class="ad-code">{{ detail.requirement.code }}</span>
+            <span>{{ detail.requirement.title }}</span>
+        </div>
+        <nz-tag [nzColor]="stageColor(detail.requirement.stage)">{{ t('stage.' + detail.requirement.stage) }}</nz-tag>
+        <nz-tag class="ad-pick" [nzColor]="priorityColor(detail.requirement.priority)" nz-dropdown [nzDropdownMenu]="prioMenu" nzTrigger="click"
+                [title]="t('change_priority')"><span class="ad-prio" [ngClass]="'p-' + detail.requirement.priority"><i></i><i></i><i></i></span> {{ t('priority.' + detail.requirement.priority) }} <i class="fa fa-angle-down"></i></nz-tag>
+                <nz-dropdown-menu #prioMenu="nzDropdownMenu">
+                    <ul nz-menu>
+                        @for (p of ['HIGH', 'MEDIUM', 'LOW']; track p) {
+                            <li nz-menu-item [nzSelected]="detail.requirement.priority === p" (click)="setPriority(detail.requirement.id, $any(p))">
+                                <span class="ad-prio" [ngClass]="'p-' + p"><i></i><i></i><i></i></span>&nbsp; {{ t('priority.' + p) }}
+                            </li>
+                        }
+                    </ul>
+                </nz-dropdown-menu>
+
+        <div class="actions">
+            @if (can('reject')) {
+                <button nz-button nzSize="small" [disabled]="busy" (click)="act('reject')">{{ t('act.reject') }}</button>
+            }
+            @if (can('submit')) {
+                <button nz-button nzType="primary" nzSize="small" [nzLoading]="busy" (click)="act('submit')"><i class="fa fa-paper-plane-o"></i><span>{{ t('act.submit') }}</span></button>
+            }
+            @if (can('approve')) {
+                <button nz-button nzType="primary" nzSize="small" [nzLoading]="busy" (click)="act('approve')"><i class="fa fa-play"></i><span>{{ t('act.approve') }}</span></button>
+            }
+            @if (can('stop')) {
+                <button nz-button nzDanger nzSize="small" [disabled]="busy" nz-popconfirm [nzPopconfirmTitle]="t('confirm_stop')"
+                        (nzOnConfirm)="act('stop')"><i class="fa fa-stop"></i><span>{{ t('act.stop') }}</span></button>
+            }
+            @if (can('retry')) {
+                <button nz-button nzType="primary" nzSize="small" [nzLoading]="busy" (click)="act('retry', {instruction: ''})"><i class="fa fa-repeat"></i><span>{{ t('act.retry') }}</span></button>
+            }
+            @if (can('deliver')) {
+                <button nz-button nzType="primary" nzSize="small" [nzLoading]="busy" nz-popconfirm [nzPopconfirmTitle]="t('confirm_deliver')"
+                        (nzOnConfirm)="act('deliver')"><i class="fa fa-upload"></i><span>{{ t('act.deliver') }}</span></button>
+            }
+            @if (can('cancel')) {
+                <button nz-button nzSize="small" nz-dropdown [nzDropdownMenu]="more" nzTrigger="click" nzPlacement="bottomRight"><i class="fa fa-ellipsis-h"></i></button>
+                <nz-dropdown-menu #more="nzDropdownMenu">
+                    <ul nz-menu>
+                        <li nz-menu-item nz-popconfirm [nzPopconfirmTitle]="t('confirm_cancel')" (nzOnConfirm)="act('cancel')">
+                            <i class="fa fa-ban"></i>&nbsp; {{ t('act.cancel') }}</li>
+                    </ul>
+                </nz-dropdown-menu>
+            }
+        </div>
+    </div>
+
+    <div class="ad-layout">
+        <div class="ad-main">
+            @if (!detail.executorEnabled && ['QUEUED', 'RUNNING', 'VERIFYING'].includes(detail.requirement.stage)) {
+                <nz-alert class="ad-off" nzType="warning" nzBanner [nzMessage]="t('executor_off')" [nzDescription]="t('executor_off_hint')"></nz-alert>
+            }
+            <div class="ad-steps">
+                <div class="ad-flow">
+                    @for (s of steps; track s; let i = $index) {
+                        <a class="ad-flow-step" [ngClass]="'is-' + stepState(s)" [class.active]="view === s" (click)="setView(s)">
+                            <span class="ad-flow-dot">
+                                @switch (stepState(s)) {
+                                    @case ('done') { <i class="fa fa-check"></i> }
+                                    @case ('failed') { <i class="fa fa-times"></i> }
+                                    @case ('current') {
+                                        @if (working(s)) { <i class="fa fa-circle-o-notch fa-spin"></i> } @else { {{ i + 1 }} }
+                                    }
+                                    @default { {{ i + 1 }} }
+                                }
+                            </span>
+                            <span class="ad-flow-text">
+                                <b>{{ t('step.' + s) }}</b>
+                                <small>{{ stepHint(s) }}</small>
+                            </span>
+                            @if (s === 'run' && detail.requirement.stage === 'RUNNING') {
+                                <i class="ad-flow-bar" [style.width.%]="detail.requirement.progress || 0"></i>
+                            }
+                        </a>
+                        @if (i < steps.length - 1) {
+                            <i class="ad-flow-link" [class.on]="stepState(s) === 'done'"></i>
+                        }
+                    }
+                </div>
+            </div>
+
+            @if (view === 'run') {
+                <!-- run: the agent session, laid out like AI chat -->
+                <div class="ad-chat">
+                    @if (detail.requirement.statusMessage) {
+                        <nz-alert class="ad-chat-alert" [nzType]="detail.requirement.stage === 'FAILED' ? 'error' : 'warning'" nzShowIcon
+                                  [nzMessage]="detail.requirement.statusMessage"></nz-alert>
+                    }
+                    @if (!session) {
+                        <div class="ad-chat-empty">
+                            <i class="fa fa-commenting-o"></i>
+                            <p>{{ detail.requirement.stage === 'QUEUED' ? t('queued_hint') : t('no_session') }}</p>
+                        </div>
+                    } @else {
+                        <div class="ad-chat-head">
+                            <nz-select nzSize="small" nzBorderless class="ad-session-select" [ngModel]="session.id"
+                                       (ngModelChange)="pickSession($event)">
+                                @for (s of detail.sessions; track s.id) {
+                                    <nz-option [nzValue]="s.id" [nzLabel]="t('session') + ' ' + sessionNo(s) + ' · ' + s.agentName"></nz-option>
+                                }
+                            </nz-select>
+                            <nz-tag [nzColor]="sessionColor(session)">{{ t('session.' + session.status) }}</nz-tag>
+                            <span class="ad-muted ad-chat-meta">
+                                <span><i class="fa fa-clock-o"></i> {{ duration(session.startedAt, session.endedAt) }}</span>
+                                @if (session.tokens) {
+                                    <span>{{ compact(session.tokens) }} tokens</span>
+                                }
+                                @if (session.costUsd) {
+                                    <span>{{ '$' + (session.costUsd | number: '1.2-2') }}</span>
+                                }
+                                <span>{{ session.startedAt | date: 'MM-dd HH:mm' }}</span>
+                            </span>
+                        </div>
+
+                        <!-- agent output is untrusted: always text, never HTML -->
+                        <div class="bubbles" #feed (scroll)="onFeedScroll(feed)">
+                            @for (b of blocks; track $index; let i = $index) {
+                                @switch (b.kind) {
+                                    @case ('prompt') {
+                                        <div class="bubble-wrap is-system">
+                                            <div class="sys-card" [class.open]="open[i]">
+                                                <a class="sys-card-head" (click)="toggle(i)">
+                                                    <i class="fa fa-file-text-o"></i>
+                                                    <b>{{ t('prompt') }}</b>
+                                                    <span class="ad-muted">{{ detail.requirement.code }} · v{{ detail.version }}</span>
+                                                    <span class="ad-spacer"></span>
+                                                    <span class="ad-muted">{{ open[i] ? t('collapse') : t('view') }}</span>
+                                                    <i class="fa ad-muted" [ngClass]="open[i] ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                                                </a>
+                                                @if (open[i]) {
+                                                    <pre>{{ $any(b).text }}</pre>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    @case ('text') {
+                                        <div class="bubble-wrap is-model">
+                                            <nz-avatar [nzText]="initial(session.agentName)" class="is-model"></nz-avatar>
+                                            <div class="bubble-content">
+                                                <div class="bubble-name">{{ session.agentName }}</div>
+                                                <ad-markdown class="bubble-text" [text]="$any(b).text"></ad-markdown>
+                                            </div>
+                                        </div>
+                                    }
+                                    @case ('tools') {
+                                        <div class="bubble-wrap is-model is-sub">
+                                            <div class="bubble-content">
+                                                <div class="calls">
+                                                    @for (c of open[i] ? $any(b).calls : $any(b).calls.slice(-3); track $index) {
+                                                        <span class="call-chip" [title]="c.input"><b>{{ c.name }}</b>{{ c.input | slice: 0: 60 }}</span>
+                                                    }
+                                                    @if ($any(b).calls.length > 3 || open[i]) {
+                                                        <a class="ad-fold ad-muted" (click)="toggle(i)">{{ open[i] ? t('collapse') : t('tool_calls') + ' ' + $any(b).calls.length }}</a>
+                                                    }
+                                                </div>
+                                                @if (open[i]) {
+                                                    @for (c of $any(b).calls; track $index) {
+                                                        @if (c.result) {
+                                                            <div class="call-result">
+                                                                <div class="ad-mono"><b>{{ c.name }}</b> {{ c.input }}</div>
+                                                                <pre>{{ c.result | slice: 0: 3000 }}</pre>
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    @case ('status') {
+                                        <div class="bubble-wrap is-model is-sub">
+                                            <div class="bubble-content"><span class="ad-status"><i class="fa" [ngClass]="$any(b).icon"></i>{{ $any(b).text }}</span></div>
+                                        </div>
+                                    }
+                                    @case ('result') {
+                                        <div class="bubble-wrap is-model is-sub">
+                                            <div class="bubble-content">
+                                                <nz-alert [nzType]="$any(b).ok ? 'success' : 'error'" nzShowIcon
+                                                          [nzMessage]="t($any(b).ok ? 'result_ok' : 'result_failed')"
+                                                          [nzDescription]="resultText"></nz-alert>
+                                                <ng-template #resultText><ad-markdown class="bubble-text" [text]="$any(b).text"></ad-markdown></ng-template>
+                                            </div>
+                                        </div>
+                                    }
+                                    @case ('error') {
+                                        <div class="bubble-wrap is-model is-sub">
+                                            <div class="bubble-content"><nz-alert nzType="error" nzShowIcon [nzMessage]="$any(b).text"></nz-alert></div>
+                                        </div>
+                                    }
+                                }
+                            }
+                            @if (session.status === 'RUNNING') {
+                                <div class="bubble-wrap is-model is-sub">
+                                    <div class="bubble-content"><span class="ad-status working"><i class="fa fa-spinner fa-spin"></i>{{ t('working') }}</span></div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <div class="input-card" [class.disabled]="!composerAction()">
+                        <textarea [(ngModel)]="message" [placeholder]="composerHint()" [disabled]="!composerAction() || busy"
+                                  (keydown)="onKey($event)" rows="2"></textarea>
+                        <div class="input-bar">
+                            <span class="ad-muted">{{ composerAction() ? t('composer.keys') : '' }}</span>
+                            <button nz-button nzType="primary" nzSize="small" [disabled]="!composerAction() || busy || (composerAction() === 'rework' && !message.trim())"
+                                    (click)="send()"><i class="fa fa-paper-plane"></i><span>{{ t('send') }}</span></button>
+                        </div>
+                    </div>
+                </div>
+            } @else {
+                <div class="ad-body">
+                    @if (detail.requirement.statusMessage) {
+                        <nz-alert class="ad-gap" [nzType]="detail.requirement.stage === 'FAILED' ? 'error' : 'warning'" nzShowIcon
+                                  [nzMessage]="detail.requirement.statusMessage"></nz-alert>
+                    }
+
+                    @if (view === 'review') {
+                        @if (detail.version > 0) {
+                            <nz-alert class="ad-gap" nzType="success" nzShowIcon
+                                      [nzMessage]="(detail.requirement.reviewer || '') + ' ' + t('approved') + ' v' + detail.version"
+                                      [nzDescription]="t('approved_hint')"></nz-alert>
+                        } @else if (detail.requirement.stage === 'REVIEW') {
+                            <nz-alert class="ad-gap" nzType="warning" nzShowIcon [nzMessage]="t('waiting_review')"
+                                      [nzDescription]="detail.canApprove ? t('review_hint') : t('review_wait_hint')"></nz-alert>
+                        } @else {
+                            <nz-alert class="ad-gap" nzType="info" nzShowIcon [nzMessage]="t('not_submitted')" [nzDescription]="t('submit_hint')"></nz-alert>
+                        }
+                    }
+
+                    @if (view === 'define' || view === 'review') {
+                        <nz-card [nzBordered]="false" [nzTitle]="docTitle" [nzExtra]="docExtra">
+                            <ng-template #docTitle>
+                                {{ t('description') }} <nz-tag class="ad-ver">v{{ detail.version }}</nz-tag>
+                                <span class="ad-muted ad-small">{{ t('updated') }} {{ detail.requirement.updateTime | date: 'yyyy-MM-dd HH:mm' }}</span>
+                            </ng-template>
+                            <ng-template #docExtra>
+                                @if (editable() && !editing) {
+                                    <button nz-button nzSize="small" nzType="text" (click)="startEdit()"><i class="fa fa-pencil"></i><span>{{ t('edit') }}</span></button>
+                                }
+                                <button nz-button nzSize="small" nzType="text" (click)="copyDescription()" [title]="t('copy')"><i class="fa fa-clone"></i></button>
+                            </ng-template>
+                            @if (!editable()) {
+                                <nz-alert class="ad-gap" nzType="info" [nzMessage]="t('doc_locked')" nzShowIcon></nz-alert>
+                            }
+                            @if (editing) {
+                                <div class="ad-form">
+                                    <input nz-input [(ngModel)]="draft.title" [placeholder]="t('title_hint')">
+                                    <textarea nz-input rows="16" [(ngModel)]="draft.description" [placeholder]="t('description_hint')"></textarea>
+                                    <div class="ad-edit-bar">
+                                        <button nz-button (click)="editing = false">{{ t('cancel') }}</button>
+                                        <button nz-button nzType="primary" [nzLoading]="busy" [disabled]="!draft.title.trim()" (click)="saveEdit()">{{ t('save') }}</button>
+                                    </div>
+                                </div>
+                            } @else {
+                                @if (detail.description) {
+                                    <ad-markdown class="ad-doc ad-doc-md" [text]="detail.description"></ad-markdown>
+                                } @else {
+                                    <pre class="ad-doc">{{ t('no_description') }}</pre>
+                                }
+                            }
+                        </nz-card>
+                    }
+
+                    @if (view === 'deliver' && !reached('deliver')) {
+                        <div class="ad-empty">
+                            <i class="fa fa-flag-o"></i>
+                            <p>{{ t('not_reached.deliver') }}</p>
+                        </div>
+                    }
+                    @if (view === 'deliver' && reached('deliver')) {
+                        <div class="ad-stats ad-gap">
+                            <div>
+                                <nz-card [nzBordered]="false" class="stat-card">
+                                    <nz-statistic [nzValue]="detail.sessions.length" [nzTitle]="t('sessions')" [nzPrefix]="i1"></nz-statistic>
+                                    <ng-template #i1><i class="fa fa-comments stat-icon blue"></i></ng-template>
+                                </nz-card>
+                            </div>
+                            <div>
+                                <nz-card [nzBordered]="false" class="stat-card">
+                                    <nz-statistic [nzValue]="detail.sessions.length ? duration(detail.sessions[detail.sessions.length - 1].startedAt, detail.sessions[0].endedAt) : '—'"
+                                                  [nzTitle]="t('elapsed')" [nzPrefix]="i2"></nz-statistic>
+                                    <ng-template #i2><i class="fa fa-clock-o stat-icon purple"></i></ng-template>
+                                </nz-card>
+                            </div>
+                            <div>
+                                <nz-card [nzBordered]="false" class="stat-card">
+                                    <nz-statistic [nzValue]="compact(totalTokens()) || '—'" nzTitle="Token" [nzPrefix]="i3"></nz-statistic>
+                                    <ng-template #i3><i class="fa fa-database stat-icon cyan"></i></ng-template>
+                                </nz-card>
+                            </div>
+                            <div>
+                                <nz-card [nzBordered]="false" class="stat-card">
+                                    <nz-statistic [nzValue]="totalCost() ? '$' + (totalCost() | number: '1.2-2') : '—'" [nzTitle]="t('cost')" [nzPrefix]="i4"></nz-statistic>
+                                    <ng-template #i4><i class="fa fa-usd stat-icon orange"></i></ng-template>
+                                </nz-card>
+                            </div>
+                        </div>
+
+                        @if (detail.requirement.verdict) {
+                            <nz-alert class="ad-gap" [nzType]="detail.requirement.verdict.startsWith('PASS') ? 'success' : 'error'" nzShowIcon
+                                      [nzMessage]="t('verdict') + (detail.qaAgent ? ' · ' + detail.qaAgent : '')" [nzDescription]="detail.requirement.verdict"></nz-alert>
+                        }
+                        @if (detail.requirement.stage === 'ACCEPTANCE') {
+                            <nz-alert class="ad-gap" nzType="info" nzShowIcon [nzMessage]="t('next_title')" [nzDescription]="nextHint"></nz-alert>
+                            <ng-template #nextHint>
+                                {{ detail.canReview ? t('next_hint') : t('review_wait_hint') }}
+                                @if (can('rework')) {
+                                    <a (click)="setView('run')">{{ t('next_rework') }} <i class="fa fa-angle-right"></i></a>
+                                }
+                            </ng-template>
+                        }
+
+                        <nz-card class="ad-gap" [nzBordered]="false" [nzTitle]="t('changes')" [nzBodyStyle]="{padding: '0'}">
+                            @if (!diffs) {
+                                <div class="ad-empty sm"><nz-spin nzSimple></nz-spin></div>
+                            }
+                            @for (d of diffs || []; track d.alias) {
+                                <div class="ad-repo">
+                                    <a class="ad-repo-head" (click)="d.expanded = !d.expanded">
+                                        <i class="fa ad-muted" [ngClass]="d.expanded ? 'fa-caret-down' : 'fa-caret-right'"></i>
+                                        <i class="fa fa-code-fork ad-primary"></i>
+                                        <b>{{ d.alias }}</b>
+                                        <span class="ad-mono ad-muted">{{ d.base }} … {{ d.branch }}</span>
+                                        <span class="ad-spacer"></span>
+                                        @if (!d.files.length && mergedInto(d.alias)) {
+                                            <nz-tag nzColor="success">{{ t('merged_into') }} {{ mergedInto(d.alias) }}</nz-tag>
+                                        } @else {
+                                            <nz-tag>{{ d.files.length }} {{ t('files') }}</nz-tag>
+                                        }
+                                    </a>
+                                    @if (d.expanded) {
+                                        @if (!d.lines.length) {
+                                            <div class="ad-empty sm">{{ t('no_changes') }}</div>
+                                        }
+                                        @if (d.truncated) {
+                                            <nz-alert nzType="warning" [nzMessage]="t('diff_truncated')" nzBanner></nz-alert>
+                                        }
+                                        <div class="ad-diff">
+                                            @for (l of d.lines; track $index) {
+                                                <div class="dl" [ngClass]="'dl-' + l.kind">{{ l.text }}</div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </nz-card>
+
+                        <nz-card [nzBordered]="false" [nzTitle]="t('deliveries')" [nzBodyStyle]="{padding: '0'}">
+                            <nz-table #dt [nzData]="detail.deliveries" nzSize="small" [nzShowPagination]="false" [nzNoResult]="t('no_delivery')">
+                                <thead>
+                                <tr>
+                                    <th>{{ t('repo') }}</th>
+                                    <th>{{ t('branch') }}</th>
+                                    <th>{{ t('status') }}</th>
+                                    <th>{{ t('commit') }}</th>
+                                    <th>{{ t('message') }}</th>
+                                    <th>{{ t('time') }}</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    @for (d of dt.data; track $index) {
+                                        <tr>
+                                            <td>{{ d.repoAlias }}</td>
+                                            <td class="ad-mono">{{ d.branch }}</td>
+                                            <td><nz-tag [nzColor]="d.status === 'PUSHED' ? 'success' : d.status === 'SKIPPED' ? 'default' : 'error'">{{ t('delivery.' + d.status) }}</nz-tag></td>
+                                            <td class="ad-mono">{{ d.commitSha | slice: 0: 8 }}</td>
+                                            <td class="ad-muted">{{ d.status === 'PUSHED' ? '' : d.message }}</td>
+                                            <td class="ad-muted">{{ d.deliveredAt | date: 'MM-dd HH:mm' }}</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </nz-table>
+                        </nz-card>
+                    }
+                </div>
+            }
+        </div>
+
+        <aside class="ad-side">
+            <section>
+                <div class="ad-side-title">{{ t('progress') }}</div>
+                <div class="ad-progress-num"><b>{{ detail.requirement.progress || 0 }}%</b><span class="ad-muted">{{ currentPhase() }}</span></div>
+                <nz-progress [nzPercent]="detail.requirement.progress || 0" [nzShowInfo]="false" nzSize="small"
+                             [nzStatus]="['RUNNING', 'VERIFYING'].includes(detail.requirement.stage) ? 'active' : detail.requirement.stage === 'FAILED' ? 'exception' : 'normal'"></nz-progress>
+                <div class="ad-phases">
+                    @for (p of phases; track p.key) {
+                        <div class="ad-phase" [ngClass]="'ph-' + phaseState(p)">
+                            <i class="fa" [ngClass]="phaseState(p) === 'done' ? 'fa-check-circle' : phaseState(p) === 'current' ? 'fa-dot-circle-o' : 'fa-circle-o'"></i>
+                            <span>{{ t('phase.' + p.key) }}</span>
+                            <em>{{ p.from }}–{{ p.to }}%</em>
+                        </div>
+                    }
+                </div>
+            </section>
+
+            <section>
+                <div class="ad-side-title">{{ t('info') }}</div>
+                <div class="ad-kv"><span>{{ t('status') }}</span><nz-tag [nzColor]="stageColor(detail.requirement.stage)">{{ t('stage.' + detail.requirement.stage) }}</nz-tag></div>
+                <div class="ad-kv"><span>{{ t('version') }}</span><b>v{{ detail.version }} · {{ detail.version > 0 ? t('approved_tag') : t('not_approved') }}</b></div>
+                <div class="ad-kv"><span>{{ t('priority') }}</span><b>{{ t('priority.' + detail.requirement.priority) }}</b></div>
+                <div class="ad-kv"><span>{{ t('project') }}</span><b>{{ detail.projectName }}</b></div>
+                <div class="ad-kv"><span>{{ t('repos') }}</span><b>@for (a of detail.requirement.repos; track a) {<nz-tag>{{ a }}</nz-tag>}</b></div>
+                <div class="ad-kv"><span>{{ t('created') }}</span><b class="ad-muted">{{ detail.requirement.createTime | date: 'yyyy-MM-dd HH:mm' }}</b></div>
+                <div class="ad-kv"><span>{{ t('updated') }}</span><b class="ad-muted">{{ detail.requirement.updateTime | date: 'yyyy-MM-dd HH:mm' }}</b></div>
+            </section>
+
+            <section>
+                <div class="ad-side-title">{{ t('participants') }}</div>
+                <div class="ad-person"><nz-avatar nzSize="small" [nzSrc]="detail.requirement.createByAvatar | avatar" [nzText]="initial(detail.requirement.createBy)" [ngClass]="avatarTone(detail.requirement.createBy)"></nz-avatar><span>{{ detail.requirement.createBy }}</span><nz-tag>{{ t('role.initiator') }}</nz-tag></div>
+                @if (detail.requirement.reviewer) {
+                    <div class="ad-person"><nz-avatar nzSize="small" [nzSrc]="detail.requirement.reviewerAvatar | avatar" [nzText]="initial(detail.requirement.reviewer)" [ngClass]="avatarTone(detail.requirement.reviewer)"></nz-avatar><span>{{ detail.requirement.reviewer }}</span><nz-tag>{{ t('role.reviewer') }}</nz-tag></div>
+                }
+                @if (detail.requirement.agent) {
+                    <div class="ad-person"><nz-avatar nzSize="small" [nzText]="initial(detail.requirement.agent)" class="is-model"></nz-avatar><span>{{ detail.requirement.agent }}</span><nz-tag nzColor="blue">{{ t('role.agent') }}</nz-tag></div>
+                }
+                @if (detail.qaAgent) {
+                    <div class="ad-person"><nz-avatar nzSize="small" [nzText]="initial(detail.qaAgent)" class="is-model"></nz-avatar><span>{{ detail.qaAgent }}</span><nz-tag nzColor="cyan">{{ t('role.qa') }}</nz-tag></div>
+                }
+            </section>
+
+            <section>
+                <div class="ad-side-title">{{ t('activity') }}</div>
+                <div class="ad-cells">
+                    @for (c of activity(); track $index) {
+                        <i [ngClass]="'l' + c"></i>
+                    }
+                </div>
+                <div class="ad-cells-axis ad-muted"><span>{{ t('hours_ago') }}</span><span>{{ t('now') }}</span></div>
+            </section>
+        </aside>
+    </div>
+}

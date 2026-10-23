@@ -1,0 +1,185 @@
+<!-- the layout of erupt's own table pages: toolbar, filter bar, framed table, pagination bar -->
+<div class="tc-toolbar">
+    <div class="tc-actions">
+        <button nz-button nzType="primary" nzSize="small" [disabled]="!project" (click)="openCreate()">
+            <i class="fa fa-plus"></i><span>{{ t('new') }}</span>
+        </button>
+        @if (projects.length) {
+            <nz-select class="ad-project" nzSize="small" [ngModel]="project?.id" (ngModelChange)="switchProject($event)">
+                @for (p of projects; track p.id) {
+                    <nz-option [nzValue]="p.id" [nzLabel]="p.name"></nz-option>
+                }
+            </nz-select>
+        }
+    </div>
+    <div class="tc-utils">
+        <nz-input-group class="ad-search" nzSize="small" [nzPrefix]="searchIcon" [nzSuffix]="keyword ? clearIcon : null">
+            <input nz-input [(ngModel)]="keyword" (ngModelChange)="pageIndex = 1" [placeholder]="t('search_hint')">
+        </nz-input-group>
+        <ng-template #searchIcon><i class="fa fa-search ad-muted"></i></ng-template>
+        <ng-template #clearIcon><i class="fa fa-times-circle ad-muted ad-clear" (click)="keyword = ''"></i></ng-template>
+        <nz-radio-group class="ad-filter" nzSize="small" [(ngModel)]="filter" (ngModelChange)="pageIndex = 1">
+            @for (f of ['all', 'mine', 'review']; track f) {
+                <label nz-radio-button [nzValue]="f">
+                    {{ t('filter.' + f) }}@if (f !== 'all' && count($any(f))) {<span class="ad-num">{{ count($any(f)) }}</span>}
+                </label>
+            }
+        </nz-radio-group>
+        <button nz-button nzSize="small" [title]="t('refresh')" (click)="load()"><i class="fa fa-refresh"></i></button>
+    </div>
+</div>
+
+<div class="tc-inner">
+    @if (loading) {
+        <div class="ad-empty"><nz-spin nzSimple></nz-spin></div>
+    } @else if (!projects.length) {
+        <div class="ad-empty">
+            <i class="fa fa-folder-open-o"></i>
+            <p>{{ t('no_project') }}</p>
+        </div>
+    } @else {
+        @if (!executorEnabled) {
+            <nz-alert class="ad-off" nzType="warning" nzShowIcon [nzMessage]="t('executor_off')" [nzDescription]="t('executor_off_hint')"></nz-alert>
+        } @else if (!executors.length) {
+            <nz-alert class="ad-off" nzType="warning" nzShowIcon [nzMessage]="t('no_executor')" [nzDescription]="t('no_executor_hint')"></nz-alert>
+        }
+        <!-- status filter in the place of erupt's search area -->
+        <div class="tc-search">
+            <nz-radio-group nzSize="small" [(ngModel)]="tab" (ngModelChange)="pageIndex = 1">
+                @for (g of tabs; track g) {
+                    <label nz-radio-button [nzValue]="g">
+                        @if (g !== 'all') {
+                            <i class="ad-dot" [ngClass]="'g-' + g"></i>
+                        }
+                        {{ g === 'all' ? t('filter.all') : t('group.' + g) }}<span class="ad-num">{{ tabCount(g) }}</span>
+                    </label>
+                }
+            </nz-radio-group>
+        </div>
+        <div class="tc-body">
+            <nz-table [nzBordered]="bordered" [nzSize]="size" [nzData]="visible()" [nzPageSize]="pageSize" [nzPageIndex]="pageIndex"
+                      [nzShowPagination]="false" [nzNoResult]="empty" #table>
+                <thead>
+                <tr>
+                    <th nzWidth="88px">{{ t('code') }}</th>
+                    <th>{{ t('title') }}</th>
+                    <th nzWidth="88px">{{ t('priority') }}</th>
+                    <th nzWidth="150px">{{ t('status') }}</th>
+                    <th nzWidth="160px">{{ t('repos') }}</th>
+                    <th nzWidth="170px">{{ t('executor') }} / {{ t('model') }}</th>
+                    <th nzWidth="110px">{{ t('creator') }}</th>
+                    <th nzWidth="110px">{{ t('reviewer') }}</th>
+                    <th nzWidth="110px">{{ t('updated') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @for (r of table.data; track r.id) {
+                        <tr class="ad-tr" [routerLink]="[page, r.id]">
+                            <td><span class="ad-code">{{ r.code }}</span></td>
+                            <td>
+                                <div class="ad-tr-main">
+                                    <a class="ad-tr-title" [routerLink]="[page, r.id]" [title]="r.title">{{ r.title }}</a>
+                                    @if (r.toReview) {
+                                        <nz-tag class="ad-tr-flag" nzColor="warning">{{ r.stage === 'ACCEPTANCE' ? t('to_accept') : t('filter.review') }}</nz-tag>
+                                    }
+                                </div>
+                            </td>
+                            <td (click)="$event.stopPropagation()">
+                                <nz-tag class="ad-pick" [nzColor]="priorityColor(r.priority)" nz-dropdown [nzDropdownMenu]="prioMenu" nzTrigger="click"
+                                        [title]="t('change_priority')">{{ t('priority.' + r.priority) }}</nz-tag>
+                                <nz-dropdown-menu #prioMenu="nzDropdownMenu">
+                                    <ul nz-menu>
+                                        @for (p of ['HIGH', 'MEDIUM', 'LOW']; track p) {
+                                            <li nz-menu-item [nzSelected]="r.priority === p" (click)="setPriority(r.id, $any(p))">{{ t('priority.' + p) }}</li>
+                                        }
+                                    </ul>
+                                </nz-dropdown-menu>
+                            </td>
+                            <td [title]="r.stage === 'FAILED' ? (r.statusMessage || '') : ''">
+                                <nz-badge [nzStatus]="badge(r).status" [nzText]="badge(r).text"></nz-badge>
+                                @if (r.stage === 'RUNNING') {
+                                    <nz-progress class="ad-tr-progress" [nzPercent]="r.progress || 0" nzSize="small" [nzShowInfo]="false" nzStatus="active"></nz-progress>
+                                }
+                            </td>
+                            <td>
+                                @for (a of r.repos; track a) {
+                                    <span class="ad-repo">{{ a }}</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="ad-agent">
+                                    <span>{{ r.agent || '—' }}</span>
+                                    <span class="ad-mono ad-muted" [title]="r.model || t('default_model')">{{ r.model || t('default_model') }}</span>
+                                </div>
+                            </td>
+                            <td><span class="ad-user"><nz-avatar nzSize="small" [nzSrc]="r.createByAvatar | avatar" [nzText]="initial(r.createBy)" [ngClass]="avatarTone(r.createBy)"></nz-avatar>{{ r.createBy }}</span></td>
+                            <td>
+                                @if (r.reviewer) {
+                                    <span class="ad-user"><nz-avatar nzSize="small" [nzSrc]="r.reviewerAvatar | avatar" [nzText]="initial(r.reviewer)" [ngClass]="avatarTone(r.reviewer)"></nz-avatar>{{ r.reviewer }}</span>
+                                } @else {
+                                    <span class="ad-muted">—</span>
+                                }
+                            </td>
+                            <td class="ad-muted" [title]="r.updateTime | date: 'yyyy-MM-dd HH:mm:ss'">{{ ago(r.updateTime) }}</td>
+                        </tr>
+                    }
+                </tbody>
+            </nz-table>
+            <ng-template #empty>
+                <div class="ad-empty sm">
+                    <i class="fa fa-inbox"></i>
+                    <p>{{ rows.length ? t('no_match') : t('no_requirement') }}</p>
+                </div>
+            </ng-template>
+        </div>
+        @if (visible().length) {
+            <div class="tc-pagination">
+                <nz-pagination nzShowSizeChanger nzSize="small" [nzTotal]="visible().length" [nzShowTotal]="total"
+                               [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" [nzPageSizeOptions]="[10, 20, 50, 100]"></nz-pagination>
+                <ng-template #total>{{ i18n.fanyi('table.totalLeft') }} {{ visible().length }} {{ i18n.fanyi('table.totalRight') }}</ng-template>
+            </div>
+        }
+    }
+</div>
+
+<nz-modal [(nzVisible)]="creating" [nzTitle]="t('new')" [nzOkLoading]="busy"
+          [nzOkText]="t('create')" (nzOnOk)="create()"
+          (nzOnCancel)="creating = false" nzWidth="640px">
+    <ng-container *nzModalContent>
+        <div class="ad-form">
+            <label>{{ t('title') }}</label>
+            <input nz-input [(ngModel)]="form.title" [placeholder]="t('title_hint')">
+            <label>{{ t('description') }}</label>
+            <textarea nz-input rows="9" [(ngModel)]="form.description" [placeholder]="t('description_hint')"></textarea>
+            <div class="ad-form-row">
+                <div>
+                    <span class="ad-label">{{ t('executor') }}</span>
+                    <nz-select [(ngModel)]="form.executor" (ngModelChange)="form.model = ''" style="width: 180px" [nzPlaceHolder]="t('no_executor')"
+                               [nzNotFoundContent]="t('no_executor')">
+                        @for (e of executors; track e.code) {
+                            <nz-option [nzValue]="e.code" [nzLabel]="e.label"></nz-option>
+                        }
+                    </nz-select>
+                </div>
+                <div>
+                    <span class="ad-label">{{ t('model') }}</span>
+                    <input nz-input [(ngModel)]="form.model" style="width: 220px" [placeholder]="t('model_hint')" [nzAutocomplete]="modelList">
+                    <nz-autocomplete #modelList nzBackfill>
+                        @for (m of modelOptions(); track m) {
+                            <nz-auto-option [nzValue]="m" [nzLabel]="m">{{ m }}</nz-auto-option>
+                        }
+                    </nz-autocomplete>
+                </div>
+                <div>
+                    <span class="ad-label">{{ t('priority') }}</span>
+                    <nz-select [(ngModel)]="form.priority" style="width: 140px">
+                        @for (p of ['HIGH', 'MEDIUM', 'LOW']; track p) {
+                            <nz-option [nzValue]="p" [nzLabel]="t('priority.' + p)"></nz-option>
+                        }
+                    </nz-select>
+                </div>
+            </div>
+            <label nz-checkbox [(ngModel)]="form.qaReview">{{ t('qa_review') }}<span class="ad-muted"> · {{ t('qa_review_hint') }}</span></label>
+        </div>
+    </ng-container>
+</nz-modal>
