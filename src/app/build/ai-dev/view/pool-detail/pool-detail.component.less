@@ -590,11 +590,31 @@
         min-height: 20px;
     }
 
+    .dl-section:first-child .dl-file {
+        border-top: 0;
+    }
+
+    // a file's header stays on top while its own lines scroll under it; a click folds the file
     .dl-file {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
         font-weight: 600;
         padding: 6px 16px;
+        cursor: pointer;
         background: var(--erupt-bg-spotlight, #fafafa);
+        border-top: 1px solid var(--ant-border-color-split);
         border-bottom: 1px solid var(--ant-border-color-split);
+
+        .dl-path {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     }
 
     .dl-hunk {
@@ -878,5 +898,99 @@
         white-space: pre-wrap;
         word-break: break-word;
         color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+    }
+}
+
+// a repository's diff with its files listed beside it
+.ad-diff-wrap {
+    display: flex;
+    border-top: 1px solid var(--ant-border-color-split);
+
+    .ad-diff {
+        position: relative;
+        flex: 1;
+        min-width: 0;
+        max-height: 640px;
+        border-top: 0;
+    }
+}
+
+.ad-files {
+    flex: 0 0 240px;
+    max-height: 640px;
+    overflow: auto;
+    border-right: 1px solid var(--ant-border-color-split);
+    font-size: 12px;
+
+    .ad-files-filter {
+        position: sticky;
+        top: 0;
+        padding: 6px 8px;
+        background: var(--erupt-bg-container, #fff);
+        border-bottom: 1px solid var(--ant-border-color-split);
+    }
+}
+
+.ad-file {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+    border-left: 2px solid transparent;
+
+    &:hover {
+        background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.04));
+    }
+
+    &.active {
+        background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.04));
+        border-left-color: var(--ant-primary-color, #1677ff);
+    }
+
+    .ad-file-name {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        line-height: 16px;
+
+        b, span {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        b {
+            font-weight: 500;
+        }
+
+        span {
+            font-size: 11px;
+        }
+    }
+}
+
+.ad-file-count {
+    flex-shrink: 0;
+    display: inline-flex;
+    gap: 6px;
+    font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+    font-size: 11px;
+    font-weight: normal;
+
+    .c-add {
+        color: #389e0d;
+    }
+
+    .c-del {
+        color: #cf1322;
+    }
+}
+
+// narrow screens keep the whole width for the code
+@media (max-width: 960px) {
+    .ad-files {
+        display: none;
     }
 }
