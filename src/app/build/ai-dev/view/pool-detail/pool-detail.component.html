@@ -41,12 +41,18 @@
                 <button nz-button nzType="primary" nzSize="small" [nzLoading]="busy" nz-popconfirm [nzPopconfirmTitle]="t('confirm_deliver')"
                         (nzOnConfirm)="act('deliver')"><i class="fa fa-upload"></i><span>{{ t('act.deliver') }}</span></button>
             }
-            @if (can('cancel')) {
+            @if (can('cancel') || can('cleanup')) {
                 <button nz-button nzSize="small" nz-dropdown [nzDropdownMenu]="more" nzTrigger="click" nzPlacement="bottomRight"><i class="fa fa-ellipsis-h"></i></button>
                 <nz-dropdown-menu #more="nzDropdownMenu">
                     <ul nz-menu>
-                        <li nz-menu-item nz-popconfirm [nzPopconfirmTitle]="t('confirm_cancel')" (nzOnConfirm)="act('cancel')">
-                            <i class="fa fa-ban"></i>&nbsp; {{ t('act.cancel') }}</li>
+                        @if (can('cleanup')) {
+                            <li nz-menu-item nz-popconfirm [nzPopconfirmTitle]="t('confirm_cleanup')" (nzOnConfirm)="act('cleanup')">
+                                <i class="fa fa-eraser"></i>&nbsp; {{ t('act.cleanup') }}</li>
+                        }
+                        @if (can('cancel')) {
+                            <li nz-menu-item nz-popconfirm [nzPopconfirmTitle]="t('confirm_cancel')" (nzOnConfirm)="act('cancel')">
+                                <i class="fa fa-ban"></i>&nbsp; {{ t('act.cancel') }}</li>
+                        }
                     </ul>
                 </nz-dropdown-menu>
             }
@@ -113,8 +119,8 @@
                                 @if (session.tokens) {
                                     <span>{{ compact(session.tokens) }} tokens</span>
                                 }
-                                @if (session.costUsd) {
-                                    <span>{{ '$' + (session.costUsd | number: '1.2-2') }}</span>
+                                @if (money(session.costUsd) !== '—') {
+                                    <span>{{ money(session.costUsd) }}</span>
                                 }
                                 <span>{{ session.startedAt | date: 'MM-dd HH:mm' }}</span>
                             </span>
@@ -143,7 +149,7 @@
                                     }
                                     @case ('text') {
                                         <div class="bubble-wrap is-model">
-                                            <nz-avatar [nzText]="initial(session.agentName)" class="is-model"></nz-avatar>
+                                            <ad-cli-logo [code]="session.executor" [icon]="detail.requirement.executorIcon" [label]="session.agentName" [size]="36"></ad-cli-logo>
                                             <div class="bubble-content">
                                                 <div class="bubble-name">{{ session.agentName }}</div>
                                                 <ad-markdown class="bubble-text" [text]="$any(b).text"></ad-markdown>
@@ -297,8 +303,11 @@
                             </div>
                             <div>
                                 <nz-card [nzBordered]="false" class="stat-card">
-                                    <nz-statistic [nzValue]="totalCost() ? '$' + (totalCost() | number: '1.2-2') : '—'" [nzTitle]="t('cost')" [nzPrefix]="i4"></nz-statistic>
-                                    <ng-template #i4><i class="fa fa-usd stat-icon orange"></i></ng-template>
+                                    <!-- formatted here: nz-statistic would split the text at its decimal point -->
+                                    <nz-statistic [nzValue]="money(totalCost())" [nzValueTemplate]="costValue" [nzTitle]="t('cost')" [nzPrefix]="i4"
+                                                  [title]="t('cost_hint')"></nz-statistic>
+                                    <ng-template #costValue let-v>{{ v }}</ng-template>
+                                    <ng-template #i4><i class="fa fa-credit-card stat-icon orange"></i></ng-template>
                                 </nz-card>
                             </div>
                         </div>
@@ -412,16 +421,47 @@
             </section>
 
             <section>
+                <div class="ad-side-title">{{ t('workspace') }}</div>
+                @for (w of workspaces; track w.alias) {
+                    <div class="ad-ws" [title]="w.path || ''">
+                        <div class="ad-ws-head">
+                            <i class="ad-ws-dot" [class.on]="w.exists"></i>
+                            <b>{{ w.alias }}</b>
+                            <span class="ad-mono ad-muted">{{ w.branch }}</span>
+                        </div>
+                        <div class="ad-ws-meta ad-muted">
+                            @if (w.exists) {
+                                <span>{{ t('ws.from') }} {{ w.base }}</span>
+                                @if (w.ahead >= 0) {
+                                    <span>{{ t('ws.ahead').replace('{0}', w.ahead + '') }}</span>
+                                }
+                                @if (w.changed > 0) {
+                                    <span class="ad-ws-dirty">{{ t('ws.changed').replace('{0}', w.changed + '') }}</span>
+                                }
+                            } @else {
+                                <span>{{ t('ws.none') }}</span>
+                            }
+                        </div>
+                        @if (w.path) {
+                            <div class="ad-ws-path ad-mono ad-muted">{{ w.path }}</div>
+                        }
+                    </div>
+                } @empty {
+                    <div class="ad-muted">—</div>
+                }
+            </section>
+
+            <section>
                 <div class="ad-side-title">{{ t('participants') }}</div>
                 <div class="ad-person"><nz-avatar nzSize="small" [nzSrc]="detail.requirement.createByAvatar | avatar" [nzText]="initial(detail.requirement.createBy)" [ngClass]="avatarTone(detail.requirement.createBy)"></nz-avatar><span>{{ detail.requirement.createBy }}</span><nz-tag>{{ t('role.initiator') }}</nz-tag></div>
                 @if (detail.requirement.reviewer) {
                     <div class="ad-person"><nz-avatar nzSize="small" [nzSrc]="detail.requirement.reviewerAvatar | avatar" [nzText]="initial(detail.requirement.reviewer)" [ngClass]="avatarTone(detail.requirement.reviewer)"></nz-avatar><span>{{ detail.requirement.reviewer }}</span><nz-tag>{{ t('role.reviewer') }}</nz-tag></div>
                 }
                 @if (detail.requirement.agent) {
-                    <div class="ad-person"><nz-avatar nzSize="small" [nzText]="initial(detail.requirement.agent)" class="is-model"></nz-avatar><span>{{ detail.requirement.agent }}</span><nz-tag nzColor="blue">{{ t('role.agent') }}</nz-tag></div>
+                    <div class="ad-person"><ad-cli-logo [code]="detail.requirement.executor" [icon]="detail.requirement.executorIcon" [label]="detail.requirement.agent" [size]="24"></ad-cli-logo><span>{{ detail.requirement.agent }}</span><nz-tag nzColor="blue">{{ t('role.agent') }}</nz-tag></div>
                 }
                 @if (detail.qaAgent) {
-                    <div class="ad-person"><nz-avatar nzSize="small" [nzText]="initial(detail.qaAgent)" class="is-model"></nz-avatar><span>{{ detail.qaAgent }}</span><nz-tag nzColor="cyan">{{ t('role.qa') }}</nz-tag></div>
+                    <div class="ad-person"><ad-cli-logo [code]="detail.requirement.executor" [icon]="detail.requirement.executorIcon" [label]="detail.qaAgent" [size]="24"></ad-cli-logo><span>{{ detail.qaAgent }}</span><nz-tag nzColor="cyan">{{ t('role.qa') }}</nz-tag></div>
                 }
             </section>
 

@@ -8,10 +8,10 @@ import {I18NService} from '@core';
 import {DataService} from '@shared/service/data.service';
 import {ScopeService, ScopeStore} from '@shared/service/scope.service';
 import {Status} from '../../../erupt/model/erupt-api.model';
-import {AiDevService, DevDetail, DevEvent, DevRepoDiff, DevSession, Stage} from '../../ai-dev.service';
+import {AiDevService, DevDetail, DevEvent, DevRepoDiff, DevSession, Stage, DevWorkspace} from '../../ai-dev.service';
 import {avatarTone, compact, duration, initial, PHASES, Step, stepOf, STEPS, stepState, StepState} from '../../ai-dev.util';
 
-type Action = 'submit' | 'approve' | 'reject' | 'stop' | 'retry' | 'rework' | 'deliver' | 'cancel';
+type Action = 'submit' | 'approve' | 'reject' | 'stop' | 'retry' | 'rework' | 'deliver' | 'cancel' | 'cleanup';
 
 /** One tool call of the agent with what came back. */
 interface ToolCall {
@@ -78,6 +78,8 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
 
     // the newest session id seen so far, and whether the view jumps to a newer one when it appears
     private latestSeen = 0;
+
+    workspaces: DevWorkspace[] = [];
     private followLatest = true;
 
     // the feed follows new messages unless the reader scrolled up to read
@@ -135,6 +137,8 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
             this.detail = detail;
             if (first) this.title.setTitle(detail.requirement.code + ' · ' + detail.requirement.title);
             if (first || stageChanged) this.view = stepOf(detail.requirement.stage);
+            // git is read for the workspace only when something could have changed it
+            if (first || stageChanged) this.loadWorkspace();
             const current = detail.sessions.find(s => s.id === this.session?.id);
             const newest = detail.sessions[0];
             if (current && newest && newest.id > this.latestSeen && this.followLatest) {
@@ -149,6 +153,12 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
             }
             if (newest) this.latestSeen = Math.max(this.latestSeen, newest.id);
             if (this.view === 'deliver' && !this.diffs) this.loadDiff();
+        });
+    }
+
+    loadWorkspace(): void {
+        this.api.workspace(this.id).subscribe(res => {
+            if (res && res.status === Status.SUCCESS) this.workspaces = res.data || [];
         });
     }
 
@@ -414,8 +424,17 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
         return this.detail!.sessions.reduce((a, s) => a + (s.tokens || 0), 0);
     }
 
-    totalCost(): number {
-        return this.detail!.sessions.reduce((a, s) => a + (s.costUsd || 0), 0);
+    // what the CLIs reported, summed over every run; null when none reported a cost
+    totalCost(): number | null {
+        const costs = this.detail!.sessions.map(s => Number(s.costUsd)).filter(c => Number.isFinite(c) && c > 0);
+        return costs.length ? costs.reduce((a, c) => a + c, 0) : null;
+    }
+
+    // $0.42, $0.0031 for a few tokens' worth; — when unknown
+    money(value: number | null | undefined): string {
+        const n = Number(value);
+        if (!Number.isFinite(n) || n <= 0) return '—';
+        return '$' + (n < 0.01 ? n.toFixed(4) : n.toFixed(2));
     }
 
     // ------------------------------------------------------------------ actions
@@ -439,6 +458,8 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
                 return stage === 'ACCEPTANCE' && review;
             case 'cancel':
                 return !['DELIVERED', 'CANCELLED', 'RUNNING', 'VERIFYING'].includes(stage);
+            case 'cleanup':
+                return ['DRAFT', 'REVIEW', 'FAILED', 'CANCELLED'].includes(stage) && this.workspaces.some(w => w.exists);
         }
     }
 
@@ -453,6 +474,7 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
                 this.diffs = null;
                 // the run this action starts is the one to watch
                 this.followLatest = true;
+                if (action === 'cleanup' || action === 'cancel') this.loadWorkspace();
                 if (['retry', 'rework', 'approve'].includes(action)) this.view = 'run';
                 this.load(false);
             },

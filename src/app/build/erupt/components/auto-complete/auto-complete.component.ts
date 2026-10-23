@@ -33,16 +33,28 @@ export class AutoCompleteComponent implements OnInit {
 
     onAutoCompleteInput(event, fieldModel: EruptFieldModel) {
         let edit = fieldModel.eruptFieldJson.edit;
-        if (edit.$value && edit.autoCompleteType.triggerLength <= edit.$value.toString().trim().length) {
-            const data = this.eruptBuildModel
-                ? this.dataHandlerService.eruptValueToObject(this.eruptBuildModel)
-                : {};
-            this.dataService.findAutoCompleteValue(this.eruptModel.eruptName, fieldModel.fieldName, data, edit.$value, this.parentEruptName).subscribe(res => {
-                edit.autoCompleteType.items = res;
-            });
+        const value = edit.$value ? edit.$value.toString().trim() : '';
+        // triggerLength 0 asks with nothing typed as well: the full list on focus
+        if ((value || edit.autoCompleteType.triggerLength === 0) && edit.autoCompleteType.triggerLength <= value.length) {
+            this.fetch(fieldModel, value);
         } else {
             edit.autoCompleteType.items = [];
         }
+    }
+
+    // triggerLength 0: focusing the field lists every candidate, whatever it holds now
+    onAutoCompleteFocus(fieldModel: EruptFieldModel) {
+        if (fieldModel.eruptFieldJson.edit.autoCompleteType.triggerLength === 0) this.fetch(fieldModel, '');
+    }
+
+    private fetch(fieldModel: EruptFieldModel, value: string) {
+        const edit = fieldModel.eruptFieldJson.edit;
+        const data = this.eruptBuildModel
+            ? this.dataHandlerService.eruptValueToObject(this.eruptBuildModel)
+            : {};
+        this.dataService.findAutoCompleteValue(this.eruptModel.eruptName, fieldModel.fieldName, data, value, this.parentEruptName).subscribe(res => {
+            edit.autoCompleteType.items = res;
+        });
     }
 
 }

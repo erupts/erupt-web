@@ -25,6 +25,10 @@
                 </label>
             }
         </nz-radio-group>
+        <nz-radio-group class="ad-filter" nzSize="small" [ngModel]="mode" (ngModelChange)="setMode($event)">
+            <label nz-radio-button nzValue="table" [title]="t('view.table')"><i class="fa fa-list"></i></label>
+            <label nz-radio-button nzValue="board" [title]="t('view.board')"><i class="fa fa-columns"></i></label>
+        </nz-radio-group>
         <button nz-button nzSize="small" [title]="t('refresh')" (click)="load()"><i class="fa fa-refresh"></i></button>
     </div>
 </div>
@@ -43,101 +47,152 @@
         } @else if (!executors.length) {
             <nz-alert class="ad-off" nzType="warning" nzShowIcon [nzMessage]="t('no_executor')" [nzDescription]="t('no_executor_hint')"></nz-alert>
         }
-        <!-- status filter in the place of erupt's search area -->
-        <div class="tc-search">
-            <nz-radio-group nzSize="small" [(ngModel)]="tab" (ngModelChange)="pageIndex = 1">
-                @for (g of tabs; track g) {
-                    <label nz-radio-button [nzValue]="g">
-                        @if (g !== 'all') {
-                            <i class="ad-dot" [ngClass]="'g-' + g"></i>
-                        }
-                        {{ g === 'all' ? t('filter.all') : t('group.' + g) }}<span class="ad-num">{{ tabCount(g) }}</span>
-                    </label>
-                }
-            </nz-radio-group>
-        </div>
-        <div class="tc-body">
-            <nz-table [nzBordered]="bordered" [nzSize]="size" [nzData]="visible()" [nzPageSize]="pageSize" [nzPageIndex]="pageIndex"
-                      [nzShowPagination]="false" [nzNoResult]="empty" #table>
-                <thead>
-                <tr>
-                    <th nzWidth="88px">{{ t('code') }}</th>
-                    <th>{{ t('title') }}</th>
-                    <th nzWidth="88px">{{ t('priority') }}</th>
-                    <th nzWidth="150px">{{ t('status') }}</th>
-                    <th nzWidth="160px">{{ t('repos') }}</th>
-                    <th nzWidth="170px">{{ t('executor') }} / {{ t('model') }}</th>
-                    <th nzWidth="110px">{{ t('creator') }}</th>
-                    <th nzWidth="110px">{{ t('reviewer') }}</th>
-                    <th nzWidth="110px">{{ t('updated') }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                    @for (r of table.data; track r.id) {
-                        <tr class="ad-tr" [routerLink]="[page, r.id]">
-                            <td><span class="ad-code">{{ r.code }}</span></td>
-                            <td>
-                                <div class="ad-tr-main">
-                                    <a class="ad-tr-title" [routerLink]="[page, r.id]" [title]="r.title">{{ r.title }}</a>
+        @if (mode === 'board') {
+            <!-- the same requirements as columns of where they stand: read here, acted on in the requirement -->
+            <div class="ad-board">
+                @for (c of boardColumns(); track c.key) {
+                    <div class="ad-col">
+                        <div class="ad-col-head">
+                            <i class="ad-dot" [ngClass]="'g-' + c.key"></i>
+                            <b>{{ t('group.' + c.key) }}</b>
+                            <em>{{ c.rows.length }}</em>
+                        </div>
+                        <div class="ad-col-body">
+                            @for (r of c.shown; track r.id) {
+                                <a class="ad-card" [routerLink]="[page, r.id]">
+                                    <div class="ad-card-top">
+                                        <span class="ad-code">{{ r.code }}</span>
+                                        <nz-tag class="ad-card-prio" [nzColor]="priorityColor(r.priority)">{{ t('priority.' + r.priority) }}</nz-tag>
+                                    </div>
+                                    <div class="ad-card-title">{{ r.title }}</div>
                                     @if (r.toReview) {
-                                        <nz-tag class="ad-tr-flag" nzColor="warning">{{ r.stage === 'ACCEPTANCE' ? t('to_accept') : t('filter.review') }}</nz-tag>
+                                        <nz-tag class="ad-card-flag" nzColor="warning">{{ r.stage === 'ACCEPTANCE' ? t('to_accept') : t('filter.review') }}</nz-tag>
                                     }
-                                </div>
-                            </td>
-                            <td (click)="$event.stopPropagation()">
-                                <nz-tag class="ad-pick" [nzColor]="priorityColor(r.priority)" nz-dropdown [nzDropdownMenu]="prioMenu" nzTrigger="click"
-                                        [title]="t('change_priority')">{{ t('priority.' + r.priority) }}</nz-tag>
-                                <nz-dropdown-menu #prioMenu="nzDropdownMenu">
-                                    <ul nz-menu>
-                                        @for (p of ['HIGH', 'MEDIUM', 'LOW']; track p) {
-                                            <li nz-menu-item [nzSelected]="r.priority === p" (click)="setPriority(r.id, $any(p))">{{ t('priority.' + p) }}</li>
-                                        }
-                                    </ul>
-                                </nz-dropdown-menu>
-                            </td>
-                            <td [title]="r.stage === 'FAILED' ? (r.statusMessage || '') : ''">
-                                <nz-badge [nzStatus]="badge(r).status" [nzText]="badge(r).text"></nz-badge>
-                                @if (r.stage === 'RUNNING') {
-                                    <nz-progress class="ad-tr-progress" [nzPercent]="r.progress || 0" nzSize="small" [nzShowInfo]="false" nzStatus="active"></nz-progress>
-                                }
-                            </td>
-                            <td>
-                                @for (a of r.repos; track a) {
-                                    <span class="ad-repo">{{ a }}</span>
-                                }
-                            </td>
-                            <td>
-                                <div class="ad-agent">
-                                    <span>{{ r.agent || '—' }}</span>
-                                    <span class="ad-mono ad-muted" [title]="r.model || t('default_model')">{{ r.model || t('default_model') }}</span>
-                                </div>
-                            </td>
-                            <td><span class="ad-user"><nz-avatar nzSize="small" [nzSrc]="r.createByAvatar | avatar" [nzText]="initial(r.createBy)" [ngClass]="avatarTone(r.createBy)"></nz-avatar>{{ r.createBy }}</span></td>
-                            <td>
-                                @if (r.reviewer) {
-                                    <span class="ad-user"><nz-avatar nzSize="small" [nzSrc]="r.reviewerAvatar | avatar" [nzText]="initial(r.reviewer)" [ngClass]="avatarTone(r.reviewer)"></nz-avatar>{{ r.reviewer }}</span>
-                                } @else {
-                                    <span class="ad-muted">—</span>
-                                }
-                            </td>
-                            <td class="ad-muted" [title]="r.updateTime | date: 'yyyy-MM-dd HH:mm:ss'">{{ ago(r.updateTime) }}</td>
-                        </tr>
-                    }
-                </tbody>
-            </nz-table>
-            <ng-template #empty>
-                <div class="ad-empty sm">
-                    <i class="fa fa-inbox"></i>
-                    <p>{{ rows.length ? t('no_match') : t('no_requirement') }}</p>
-                </div>
-            </ng-template>
-        </div>
-        @if (visible().length) {
-            <div class="tc-pagination">
-                <nz-pagination nzShowSizeChanger nzSize="small" [nzTotal]="visible().length" [nzShowTotal]="total"
-                               [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" [nzPageSizeOptions]="[10, 20, 50, 100]"></nz-pagination>
-                <ng-template #total>{{ i18n.fanyi('table.totalLeft') }} {{ visible().length }} {{ i18n.fanyi('table.totalRight') }}</ng-template>
+                                    @if (r.stage === 'RUNNING') {
+                                        <nz-progress [nzPercent]="r.progress || 0" nzSize="small" nzStatus="active"></nz-progress>
+                                    } @else {
+                                        <nz-badge [nzStatus]="badge(r).status" [nzText]="badge(r).text"></nz-badge>
+                                    }
+                                    <div class="ad-card-foot">
+                                        <span class="ad-muted ad-card-agent" [title]="(r.agent || '') + (r.model ? ' · ' + r.model : '')">
+                                            <ad-cli-logo [code]="r.executor" [icon]="r.executorIcon" [label]="r.agent" [size]="16"></ad-cli-logo>
+                                            {{ r.agent || '—' }}@if (r.model) { · {{ r.model }}}
+                                        </span>
+                                        <span class="ad-card-people">
+                                            <nz-avatar nzSize="small" [nzSrc]="r.createByAvatar | avatar" [nzText]="initial(r.createBy)" [ngClass]="avatarTone(r.createBy)" [title]="r.createBy"></nz-avatar>
+                                            @if (r.reviewer && r.reviewer !== r.createBy) {
+                                                <nz-avatar nzSize="small" [nzSrc]="r.reviewerAvatar | avatar" [nzText]="initial(r.reviewer)" [ngClass]="avatarTone(r.reviewer)" [title]="r.reviewer"></nz-avatar>
+                                            }
+                                        </span>
+                                    </div>
+                                </a>
+                            } @empty {
+                                <div class="ad-col-empty ad-muted">—</div>
+                            }
+                            @if (c.rows.length > c.shown.length) {
+                                <a class="ad-col-more" (click)="expanded[c.key] = true">{{ t('view.more').replace('{0}', (c.rows.length - c.shown.length) + '') }}</a>
+                            }
+                        </div>
+                    </div>
+                }
             </div>
+        } @else {
+            <!-- status filter in the place of erupt's search area -->
+            <div class="tc-search">
+                <nz-radio-group nzSize="small" [(ngModel)]="tab" (ngModelChange)="pageIndex = 1">
+                    @for (g of tabs; track g) {
+                        <label nz-radio-button [nzValue]="g">
+                            @if (g !== 'all') {
+                                <i class="ad-dot" [ngClass]="'g-' + g"></i>
+                            }
+                            {{ g === 'all' ? t('filter.all') : t('group.' + g) }}<span class="ad-num">{{ tabCount(g) }}</span>
+                        </label>
+                    }
+                </nz-radio-group>
+            </div>
+            <div class="tc-body">
+                <nz-table [nzBordered]="bordered" [nzSize]="size" [nzData]="visible()" [nzPageSize]="pageSize" [nzPageIndex]="pageIndex"
+                          [nzShowPagination]="false" [nzNoResult]="empty" #table>
+                    <thead>
+                    <tr>
+                        <th nzWidth="88px">{{ t('code') }}</th>
+                        <th>{{ t('title') }}</th>
+                        <th nzWidth="88px">{{ t('priority') }}</th>
+                        <th nzWidth="150px">{{ t('status') }}</th>
+                        <th nzWidth="160px">{{ t('repos') }}</th>
+                        <th nzWidth="170px">{{ t('executor') }} / {{ t('model') }}</th>
+                        <th nzWidth="110px">{{ t('creator') }}</th>
+                        <th nzWidth="110px">{{ t('reviewer') }}</th>
+                        <th nzWidth="110px">{{ t('updated') }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        @for (r of table.data; track r.id) {
+                            <tr class="ad-tr" [routerLink]="[page, r.id]">
+                                <td><span class="ad-code">{{ r.code }}</span></td>
+                                <td>
+                                    <div class="ad-tr-main">
+                                        <a class="ad-tr-title" [routerLink]="[page, r.id]" [title]="r.title">{{ r.title }}</a>
+                                        @if (r.toReview) {
+                                            <nz-tag class="ad-tr-flag" nzColor="warning">{{ r.stage === 'ACCEPTANCE' ? t('to_accept') : t('filter.review') }}</nz-tag>
+                                        }
+                                    </div>
+                                </td>
+                                <td (click)="$event.stopPropagation()">
+                                    <nz-tag class="ad-pick" [nzColor]="priorityColor(r.priority)" nz-dropdown [nzDropdownMenu]="prioMenu" nzTrigger="click"
+                                            [title]="t('change_priority')">{{ t('priority.' + r.priority) }}</nz-tag>
+                                    <nz-dropdown-menu #prioMenu="nzDropdownMenu">
+                                        <ul nz-menu>
+                                            @for (p of ['HIGH', 'MEDIUM', 'LOW']; track p) {
+                                                <li nz-menu-item [nzSelected]="r.priority === p" (click)="setPriority(r.id, $any(p))">{{ t('priority.' + p) }}</li>
+                                            }
+                                        </ul>
+                                    </nz-dropdown-menu>
+                                </td>
+                                <td [title]="r.stage === 'FAILED' ? (r.statusMessage || '') : ''">
+                                    <nz-badge [nzStatus]="badge(r).status" [nzText]="badge(r).text"></nz-badge>
+                                    @if (r.stage === 'RUNNING') {
+                                        <nz-progress class="ad-tr-progress" [nzPercent]="r.progress || 0" nzSize="small" [nzShowInfo]="false" nzStatus="active"></nz-progress>
+                                    }
+                                </td>
+                                <td>
+                                    @for (a of r.repos; track a) {
+                                        <span class="ad-repo">{{ a }}</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="ad-agent">
+                                        <span class="ad-agent-name"><ad-cli-logo [code]="r.executor" [icon]="r.executorIcon" [label]="r.agent" [size]="16"></ad-cli-logo>{{ r.agent || '—' }}</span>
+                                        <span class="ad-mono ad-muted" [title]="r.model || t('default_model')">{{ r.model || t('default_model') }}</span>
+                                    </div>
+                                </td>
+                                <td><span class="ad-user"><nz-avatar nzSize="small" [nzSrc]="r.createByAvatar | avatar" [nzText]="initial(r.createBy)" [ngClass]="avatarTone(r.createBy)"></nz-avatar>{{ r.createBy }}</span></td>
+                                <td>
+                                    @if (r.reviewer) {
+                                        <span class="ad-user"><nz-avatar nzSize="small" [nzSrc]="r.reviewerAvatar | avatar" [nzText]="initial(r.reviewer)" [ngClass]="avatarTone(r.reviewer)"></nz-avatar>{{ r.reviewer }}</span>
+                                    } @else {
+                                        <span class="ad-muted">—</span>
+                                    }
+                                </td>
+                                <td class="ad-muted" [title]="r.updateTime | date: 'yyyy-MM-dd HH:mm:ss'">{{ ago(r.updateTime) }}</td>
+                            </tr>
+                        }
+                    </tbody>
+                </nz-table>
+                <ng-template #empty>
+                    <div class="ad-empty sm">
+                        <i class="fa fa-inbox"></i>
+                        <p>{{ rows.length ? t('no_match') : t('no_requirement') }}</p>
+                    </div>
+                </ng-template>
+            </div>
+            @if (visible().length) {
+                <div class="tc-pagination">
+                    <nz-pagination nzShowSizeChanger nzSize="small" [nzTotal]="visible().length" [nzShowTotal]="total"
+                                   [(nzPageIndex)]="pageIndex" [(nzPageSize)]="pageSize" [nzPageSizeOptions]="[10, 20, 50, 100]"></nz-pagination>
+                    <ng-template #total>{{ i18n.fanyi('table.totalLeft') }} {{ visible().length }} {{ i18n.fanyi('table.totalRight') }}</ng-template>
+                </div>
+            }
         }
     }
 </div>
@@ -157,7 +212,9 @@
                     <nz-select [(ngModel)]="form.executor" (ngModelChange)="form.model = ''" style="width: 180px" [nzPlaceHolder]="t('no_executor')"
                                [nzNotFoundContent]="t('no_executor')">
                         @for (e of executors; track e.code) {
-                            <nz-option [nzValue]="e.code" [nzLabel]="e.label"></nz-option>
+                            <nz-option nzCustomContent [nzValue]="e.code" [nzLabel]="e.label">
+                                <span class="ad-agent-name"><ad-cli-logo [code]="e.code" [icon]="e.icon" [label]="e.label" [size]="16"></ad-cli-logo>{{ e.label }}</span>
+                            </nz-option>
                         }
                     </nz-select>
                 </div>

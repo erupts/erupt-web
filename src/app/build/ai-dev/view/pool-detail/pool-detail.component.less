@@ -738,3 +738,54 @@
 .bubble-text.ad-md-host, ad-markdown.bubble-text, ad-markdown.ad-doc-md {
     white-space: normal;
 }
+
+/* the requirement's workspace, one line per repository */
+.ad-ws {
+    padding: 6px 0;
+
+    & + .ad-ws {
+        border-top: 1px dashed var(--ant-border-color-split);
+    }
+}
+
+.ad-ws-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+
+    span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+.ad-ws-dot {
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
+
+    &.on {
+        background: #52c41a;
+    }
+}
+
+.ad-ws-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    margin: 2px 0 0 12px;
+    font-size: 12px;
+}
+
+.ad-ws-dirty {
+    color: #d48806;
+}
+
+.ad-ws-path {
+    margin: 2px 0 0 12px;
+    word-break: break-all;
+}
