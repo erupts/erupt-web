@@ -517,7 +517,7 @@
     }
 
     ::ng-deep .ant-statistic-content {
-        line-height: 32px;
+        line-height: 34px;
     }
 
     ::ng-deep .ant-statistic-title {
@@ -531,10 +531,20 @@
         font-size: 22px;
     }
 
-    .stat-icon {
-        font-size: 18px;
+    ::ng-deep .ant-statistic-content-prefix {
+        display: inline-flex;
         margin-right: 10px;
-        padding: 8px;
+    }
+
+    // a fixed square, so every glyph sits centred on the same tile whatever its width
+    .stat-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        font-size: 17px;
+        line-height: 1;
         border-radius: 8px;
 
         &.blue { color: #1890ff; background: rgba(24, 144, 255, 0.1); }
