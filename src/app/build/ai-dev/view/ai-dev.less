@@ -182,3 +182,73 @@
         opacity: .6;
     }
 }
+
+// alerts of the pool pages: a colour bar and a faint tint instead of a bordered box, square, compact,
+// with the icon as small as the text it leads
+:host ::ng-deep nz-alert .ant-alert {
+    --alert-color: #1677ff;
+    align-items: flex-start;
+    padding: 8px 12px;
+    border: 0;
+    border-left: 3px solid var(--alert-color);
+    border-radius: 0;
+    background: color-mix(in srgb, var(--alert-color) 7%, transparent);
+    font-size: 13px;
+    line-height: 20px;
+
+    &.ant-alert-success {
+        --alert-color: #52c41a;
+    }
+
+    &.ant-alert-warning {
+        --alert-color: #faad14;
+    }
+
+    &.ant-alert-error {
+        --alert-color: #ff4d4f;
+    }
+
+    .ant-alert-icon {
+        margin-right: 8px;
+        font-size: 14px;
+        line-height: 20px;
+        height: 20px;
+        color: var(--alert-color);
+    }
+
+    .ant-alert-message {
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 0;
+        color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+    }
+
+    .ant-alert-description {
+        font-size: 13px;
+        line-height: 20px;
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+    }
+
+    // a title with a line under it: same small icon, no extra room
+    &.ant-alert-with-description {
+        padding: 8px 12px;
+
+        .ant-alert-icon {
+            font-size: 14px;
+            margin-right: 8px;
+        }
+
+        .ant-alert-message {
+            margin-bottom: 2px;
+        }
+    }
+
+    .ant-alert-action {
+        margin-left: 8px;
+        align-self: center;
+    }
+
+    &.ant-alert-banner {
+        border-left-width: 3px;
+    }
+}

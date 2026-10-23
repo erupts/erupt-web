@@ -22,13 +22,13 @@
 
         <div class="actions">
             @if (can('reject')) {
-                <button nz-button nzSize="small" [disabled]="busy" (click)="act('reject')">{{ t('act.reject') }}</button>
+                <button nz-button nzSize="small" [disabled]="busy" (click)="review('reject')">{{ t('act.reject') }}</button>
             }
             @if (can('submit')) {
                 <button nz-button nzType="primary" nzSize="small" [nzLoading]="busy" (click)="act('submit')"><i class="fa fa-paper-plane-o"></i><span>{{ t('act.submit') }}</span></button>
             }
             @if (can('approve')) {
-                <button nz-button nzType="primary" nzSize="small" [nzLoading]="busy" (click)="act('approve')"><i class="fa fa-play"></i><span>{{ t('act.approve') }}</span></button>
+                <button nz-button nzType="primary" nzSize="small" [nzLoading]="busy" (click)="review('approve')"><i class="fa fa-play"></i><span>{{ t('act.approve') }}</span></button>
             }
             @if (can('stop')) {
                 <button nz-button nzDanger nzSize="small" [disabled]="busy" nz-popconfirm [nzPopconfirmTitle]="t('confirm_stop')"
@@ -102,8 +102,8 @@
                 <!-- run: the agent session, laid out like AI chat -->
                 <div class="ad-chat">
                     @if (detail.requirement.statusMessage) {
-                        <nz-alert class="ad-chat-alert" [nzType]="detail.requirement.stage === 'FAILED' ? 'error' : 'warning'" nzShowIcon
-                                  [nzMessage]="detail.requirement.statusMessage"></nz-alert>
+                        <nz-alert class="ad-chat-alert" [nzType]="detail.requirement.stage === 'FAILED' ? 'error' : 'warning'"
+                                  [nzMessage]="detail.requirement.statusMessage" nzShowIcon></nz-alert>
                     }
                     @if (!session) {
                         <div class="ad-chat-empty">
@@ -141,7 +141,7 @@
                                                 <a class="sys-card-head" (click)="toggle(i)">
                                                     <i class="fa fa-file-text-o"></i>
                                                     <b>{{ t('prompt') }}</b>
-                                                    <span class="ad-muted">{{ detail.requirement.code }} · v{{ detail.version }}</span>
+                                                    <span class="ad-muted">{{ detail.requirement.code }}</span>
                                                     <span class="ad-spacer"></span>
                                                     <span class="ad-muted">{{ open[i] ? t('collapse') : t('view') }}</span>
                                                     <i class="fa ad-muted" [ngClass]="open[i] ? 'fa-angle-up' : 'fa-angle-down'"></i>
@@ -202,7 +202,7 @@
                                     }
                                     @case ('error') {
                                         <div class="bubble-wrap is-model is-sub">
-                                            <div class="bubble-content"><nz-alert nzType="error" nzShowIcon [nzMessage]="$any(b).text"></nz-alert></div>
+                                            <div class="bubble-content"><nz-alert nzType="error" [nzMessage]="$any(b).text" nzShowIcon></nz-alert></div>
                                         </div>
                                     }
                                 }
@@ -228,27 +228,48 @@
             } @else {
                 <div class="ad-body">
                     @if (detail.requirement.statusMessage) {
-                        <nz-alert class="ad-gap" [nzType]="detail.requirement.stage === 'FAILED' ? 'error' : 'warning'" nzShowIcon
-                                  [nzMessage]="detail.requirement.statusMessage"></nz-alert>
+                        <nz-alert class="ad-gap" [nzType]="detail.requirement.stage === 'FAILED' ? 'error' : 'warning'"
+                                  [nzMessage]="detail.requirement.statusMessage" nzShowIcon></nz-alert>
+                    }
+
+                    @if (rejection(); as rj) {
+                        <nz-alert nzType="error" [nzMessage]="t('review.rejected_by').replace('{0}', rj.reviewer || '')" [nzDescription]="rj.comment" nzShowIcon></nz-alert>
                     }
 
                     @if (view === 'review') {
-                        @if (detail.version > 0) {
-                            <nz-alert class="ad-gap" nzType="success" nzShowIcon
-                                      [nzMessage]="(detail.requirement.reviewer || '') + ' ' + t('approved') + ' v' + detail.version"
-                                      [nzDescription]="t('approved_hint')"></nz-alert>
+                        @if (stepState('review') === 'done') {
+                            <nz-alert class="ad-gap" nzType="success"
+                                      [nzMessage]="(detail.requirement.reviewer || '') + ' ' + t('approved')" nzShowIcon></nz-alert>
                         } @else if (detail.requirement.stage === 'REVIEW') {
-                            <nz-alert class="ad-gap" nzType="warning" nzShowIcon [nzMessage]="t('waiting_review')"
-                                      [nzDescription]="detail.canApprove ? t('review_hint') : t('review_wait_hint')"></nz-alert>
+                            <nz-alert class="ad-gap" nzType="warning" [nzMessage]="t('waiting_review')"
+                                      [nzDescription]="detail.canApprove ? t('review_hint') : t('review_wait_hint')" nzShowIcon></nz-alert>
                         } @else {
-                            <nz-alert class="ad-gap" nzType="info" nzShowIcon [nzMessage]="t('not_submitted')" [nzDescription]="t('submit_hint')"></nz-alert>
+                            <nz-alert class="ad-gap" nzType="info" [nzMessage]="t('not_submitted')" [nzDescription]="t('submit_hint')" nzShowIcon></nz-alert>
                         }
+                    }
+
+                    @if (view === 'review' && detail.reviews.length) {
+                        <nz-card [nzBordered]="false" [nzTitle]="t('review.history')">
+                            <nz-timeline class="ad-reviews">
+                                @for (rv of detail.reviews; track $index) {
+                                    <nz-timeline-item [nzColor]="rv.decision === 'APPROVED' ? 'green' : 'red'">
+                                        <div class="rv-head">
+                                            <b>{{ t('review.' + rv.decision) }}</b>
+                                            <span class="ad-muted">{{ rv.reviewer || '' }} · {{ rv.reviewedAt | date: 'yyyy-MM-dd HH:mm' }}</span>
+                                        </div>
+                                        @if (rv.comment) {
+                                            <div class="rv-comment">{{ rv.comment }}</div>
+                                        }
+                                    </nz-timeline-item>
+                                }
+                            </nz-timeline>
+                        </nz-card>
                     }
 
                     @if (view === 'define' || view === 'review') {
                         <nz-card [nzBordered]="false" [nzTitle]="docTitle" [nzExtra]="docExtra">
                             <ng-template #docTitle>
-                                {{ t('description') }} <nz-tag class="ad-ver">v{{ detail.version }}</nz-tag>
+                                {{ t('description') }}
                                 <span class="ad-muted ad-small">{{ t('updated') }} {{ detail.requirement.updateTime | date: 'yyyy-MM-dd HH:mm' }}</span>
                             </ng-template>
                             <ng-template #docExtra>
@@ -286,7 +307,7 @@
                         </div>
                     }
                     @if (view === 'deliver' && reached('deliver')) {
-                        <div class="ad-stats ad-gap">
+                        <div class="ad-stats">
                             <div>
                                 <nz-card [nzBordered]="false" class="stat-card">
                                     <nz-statistic [nzValue]="detail.sessions.length" [nzTitle]="t('sessions')" [nzPrefix]="i1"></nz-statistic>
@@ -302,27 +323,27 @@
                             </div>
                             <div>
                                 <nz-card [nzBordered]="false" class="stat-card">
-                                    <nz-statistic [nzValue]="compact(totalTokens()) || '—'" nzTitle="Token" [nzPrefix]="i3"></nz-statistic>
+                                    <nz-statistic [nzValue]="compact(totalTokens()) || '—'" [nzValueTemplate]="plainValue" nzTitle="Token" [nzPrefix]="i3"></nz-statistic>
                                     <ng-template #i3><i class="fa fa-database stat-icon cyan"></i></ng-template>
                                 </nz-card>
                             </div>
                             <div>
                                 <nz-card [nzBordered]="false" class="stat-card">
                                     <!-- formatted here: nz-statistic would split the text at its decimal point -->
-                                    <nz-statistic [nzValue]="money(totalCost())" [nzValueTemplate]="costValue" [nzTitle]="t('cost')" [nzPrefix]="i4"
+                                    <nz-statistic [nzValue]="money(totalCost())" [nzValueTemplate]="plainValue" [nzTitle]="t('cost')" [nzPrefix]="i4"
                                                   [title]="t('cost_hint')"></nz-statistic>
-                                    <ng-template #costValue let-v>{{ v }}</ng-template>
+                                    <ng-template #plainValue let-v>{{ v }}</ng-template>
                                     <ng-template #i4><i class="fa fa-credit-card stat-icon orange"></i></ng-template>
                                 </nz-card>
                             </div>
                         </div>
 
                         @if (detail.requirement.verdict) {
-                            <nz-alert class="ad-gap" [nzType]="detail.requirement.verdict.startsWith('PASS') ? 'success' : 'error'" nzShowIcon
-                                      [nzMessage]="t('verdict') + (detail.qaAgent ? ' · ' + detail.qaAgent : '')" [nzDescription]="detail.requirement.verdict"></nz-alert>
+                            <nz-alert class="ad-gap" [nzType]="detail.requirement.verdict.startsWith('PASS') ? 'success' : 'error'"
+                                      [nzMessage]="t('verdict') + (detail.qaAgent ? ' · ' + detail.qaAgent : '')" [nzDescription]="detail.requirement.verdict" nzShowIcon></nz-alert>
                         }
                         @if (detail.requirement.stage === 'ACCEPTANCE') {
-                            <nz-alert class="ad-gap" nzType="info" nzShowIcon [nzMessage]="t('next_title')" [nzDescription]="nextHint"></nz-alert>
+                            <nz-alert nzType="info" nzShowIcon [nzMessage]="t('next_title')" [nzDescription]="nextHint"></nz-alert>
                             <ng-template #nextHint>
                                 {{ detail.canReview ? t('next_hint') : t('review_wait_hint') }}
                                 @if (can('rework')) {
@@ -331,7 +352,13 @@
                             </ng-template>
                         }
 
-                        <nz-card class="ad-gap" [nzBordered]="false" [nzTitle]="t('changes')" [nzBodyStyle]="{padding: '0'}">
+                        <nz-card class="ad-gap" [nzBordered]="false" [nzTitle]="t('changes')" [nzExtra]="layoutPick" [nzBodyStyle]="{padding: '0'}">
+                            <ng-template #layoutPick>
+                                <nz-radio-group nzSize="small" [ngModel]="diffLayout" (ngModelChange)="setDiffLayout($event)">
+                                    <label nz-radio-button nzValue="unified" [title]="t('diff.unified')"><i class="fa fa-bars"></i> {{ t('diff.unified') }}</label>
+                                    <label nz-radio-button nzValue="split" [title]="t('diff.split')"><i class="fa fa-columns"></i> {{ t('diff.split') }}</label>
+                                </nz-radio-group>
+                            </ng-template>
                             @if (!diffs) {
                                 <div class="ad-empty sm"><nz-spin nzSimple></nz-spin></div>
                             }
@@ -356,11 +383,32 @@
                                         @if (d.truncated) {
                                             <nz-alert nzType="warning" [nzMessage]="t('diff_truncated')" nzBanner></nz-alert>
                                         }
-                                        <div class="ad-diff">
-                                            @for (l of d.lines; track $index) {
-                                                <div class="dl" [ngClass]="'dl-' + l.kind">{{ l.text }}</div>
-                                            }
-                                        </div>
+                                        @if (diffLayout === 'split') {
+                                            <div class="ad-diff ad-split">
+                                                @for (r of d.rows; track $index) {
+                                                    @if (r.kind === 'pair') {
+                                                        <div class="sl">
+                                                            <span class="ln">{{ r.left?.old }}</span>
+                                                            <span class="lt" [class.dl-del]="r.left?.kind === 'del'" [class.sl-none]="!r.left">{{ r.left?.text }}</span>
+                                                            <span class="ln">{{ r.right?.new }}</span>
+                                                            <span class="lt" [class.dl-add]="r.right?.kind === 'add'" [class.sl-none]="!r.right">{{ r.right?.text }}</span>
+                                                        </div>
+                                                    } @else {
+                                                        <div class="dl" [ngClass]="'dl-' + r.kind">{{ r.text }}</div>
+                                                    }
+                                                }
+                                            </div>
+                                        } @else {
+                                            <div class="ad-diff">
+                                                @for (l of d.lines; track $index) {
+                                                    @if (l.kind === 'file' || l.kind === 'hunk') {
+                                                        <div class="dl" [ngClass]="'dl-' + l.kind">{{ l.text }}</div>
+                                                    } @else {
+                                                        <div class="dl ul" [ngClass]="'dl-' + l.kind"><span class="ln">{{ l.old }}</span><span class="ln">{{ l.new }}</span><span>{{ l.kind === 'add' ? '+' : l.kind === 'del' ? '-' : ' ' }}{{ l.text }}</span></div>
+                                                    }
+                                                }
+                                            </div>
+                                        }
                                     }
                                 </div>
                             }
@@ -417,7 +465,6 @@
             <section>
                 <div class="ad-side-title">{{ t('info') }}</div>
                 <div class="ad-kv"><span>{{ t('status') }}</span><nz-tag [nzColor]="stageColor(detail.requirement.stage)">{{ t('stage.' + detail.requirement.stage) }}</nz-tag></div>
-                <div class="ad-kv"><span>{{ t('version') }}</span><b>v{{ detail.version }} · {{ detail.version > 0 ? t('approved_tag') : t('not_approved') }}</b></div>
                 <div class="ad-kv"><span>{{ t('priority') }}</span><b>{{ t('priority.' + detail.requirement.priority) }}</b></div>
                 <div class="ad-kv"><span>{{ t('project') }}</span><b>{{ detail.projectName }}</b></div>
                 <div class="ad-kv"><span>{{ t('repos') }}</span><b>@for (a of detail.requirement.repos; track a) {<nz-tag>{{ a }}</nz-tag>}</b></div>
@@ -482,3 +529,12 @@
         </aside>
     </div>
 }
+
+<nz-modal [nzVisible]="!!reviewing" [nzTitle]="reviewing ? t('act.' + reviewing) : ''" (nzOnCancel)="reviewing = null"
+          [nzOkText]="reviewing ? t('act.' + reviewing) : ''" [nzOkDanger]="reviewing === 'reject'"
+          [nzOkDisabled]="reviewing === 'reject' && !reviewComment.trim()" (nzOnOk)="confirmReview()">
+    <ng-container *nzModalContent>
+        <textarea nz-input rows="5" [(ngModel)]="reviewComment"
+                  [placeholder]="reviewing === 'reject' ? t('review.reason_hint') : t('review.note_hint')"></textarea>
+    </ng-container>
+</nz-modal>
