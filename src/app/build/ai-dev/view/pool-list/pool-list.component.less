@@ -167,7 +167,9 @@
 }
 
 .ad-repo {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
     margin: 1px 4px 1px 0;
     padding: 0 6px;
     line-height: 20px;
@@ -385,4 +387,33 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
+}
+
+// a repository's delivery: pushed in green, a failed push in red, nothing yet as it was
+.ad-repo.d-PUSHED {
+    color: #389e0d;
+    background: rgba(82, 196, 26, 0.08);
+    border-color: rgba(82, 196, 26, 0.4);
+}
+
+.ad-repo.d-CONFLICT, .ad-repo.d-REJECTED, .ad-repo.d-FAILED {
+    color: #cf1322;
+    background: rgba(255, 77, 79, 0.08);
+    border-color: rgba(255, 77, 79, 0.4);
+}
+
+.ad-repo .fa {
+    font-size: 10px;
+}
+
+.ad-ops {
+    white-space: nowrap;
+
+    a + a {
+        margin-left: 12px;
+    }
+
+    .ad-danger {
+        color: #ff4d4f;
+    }
 }

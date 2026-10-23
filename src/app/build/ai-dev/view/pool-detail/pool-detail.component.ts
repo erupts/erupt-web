@@ -11,7 +11,7 @@ import {Status} from '../../../erupt/model/erupt-api.model';
 import {AiDevService, DevDetail, DevEvent, DevRepoDiff, DevSession, Stage, DevWorkspace} from '../../ai-dev.service';
 import {avatarTone, compact, duration, initial, PHASES, Step, stepOf, STEPS, stepState, StepState} from '../../ai-dev.util';
 
-type Action = 'submit' | 'approve' | 'reject' | 'stop' | 'retry' | 'rework' | 'deliver' | 'cancel' | 'cleanup';
+type Action = 'submit' | 'approve' | 'reject' | 'stop' | 'retry' | 'rework' | 'deliver' | 'cancel' | 'cleanup' | 'delete';
 
 /** One tool call of the agent with what came back. */
 interface ToolCall {
@@ -159,6 +159,20 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
     loadWorkspace(): void {
         this.api.workspace(this.id).subscribe(res => {
             if (res && res.status === Status.SUCCESS) this.workspaces = res.data || [];
+        });
+    }
+
+    remove(): void {
+        if (!this.detail || this.busy) return;
+        this.busy = true;
+        this.data.deleteEruptData(AiDevService.erupt, this.detail.requirement.id).subscribe({
+            next: res => {
+                this.busy = false;
+                if (!this.ok(res)) return;
+                this.msg.success(this.t('deleted').replace('{0}', this.detail!.requirement.code));
+                this.back();
+            },
+            error: () => this.busy = false
         });
     }
 
@@ -458,6 +472,8 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
                 return stage === 'ACCEPTANCE' && review;
             case 'cancel':
                 return !['DELIVERED', 'CANCELLED', 'RUNNING', 'VERIFYING'].includes(stage);
+            case 'delete':
+                return !['QUEUED', 'RUNNING', 'VERIFYING', 'DELIVERED'].includes(stage);
             case 'cleanup':
                 return ['DRAFT', 'REVIEW', 'FAILED', 'CANCELLED'].includes(stage) && this.workspaces.some(w => w.exists);
         }
