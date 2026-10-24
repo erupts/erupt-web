@@ -153,7 +153,22 @@
 
 .ad-gap {
     display: block;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
+}
+
+// the blocks of a step stack with one even gap, whatever each of them is
+.ad-body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    > * {
+        flex-shrink: 0;
+    }
+
+    > .ad-gap {
+        margin-bottom: 0;
+    }
 }
 
 .ad-small {
@@ -162,10 +177,7 @@
     font-weight: normal;
 }
 
-.ad-ver {
-    margin-left: 6px;
-    font-weight: normal;
-}
+
 
 .ad-doc {
     margin: 0;
@@ -489,10 +501,25 @@
 .ad-stats {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
+    gap: 12px;
 }
 
 .stat-card {
+
+    margin-bottom: 0px;
+
+    ::ng-deep .ant-card-body {
+        padding: 12px 16px;
+    }
+
+    ::ng-deep .ant-statistic-title {
+        margin-bottom: 2px;
+    }
+
+    ::ng-deep .ant-statistic-content {
+        line-height: 32px;
+    }
+
     ::ng-deep .ant-statistic-title {
         font-size: 13px;
         color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
@@ -581,6 +608,48 @@
 
     .dl-del {
         background: rgba(255, 77, 79, 0.12);
+    }
+
+    .ln {
+        display: inline-block;
+        min-width: 40px;
+        padding-right: 8px;
+        text-align: right;
+        color: var(--ant-text-color-secondary, rgba(0, 0, 0, 0.45));
+        user-select: none;
+    }
+
+    .dl.ul {
+        padding-left: 0;
+    }
+}
+
+// side by side: base on the left, branch on the right, long lines wrap so both halves stay aligned
+.ad-diff.ad-split {
+    .sl {
+        display: grid;
+        grid-template-columns: 48px minmax(0, 1fr) 48px minmax(0, 1fr);
+        line-height: 20px;
+    }
+
+    .lt {
+        white-space: pre-wrap;
+        word-break: break-all;
+        padding: 0 8px;
+        min-height: 20px;
+    }
+
+    .lt:nth-child(2) {
+        border-right: 1px solid var(--ant-border-color-split);
+    }
+
+    .ln {
+        min-width: 0;
+        background: var(--erupt-bg-spotlight, #fafafa);
+    }
+
+    .sl-none {
+        background: repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(0, 0, 0, 0.03) 4px, rgba(0, 0, 0, 0.03) 8px);
     }
 }
 
@@ -788,4 +857,26 @@
 .ad-ws-path {
     margin: 2px 0 0 12px;
     word-break: break-all;
+}
+
+.ad-reviews {
+    padding-top: 4px;
+
+    ::ng-deep .ant-timeline-item:last-child {
+        padding-bottom: 0;
+    }
+
+    .rv-head {
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+        flex-wrap: wrap;
+    }
+
+    .rv-comment {
+        margin-top: 4px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+    }
 }

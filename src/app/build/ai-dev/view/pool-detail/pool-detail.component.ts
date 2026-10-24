@@ -8,7 +8,7 @@ import {I18NService} from '@core';
 import {DataService} from '@shared/service/data.service';
 import {ScopeService, ScopeStore} from '@shared/service/scope.service';
 import {Status} from '../../../erupt/model/erupt-api.model';
-import {AiDevService, DevDetail, DevEvent, DevRepoDiff, DevSession, Stage, DevWorkspace} from '../../ai-dev.service';
+import {AiDevService, DevDetail, DevEvent, DevRepoDiff, DevReview, DevSession, Stage, DevWorkspace} from '../../ai-dev.service';
 import {avatarTone, compact, duration, initial, PHASES, Step, stepOf, STEPS, stepState, StepState} from '../../ai-dev.util';
 
 type Action = 'submit' | 'approve' | 'reject' | 'stop' | 'retry' | 'rework' | 'deliver' | 'cancel' | 'cleanup' | 'delete';
@@ -32,7 +32,20 @@ type Block =
 interface DiffLine {
     kind: 'file' | 'hunk' | 'add' | 'del' | 'ctx';
     text: string;
+    // line numbers in the base and in the branch, where the line exists
+    old?: number;
+    new?: number;
 }
+
+// one row of the side-by-side view: a file or hunk header across both sides, or the base line beside the branch line
+interface SplitRow {
+    kind: 'file' | 'hunk' | 'pair';
+    text?: string;
+    left?: DiffLine;
+    right?: DiffLine;
+}
+
+const DIFF_LAYOUT_KEY = 'erupt-ai-dev.diff.layout';
 
 const ACTIVE: Stage[] = ['QUEUED', 'RUNNING', 'VERIFYING'];
 
@@ -65,11 +78,18 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
     private lastSeq = 0;
     private eventsSub: Subscription | null = null;
 
-    diffs: (DevRepoDiff & { lines: DiffLine[], expanded: boolean })[] | null = null;
+    diffs: (DevRepoDiff & { lines: DiffLine[], rows: SplitRow[], expanded: boolean })[] | null = null;
+
+    diffLayout: 'unified' | 'split' = 'unified';
     message = '';
     busy = false;
 
     editing = false;
+
+
+    // approve or reject waiting for the reviewer's comment, required to reject
+    reviewing: 'approve' | 'reject' | null = null;
+    reviewComment = '';
     draft = {title: '', description: ''};
 
     private destroy$ = new Subject<void>();
@@ -96,6 +116,11 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        try {
+            if (localStorage.getItem(DIFF_LAYOUT_KEY) === 'split') this.diffLayout = 'split';
+        } catch {
+            // storage may be blocked: unified it is
+        }
         this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
             this.id = Number(params.get('id'));
             this.detail = null;
@@ -295,7 +320,10 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
     loadDiff(): void {
         this.api.diff(this.id).subscribe(res => {
             if (!this.ok(res)) return;
-            const diffs = (res.data as DevRepoDiff[]).map(d => ({...d, lines: PoolDetailComponent.parseDiff(d.patch), expanded: false}));
+            const diffs = (res.data as DevRepoDiff[]).map(d => {
+                const lines = PoolDetailComponent.parseDiff(d.patch);
+                return {...d, lines, rows: PoolDetailComponent.splitRows(lines), expanded: false};
+            });
             // small changes open right away: nothing to click through for a few lines
             const total = diffs.reduce((a, d) => a + d.lines.length, 0);
             if (total <= 400) diffs.forEach(d => d.expanded = d.lines.length > 0);
@@ -311,14 +339,54 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
 
     static parseDiff(patch: string): DiffLine[] {
         if (!patch) return [];
-        return patch.split('\n').map(text => {
+        let oldNo = 0, newNo = 0;
+        return patch.split('\n').map((text): DiffLine | null => {
             if (text.startsWith('diff --git')) return {kind: 'file', text: text.replace(/^diff --git a\/(\S+) b\/\S+$/, '$1')};
-            if (text.startsWith('@@')) return {kind: 'hunk', text};
+            if (text.startsWith('@@')) {
+                const m = /^@@ -(\d+)(?:,\d+)? \+(\d+)/.exec(text);
+                if (m) [oldNo, newNo] = [+m[1], +m[2]];
+                return {kind: 'hunk', text};
+            }
             if (text.startsWith('+++') || text.startsWith('---') || text.startsWith('index ')) return null;
-            if (text.startsWith('+')) return {kind: 'add', text: text.slice(1)};
-            if (text.startsWith('-')) return {kind: 'del', text: text.slice(1)};
-            return {kind: 'ctx', text: text.startsWith(' ') ? text.slice(1) : text};
+            if (text.startsWith('+')) return {kind: 'add', text: text.slice(1), new: newNo++};
+            if (text.startsWith('-')) return {kind: 'del', text: text.slice(1), old: oldNo++};
+            // "\ No newline at end of file" and other notes carry no line of their own
+            if (text.startsWith('\\')) return {kind: 'ctx', text};
+            return {kind: 'ctx', text: text.startsWith(' ') ? text.slice(1) : text, old: oldNo++, new: newNo++};
         }).filter((l): l is DiffLine => !!l);
+    }
+
+    // removed lines sit beside the added lines that replace them, in order; context lines on both sides
+    static splitRows(lines: DiffLine[]): SplitRow[] {
+        const rows: SplitRow[] = [];
+        let dels: DiffLine[] = [], adds: DiffLine[] = [];
+        const flush = () => {
+            for (let i = 0; i < Math.max(dels.length, adds.length); i++) rows.push({kind: 'pair', left: dels[i], right: adds[i]});
+            dels = [];
+            adds = [];
+        };
+        for (const l of lines) {
+            if (l.kind === 'del') {
+                if (adds.length) flush();
+                dels.push(l);
+            } else if (l.kind === 'add') {
+                adds.push(l);
+            } else {
+                flush();
+                rows.push(l.kind === 'ctx' ? {kind: 'pair', left: l, right: l} : {kind: l.kind, text: l.text});
+            }
+        }
+        flush();
+        return rows;
+    }
+
+    setDiffLayout(layout: 'unified' | 'split'): void {
+        this.diffLayout = layout;
+        try {
+            localStorage.setItem(DIFF_LAYOUT_KEY, layout);
+        } catch {
+            // not remembered then
+        }
     }
 
     // ------------------------------------------------------------------ steps & progress
@@ -396,7 +464,7 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
         const d = this.detail!, r = d.requirement, state = this.stepState(step);
         switch (step) {
             case 'define':
-                return 'v' + d.version + ' · ' + (r.createBy || '');
+                return r.createBy || '';
             case 'review':
                 if (state === 'done') return this.t('hint.approved').replace('{0}', r.reviewer || '');
                 if (state === 'current') return this.t('hint.waiting').replace('{0}', r.reviewer || this.t('reviewer'));
@@ -496,6 +564,24 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
             },
             error: () => this.busy = false
         });
+    }
+
+    review(action: 'approve' | 'reject'): void {
+        this.reviewComment = '';
+        this.reviewing = action;
+    }
+
+    confirmReview(): void {
+        const action = this.reviewing;
+        if (!action || (action === 'reject' && !this.reviewComment.trim())) return;
+        this.reviewing = null;
+        this.act(action, {comment: this.reviewComment.trim()});
+    }
+
+    // the reason it came back to draft, while nothing newer happened to it
+    rejection(): DevReview | null {
+        const last = this.detail?.reviews[0];
+        return last && last.decision === 'REJECTED' && this.detail!.requirement.stage === 'DRAFT' ? last : null;
     }
 
     // a follow-up continues the agent's session: a retry after a failure, requested changes after a run

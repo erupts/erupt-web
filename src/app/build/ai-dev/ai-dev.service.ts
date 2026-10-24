@@ -70,7 +70,6 @@ export interface DevDelivery {
 export interface DevDetail {
     requirement: DevRow;
     description: string | null;
-    version: number;
     projectId: number;
     projectName: string;
     qaAgent: string | null;
@@ -80,6 +79,16 @@ export interface DevDetail {
     // approve / reject: a reviewer, and not the creator unless the project allows self review
     canApprove: boolean;
     executorEnabled: boolean;
+    // every approval and rejection, newest first
+    reviews: DevReview[];
+}
+
+export interface DevReview {
+    decision: 'APPROVED' | 'REJECTED';
+    comment: string | null;
+    reviewer: string | null;
+    reviewerAvatar: string | null;
+    reviewedAt: string;
 }
 
 /** One repository of a requirement's workspace on the server; path only for super admins. */
