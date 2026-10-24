@@ -377,36 +377,69 @@
                                         }
                                     </a>
                                     @if (d.expanded) {
-                                        @if (!d.lines.length) {
+                                        @if (!d.lineCount) {
                                             <div class="ad-empty sm">{{ t('no_changes') }}</div>
                                         }
                                         @if (d.truncated) {
                                             <nz-alert nzType="warning" [nzMessage]="t('diff_truncated')" nzBanner></nz-alert>
                                         }
-                                        @if (diffLayout === 'split') {
-                                            <div class="ad-diff ad-split">
-                                                @for (r of d.rows; track $index) {
-                                                    @if (r.kind === 'pair') {
-                                                        <div class="sl">
-                                                            <span class="ln">{{ r.left?.old }}</span>
-                                                            <span class="lt" [class.dl-del]="r.left?.kind === 'del'" [class.sl-none]="!r.left">{{ r.left?.text }}</span>
-                                                            <span class="ln">{{ r.right?.new }}</span>
-                                                            <span class="lt" [class.dl-add]="r.right?.kind === 'add'" [class.sl-none]="!r.right">{{ r.right?.text }}</span>
+                                        @if (d.lineCount) {
+                                            <div class="ad-diff-wrap">
+                                                @if (d.fileDiffs.length > 1) {
+                                                    <div class="ad-files">
+                                                        @if (d.fileDiffs.length > 8) {
+                                                            <div class="ad-files-filter">
+                                                                <input nz-input nzSize="small" [(ngModel)]="d.filter" [placeholder]="t('diff.filter')">
+                                                            </div>
+                                                        }
+                                                        @for (it of shownFiles(d); track it.i) {
+                                                            <a class="ad-file" [class.active]="d.active === it.i" [title]="it.f.path" (click)="jumpTo(d, it.i, box)">
+                                                                <span class="ad-file-name">
+                                                                    <b>{{ fileName(it.f.path) }}</b>
+                                                                    @if (fileDir(it.f.path)) {
+                                                                        <span class="ad-muted">{{ fileDir(it.f.path) }}</span>
+                                                                    }
+                                                                </span>
+                                                                <span class="ad-file-count"><span class="c-add">+{{ it.f.add }}</span><span class="c-del">-{{ it.f.del }}</span></span>
+                                                            </a>
+                                                        }
+                                                    </div>
+                                                }
+                                                <div #box class="ad-diff" [class.ad-split]="diffLayout === 'split'" (scroll)="spy(d, box)">
+                                                    @for (f of d.fileDiffs; track $index; let i = $index) {
+                                                        <section class="dl-section" [attr.data-file]="i">
+                                                        <div class="dl dl-file" (click)="f.collapsed = !f.collapsed">
+                                                            <i class="fa ad-muted" [ngClass]="f.collapsed ? 'fa-caret-right' : 'fa-caret-down'"></i>
+                                                            <span class="dl-path">{{ f.path }}</span>
+                                                            <span class="ad-file-count"><span class="c-add">+{{ f.add }}</span><span class="c-del">-{{ f.del }}</span></span>
                                                         </div>
-                                                    } @else {
-                                                        <div class="dl" [ngClass]="'dl-' + r.kind">{{ r.text }}</div>
+                                                        @if (!f.collapsed) {
+                                                            @if (diffLayout === 'split') {
+                                                                @for (r of f.rows; track $index) {
+                                                                    @if (r.kind === 'pair') {
+                                                                        <div class="sl">
+                                                                            <span class="ln">{{ r.left?.old }}</span>
+                                                                            <span class="lt" [class.dl-del]="r.left?.kind === 'del'" [class.sl-none]="!r.left">{{ r.left?.text }}</span>
+                                                                            <span class="ln">{{ r.right?.new }}</span>
+                                                                            <span class="lt" [class.dl-add]="r.right?.kind === 'add'" [class.sl-none]="!r.right">{{ r.right?.text }}</span>
+                                                                        </div>
+                                                                    } @else {
+                                                                        <div class="dl" [ngClass]="'dl-' + r.kind">{{ r.text }}</div>
+                                                                    }
+                                                                }
+                                                            } @else {
+                                                                @for (l of f.lines; track $index) {
+                                                                    @if (l.kind === 'hunk') {
+                                                                        <div class="dl dl-hunk">{{ l.text }}</div>
+                                                                    } @else {
+                                                                        <div class="dl ul" [ngClass]="'dl-' + l.kind"><span class="ln">{{ l.old }}</span><span class="ln">{{ l.new }}</span><span>{{ l.kind === 'add' ? '+' : l.kind === 'del' ? '-' : ' ' }}{{ l.text }}</span></div>
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        </section>
                                                     }
-                                                }
-                                            </div>
-                                        } @else {
-                                            <div class="ad-diff">
-                                                @for (l of d.lines; track $index) {
-                                                    @if (l.kind === 'file' || l.kind === 'hunk') {
-                                                        <div class="dl" [ngClass]="'dl-' + l.kind">{{ l.text }}</div>
-                                                    } @else {
-                                                        <div class="dl ul" [ngClass]="'dl-' + l.kind"><span class="ln">{{ l.old }}</span><span class="ln">{{ l.new }}</span><span>{{ l.kind === 'add' ? '+' : l.kind === 'del' ? '-' : ' ' }}{{ l.text }}</span></div>
-                                                    }
-                                                }
+                                                </div>
                                             </div>
                                         }
                                     }

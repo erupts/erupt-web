@@ -45,6 +45,18 @@ interface SplitRow {
     right?: DiffLine;
 }
 
+// one file of a repository's diff, in both layouts, with its line counts for the file list
+interface FileDiff {
+    path: string;
+    lines: DiffLine[];
+    rows: SplitRow[];
+    add: number;
+    del: number;
+    collapsed: boolean;
+}
+
+type RepoDiffView = DevRepoDiff & { fileDiffs: FileDiff[], lineCount: number, expanded: boolean, active: number, filter: string };
+
 const DIFF_LAYOUT_KEY = 'erupt-ai-dev.diff.layout';
 
 const ACTIVE: Stage[] = ['QUEUED', 'RUNNING', 'VERIFYING'];
@@ -78,7 +90,7 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
     private lastSeq = 0;
     private eventsSub: Subscription | null = null;
 
-    diffs: (DevRepoDiff & { lines: DiffLine[], rows: SplitRow[], expanded: boolean })[] | null = null;
+    diffs: RepoDiffView[] | null = null;
 
     diffLayout: 'unified' | 'split' = 'unified';
     message = '';
@@ -320,13 +332,13 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
     loadDiff(): void {
         this.api.diff(this.id).subscribe(res => {
             if (!this.ok(res)) return;
-            const diffs = (res.data as DevRepoDiff[]).map(d => {
-                const lines = PoolDetailComponent.parseDiff(d.patch);
-                return {...d, lines, rows: PoolDetailComponent.splitRows(lines), expanded: false};
+            const diffs: RepoDiffView[] = (res.data as DevRepoDiff[]).map(d => {
+                const fileDiffs = PoolDetailComponent.byFile(PoolDetailComponent.parseDiff(d.patch));
+                return {...d, fileDiffs, lineCount: fileDiffs.reduce((a, f) => a + f.lines.length, 0), expanded: false, active: 0, filter: ''};
             });
             // small changes open right away: nothing to click through for a few lines
-            const total = diffs.reduce((a, d) => a + d.lines.length, 0);
-            if (total <= 400) diffs.forEach(d => d.expanded = d.lines.length > 0);
+            const total = diffs.reduce((a, d) => a + d.lineCount, 0);
+            if (total <= 400) diffs.forEach(d => d.expanded = d.lineCount > 0);
             this.diffs = diffs;
         });
     }
@@ -354,6 +366,57 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
             if (text.startsWith('\\')) return {kind: 'ctx', text};
             return {kind: 'ctx', text: text.startsWith(' ') ? text.slice(1) : text, old: oldNo++, new: newNo++};
         }).filter((l): l is DiffLine => !!l);
+    }
+
+    // the patch cut at each file header; the header itself is drawn by the page
+    static byFile(lines: DiffLine[]): FileDiff[] {
+        const files: FileDiff[] = [];
+        for (const l of lines) {
+            if (l.kind === 'file') {
+                files.push({path: l.text, lines: [], rows: [], add: 0, del: 0, collapsed: false});
+                continue;
+            }
+            if (!files.length) continue;
+            const f = files[files.length - 1];
+            f.lines.push(l);
+            if (l.kind === 'add') f.add++;
+            if (l.kind === 'del') f.del++;
+        }
+        files.forEach(f => f.rows = PoolDetailComponent.splitRows(f.lines));
+        return files;
+    }
+
+    shownFiles(d: RepoDiffView): { f: FileDiff, i: number }[] {
+        const q = d.filter.trim().toLowerCase();
+        return d.fileDiffs.map((f, i) => ({f, i})).filter(it => !q || it.f.path.toLowerCase().includes(q));
+    }
+
+    fileName(path: string): string {
+        return path.substring(path.lastIndexOf('/') + 1);
+    }
+
+    fileDir(path: string): string {
+        const i = path.lastIndexOf('/');
+        return i < 0 ? '' : path.substring(0, i);
+    }
+
+    // brings a file's header to the top of the repository's diff, opening it if it was folded
+    jumpTo(d: RepoDiffView, i: number, box: HTMLElement): void {
+        d.fileDiffs[i].collapsed = false;
+        d.active = i;
+        setTimeout(() => {
+            const head = box.querySelector<HTMLElement>('[data-file="' + i + '"]');
+            if (head) box.scrollTo({top: head.offsetTop, behavior: 'smooth'});
+        });
+    }
+
+    // the file list follows the diff: the last header scrolled past is the file being read
+    spy(d: RepoDiffView, box: HTMLElement): void {
+        let active = 0;
+        box.querySelectorAll<HTMLElement>('[data-file]').forEach(head => {
+            if (head.offsetTop <= box.scrollTop + 8) active = +head.dataset['file']!;
+        });
+        d.active = active;
     }
 
     // removed lines sit beside the added lines that replace them, in order; context lines on both sides
