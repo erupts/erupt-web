@@ -17,8 +17,10 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    min-height: 40px;
-    padding: 6px 15px;
+    // the same bar as erupt's table pages (and the pool list): 24px of content, 39px in all
+    box-sizing: border-box;
+    min-height: 39px;
+    padding: 7px 15px;
     background: var(--erupt-bg-container, #fff);
     border-bottom: 1px solid var(--ant-border-color-split);
 
@@ -27,6 +29,8 @@
         align-items: center;
         gap: 8px;
         min-width: 0;
+        height: 24px;
+        line-height: 24px;
         font-size: 14px;
         font-weight: 600;
         color: var(--erupt-text, rgba(0, 0, 0, 0.85));

@@ -227,3 +227,162 @@
         text-overflow: ellipsis;
     }
 }
+
+/* board: one column per status, cards like the requirement page's own summary */
+.ad-board {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(220px, 1fr));
+    gap: 12px;
+    align-items: start;
+    overflow-x: auto;
+}
+
+.ad-col {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border-radius: 8px;
+    border: 1px solid var(--ant-border-color-split);
+    background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.02));
+}
+
+.ad-col-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+
+    .ad-dot {
+        margin: 0;
+        vertical-align: 0;
+    }
+
+    em {
+        margin-left: auto;
+        font-style: normal;
+        font-size: 12px;
+        padding: 0 7px;
+        line-height: 18px;
+        border-radius: 9px;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+        background: var(--erupt-bg-container, #fff);
+    }
+}
+
+.ad-col-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 8px 8px;
+}
+
+.ad-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+    background: var(--erupt-bg-container, #fff);
+    border: 1px solid var(--ant-border-color-split);
+    transition: border-color .2s, box-shadow .2s;
+
+    &:hover {
+        color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+        border-color: var(--ant-primary-color, #1890ff);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    ::ng-deep .ant-progress {
+        margin: 0;
+        line-height: 1;
+    }
+}
+
+.ad-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ad-card-prio, .ad-card-flag {
+    margin: 0;
+    font-size: 11px;
+    line-height: 18px;
+}
+
+.ad-card-flag {
+    align-self: flex-start;
+}
+
+.ad-card-title {
+    font-weight: 500;
+    line-height: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+}
+
+.ad-card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
+}
+
+.ad-card-agent {
+    min-width: 0;
+    font-size: 12px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.ad-card-people {
+    flex-shrink: 0;
+    display: inline-flex;
+
+    nz-avatar + nz-avatar {
+        margin-left: -6px;
+        box-shadow: 0 0 0 2px var(--erupt-bg-container, #fff);
+    }
+}
+
+.ad-col-empty {
+    padding: 12px 0;
+    text-align: center;
+}
+
+.ad-col-more {
+    padding: 4px 0;
+    font-size: 12px;
+    text-align: center;
+}
+
+// the board's status badge, like the table's
+:host ::ng-deep .ad-card .ant-badge-status {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+
+    .ant-badge-status-dot {
+        top: 0;
+    }
+}
+
+.ad-agent-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.ad-card-agent {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}

@@ -38,6 +38,9 @@ export interface DevRow {
     reviewerAvatar: string | null;
     // model id the executor was given, null for its default
     model: string | null;
+    // executor code (claude, codex…) and the icon configured for it
+    executor: string;
+    executorIcon: string | null;
 }
 
 export interface DevSession {
@@ -75,6 +78,17 @@ export interface DevDetail {
     // approve / reject: a reviewer, and not the creator unless the project allows self review
     canApprove: boolean;
     executorEnabled: boolean;
+}
+
+/** One repository of a requirement's workspace on the server; path only for super admins. */
+export interface DevWorkspace {
+    alias: string;
+    branch: string;
+    base: string;
+    exists: boolean;
+    ahead: number;
+    changed: number;
+    path: string | null;
 }
 
 export interface DevEvent {
@@ -115,6 +129,10 @@ export class AiDevService {
     // the coding CLIs installed on the server and the one a new requirement starts with
     executors(project: number): Observable<EruptApiModel> {
         return this._http.get<EruptApiModel>(AiDevService.base + '/pool/executors', {project});
+    }
+
+    workspace(id: number): Observable<EruptApiModel> {
+        return this._http.get<EruptApiModel>(AiDevService.base + '/pool/requirement/' + id + '/workspace');
     }
 
     requirements(project: number): Observable<EruptApiModel> {

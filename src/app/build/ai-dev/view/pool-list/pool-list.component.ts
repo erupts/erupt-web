@@ -29,6 +29,11 @@ const ACTIVE: Stage[] = ['QUEUED', 'RUNNING', 'VERIFYING'];
 
 const PRIORITY = ['HIGH', 'MEDIUM', 'LOW'];
 
+const VIEW_KEY = 'erupt-ai-dev.pool.view';
+
+// finished columns would only grow: the latest first, the rest one click away
+const BOARD_LIMIT = 20;
+
 @Component({
     standalone: false,
     selector: 'app-ai-dev-pool-list',
@@ -49,13 +54,17 @@ export class PoolListComponent implements OnInit, OnDestroy {
     keyword = '';
     readonly tabs = ['all', ...GROUPS.map(g => g.key)];
     tab = 'all';
+    // table or board, remembered per browser
+    mode: 'table' | 'board' = 'table';
+    // board columns opened past their first cards
+    expanded: { [column: string]: boolean } = {};
     pageIndex = 1;
     pageSize = 20;
 
     creating = false;
     busy = false;
     form = {title: '', description: '', priority: 'MEDIUM', repos: [] as string[], executor: null as string | null, model: '', qaReview: false};
-    executors: { code: string, label: string, models: string[] }[] = [];
+    executors: { code: string, label: string, models: string[], icon: string | null }[] = [];
     // false: this instance runs no agent, so approved requirements wait in the queue
     executorEnabled = true;
 
@@ -71,6 +80,11 @@ export class PoolListComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        try {
+            if (localStorage.getItem(VIEW_KEY) === 'board') this.mode = 'board';
+        } catch {
+            // storage may be blocked: the table it is
+        }
         this.title.setTitle(this.t('pool'));
         this.scope.ready().subscribe(() => this.api.projects().subscribe(res => {
             if (!this.ok(res)) return;
@@ -151,6 +165,27 @@ export class PoolListComponent implements OnInit, OnDestroy {
 
     get size(): 'small' | 'middle' | 'default' {
         return this.settings.layout['tableSize'] || 'small';
+    }
+
+    setMode(mode: 'table' | 'board'): void {
+        this.mode = mode;
+        try {
+            localStorage.setItem(VIEW_KEY, mode);
+        } catch {
+            // not remembered then
+        }
+    }
+
+    // the board: one column per status but cancelled, the toolbar filters applied, the most urgent first
+    boardColumns(): { key: string, rows: DevRow[], shown: DevRow[] }[] {
+        const rows = this.filtered();
+        return GROUPS.filter(g => g.key !== 'cancelled').map(g => {
+            const inColumn = rows.filter(r => g.stages.includes(r.stage)).sort((a, b) =>
+                PRIORITY.indexOf(a.priority) - PRIORITY.indexOf(b.priority) || b.updateTime.localeCompare(a.updateTime));
+            const finished = g.key === 'delivered';
+            const sorted = finished ? [...inColumn].sort((a, b) => b.updateTime.localeCompare(a.updateTime)) : inColumn;
+            return {key: g.key, rows: sorted, shown: this.expanded[g.key] ? sorted : sorted.slice(0, BOARD_LIMIT)};
+        });
     }
 
     priorityColor(p: string): string {
