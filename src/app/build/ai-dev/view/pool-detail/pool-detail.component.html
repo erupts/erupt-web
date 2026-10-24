@@ -41,7 +41,7 @@
                 <button nz-button nzType="primary" nzSize="small" [nzLoading]="busy" nz-popconfirm [nzPopconfirmTitle]="t('confirm_deliver')"
                         (nzOnConfirm)="act('deliver')"><i class="fa fa-upload"></i><span>{{ t('act.deliver') }}</span></button>
             }
-            @if (can('cancel') || can('cleanup')) {
+            @if (can('cancel') || can('cleanup') || can('delete')) {
                 <button nz-button nzSize="small" nz-dropdown [nzDropdownMenu]="more" nzTrigger="click" nzPlacement="bottomRight"><i class="fa fa-ellipsis-h"></i></button>
                 <nz-dropdown-menu #more="nzDropdownMenu">
                     <ul nz-menu>
@@ -52,6 +52,11 @@
                         @if (can('cancel')) {
                             <li nz-menu-item nz-popconfirm [nzPopconfirmTitle]="t('confirm_cancel')" (nzOnConfirm)="act('cancel')">
                                 <i class="fa fa-ban"></i>&nbsp; {{ t('act.cancel') }}</li>
+                        }
+                        @if (can('delete')) {
+                            <li nz-menu-item nzDanger nz-popconfirm nzOkDanger
+                                [nzPopconfirmTitle]="t('confirm_delete').replace('{0}', detail.requirement.code)" (nzOnConfirm)="remove()">
+                                <i class="fa fa-trash-o"></i>&nbsp; {{ t('act.delete') }}</li>
                         }
                     </ul>
                 </nz-dropdown-menu>

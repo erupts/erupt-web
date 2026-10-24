@@ -41,6 +41,8 @@ export interface DevRow {
     // executor code (claude, codex…) and the icon configured for it
     executor: string;
     executorIcon: string | null;
+    // the latest delivery of each repository, by alias; empty until delivered
+    deliveries: { [alias: string]: { status: DevDelivery['status'], branch: string, message: string | null } };
 }
 
 export interface DevSession {

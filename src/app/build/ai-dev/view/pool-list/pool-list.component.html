@@ -111,12 +111,14 @@
                 </nz-radio-group>
             </div>
             <div class="tc-body">
+                <!-- a fixed scroll width: on a narrow screen the table scrolls inside its frame instead of squeezing -->
                 <nz-table [nzBordered]="bordered" [nzSize]="size" [nzData]="visible()" [nzPageSize]="pageSize" [nzPageIndex]="pageIndex"
+                          [nzScroll]="{x: '1350px'}"
                           [nzShowPagination]="false" [nzNoResult]="empty" #table>
                     <thead>
                     <tr>
                         <th nzWidth="88px">{{ t('code') }}</th>
-                        <th>{{ t('title') }}</th>
+                        <th nzWidth="260px">{{ t('title') }}</th>
                         <th nzWidth="88px">{{ t('priority') }}</th>
                         <th nzWidth="150px">{{ t('status') }}</th>
                         <th nzWidth="160px">{{ t('repos') }}</th>
@@ -124,6 +126,7 @@
                         <th nzWidth="110px">{{ t('creator') }}</th>
                         <th nzWidth="110px">{{ t('reviewer') }}</th>
                         <th nzWidth="110px">{{ t('updated') }}</th>
+                        <th nzWidth="110px" nzRight>{{ t('actions') }}</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -157,7 +160,14 @@
                                 </td>
                                 <td>
                                     @for (a of r.repos; track a) {
-                                        <span class="ad-repo">{{ a }}</span>
+                                        <span class="ad-repo" [ngClass]="'d-' + (r.deliveries?.[a]?.status || 'NONE')" [title]="repoTitle(r, a)">
+                                            @if (r.deliveries?.[a]?.status === 'PUSHED') {
+                                                <i class="fa fa-check"></i>
+                                            } @else if (r.deliveries?.[a] && r.deliveries[a].status !== 'SKIPPED') {
+                                                <i class="fa fa-exclamation"></i>
+                                            }
+                                            {{ a }}
+                                        </span>
                                     }
                                 </td>
                                 <td>
@@ -175,6 +185,13 @@
                                     }
                                 </td>
                                 <td class="ad-muted" [title]="r.updateTime | date: 'yyyy-MM-dd HH:mm:ss'">{{ ago(r.updateTime) }}</td>
+                                <td nzRight class="ad-ops" (click)="$event.stopPropagation()">
+                                    <a [routerLink]="[page, r.id]">{{ t('view') }}</a>
+                                    @if (deletable(r)) {
+                                        <a class="ad-danger" nz-popconfirm [nzPopconfirmTitle]="t('confirm_delete').replace('{0}', r.code)"
+                                           nzOkDanger (nzOnConfirm)="remove(r)">{{ t('act.delete') }}</a>
+                                    }
+                                </td>
                             </tr>
                         }
                     </tbody>

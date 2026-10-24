@@ -188,6 +188,26 @@ export class PoolListComponent implements OnInit, OnDestroy {
         });
     }
 
+    // not while agents work from it, nor once delivered; the server also checks it is the user's to delete
+    deletable(r: DevRow): boolean {
+        return !['QUEUED', 'RUNNING', 'VERIFYING', 'DELIVERED'].includes(r.stage);
+    }
+
+    remove(r: DevRow): void {
+        this.data.deleteEruptData(AiDevService.erupt, r.id).subscribe(res => {
+            if (!this.ok(res)) return;
+            this.msg.success(this.t('deleted').replace('{0}', r.code));
+            this.load();
+        });
+    }
+
+    // where a repository's change went, or why it did not
+    repoTitle(r: DevRow, alias: string): string {
+        const d = r.deliveries?.[alias];
+        if (!d) return alias + ' · ' + this.t('delivery.PENDING');
+        return alias + ' · ' + this.t('delivery.' + d.status) + (d.status === 'PUSHED' ? ' → ' + d.branch : d.message ? ': ' + d.message : '');
+    }
+
     priorityColor(p: string): string {
         return p === 'HIGH' ? 'red' : p === 'MEDIUM' ? 'orange' : 'default';
     }
