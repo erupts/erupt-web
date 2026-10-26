@@ -78,7 +78,6 @@ export interface DevDetail {
     canReview: boolean;
     // approve / reject: a reviewer, and not the creator unless the project allows self review
     canApprove: boolean;
-    executorEnabled: boolean;
     // every approval and rejection, newest first
     reviews: DevReview[];
 }

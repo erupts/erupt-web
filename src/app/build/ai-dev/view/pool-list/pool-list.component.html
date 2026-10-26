@@ -42,9 +42,7 @@
             <p>{{ t('no_project') }}</p>
         </div>
     } @else {
-        @if (!executorEnabled) {
-            <nz-alert class="ad-off" nzType="warning" nzShowIcon [nzMessage]="t('executor_off')" [nzDescription]="t('executor_off_hint')"></nz-alert>
-        } @else if (!executors.length) {
+        @if (executors && !executors.length) {
             <nz-alert class="ad-off" nzType="warning" nzShowIcon [nzMessage]="t('no_executor')" [nzDescription]="t('no_executor_hint')"></nz-alert>
         }
         @if (mode === 'board') {
@@ -228,7 +226,7 @@
                     <span class="ad-label">{{ t('executor') }}</span>
                     <nz-select [(ngModel)]="form.executor" (ngModelChange)="form.model = ''" style="width: 180px" [nzPlaceHolder]="t('no_executor')"
                                [nzNotFoundContent]="t('no_executor')">
-                        @for (e of executors; track e.code) {
+                        @for (e of executors || []; track e.code) {
                             <nz-option nzCustomContent [nzValue]="e.code" [nzLabel]="e.label">
                                 <span class="ad-agent-name"><ad-cli-logo [code]="e.code" [icon]="e.icon" [label]="e.label" [size]="16"></ad-cli-logo>{{ e.label }}</span>
                             </nz-option>
