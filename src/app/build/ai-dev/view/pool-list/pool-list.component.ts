@@ -64,9 +64,8 @@ export class PoolListComponent implements OnInit, OnDestroy {
     creating = false;
     busy = false;
     form = {title: '', description: '', priority: 'MEDIUM', repos: [] as string[], executor: null as string | null, model: '', qaReview: false};
-    executors: { code: string, label: string, models: string[], icon: string | null }[] = [];
-    // false: this instance runs no agent, so approved requirements wait in the queue
-    executorEnabled = true;
+    // null until the backend answers, so the "no executor" alert does not flash on load
+    executors: { code: string, label: string, models: string[], icon: string | null }[] | null = null;
 
     private destroy$ = new Subject<void>();
 
@@ -120,7 +119,6 @@ export class PoolListComponent implements OnInit, OnDestroy {
     load(): void {
         this.api.executors(this.project!.id).subscribe(res => {
             if (res && res.status === Status.SUCCESS) {
-                this.executorEnabled = res.data.enabled;
                 this.executors = res.data.options || [];
             }
         });
@@ -252,7 +250,7 @@ export class PoolListComponent implements OnInit, OnDestroy {
 
     // the picked executor's models that match what is typed so far
     modelOptions(): string[] {
-        const models = this.executors.find(e => e.code === this.form.executor)?.models || [];
+        const models = this.executors?.find(e => e.code === this.form.executor)?.models || [];
         const typed = (this.form.model || '').trim().toLowerCase();
         return (typed ? models.filter(m => m.toLowerCase().includes(typed)) : models).slice(0, 50);
     }

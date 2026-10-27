@@ -66,9 +66,6 @@
 
     <div class="ad-layout">
         <div class="ad-main">
-            @if (!detail.executorEnabled && ['QUEUED', 'RUNNING', 'VERIFYING'].includes(detail.requirement.stage)) {
-                <nz-alert class="ad-off" nzType="warning" nzBanner [nzMessage]="t('executor_off')" [nzDescription]="t('executor_off_hint')"></nz-alert>
-            }
             <div class="ad-steps">
                 <div class="ad-flow">
                     @for (s of steps; track s; let i = $index) {
