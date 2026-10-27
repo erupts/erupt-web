@@ -1,6 +1,6 @@
 import {Direction, Directionality} from '@angular/cdk/bidi';
 import {StatusService} from "@shared/service/status.service";
-import {selectedTopMenu, topLevelMenus} from "@shared/model/erupt-menu";
+import {MENU_MODE_FLAGS, selectedTopMenu, topLevelMenus} from "@shared/model/erupt-menu";
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {DOCUMENT} from '@angular/common';
 import {
@@ -174,10 +174,19 @@ export class MenuComponent implements OnInit, OnDestroy {
         this.splitTopItems = topLevelMenus(this.list) as Nav[];
     }
 
-    private autoSelectTopItem(): void {
+    // the route and category the selected category last followed
+    private followed?: { url: string, top: Nav };
+
+    // Select the category of the current route. Expanding a submenu re-emits the menu too: that must
+    // not pull the sidebar back from a category the user picked, so it only follows a route (or menu
+    // data) that moved since, unless forced by a switch of menu mode.
+    private autoSelectTopItem(force = false): void {
         if ((!this.splitMenu && !this.dualMenu && !this.topSplitMenu) || !this.splitTopItems.length) return;
-        const active = this.splitTopItems.find(i => i['_open'] || i['_selected']);
+        const active = this.splitTopItems.find(i => i['_selected']);
         if (active) {
+            const url = this.router.url;
+            if (!force && this.followed?.url === url && this.followed.top === active) return;
+            this.followed = {url, top: active};
             const key = active.key || active.text;
             if (this.settings.layout['splitMenuKey'] !== key) {
                 this.settings.setLayout('splitMenuKey', key);
@@ -404,8 +413,9 @@ export class MenuComponent implements OnInit, OnDestroy {
             .subscribe(t => {
                 this.clearFloating();
                 // entering a category-tab mode: the header tab must show the active route
-                // (not on splitMenuKey itself, or a click on a header tab is undone at once)
-                if (t.name !== 'splitMenuKey') this.autoSelectTopItem();
+                // (not on splitMenuKey itself, or a click on a header tab is undone at once);
+                // folding the sidebar keeps the category the user picked
+                if (t.name !== 'splitMenuKey') this.autoSelectTopItem(Object.values(MENU_MODE_FLAGS).includes(t.name!));
                 cdr.detectChanges();
             });
         this.underPad();
