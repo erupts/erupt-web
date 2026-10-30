@@ -17,6 +17,7 @@ export class RestPath {
     public static formView: string = RestPath.erupt + "/data/form-view";
     public static comment: string = RestPath.erupt + "/comment";
     public static revision: string = RestPath.erupt + "/revision";
+    public static share: string = RestPath.erupt + "/share";
 }
 
 export enum EditType {
