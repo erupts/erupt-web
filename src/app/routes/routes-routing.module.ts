@@ -137,6 +137,11 @@ let coreRouter: Routes = [
 ];
 
 const routes: Routes = [
+    // public share links: no layout, no login; the landing page mints its own session
+    {
+        path: "share",
+        loadChildren: () => import("../build/share/share.module").then(m => m.ShareModule)
+    },
     // erupt
     {
         path: "",
