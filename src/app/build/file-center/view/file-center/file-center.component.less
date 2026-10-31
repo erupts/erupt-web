@@ -342,10 +342,10 @@
     }
 }
 
-// A faint highlight on the resize handles under the cursor so they can be found
+// A faint highlight on a resize handle while the cursor is on it, so it can be found; not while
+// the cursor merely crosses the column (nz-resizable marks that with nz-resizable-handle-box-hover)
 .fc-column, .fc-preview {
-    ::ng-deep .nz-resizable-handle:hover,
-    ::ng-deep .nz-resizable-handle.nz-resizable-handle-box-hover {
+    ::ng-deep .nz-resizable-handle:hover {
         background: rgba(22, 119, 255, 0.12);
     }
 }
