@@ -8,6 +8,7 @@ import {ShareRoutingModule} from "./share-routing.module";
 import {ShareLandingComponent} from "./view/share-landing/share-landing.component";
 import {ShareFormComponent} from "./view/share-form/share-form.component";
 import {SharePageComponent} from "./view/share-page/share-page.component";
+import {ShareTargetComponent} from "./view/share-target/share-target.component";
 
 // Visitor side of erupt-share: the landing page of a link and the public form it may open.
 // The share routes come before EruptModule's own (table/:name, form/:name, ...), which the
@@ -25,7 +26,8 @@ import {SharePageComponent} from "./view/share-page/share-page.component";
     declarations: [
         ShareLandingComponent,
         ShareFormComponent,
-        SharePageComponent
+        SharePageComponent,
+        ShareTargetComponent
     ]
 })
 export class ShareModule {

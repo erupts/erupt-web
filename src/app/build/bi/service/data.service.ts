@@ -6,6 +6,7 @@ import {_HttpClient, MenuService} from "@delon/theme";
 import {DataService} from "@shared/service/data.service";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {downloadFile} from "@shared/util/erupt.util";
+import {ShareSession} from "@shared/model/share-session";
 
 @Injectable({
     providedIn: 'root'
@@ -133,7 +134,9 @@ export class BiDataService {
 
     // load custom chart
     getChartTpl(id: number, code: string, query: any): string {
-        return RestPath.bi + "/" + code + "/custom-chart/" + id + "?_token=" + this.tokenService.get().token +
+        // framed with a URL token: the share session's on a share route, the login token elsewhere
+        const token = ShareSession.active() ? ShareSession.token() : this.tokenService.get().token;
+        return RestPath.bi + "/" + code + "/custom-chart/" + id + "?_token=" + token +
             "&_t=" + new Date().getTime() +
             "&_erupt=" + code +
             "&condition=" + encodeURIComponent(JSON.stringify(query));

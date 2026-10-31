@@ -5,6 +5,7 @@ import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {forkJoin, Observable, of, ReplaySubject, take, tap} from "rxjs";
 import {catchError} from "rxjs/operators";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
+import {ShareSession} from "@shared/model/share-session";
 import {Userinfo} from "@shared/model/user.model";
 
 /** A scope pick the server accepted, with the labels of its values */
@@ -111,7 +112,12 @@ export class ScopeService {
      * the scopes, is even created.
      */
     ready(): Observable<void> {
-        if (!this.account && !this.asking) {
+        if (ShareSession.active() && !this.account) {
+            // a share visitor has no account to ask for and no scope to pick: the page opens as it is
+            this.account = "share";
+            this.scopes = [];
+            this.loaded$.next();
+        } else if (!this.account && !this.asking) {
             this.asking = true;
             this.http.get<Userinfo>(RestPath.erupt + "/userinfo").subscribe(u => this.load(u.account));
         }
