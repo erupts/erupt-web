@@ -6,7 +6,7 @@ import {R} from "@shared/model/api.model";
 
 export interface ShareMeta {
     title: string;
-    type: "FORM" | "PAGE";
+    type: "FORM" | "MENU";
     requirePassword: boolean;
     issuer: string;
     available: boolean;
@@ -15,7 +15,11 @@ export interface ShareMeta {
 
 export interface ShareSession {
     token: string;
-    route: string;
+    type: "FORM" | "MENU";
+    // FORM: the erupt name; MENU: the menu value
+    target: string;
+    // MENU: the menu type, which decides the page that renders it
+    menuType: string | null;
     expireMinutes: number;
 }
 

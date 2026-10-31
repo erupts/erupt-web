@@ -2,7 +2,9 @@ import {Component, OnInit} from "@angular/core";
 import {ActivatedRoute, Router} from "@angular/router";
 import {WindowModel} from "@shared/model/window.model";
 import {ShareSession} from "@shared/model/share-session";
-import {ShareApiService, ShareMeta} from "../../service/share-api.service";
+import {ShareApiService, ShareMeta, ShareSession as ShareSessionVo} from "../../service/share-api.service";
+import {MenuTypeEnum} from "@shared/model/erupt-menu";
+import {generateMenuPath} from "@shared/util/erupt.util";
 
 /**
  * Entry of a public link: shows what the link is, asks the password when one is set, then
@@ -57,9 +59,17 @@ export class ShareLandingComponent implements OnInit {
                 }
                 // Kept apart from any login token in this browser: the share routes send it, nothing else does
                 ShareSession.set(this.code, res.data.token);
-                this.router.navigateByUrl(res.data.route).then();
+                this.router.navigateByUrl(this.targetRoute(res.data)).then();
             },
             error: () => this.opening = false
         });
+    }
+
+    // Where the target renders: a form has its own page, a template page is framed with the share
+    // token, any other menu opens the same page the admin layout would, under /share
+    private targetRoute(session: ShareSessionVo): string {
+        if (session.type === "FORM") return ShareSession.ROUTE + "form/" + session.target;
+        if (session.menuType === MenuTypeEnum.tpl || session.menuType === MenuTypeEnum.mtpl) return ShareSession.ROUTE + "page/" + session.target;
+        return "/share" + generateMenuPath(session.menuType, session.target);
     }
 }
