@@ -333,6 +333,12 @@
         <nz-switch nzSize="small" [(ngModel)]="layout['collapsedText']"
                    (ngModelChange)="setLayout('collapsedText', layout['collapsedText'])"></nz-switch>
     </div>
+    <!-- sub-option of the menu block: section titles by module group in the sidebar -->
+    <div class="menu-mode-sub">
+        <span>{{'setting.menu-groups' | translate}}</span>
+        <nz-switch nzSize="small" [(ngModel)]="layout['menuGroups']"
+                   (ngModelChange)="setLayout('menuGroups', layout['menuGroups'])"></nz-switch>
+    </div>
     <!-- sub-option of the dual mode only: labels under the first-level rail icons -->
     @if (menuMode === MenuMode.DUAL) {
         <div class="menu-mode-sub">

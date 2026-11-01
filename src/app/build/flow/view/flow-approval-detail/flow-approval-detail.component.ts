@@ -1,5 +1,6 @@
 import {openResizableDrawer, resizableDrawerContent} from "@shared/component/resizable-drawer.component";
-import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, inject} from '@angular/core';
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {
     ApprovalView,
     FlowInstance,
@@ -40,6 +41,8 @@ import {UpmsDataService} from "@flow/service/upms-data.service";
     styleUrls: ['./flow-approval-detail.component.less']
 })
 export class FlowApprovalDetailComponent implements OnInit {
+
+    private clipboard = inject(ClipboardService);
 
     activeTabIndex: number = 0;
 
@@ -510,9 +513,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     copyToClipboard(no: string) {
         if (!no) return;
-        navigator.clipboard.writeText(no).then(() => {
-            this.message.success(this.i18n.fanyi('flow.success.no_copied'));
-        });
+        this.clipboard.copy(no, this.i18n.fanyi('flow.success.no_copied'));
     }
 
     withdraw() {
@@ -688,9 +689,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     copyLink() {
         let link = location.origin + "/#/fill/flow/approval-detail/" + this.selectedInstance.no;
-        navigator.clipboard.writeText(link).then(() => {
-            this.message.success(this.i18n.fanyi('flow.success.link_copied'));
-        });
+        this.clipboard.copy(link, this.i18n.fanyi('flow.success.link_copied'));
     }
 
     // Print preview feature

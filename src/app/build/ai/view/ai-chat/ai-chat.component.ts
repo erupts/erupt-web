@@ -9,9 +9,11 @@ import {
     OnDestroy,
     OnInit,
     TemplateRef,
-    ViewChild
+    ViewChild,
+    inject
 } from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {SharedModule} from '@shared/shared.module';
 import {AiConversationsComponent} from '../ai-conversations/ai-conversations.component';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -60,6 +62,8 @@ const BUBBLES_BOTTOM_BUFFER_PX = 300;
     providers: [ChatApiService, MarkdownService, NzImageService]
 })
 export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
+
+    private clipboard = inject(ClipboardService);
     @Input() collapseSidebar = false;
 
     @Input() embedded = false;
@@ -635,7 +639,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     /** Copy message content to clipboard */
     copyMessage(item: ChatMessage): void {
-        navigator.clipboard.writeText(item.content || '').then(() => {
+        this.clipboard.copy(item.content || '', null).then(ok => {
+            if (!ok) return;
             item.copied = true;
             setTimeout(() => item.copied = false, 2000);
         });

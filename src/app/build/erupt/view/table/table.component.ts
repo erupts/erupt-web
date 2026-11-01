@@ -1,4 +1,5 @@
-import {Component, ElementRef, HostListener, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
+import {Component, ElementRef, HostListener, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild, inject} from "@angular/core";
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {ScopeStore} from "@shared/service/scope.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
@@ -62,6 +63,8 @@ import {printHtml, printPageCss} from "@shared/util/print.util";
     styleUrls: ["./table.component.less"]
 })
 export class TableComponent implements OnInit, OnDestroy {
+
+    private clipboard = inject(ClipboardService);
 
     // How many icon actions the operation column is sized for when cells wrap (@Layout
     // tableTruncate = false); the rest flow onto further lines.
@@ -1786,6 +1789,8 @@ export class TableComponent implements OnInit, OnDestroy {
     //provides callable functions for custom expressions
     execExpr(expr: string) {
         let ev = {
+            // copies text with the http fallback and tells the user; success: the message, or none
+            copy: (text: string, success?: string) => this.clipboard.copy(text, success),
             codeModal: (lang: string, code: any) => {
                 let ref = this.modal.create({
                     nzDraggable: true,

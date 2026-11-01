@@ -1,4 +1,5 @@
-import {Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
+import {Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild, inject} from "@angular/core";
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {ActivatedRoute, Router} from "@angular/router";
 import {Location} from "@angular/common";
 import {Subscription} from "rxjs";
@@ -33,6 +34,8 @@ const DRAFT_KEY = "erupt-designer-draft";
     styleUrls: ["./designer.component.less"]
 })
 export class DesignerComponent implements OnInit, OnDestroy {
+
+    private clipboard = inject(ClipboardService);
 
     readonly paletteGroups: PaletteGroup[] = PALETTE_GROUPS;
     readonly editType = EditType;
@@ -584,7 +587,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
 
     copyCode(): void {
         if (this.code) {
-            navigator.clipboard.writeText(this.code).then(() => this.msg.success(this.i18n.fanyi("designer.copy_success")));
+            this.clipboard.copy(this.code, this.i18n.fanyi("designer.copy_success"));
         }
     }
 
