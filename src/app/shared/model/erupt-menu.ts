@@ -8,6 +8,44 @@ export interface MenuVo {
     type: MenuTypeEnum;
     value: string;
     pid: number;
+    /** Group of the module declaring a root menu, null for a user's own menu */
+    group?: string | null;
+}
+
+// The module groups in the order the sidebar and the module center show them (ModuleGroup on the server).
+export const MODULE_GROUPS = ['PLATFORM', 'BUSINESS', 'AI', 'DEV_TOOLS', 'OPS', 'DATA'];
+
+// The sidebar's sections, cut from the root menus in their sort order: a run of root menus of one
+// module group becomes a titled section; platform menus and menus without a group (the user's own)
+// are untitled, except that one sorted inside a group's run stays in that section. Sort remains the
+// only order there is: an admin moves a whole section, or a menu into one, by changing sort.
+export function menuSections(tree: Menu[], groupOf: (key: string) => string | null | undefined,
+                             title: (group: string) => string): Menu[] {
+    // the titled kind of each root menu, null for the untitled ones
+    const kinds = tree.map(item => {
+        const group = groupOf(item.key!);
+        return group && group !== 'PLATFORM' ? group : null;
+    });
+    const sections: Menu[] = [];
+    let current: Menu | null = null;
+    let currentKind: string | null = null;
+    tree.forEach((item, i) => {
+        let kind = kinds[i];
+        if (kind === null && currentKind !== null) {
+            // an untitled menu between two menus of the current group belongs to the group's section
+            const next = kinds.slice(i + 1).find(k => k !== null);
+            if (next === currentKind) kind = currentKind;
+        }
+        if (!current || kind !== currentKind) {
+            current = kind
+                ? {group: true, hideInBreadcrumb: true, text: title(kind), children: []}
+                : {group: false, hideInBreadcrumb: true, text: '~', children: []};
+            currentKind = kind;
+            sections.push(current);
+        }
+        current.children!.push(item);
+    });
+    return sections;
 }
 
 // Sidebar / header menu layout mode (settings drawer, persisted in the delon

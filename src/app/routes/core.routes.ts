@@ -52,6 +52,10 @@ export const coreRouter: Routes = [
         loadChildren: () => import("../build/file-center/file-center.module").then(m => m.FileCenterModule)
     },
     {
+        path: "module-center",
+        loadChildren: () => import("../build/module-center/module-center.module").then(m => m.ModuleCenterModule)
+    },
+    {
         path: "ai-dev",
         loadChildren: () => import("../build/ai-dev/ai-dev.module").then(m => m.AiDevModule)
     },
