@@ -39,7 +39,7 @@ import {
 import {DataService} from "@shared/service/data.service";
 import {generateMenuPath} from "@shared/util/erupt.util";
 import {RecentMenus} from "@shared/util/recent-menu.util";
-import {MenuTypeEnum, MenuVo, selectedTopMenu, topLevelMenus} from "@shared/model/erupt-menu";
+import {menuSections, MenuTypeEnum, MenuVo, selectedTopMenu, topLevelMenus} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
@@ -329,13 +329,9 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 text: this.i18n.fanyi("global.home"),
                 link: "/"
             }]);
-            const tree = generateTree(res, null);
-            const menuItems: Menu[] = [{
-                group: false,
-                hideInBreadcrumb: true,
-                text: "~",
-                children: tree
-            }];
+            const groups = new Map(res.filter(m => m.pid == null).map(m => [m.code, m.group]));
+            const menuItems = menuSections(generateTree(res, null), key => groups.get(key),
+                group => this.i18n.fanyi('module.group.' + group.toLowerCase()));
             if (hiddenMenus.length) {
                 menuItems.push({group: false, hide: true, text: '_hidden', children: hiddenMenus});
             }
