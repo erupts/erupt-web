@@ -148,6 +148,7 @@ export function kvValues(map: KVMap): Record<string, string> {
 export interface CardView {
     coverField: string;
     coverEffect: CoverEffect;
+    layout: CardLayout;
     viewFields: string[];
 }
 
@@ -183,6 +184,14 @@ export interface DrillInput {
 export enum CoverEffect {
     FIT = "FIT", //fit
     CLIP = "CLIP", //clip
+}
+
+// values match backend CardView.Layout
+export enum CardLayout {
+    // equal-size cards in rows
+    GRID = "GRID",
+    // cards keep their cover's own height and fill columns
+    MASONRY = "MASONRY",
 }
 
 interface Layout {

@@ -14,6 +14,7 @@ import {KV} from "../erupt/model/util.model";
 import {DataHandlerService} from "../erupt/service/data-handler.service";
 import {DesignerService} from "./service/designer.service";
 import {
+    CardLayout,
     CoverEffect,
     DesignerField,
     DesignerForm,
@@ -55,6 +56,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
     readonly visType = VisType;
     readonly fieldVisibility = FieldVisibility;
     readonly coverEffect = CoverEffect;
+    readonly cardLayout = CardLayout;
 
     form: DesignerForm = this.emptyForm();
 
@@ -525,7 +527,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
                 vis.boardView = vis.boardView || {};
                 break;
             case VisType.CARD:
-                vis.cardView = vis.cardView || {coverEffect: CoverEffect.CLIP};
+                vis.cardView = vis.cardView || {coverEffect: CoverEffect.CLIP, layout: CardLayout.GRID};
                 break;
             case VisType.GANTT:
                 vis.ganttView = vis.ganttView || {};

@@ -1,9 +1,8 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {DataService} from "@shared/service/data.service";
-import {CoverEffect, FieldVisibility, Page, Vis} from "../../model/erupt.model";
+import {CardLayout, CoverEffect, FieldVisibility, Page, Vis} from "../../model/erupt.model";
 import {NzImageService} from "ng-zorro-antd/image";
-import {EruptFieldModel} from "../../model/erupt-field.model";
 import {UiBuildService} from "../../service/ui-build.service";
 import {STColumn} from "@delon/abc/st";
 import {SelectMode} from "../../model/erupt.enum";
@@ -78,9 +77,19 @@ export class CardComponent implements OnInit, OnChanges {
         this.columnMap.get(field)?.click(this.data[0]);
     }
 
-    viewImageStyle(path: string, eruptFieldModel: EruptFieldModel): object {
+    get masonry(): boolean {
+        return this.vis.cardView.layout === CardLayout.MASONRY;
+    }
+
+    // the first image of the cover field
+    coverUrl(path: string): string {
+        const fieldModel = this.eruptBuildModel.eruptModel.eruptFieldModelMap.get(this.vis.cardView.coverField);
+        return DataService.previewAttachment(path.split(fieldModel?.eruptFieldJson.edit?.attachmentType?.fileSeparator || "|")[0]);
+    }
+
+    viewImageStyle(path: string): object {
         return {
-            backgroundImage: 'url(' + DataService.previewAttachment(path.split(eruptFieldModel.eruptFieldJson.edit?.attachmentType?.fileSeparator || "|")[0]) + ')',
+            backgroundImage: 'url(' + this.coverUrl(path) + ')',
             backgroundSize: this.vis.cardView.coverEffect == CoverEffect.FIT ? "contain" : "cover",
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center'
