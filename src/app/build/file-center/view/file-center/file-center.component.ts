@@ -1,4 +1,5 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit, inject} from '@angular/core';
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {NzResizeEvent} from 'ng-zorro-antd/resizable';
 import {I18NService} from '@core';
@@ -43,6 +44,8 @@ const PREVIEW_WIDTH_KEY = 'erupt-file-center-preview-width';
     styleUrls: ['./file-center.component.less']
 })
 export class FileCenterComponent implements OnInit {
+
+    private clipboard = inject(ClipboardService);
 
     stores: string[] = [];
     store: string | null = null;
@@ -270,7 +273,7 @@ export class FileCenterComponent implements OnInit {
 
     copyLink(): void {
         if (!this.preview?.link) return;
-        navigator.clipboard.writeText(new URL(this.preview.link, location.href).href).then(() => this.msg.success(this.t('link_copied')));
+        this.clipboard.copy(new URL(this.preview.link, location.href).href, this.t('link_copied'));
     }
 
     size(n: number): string {

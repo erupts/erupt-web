@@ -1,4 +1,5 @@
-import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild, inject} from '@angular/core';
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {TitleService} from '@delon/theme';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NzMessageService} from 'ng-zorro-antd/message';
@@ -70,6 +71,8 @@ const POLL_MS = 3000;
     styleUrls: ['../ai-dev.less', './pool-detail.component.less']
 })
 export class PoolDetailComponent implements OnInit, OnDestroy {
+
+    private clipboard = inject(ClipboardService);
 
     readonly steps = STEPS;
     readonly phases = PHASES;
@@ -705,7 +708,7 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
     }
 
     copyDescription(): void {
-        navigator.clipboard?.writeText(this.detail?.description || '').then(() => this.msg.success(this.t('copied')));
+        this.clipboard.copy(this.detail?.description || '', this.t('copied'));
     }
 
     private ok(res: any, silent = false): boolean {

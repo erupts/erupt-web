@@ -166,6 +166,11 @@ export class MenuComponent implements OnInit, OnDestroy {
         return !!this.settings.layout['groupMenu'];
     }
 
+    // Section titles by module group, on unless switched off in the settings drawer or app.js
+    get menuGroups(): boolean {
+        return this.settings.layout['menuGroups'] !== false;
+    }
+
     get topSplitMenu(): boolean {
         return !!this.settings.layout['topSplitMenu'];
     }
@@ -408,7 +413,7 @@ export class MenuComponent implements OnInit, OnDestroy {
         settings.notify
             .pipe(
                 takeUntil(destroy$),
-                filter(t => t.type === 'layout' && ['collapsed', 'splitMenu', 'dualMenu', 'dualRailText', 'groupMenu', 'topSplitMenu', 'splitMenuKey'].includes(t.name!))
+                filter(t => t.type === 'layout' && ['collapsed', 'splitMenu', 'dualMenu', 'dualRailText', 'groupMenu', 'menuGroups', 'topSplitMenu', 'splitMenuKey'].includes(t.name!))
             )
             .subscribe(t => {
                 this.clearFloating();

@@ -112,12 +112,10 @@
                 [optionalHelp]="field.eruptFieldJson.edit.desc">
                 @if (field.eruptFieldJson.edit.inputType.prefix.length == 0 && field.eruptFieldJson.edit.inputType.suffix.length == 0) {
                     <nz-input-wrapper class="erupt-input" nzAllowClear>
-                        @if (supportCopy) {
-                            <div nzInputAddonBefore>
-                                <span nz-icon nzType="copy" (click)="copy(field.eruptFieldJson.edit.$value)"
-                                      style="cursor: pointer" nzTheme="outline"></span>
-                            </div>
-                        }
+                        <div nzInputAddonBefore>
+                            <span nz-icon nzType="copy" (click)="copy(field.eruptFieldJson.edit.$value)"
+                                  style="cursor: pointer" nzTheme="outline"></span>
+                        </div>
                         <input nz-input [nzSize]="size" autocomplete="off" nz-tooltip
                                nzTooltipTrigger="focus"
                                nzTooltipPlacement="topLeft"

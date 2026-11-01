@@ -1,4 +1,5 @@
-import {Injectable} from "@angular/core";
+import {Injectable, inject} from "@angular/core";
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {ModalButtonOptions, ModalOptions, NzModalRef, NzModalService, NzModalState} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {SettingsService} from "@delon/theme";
@@ -87,6 +88,8 @@ interface PanelEntry {
  */
 @Injectable()
 export class FormModalService {
+
+    private clipboard = inject(ClipboardService);
 
     private readonly panels = new Map<NzModalRef<EditComponent>, PanelEntry>();
 
@@ -179,10 +182,8 @@ export class FormModalService {
     private copyLink(ref: NzModalRef<EditComponent>) {
         const link = this.panels.get(ref)?.opts.link;
         if (!link) return;
-        navigator.clipboard.writeText(link)
-            .then(() => this.msg.success(this.i18n.fanyi("global.copy_success")))
-            // clipboard access refused (insecure context / unfocused document): show the link instead
-            .catch(() => this.msg.info(link, {nzDuration: 8000}));
+        // not copied (clipboard refused on http and selection copy blocked): show the link instead
+        this.clipboard.copy(link).then(ok => ok || this.msg.info(link, {nzDuration: 8000}));
     }
 
     // True when the panel may be left: nothing changed, or the user chose to discard.

@@ -64,6 +64,8 @@ export class WindowModel {
         workspaceFrame?: string,
         // "normal" | "split" | "dual" | "top" | "group" | "top-split" (MenuMode)
         menuMode?: string,
+        // false hides the sidebar's section titles by module group (business, AI, dev tools, ops)
+        menuGroups?: boolean,
         // "center" | "side" | "full" (FormPanelMode): how record forms open
         formPanelMode?: string,
         // "center" | "cover" | "wide" | "wallpaper" | "poster" (LoginLayout): the login page layout
