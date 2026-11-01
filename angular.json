@@ -21,7 +21,7 @@
                     "builder": "@angular/build:application",
                     "options": {
                         "outputPath": {
-                            "base": "/Users/liyuepeng/git/erupt/erupt-web/src/main/resources/public",
+                            "base": "/Users/yp.li/Code/erupt/erupt-web/src/main/resources/public",
                             "browser": ""
                         },
                         "index": "src/index.html",
