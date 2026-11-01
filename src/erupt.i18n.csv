@@ -635,6 +635,9 @@ designer.vis.fields_placeholder,选择字段,選擇字段,Select fields,Sélecti
 designer.vis.group_field,分组字段,分組字段,Group Field,Champ de groupe,グループフィールド,그룹 필드,Поле группировки,Campo de grupo,Gruppierungsfeld,Campo de agrupamento,Bidang grup,حقل التجميع
 designer.vis.cover_field,封面字段,封面字段,Cover Field,Champ de couverture,カバーフィールド,커버 필드,Поле обложки,Campo de portada,Coverfeld,Campo de capa,Bidang sampul,حقل الغلاف
 designer.vis.cover_effect,封面效果,封面效果,Cover Effect,Effet de couverture,カバー効果,커버 효과,Эффект обложки,Efecto de portada,Cover-Effekt,Efeito de capa,Efek sampul,تأثير الغلاف
+designer.vis.card_layout,布局,佈局,Layout,Disposition,レイアウト,레이아웃,Макет,Diseño,Layout,Layout,Tata letak,التخطيط
+designer.vis.card_layout.grid,网格,網格,Grid,Grille,グリッド,그리드,Сетка,Cuadrícula,Raster,Grelha,Kisi,شبكة
+designer.vis.card_layout.masonry,瀑布流,瀑布流,Masonry,Mosaïque,メイソンリー,메이슨리,Плитка,Mosaico,Masonry,Mosaico,Masonry,شلال
 designer.vis.start_date_field,开始日期字段,開始日期字段,Start Date Field,Champ date de début,開始日フィールド,시작일 필드,Поле даты начала,Campo fecha de inicio,Startdatumsfeld,Campo data de início,Bidang tanggal mulai,حقل تاريخ البدء
 designer.vis.end_date_field,结束日期字段,結束日期字段,End Date Field,Champ date de fin,終了日フィールド,종료일 필드,Поле даты окончания,Campo fecha de fin,Enddatumsfeld,Campo data de término,Bidang tanggal selesai,حقل تاريخ الانتهاء
 designer.vis.progress_field,进度字段,進度字段,Progress Field,Champ de progression,進捗フィールド,진행률 필드,Поле прогресса,Campo de progreso,Fortschrittsfeld,Campo de progresso,Bidang progres,حقل التقدم

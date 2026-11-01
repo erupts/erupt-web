@@ -933,7 +933,7 @@
                             </nz-select>
                         </div>
                     }
-                    <!-- Card: cover field + cover effect -->
+                    <!-- Card: cover field + cover effect + layout -->
                     @if (vis.type === visType.CARD) {
                         <div class="prop-item">
                             <label>{{ 'designer.vis.cover_field' | translate }}</label>
@@ -950,6 +950,14 @@
                                             nzSize="small">
                                 <label nz-radio-button [nzValue]="coverEffect.CLIP">CLIP</label>
                                 <label nz-radio-button [nzValue]="coverEffect.FIT">FIT</label>
+                            </nz-radio-group>
+                        </div>
+                        <div class="prop-item">
+                            <label>{{ 'designer.vis.card_layout' | translate }}</label>
+                            <nz-radio-group [(ngModel)]="vis.cardView!.layout" (ngModelChange)="saveDraft()"
+                                            nzSize="small">
+                                <label nz-radio-button [nzValue]="cardLayout.GRID">{{ 'designer.vis.card_layout.grid' | translate }}</label>
+                                <label nz-radio-button [nzValue]="cardLayout.MASONRY">{{ 'designer.vis.card_layout.masonry' | translate }}</label>
                             </nz-radio-group>
                         </div>
                     }

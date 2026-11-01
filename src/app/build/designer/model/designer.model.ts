@@ -54,6 +54,12 @@ export enum CoverEffect {
     CLIP = "CLIP"
 }
 
+// card layout; values match backend CardView.Layout enum
+export enum CardLayout {
+    GRID = "GRID",
+    MASONRY = "MASONRY"
+}
+
 // mirrors @Vis: frontend-only key field is stripped before sending
 export interface DesignerVis {
     key?: string;           // frontend-only unique identifier
@@ -64,7 +70,7 @@ export interface DesignerVis {
     fieldVisibility?: FieldVisibility;
     fields?: string[];
     boardView?: { groupField?: string };
-    cardView?: { coverField?: string; coverEffect?: CoverEffect };
+    cardView?: { coverField?: string; coverEffect?: CoverEffect; layout?: CardLayout };
     ganttView?: {
         startDateField?: string;
         endDateField?: string;
