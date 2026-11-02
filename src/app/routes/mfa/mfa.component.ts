@@ -1,4 +1,5 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, inject} from "@angular/core";
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {DataService} from "@shared/service/data.service";
 import {I18NService} from "@core";
@@ -20,6 +21,8 @@ import {Status} from "../../build/erupt/model/erupt-api.model";
     styleUrls: ["./mfa.component.less"]
 })
 export class MfaComponent implements OnInit {
+
+    private clipboard = inject(ClipboardService);
 
     loading = false;
 
@@ -164,10 +167,9 @@ export class MfaComponent implements OnInit {
     }
 
     private copy(text: string, successKey: string, acknowledge: boolean) {
-        navigator.clipboard.writeText(text).then(() => {
-            this.msg.success(this.fanyi(successKey));
-            if (acknowledge) this.recoveryAcknowledged = true;
-        }, () => this.msg.error(this.fanyi("mfa.copy_failed")));
+        this.clipboard.copy(text, this.fanyi(successKey)).then(ok => {
+            if (ok && acknowledge) this.recoveryAcknowledged = true;
+        });
     }
 
 }

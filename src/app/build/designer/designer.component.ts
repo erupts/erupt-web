@@ -1,4 +1,5 @@
-import {Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
+import {Component, HostListener, OnDestroy, OnInit, TemplateRef, ViewChild, inject} from "@angular/core";
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {ActivatedRoute, Router} from "@angular/router";
 import {Location} from "@angular/common";
 import {Subscription} from "rxjs";
@@ -13,6 +14,7 @@ import {KV} from "../erupt/model/util.model";
 import {DataHandlerService} from "../erupt/service/data-handler.service";
 import {DesignerService} from "./service/designer.service";
 import {
+    CardLayout,
     CoverEffect,
     DesignerField,
     DesignerForm,
@@ -34,6 +36,8 @@ const DRAFT_KEY = "erupt-designer-draft";
 })
 export class DesignerComponent implements OnInit, OnDestroy {
 
+    private clipboard = inject(ClipboardService);
+
     readonly paletteGroups: PaletteGroup[] = PALETTE_GROUPS;
     readonly editType = EditType;
     // Compact toolbar for the callout content editor in the narrow props panel
@@ -52,6 +56,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
     readonly visType = VisType;
     readonly fieldVisibility = FieldVisibility;
     readonly coverEffect = CoverEffect;
+    readonly cardLayout = CardLayout;
 
     form: DesignerForm = this.emptyForm();
 
@@ -173,7 +178,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
             tableName: "",
             erupt: {
                 name: "",
-                power: {add: true, edit: true, delete: true, query: true, viewDetails: true, export: true, importable: true, print: true, cellEdit: true},
+                power: {add: true, edit: true, delete: true, query: true, viewDetails: true, export: true, importable: true, print: true, cellEdit: true, batchEdit: true},
                 layout: {formSize: FormSize.DEFAULT, formSteps: false, pagingType: PagingType.BACKEND, pageSize: 10, tableLeftFixed: 0, tableRightFixed: 0},
                 vis: []
             },
@@ -522,7 +527,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
                 vis.boardView = vis.boardView || {};
                 break;
             case VisType.CARD:
-                vis.cardView = vis.cardView || {coverEffect: CoverEffect.CLIP};
+                vis.cardView = vis.cardView || {coverEffect: CoverEffect.CLIP, layout: CardLayout.GRID};
                 break;
             case VisType.GANTT:
                 vis.ganttView = vis.ganttView || {};
@@ -584,7 +589,7 @@ export class DesignerComponent implements OnInit, OnDestroy {
 
     copyCode(): void {
         if (this.code) {
-            navigator.clipboard.writeText(this.code).then(() => this.msg.success(this.i18n.fanyi("designer.copy_success")));
+            this.clipboard.copy(this.code, this.i18n.fanyi("designer.copy_success"));
         }
     }
 

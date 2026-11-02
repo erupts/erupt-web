@@ -1,238 +1,130 @@
-<sv-container style="width: 100%" class="print-preview-container" layout="vertical" [bordered]="bordered"  size="small" [col]="col">
-    @for (field of eruptModel.eruptFieldModels; track field) {
-        @if (field.eruptFieldJson.edit && field.eruptFieldJson.edit.show && field.eruptFieldJson.edit.title) {
-            @switch (field.eruptFieldJson.edit.type) {
-                <!-- INPUT -->
-                @case (editType.INPUT) {
-                    @if (field.eruptFieldJson.edit.inputType.fullSpan) {
-                        <sv [label]="field.eruptFieldJson.edit.title" [col]="1">
-                            {{ getDisplayValue(field) }}
-                        </sv>
-                    }
-                    @if (!field.eruptFieldJson.edit.inputType.fullSpan) {
-                        <sv [label]="field.eruptFieldJson.edit.title">
-                            {{ getDisplayValue(field) }}
-                        </sv>
-                    }
-                }
-                <!-- NUMBER -->
-                @case (editType.NUMBER) {
-                    <sv [label]="field.eruptFieldJson.edit.title">
-                        {{ getDisplayValue(field) }}
-                    </sv>
-                }
-                <!-- COLOR -->
-                @case (editType.COLOR) {
-                    <sv [label]="field.eruptFieldJson.edit.title">
-                        <div style="display: flex;align-items: center;gap: 8px;">
-                            <div [style.background-color]="field.eruptFieldJson.edit.$value"
-                                 style="width: 20px;height: 20px;border: 1px solid #d9d9d9;border-radius: 2px;"></div>
-                            <span>{{ field.eruptFieldJson.edit.$value || '-' }}</span>
-                        </div>
-                    </sv>
-                }
-                <!-- TEXTAREA -->
-                @case (editType.TEXTAREA) {
-                    <sv [label]="field.eruptFieldJson.edit.title" [col]="1">
-                        <div style="white-space: pre-wrap;word-break: break-word;">{{ getDisplayValue(field) }}</div>
-                    </sv>
-                }
-                <!-- MARKDOWN -->
-                @case (editType.MARKDOWN) {
-                    <sv [label]="field.eruptFieldJson.edit.title" [col]="1">
-                        <div [innerHTML]="field.eruptFieldJson.edit.$value | safeHtml"></div>
-                    </sv>
-                }
-                <!-- CHOICE -->
-                @case (editType.CHOICE) {
-                    @if (field.eruptFieldJson.edit.choiceType.type == choiceEnum.RADIO) {
-                        <div nz-col [nzXs]="24">
-                            <sv [label]="field.eruptFieldJson.edit.title">
-                                {{ getDisplayValue(field) }}
-                            </sv>
-                        </div>
-                    }
-                    @if (field.eruptFieldJson.edit.choiceType.type == choiceEnum.SELECT) {
-                        <sv [label]="field.eruptFieldJson.edit.title">
-                            {{ getDisplayValue(field) }}
-                        </sv>
-                    }
-                }
-                <!-- MULTI_CHOICE -->
-                @case (editType.MULTI_CHOICE) {
-                    @if (field.eruptFieldJson.edit.multiChoiceType.type != multiChoiceEnum.SELECT) {
-                        <div nz-col [nzXs]="24">
-                            <sv [label]="field.eruptFieldJson.edit.title">
-                                {{ getDisplayValue(field) }}
-                            </sv>
-                        </div>
-                    }
-                    @if (field.eruptFieldJson.edit.multiChoiceType.type == multiChoiceEnum.SELECT) {
-                        <sv [label]="field.eruptFieldJson.edit.title">
-                            {{ getDisplayValue(field) }}
-                        </sv>
-                    }
-                }
-                <!-- TAGS -->
-                @case (editType.TAGS) {
-                    <sv [label]="field.eruptFieldJson.edit.title" [col]="1">
-                        {{ getDisplayValue(field) }}
-                    </sv>
-                }
-                <!-- CHECKBOX / TRANSFER -->
-                @case (editType.TRANSFER) {
-                    <sv [label]="field.eruptFieldJson.edit.title" [col]="1">
-                        {{ getDisplayValue(field) }}
-                    </sv>
-                }
-                @case (editType.CHECKBOX) {
-                    <sv [label]="field.eruptFieldJson.edit.title" [col]="1">
-                        {{ getDisplayValue(field) }}
-                    </sv>
-                }
-                <!-- SLIDER -->
-                @case (editType.SLIDER) {
-                    <sv [label]="field.eruptFieldJson.edit.title">
-                        {{ getDisplayValue(field) }}
-                    </sv>
-                }
-                <!-- RATE -->
-                @case (editType.RATE) {
-                    <sv [label]="field.eruptFieldJson.edit.title">
-                        <nz-rate [ngModel]="field.eruptFieldJson.edit.$value"
-                                 [nzDisabled]="true"
-                                 [nzCharacter]="field.eruptFieldJson.edit.rateType.character&&characterIcon"
-                                 [nzCount]="field.eruptFieldJson.edit.rateType.count"
-                                 [nzAllowHalf]="field.eruptFieldJson.edit.rateType.allowHalf">
-                            <ng-template #characterIcon>
-                                <span>{{ field.eruptFieldJson.edit.rateType.character }}</span>
-                            </ng-template>
-                        </nz-rate>
-                    </sv>
-                }
-                <!-- DATE -->
-                @case (editType.DATE) {
-                    <sv [label]="field.eruptFieldJson.edit.title">
-                        {{ getDisplayValue(field) }}
-                    </sv>
-                }
-                <!-- REFERENCE_TREE -->
-                @case (editType.REFERENCE_TREE) {
-                    <sv [label]="field.eruptFieldJson.edit.title">
-                        {{ getDisplayValue(field) }}
-                    </sv>
-                }
-                <!-- REFERENCE_TABLE -->
-                @case (editType.REFERENCE_TABLE) {
-                    <sv [label]="field.eruptFieldJson.edit.title">
-                        {{ getDisplayValue(field) }}
-                    </sv>
-                }
-                <!-- BOOLEAN -->
-                @case (editType.BOOLEAN) {
-                    <sv [label]="field.eruptFieldJson.edit.title">
-                        {{ getDisplayValue(field) | translate }}
-                    </sv>
-                }
-                <!-- ATTACHMENT -->
-                @case (editType.ATTACHMENT) {
-                    <sv [label]="field.eruptFieldJson.edit.title" [col]="1">
-                        @if (hasAttachments(field)) {
-                            @switch (field.eruptFieldJson.edit.attachmentType.type) {
-                                @case (attachmentEnum.IMAGE) {
-                                    <div style="display: flex;flex-wrap: wrap;gap: 8px;">
-                                        @for (file of field.eruptFieldJson.edit.$viewValue; track file.uid) {
-                                            <div style="border: 1px solid #d9d9d9;padding: 4px;border-radius: 2px;">
-                                                @if (file.url) {
-                                                    <img [src]="file.url" style="width: 100px;height: 100px;object-fit: contain;" alt=""/>
-                                                }
-                                                @if (!file.url && file.response && file.response.data) {
-                                                    <!--                                                            <img [src]="dataService.previewAttachment(file.response.data)"-->
-                                                        <!--                                                                 style="width: 100px;height: 100px;object-fit: contain;" alt=""/>-->
-                                                }
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                                @case (attachmentEnum.BASE) {
-                                    <div style="display: flex;flex-direction: column;gap: 4px;">
-                                        @for (file of field.eruptFieldJson.edit.$viewValue; track file.uid) {
-                                            <div>
-                                                @if (file.url) {
-                                                    <a [href]="file.url" target="_blank">{{ file.name }}</a>
-                                                }
-                                                @if (!file.url && file.response && file.response.data) {
-                                                    <!--                                                            <a [href]="dataService.previewAttachment(file.response.data,false)" target="_blank">{{ file.name }}</a>-->
-                                                }
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                            }
-                        }
-                        @if (!hasAttachments(field)) {
-                            -
-                        }
-                    </sv>
-                }
-                <!-- HTML_EDITOR -->
-                @case (editType.HTML_EDITOR) {
-                    <sv [label]="field.eruptFieldJson.edit.title" [col]="1">
-                        <div class="rich-content-html" [innerHTML]="field.eruptFieldJson.edit.$value | safeHtml"></div>
-                    </sv>
-                }
-                <!-- CODE_EDITOR -->
-                @case (editType.CODE_EDITOR) {
-                    <sv [label]="field.eruptFieldJson.edit.title" [col]="1">
-                        <pre style="background: #f5f5f5;padding: 12px;border-radius: 4px;overflow-x: auto;"><code>{{ field.eruptFieldJson.edit.$value || '-' }}</code></pre>
-                    </sv>
-                }
-                <!-- SIGNATURE -->
-                @case (editType.SIGNATURE) {
-                    <sv [label]="field.eruptFieldJson.edit.title" [col]="1">
-                        @if (hasSignature(field)) {
-                            <div style="display: inline-block;border: 1px solid #d9d9d9;padding: 4px;border-radius: 2px;">
-                                <img [src]="field.eruptFieldJson.edit.$value"
-                                     style="max-width: 150px;max-height: 80px;display: block;" alt="signature"/>
-                            </div>
-                        }
-                        @if (!hasSignature(field)) {
-                            -
-                        }
-                    </sv>
-                }
-                <!-- MAP -->
-                @case (editType.MAP) {
-                    <sv [label]="field.eruptFieldJson.edit.title" [col]="1">
-                        {{ getDisplayValue(field) }}
-                    </sv>
-                }
-                <!-- COMBINE -->
-                @case (editType.COMBINE) {
-                    <sv [col]="1">
-                        <div class="print-combine-section">
-                            <div class="combine-title">{{ field.eruptFieldJson.edit.title }}</div>
-                            <div class="combine-content">
-                                <erupt-print-type
-                                    [eruptBuildModel]="{eruptModel:eruptBuildModel.combineErupts[field.fieldName]}">
-                                </erupt-print-type>
-                            </div>
-                        </div>
-                    </sv>
-                }
-                <!-- DIVIDE -->
-                @case (editType.DIVIDE) {
-                    <sv [col]="1">
-                        <nz-divider [nzDashed]="false" [nzText]="field.eruptFieldJson.edit.title"></nz-divider>
-                    </sv>
-                }
-                <!-- CALLOUT -->
-                @case (editType.CALLOUT) {
-                    <sv [col]="1" [label]="field.eruptFieldJson.edit.title">
-                        <div [innerHTML]="field.eruptFieldJson.edit.calloutType.value | safeHtml"></div>
-                    </sv>
-                }
+@if (!nested) {
+    <erupt-print-config-bar [config]="config"/>
+}
+<div class="print-preview-container" [class.print-bordered]="config.bordered"
+     [style.--print-border-color]="config.borderColor" [style.--print-font-size.px]="config.fontSize">
+@if (!nested && config.showTitle && title) {
+    <div class="print-title">{{ title }}</div>
+}
+<div class="print-grid" [class.print-label-left]="config.layout === PrintLabelLayout.HORIZONTAL"
+     [style.grid-template-columns]="'repeat(' + config.col + ', minmax(0, 1fr))'">
+    @for (cell of cells; track cell.field) {
+        @let field = cell.field;
+        @let edit = field.eruptFieldJson.edit;
+        <div class="print-cell" [class.print-section]="cell.section" [style.grid-column]="'span ' + cell.span">
+            @if (!cell.section) {
+                <div class="print-label">{{ edit.title }}</div>
             }
-        }
+            <div class="print-value">
+                @switch (edit.type) {
+                    @case (editType.COLOR) {
+                        <span class="print-color" [style.background-color]="edit.$value"></span>{{ edit.$value || '-' }}
+                    }
+                    @case (editType.TEXTAREA) {
+                        <div style="white-space: pre-wrap">{{ getDisplayValue(field) }}</div>
+                    }
+                    @case (editType.MARKDOWN) {
+                        <div [innerHTML]="edit.$value | safeHtml"></div>
+                    }
+                    @case (editType.HTML_EDITOR) {
+                        <div class="rich-content-html" [innerHTML]="edit.$value | safeHtml"></div>
+                    }
+                    @case (editType.CODE_EDITOR) {
+                        <pre class="print-code"><code>{{ edit.$value || '-' }}</code></pre>
+                    }
+                    @case (editType.BOOLEAN) {
+                        {{ getDisplayValue(field) | translate }}
+                    }
+                    @case (editType.RATE) {
+                        <nz-rate [ngModel]="edit.$value" [nzDisabled]="true"
+                                 [nzCharacter]="edit.rateType.character && characterIcon"
+                                 [nzCount]="edit.rateType.count" [nzAllowHalf]="edit.rateType.allowHalf"></nz-rate>
+                        <ng-template #characterIcon><span>{{ edit.rateType.character }}</span></ng-template>
+                    }
+                    @case (editType.ATTACHMENT) {
+                        @if (hasAttachments(field)) {
+                            <div class="print-files" [class.print-images]="edit.attachmentType.type === attachmentEnum.IMAGE">
+                                @for (file of edit.$viewValue; track file.uid) {
+                                    @if (file.url) {
+                                        @if (edit.attachmentType.type === attachmentEnum.IMAGE) {
+                                            <img [src]="file.url" alt=""/>
+                                        } @else {
+                                            <a [href]="file.url" target="_blank">{{ file.name }}</a>
+                                        }
+                                    }
+                                }
+                            </div>
+                        } @else {
+                            -
+                        }
+                    }
+                    @case (editType.SIGNATURE) {
+                        @if (hasSignature(field)) {
+                            <img class="print-signature" [src]="edit.$value" alt="signature"/>
+                        } @else {
+                            -
+                        }
+                    }
+                    @case (editType.TAB_TREE) {
+                        {{ tabTreeLabels[field.fieldName] || '-' }}
+                    }
+                    @case (editType.CALLOUT) {
+                        <div [innerHTML]="edit.calloutType.value | safeHtml"></div>
+                    }
+                    @case (editType.DIVIDE) {
+                        <div class="print-divide">{{ edit.title }}</div>
+                    }
+                    @case (editType.COMBINE) {
+                        <div class="print-combine-section">
+                            <div class="combine-title">{{ edit.title }}</div>
+                            <div class="combine-content">
+                                <erupt-print-type [config]="config" [nested]="true"
+                                                  [eruptBuildModel]="{eruptModel: eruptBuildModel.combineErupts[field.fieldName]}"/>
+                            </div>
+                        </div>
+                    }
+                    @case (editType.TAB_TABLE_ADD) {
+                        <ng-container *ngTemplateOutlet="tabTable; context: {$implicit: field}"></ng-container>
+                    }
+                    @case (editType.TAB_TABLE_REFER) {
+                        <ng-container *ngTemplateOutlet="tabTable; context: {$implicit: field}"></ng-container>
+                    }
+                    @case (editType.MULTI_FORM) {
+                        <ng-container *ngTemplateOutlet="tabTable; context: {$implicit: field}"></ng-container>
+                    }
+                    @default {
+                        {{ getDisplayValue(field) }}
+                    }
+                }
+            </div>
+        </div>
     }
-</sv-container>
+</div>
+</div>
+
+<ng-template #tabTable let-field>
+    <div class="print-combine-section">
+        <div class="combine-title">{{ field.eruptFieldJson.edit.title }}</div>
+        @let cols = tabColumns[field.fieldName] || [];
+        <table class="print-tab-table">
+            <thead>
+                <tr>
+                    @for (view of cols; track view.column) {
+                        <th>{{ view.title }}</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (row of field.eruptFieldJson.edit.$value || []; track $index) {
+                    <tr>
+                        @for (view of cols; track view.column) {
+                            <td>{{ getCellValue(view, row) }}</td>
+                        }
+                    </tr>
+                } @empty {
+                    <tr><td [attr.colspan]="cols.length || 1" class="print-tab-empty">-</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</ng-template>

@@ -1,0 +1,49 @@
+<div class="mc">
+    <div class="mc-toolbar">
+        <div class="mc-intro">{{ t('intro') }}</div>
+        <input nz-input class="mc-search" [(ngModel)]="filter" [placeholder]="t('search')">
+    </div>
+
+    @if (loading) {
+        <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 6 }" style="padding: 16px"></nz-skeleton>
+    }
+
+    @for (section of sections(); track section.group) {
+        <div class="mc-section">
+            <div class="mc-section-title">
+                {{ groupTitle(section.group) }}
+                <span class="mc-count">{{ section.modules.length }}</span>
+            </div>
+            <div class="mc-grid">
+                @for (m of section.modules; track m.name) {
+                    <div class="mc-card" [class.off]="m.enabled === false">
+                        <div class="mc-card-head">
+                            <span class="mc-name">{{ m.name }}</span>
+                            @if (m.enabled === false) {
+                                <nz-tag>{{ t('off') }}</nz-tag>
+                            } @else if (m.menus !== null && m.enabled === null) {
+                                <nz-tag nzColor="blue">{{ t('core') }}</nz-tag>
+                            }
+                        </div>
+                        <div class="mc-desc">{{ m.description || '' }}</div>
+                        <div class="mc-card-foot">
+                            @if (docs(m); as link) {
+                                <a [href]="link" target="_blank" rel="noopener">
+                                    <i class="fa fa-book"></i> {{ t('docs') }}
+                                </a>
+                            }
+                            @if (m.menus !== null) {
+                                <span class="mc-menus">{{ m.menus }} {{ t('menus') }}</span>
+                            }
+                            @if (m.enabled !== null) {
+                                <nz-switch class="mc-switch" nzSize="small" [ngModel]="m.enabled"
+                                           [nzLoading]="busy.has(m.name)"
+                                           (ngModelChange)="toggle(m, $event)"></nz-switch>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

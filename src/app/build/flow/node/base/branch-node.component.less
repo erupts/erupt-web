@@ -2,7 +2,7 @@
 @node-line-len: 80px;
 // Backed by a CSS custom property so the color can be themed at runtime
 // (see the `:host-context(.brutalist-theme)` override at the bottom).
-@node-line-color: var(--node-line-color, #d9d9d9);
+@node-line-color: var(--node-line-color, var(--erupt-border, #d9d9d9));
 @error-color: #FF4D4F;
 
 .p-node {
@@ -19,19 +19,19 @@
 
     .p-node-body {
         cursor: pointer;
-        background: white;
+        background: var(--erupt-bg-container, #fff);
         overflow: hidden;
         border-radius: 5px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        box-shadow: 0 0 5px 0 #d8d8d8;
+        box-shadow: 0 0 5px 0 var(--erupt-fill, #d8d8d8);
 
         .p-node-move {
             width: 15px;
 
             &:hover {
-                background: #F5F6F6;
+                background: var(--erupt-fill-tertiary, #F5F6F6);
             }
         }
 
@@ -63,7 +63,7 @@
             font-size: 13px;
 
             .node-action {
-                color: #767676;
+                color: var(--erupt-text-secondary, #767676);
                 display: none;
 
                 & > * {
@@ -96,6 +96,8 @@
                 width: calc(@node-width - 85px);
                 border: 1px solid @node-line-color;
                 border-radius: 5px;
+                background: var(--erupt-bg-container, #fff);
+                color: var(--erupt-text, #000);
 
                 &:focus {
                     outline: none;
@@ -110,7 +112,7 @@
             justify-content: space-between;
             align-items: center;
             font-size: 15px;
-            color: #656363;
+            color: var(--erupt-text-secondary, #656363);
 
             & > div {
                 word-wrap: break-word;

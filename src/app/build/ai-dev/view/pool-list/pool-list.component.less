@@ -1,0 +1,419 @@
+/* the frame of erupt's table page (build/erupt/view/table), so this list reads like every other one */
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    background: var(--erupt-bg-layout, #f5f7fa);
+}
+
+.tc-toolbar {
+    display: flex;
+    align-items: center;
+    padding: 7px 15px;
+    border-bottom: 1px solid var(--ant-border-color-split);
+    background: var(--erupt-bg-container, #fff);
+    flex-shrink: 0;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tc-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    flex: 1;
+    gap: 8px;
+}
+
+.tc-utils {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 8px;
+}
+
+.tc-inner {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 12px;
+}
+
+.tc-search {
+    padding: 6px 8px;
+    background: var(--erupt-bg-container, #fff);
+    border: 1px solid var(--ant-border-color-split);
+}
+
+.tc-body {
+    overflow: hidden;
+    background: var(--erupt-bg-container, #fff);
+
+    ::ng-deep .ant-table .ant-table-container {
+        border: 1px solid var(--ant-border-color-split);
+        border-top: none;
+    }
+
+    ::ng-deep .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table {
+        border-top: none;
+    }
+}
+
+.tc-body:has(+ .tc-pagination) ::ng-deep .ant-table .ant-table-container {
+    border-bottom: none;
+}
+
+.tc-pagination {
+    height: 39px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--ant-border-color-split);
+    background: var(--erupt-bg-container, #fff);
+}
+
+// ng-zorro spaces adjacent buttons with a margin; the toolbars here use gap
+:host ::ng-deep .tc-actions .ant-btn + .ant-btn,
+:host ::ng-deep .tc-utils .ant-btn + .ant-btn {
+    margin-left: 0;
+}
+
+.ad-project {
+    width: 200px;
+}
+
+.ad-search {
+    width: 200px;
+
+    .ad-clear {
+        cursor: pointer;
+    }
+}
+
+.ad-filter {
+    display: inline-flex;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.ad-num {
+    margin-left: 4px;
+    font-size: 12px;
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+}
+
+.ad-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-right: 5px;
+    // the radio button's text sits on a 22px line: lift the dot to its middle rather than the baseline
+    vertical-align: 1px;
+    border-radius: 50%;
+    background: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
+
+    &.g-pending { background: #faad14; }
+    &.g-running { background: var(--ant-primary-color, #1890ff); }
+    &.g-acceptance { background: #13c2c2; }
+    &.g-failed { background: #ff4d4f; }
+    &.g-delivered { background: #52c41a; }
+}
+
+.ad-tr {
+    cursor: pointer;
+
+    td {
+        vertical-align: middle;
+    }
+}
+
+.ad-tr-main {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.ad-tr-title {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+
+    &:hover {
+        color: var(--ant-primary-color, #1890ff);
+    }
+}
+
+.ad-tr-flag {
+    flex-shrink: 0;
+    margin: 0 0 0 8px;
+    font-size: 11px;
+    line-height: 18px;
+}
+
+.ad-tr-progress {
+    display: block;
+    width: 110px;
+
+    ::ng-deep .ant-progress-outer {
+        padding-right: 0;
+    }
+
+    ::ng-deep .ant-progress-inner {
+        height: 3px;
+    }
+}
+
+.ad-repo {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin: 1px 4px 1px 0;
+    padding: 0 6px;
+    line-height: 20px;
+    font-size: 12px;
+    border-radius: 4px;
+    font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+    color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+    background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.04));
+    border: 1px solid var(--erupt-border, #e5e7eb);
+}
+
+.ad-pick {
+    cursor: pointer;
+    margin: 0;
+}
+
+.ad-off {
+    margin-bottom: 12px;
+}
+
+// the status badge: dot and text centred on one line
+:host ::ng-deep .ad-tr .ant-badge-status {
+    display: inline-flex;
+    align-items: center;
+    line-height: 20px;
+
+    .ant-badge-status-dot {
+        top: 0;
+    }
+}
+
+.ad-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+// avatar colours, stable per person, for those without a picture
+:host ::ng-deep {
+    .c1 { background: #13c2c2; }
+    .c2 { background: #722ed1; }
+    .c3 { background: #fa8c16; }
+    .c4 { background: #1890ff; }
+    .c5 { background: #eb2f96; }
+}
+
+.ad-agent {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 18px;
+
+    span {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+}
+
+/* board: one column per status, cards like the requirement page's own summary */
+.ad-board {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(220px, 1fr));
+    gap: 12px;
+    align-items: start;
+    overflow-x: auto;
+}
+
+.ad-col {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border-radius: 8px;
+    border: 1px solid var(--ant-border-color-split);
+    background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.02));
+}
+
+.ad-col-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+
+    .ad-dot {
+        margin: 0;
+        vertical-align: 0;
+    }
+
+    em {
+        margin-left: auto;
+        font-style: normal;
+        font-size: 12px;
+        padding: 0 7px;
+        line-height: 18px;
+        border-radius: 9px;
+        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+        background: var(--erupt-bg-container, #fff);
+    }
+}
+
+.ad-col-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 8px 8px;
+}
+
+.ad-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+    background: var(--erupt-bg-container, #fff);
+    border: 1px solid var(--ant-border-color-split);
+    transition: border-color .2s, box-shadow .2s;
+
+    &:hover {
+        color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+        border-color: var(--ant-primary-color, #1890ff);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    ::ng-deep .ant-progress {
+        margin: 0;
+        line-height: 1;
+    }
+}
+
+.ad-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ad-card-prio, .ad-card-flag {
+    margin: 0;
+    font-size: 11px;
+    line-height: 18px;
+}
+
+.ad-card-flag {
+    align-self: flex-start;
+}
+
+.ad-card-title {
+    font-weight: 500;
+    line-height: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+}
+
+.ad-card-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 0;
+}
+
+.ad-card-agent {
+    min-width: 0;
+    font-size: 12px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.ad-card-people {
+    flex-shrink: 0;
+    display: inline-flex;
+
+    nz-avatar + nz-avatar {
+        margin-left: -6px;
+        box-shadow: 0 0 0 2px var(--erupt-bg-container, #fff);
+    }
+}
+
+.ad-col-empty {
+    padding: 12px 0;
+    text-align: center;
+}
+
+.ad-col-more {
+    padding: 4px 0;
+    font-size: 12px;
+    text-align: center;
+}
+
+// the board's status badge, like the table's
+:host ::ng-deep .ad-card .ant-badge-status {
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+
+    .ant-badge-status-dot {
+        top: 0;
+    }
+}
+
+.ad-agent-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+
+.ad-card-agent {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+// a repository's delivery: pushed in green, a failed push in red, nothing yet as it was
+.ad-repo.d-PUSHED {
+    color: #389e0d;
+    background: rgba(82, 196, 26, 0.08);
+    border-color: rgba(82, 196, 26, 0.4);
+}
+
+.ad-repo.d-CONFLICT, .ad-repo.d-REJECTED, .ad-repo.d-FAILED {
+    color: #cf1322;
+    background: rgba(255, 77, 79, 0.08);
+    border-color: rgba(255, 77, 79, 0.4);
+}
+
+.ad-repo .fa {
+    font-size: 10px;
+}
+
+.ad-ops {
+    white-space: nowrap;
+
+    a + a {
+        margin-left: 12px;
+    }
+
+    .ad-danger {
+        color: #ff4d4f;
+    }
+}

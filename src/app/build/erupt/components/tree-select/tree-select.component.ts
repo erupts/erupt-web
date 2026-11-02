@@ -40,12 +40,15 @@ export class TreeSelectComponent implements OnInit {
     ngOnInit() {
         this.data.queryReferenceTreeData(this.eruptModel.eruptName, this.eruptField.fieldName, this.dependVal, this.parentEruptName)
             .subscribe(tree => {
-                this.dataLength = this.dataHandler.countNodes(tree)
-                this.list = this.dataHandler.dataTreeToZorroTree(tree, this.eruptField.eruptFieldJson.edit.referenceTreeType.expandLevel);
+                this.dataLength = this.dataHandler.countNodes(tree);
+                const refType = this.eruptField.eruptFieldJson.edit.referenceTreeType;
+                this.list = this.dataHandler.dataTreeToZorroTree(tree, refType.expandLevel, refType.leafOnly);
             });
     }
 
     nodeClickEvent(event: NzFormatEmitEvent) {
+        // leaf-only mode marks parents as non-selectable, so a click on one is a no-op
+        if (event.node && !event.node.isSelectable) return;
         if (this.multiple) {
             event.node.setChecked(!event.node.isChecked);
             this.checkBoxChange();

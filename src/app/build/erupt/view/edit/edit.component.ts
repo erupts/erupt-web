@@ -77,6 +77,8 @@ export class EditComponent implements OnInit {
 
     commentAction?: () => void;
 
+    revisionAction?: () => void;
+
     removeAction?: { confirm: string; run: () => void };
 
     menuActions: { label: string; icon: string; run: () => void }[] = [];
@@ -101,9 +103,15 @@ export class EditComponent implements OnInit {
         return typeof value === "function" ? (value as Function).call(button, this) : value;
     }
 
+    // nz-modal semantics: onClick is called as a method of the button object with the content
+    // component; an async handler keeps the button spinning until it settles (autoLoading)
     clickButton(button: ModalButtonOptions) {
-        // nz-modal calls onClick as a method of the button object, with the content component
-        if (button.onClick) button.onClick.call(button, this);
+        if (!button.onClick || this.buttonProp(button, "loading")) return;
+        const result = button.onClick.call(button, this);
+        if (button.autoLoading !== false && result instanceof Promise) {
+            button.loading = true;
+            result.finally(() => button.loading = false);
+        }
     }
 
     constructor(

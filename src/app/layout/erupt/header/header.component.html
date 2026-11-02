@@ -24,6 +24,10 @@
         <i nz-icon nzType="menu-{{settings.layout.collapsed ? 'unfold' : 'fold'}}"></i>
       </div>
     </li>
+    <!-- scope pickers: shown on the pages of models that declare a scope -->
+    <li class="hidden-mobile">
+      <header-scope-switch></header-scope-switch>
+    </li>
     @if (!splitMenu && !topSplitMenu && !topMenu && settings.layout['breadcrumbs']) {
       <li class="hidden-mobile header-breadcrumb" style="padding:0 10px 0 18px;">
         <erupt-nav></erupt-nav>

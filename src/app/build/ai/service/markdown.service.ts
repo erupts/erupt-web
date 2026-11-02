@@ -1,4 +1,8 @@
 import {Injectable} from '@angular/core';
+import {copyText} from '@shared/util/clipboard.util';
+
+// Rendered code blocks copy through an inline onclick, which can only reach a window-level helper
+(window as any).eruptCopyText = copyText;
 
 function escHtml(s: string): string {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -111,7 +115,7 @@ export class MarkdownService {
                         return `<div class="echarts-block" data-option="${encoded}" style="height:400px;">` +
                             `<div class="echarts-ph"></div></div>`;
                     }
-                    const copyBtn = `<button class="code-copy-btn" onclick="const c=this.closest('.code-block-wrap').querySelector('code');navigator.clipboard.writeText(c.textContent||'').then(()=>{this.setAttribute('data-copied','');setTimeout(()=>this.removeAttribute('data-copied'),1500)})">Copy</button>`;
+                    const copyBtn = `<button class="code-copy-btn" onclick="const c=this.closest('.code-block-wrap').querySelector('code');window.eruptCopyText(c.textContent||'').then(ok=>{if(!ok)return;this.setAttribute('data-copied','');setTimeout(()=>this.removeAttribute('data-copied'),1500)})">Copy</button>`;
                     const langLabel = info ? `<span class="code-lang">${this.md.utils.escapeHtml(info)}</span>` : '';
                     const lineCount = str.replace(/\n$/, '').split('\n').length;
                     const gutter = `<div class="code-gutter">${Array.from({length: lineCount}, (_, i) => `<span>${i + 1}</span>`).join('')}</div>`;

@@ -14,6 +14,7 @@ import {Observable} from 'rxjs';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {authSimpleInterceptor} from '@delon/auth';
+import {ShareTokenInterceptor} from './core/net/share-token.interceptor';
 
 import {DefaultInterceptor, I18NService, StartupService} from '@core';
 // register angular
@@ -46,6 +47,8 @@ class AuthSimpleInterceptorWrapper implements HttpInterceptor {
 }
 
 const INTERCEPTOR_PROVIDES = [
+    // first, so a share page's requests are marked anonymous before the auth interceptor sees them
+    {provide: HTTP_INTERCEPTORS, useClass: ShareTokenInterceptor, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: AuthSimpleInterceptorWrapper, multi: true},
     {provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true}
 ];

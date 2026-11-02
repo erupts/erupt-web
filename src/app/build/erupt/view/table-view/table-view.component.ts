@@ -26,7 +26,7 @@ export class TableViewComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.router$.unsubscribe();
+        this.router$?.unsubscribe();
     }
 
 }

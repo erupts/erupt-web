@@ -10,13 +10,14 @@ import {
     ViewChild,
     ViewContainerRef
 } from "@angular/core";
+import {ScopeService} from "@shared/service/scope.service";
 import {IframeManagerService} from "@shared/service/iframe-manager.service";
 import {StatusService} from "@shared/service/status.service";
 import {DOCUMENT} from "@angular/common";
 import {NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router} from "@angular/router";
 
-import {Observable, Subscription} from "rxjs";
-import {tap} from "rxjs/operators";
+import {forkJoin, Observable, of, Subscription} from "rxjs";
+import {catchError, map, tap} from "rxjs/operators";
 import {ScrollService, updateHostClass} from "@delon/util";
 import {Menu, MenuService, SettingsService} from "@delon/theme";
 import {
@@ -38,7 +39,7 @@ import {
 import {DataService} from "@shared/service/data.service";
 import {generateMenuPath} from "@shared/util/erupt.util";
 import {RecentMenus} from "@shared/util/recent-menu.util";
-import {MenuTypeEnum, MenuVo, selectedTopMenu, topLevelMenus} from "@shared/model/erupt-menu";
+import {menuSections, MenuTypeEnum, MenuVo, selectedTopMenu, topLevelMenus} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {NzModalService} from "ng-zorro-antd/modal";
@@ -124,6 +125,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 private i18n: I18NService,
                 private utilsService: UtilsService,
                 private iframeManager: IframeManagerService,
+                private scopeService: ScopeService,
                 private statusService: StatusService,
                 public session: SessionService,
                 @Optional()
@@ -229,14 +231,14 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         this.menuChange$ = this.menuSrv.change.subscribe(() => this.setClass());
         this.setClass();
         this.loadMenu().subscribe();
-        let userinfoObservable: Observable<Userinfo>;
-
+        // the user is the platform's /userinfo for every session; a tenant session adds its tenant's name
+        let userinfoObservable: Observable<Userinfo> = this.data.userinfo();
         if (this.utilsService.isTenantToken()) {
-            userinfoObservable = this.data.tenantUserinfo()
-        } else {
-            userinfoObservable = this.data.userinfo();
+            userinfoObservable = forkJoin([userinfoObservable, this.data.tenantInfo().pipe(catchError(() => of(null)))])
+                .pipe(map(([userinfo, tenant]) => ({...userinfo, tenantName: tenant?.tenantName})));
         }
         userinfoObservable.subscribe(userinfo => {
+            this.scopeService.load(userinfo.account);
             let path = generateMenuPath(userinfo.indexMenuType, userinfo.indexMenuValue);
             const appConfig = EruptAppData.get();
             if (appConfig.waterMark) {
@@ -327,13 +329,9 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 text: this.i18n.fanyi("global.home"),
                 link: "/"
             }]);
-            const tree = generateTree(res, null);
-            const menuItems: Menu[] = [{
-                group: false,
-                hideInBreadcrumb: true,
-                text: "~",
-                children: tree
-            }];
+            const groups = new Map(res.filter(m => m.pid == null).map(m => [m.code, m.group]));
+            const menuItems = menuSections(generateTree(res, null), key => groups.get(key),
+                group => this.i18n.fanyi('module.group.' + group.toLowerCase()));
             if (hiddenMenus.length) {
                 menuItems.push({group: false, hide: true, text: '_hidden', children: hiddenMenus});
             }

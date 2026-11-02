@@ -45,7 +45,7 @@ export class StartupService {
     // brutalist pastel never boots into another skin and vice versa.
     private applyTheme(): void {
         // only the color entries go to ng-zorro; the layout-ish defaults are read elsewhere
-        const {dark, compact, skin, menuMode, workspaceFrame, customizable, loginLayout, loginBackground, ...theme} = WindowModel.theme || {};
+        const {dark, compact, skin, menuMode, menuGroups, workspaceFrame, customizable, loginLayout, loginBackground, ...theme} = WindowModel.theme || {};
         theme.primaryColor = resolveThemeColor();
         this.nzConfigService.set('theme', theme);
         // User choice first, then the site config default (theme.headerColor),
@@ -156,6 +156,10 @@ export class StartupService {
         const layout = this.settingSrv.layout;
         const defaultMenuMode = (WindowModel.theme?.menuMode as MenuMode) || MenuMode.NORMAL;
         const locked = !WindowModel.appearanceCustomizable();
+        // Sidebar section titles by module group: same rule, theme.menuGroups (default on)
+        if (locked || layout['menuGroups'] === undefined) {
+            layout['menuGroups'] = WindowModel.theme?.menuGroups !== false;
+        }
         if (locked || (!hasMenuModeChoice(layout) && defaultMenuMode !== MenuMode.NORMAL)) {
             Object.assign(layout, menuModeFlags(defaultMenuMode));
             // the header-menu modes take the breadcrumb's place (same rule as setMenuMode)

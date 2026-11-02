@@ -126,8 +126,13 @@
                                 </button>
                             }
                         }
+                        @if (batchEditPower() && selectedRows.length > 0) {
+                            <button nz-button nzSize="small" id="erupt-btn-batch-edit" (click)="batchEdit()">
+                                <i nz-icon nzType="form" nzTheme="outline"></i>{{ 'table.batch_edit'|translate }}
+                            </button>
+                        }
                         @if (selectedRows.length == 1) {
-                            @if (eruptBuildModel.eruptModel.eruptJson.power.print) {
+                            @if (canPrint(eruptBuildModel.eruptModel.eruptJson.power)) {
                                 <button nz-button nzSize="small" id="erupt-btn-print"
                                         [nzLoading]="printLoading" (click)="printSelectedRows()">
                                     <i nz-icon nzType="printer" nzTheme="outline"></i>{{ 'global.print'|translate }}
@@ -142,22 +147,39 @@
                         }
                         @if (eruptBuildModel.eruptModel.eruptJson.power.export) {
                             <nz-badge [nzCount]="selectedRows.length" [nzShowZero]="false" nzSize="small">
-                                <button nz-button nzSize="small" (click)="exportExcel()"
-                                        id="erupt-btn-export" [nzLoading]="downloading">
-                                    <i nz-icon nzType="download" nzTheme="outline"></i>{{ 'table.download'|translate }}
-                                </button>
+                                <!-- compact space joins the two buttons (flex, so no whitespace line box pushes them down) -->
+                                <nz-space-compact nzSize="small">
+                                    <button nz-button nzSize="small" (click)="exportExcel()"
+                                            id="erupt-btn-export" [nzLoading]="downloading">
+                                        <i nz-icon nzType="download" nzTheme="outline"></i>{{ 'table.download'|translate }}
+                                    </button>
+                                    @if (tableFormats.length > 1) {
+                                        <button nz-button nzSize="small" nz-dropdown [nzDropdownMenu]="exportMenu" nzPlacement="bottomRight">
+                                            <i nz-icon nzType="ellipsis"></i>
+                                        </button>
+                                    }
+                                </nz-space-compact>
                             </nz-badge>
+                            <nz-dropdown-menu #exportMenu="nzDropdownMenu">
+                                <ul nz-menu>
+                                    @for (f of tableFormats; track f.format) {
+                                        <li nz-menu-item (click)="exportExcel(f.format)">
+                                            <i nz-icon nzType="file" nzTheme="outline"></i>
+                                            &nbsp;{{ f.name }}
+                                        </li>
+                                    }
+                                </ul>
+                            </nz-dropdown-menu>
                         }
                         @if (eruptBuildModel.eruptModel.eruptJson.power.importable) {
-                            <span>
+                            <nz-space-compact nzSize="small">
                                 <button nz-button nzSize="small" (click)="importableExcel()" id="erupt-btn-importable">
                                     <i nz-icon nzType="import" nzTheme="outline"></i>{{ 'table.import'|translate }}
                                 </button>
-                                <button nz-button nzSize="small" nz-dropdown [nzDropdownMenu]="menu1"
-                                        nzPlacement="bottomRight" style="margin-left:-1px">
+                                <button nz-button nzSize="small" nz-dropdown [nzDropdownMenu]="menu1" nzPlacement="bottomRight">
                                     <i nz-icon nzType="ellipsis"></i>
                                 </button>
-                            </span>
+                            </nz-space-compact>
                             <nz-dropdown-menu #menu1="nzDropdownMenu">
                                 <ul nz-menu>
                                     <li nz-menu-item (click)="downloadExcelTemplate()">
@@ -456,7 +478,14 @@
                                                   [vis]="vis[selectedVisIndex]"/>
                                     }
                                     @case (VisType.TABLE) {
-                                        <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
+                                        @if (vis[selectedVisIndex].tableView?.groupField) {
+                                            <vis-table-group [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
+                                                             [columns]="stColumns" [loading]="dataPage.querying"
+                                                             (change)="tableDataChange($event)"
+                                                             [vis]="vis[selectedVisIndex]"/>
+                                        } @else {
+                                            <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
+                                        }
                                     }
                                     @case (VisType.BOARD) {
                                         <vis-board [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
@@ -472,6 +501,18 @@
                                                    (onSelectionChange)="handleVisSelectionChange($event)"
                                                    [selectionMode]="_reference ? _reference.mode : null"
                                                    [vis]="vis[selectedVisIndex]"/>
+                                    }
+                                    @case (VisType.TIMELINE) {
+                                        <vis-timeline [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
+                                                      (onEdit)="onEdit($event)" [vis]="vis[selectedVisIndex]"/>
+                                    }
+                                    @case (VisType.MAP) {
+                                        <vis-map [eruptBuildModel]="eruptBuildModel" [data]="dataPage.data"
+                                                 (onEdit)="onEdit($event)" [vis]="vis[selectedVisIndex]"/>
+                                    }
+                                    @case (VisType.CUBE) {
+                                        <vis-cube [eruptBuildModel]="eruptBuildModel" [conditions]="cubeConditions"
+                                                  [vis]="vis[selectedVisIndex]"/>
                                     }
                                     @case (VisType.TPL) {
                                         <nz-spin [nzSpinning]="!getVisTplData()"
@@ -492,7 +533,7 @@
                                 <ng-container [ngTemplateOutlet]="eruptTable"></ng-container>
                             }
                         </div>
-                        @if (dataPage.showPagination && dataPage?.total > 0 && vis[selectedVisIndex]?.type !== VisType.BOARD && (vis.length || eruptBuildModel.eruptModel.eruptJson.visRawTable !== false)) {
+                        @if (dataPage.showPagination && dataPage?.total > 0 && !fullLoadVis() && (vis.length || eruptBuildModel.eruptModel.eruptJson.visRawTable !== false)) {
                             <div class="tc-pagination">
                                 <nz-pagination nzShowSizeChanger nzShowQuickJumper
                                                [nzPageIndex]="dataPage.pi" [nzShowTotal]="totalTemplate"
@@ -532,6 +573,7 @@
 <ng-template #eruptTable>
     <div [syncVirtualScroll]="dataPage.data.length >= 100 && !extraRows?.length && !dragSortField && !wrapCells"
          [class.erupt-drag-sort]="dragSortAllowed()" [class.erupt-row-click-view]="rowClickViewEnabled">
+        @if (stAlive) {
         <st #st resizable [loading]="dataPage.querying" [widthMode]="widthMode"
             [body]="bodyTpl" [data]="dataPage.data" [columns]="stColumns"
             [drag]="dragSortAllowed() ? dragOptions : null"
@@ -556,6 +598,19 @@
                 }
             </ng-template>
         </st>
+        }
+        <!-- totals arrive on their own request and render outside st, so the rows never wait or re-render for them -->
+        @if (statChips.length) {
+            <div class="erupt-stat-bar">
+                <i nz-icon nzType="calculator" nzTheme="outline" class="erupt-stat-icon"></i>
+                @for (chip of statChips; track chip.title) {
+                    <span class="erupt-stat-chip">
+                        <span class="erupt-stat-key">{{ chip.title }}</span>
+                        <span class="erupt-stat-val">{{ chip.value }}</span>
+                    </span>
+                }
+            </div>
+        }
     </div>
 </ng-template>
 <ng-template #printSelectTpl>

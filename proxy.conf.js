@@ -26,6 +26,12 @@ module.exports = {
         ...proxy,
         ws: true
     },
+    // erupt-k8s-dashboard: bundled xterm.js and the pod terminal socket
+    '/erupt-k8s-dashboard': proxy,
+    '/erupt-k8s-terminal': {
+        ...proxy,
+        ws: true
+    },
     '/erupt-remote': {
         ...proxy,
         ws: true

@@ -1,14 +1,17 @@
-import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild} from "@angular/core";
+import {Component, ElementRef, HostListener, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild, inject} from "@angular/core";
+import {ClipboardService} from '@shared/service/clipboard.service';
+import {ScopeStore} from "@shared/service/scope.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
-import {DataService} from "@shared/service/data.service";
-import {Alert, Drill, DrillInput, EruptModel, FieldVisibility, Page, Power, Row, RowOperation, Vis, VisType} from "../../model/erupt.model";
+import {DataService, TableFormat} from "@shared/service/data.service";
+import {Alert, Drill, DrillInput, EruptModel, FieldVisibility, Page, Power, Row, RowOperation, Vis, VisType, canPrint} from "../../model/erupt.model";
 
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
 import {FormAction, FormModalService, FormNavigator} from "../../service/form-modal.service";
 import {RecordCommentComponent} from "../../components/record-comment/record-comment.component";
+import {RecordRevisionComponent} from "../../components/record-revision/record-revision.component";
 import {EruptBuildModel} from "../../model/erupt-build.model";
 import {cloneDeep} from "lodash";
 import {
@@ -27,6 +30,7 @@ import {
 } from "../../model/erupt.enum";
 import {DataHandlerService} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
+import {BatchEditComponent} from "../../components/batch-edit/batch-edit.component";
 import {Status} from "../../model/erupt-api.model";
 import {EruptFieldModel, View, VL} from "../../model/erupt-field.model";
 import {Observable, Subscription} from "rxjs";
@@ -42,14 +46,14 @@ import {CodeEditorComponent} from "../../components/code-editor/code-editor.comp
 import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
 import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
 import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
-import {TableStyle} from "../../model/erupt.vo";
+import {QueryCondition, TableStyle} from "../../model/erupt.vo";
 import {colRules} from "@shared/model/util.model";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {WindowModel} from "@shared/model/window.model";
 import {PrintTypeComponent} from "../../components/print-type/print-type";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {eruptToPrintVars, PrintTemplate, PrintVar} from "@shared/component/print-template/print-template";
-import printJS from 'print-js';
+import {printHtml, printPageCss} from "@shared/util/print.util";
 
 
 @Component({
@@ -59,6 +63,8 @@ import printJS from 'print-js';
     styleUrls: ["./table.component.less"]
 })
 export class TableComponent implements OnInit, OnDestroy {
+
+    private clipboard = inject(ClipboardService);
 
     // How many icon actions the operation column is sized for when cells wrap (@Layout
     // tableTruncate = false); the rest flow onto further lines.
@@ -100,6 +106,12 @@ export class TableComponent implements OnInit, OnDestroy {
     @ViewChild("st", {static: false})
     st: STComponent;
 
+    private scopeFixed(eb: EruptBuildModel, field: string): boolean {
+        if (eb.scope.bind.indexOf(field) === -1) return false;
+        const value = ScopeStore.value(eb.scope.name, field);
+        return value !== null && value !== undefined && value !== "" && !Array.isArray(value);
+    }
+
     @ViewChild("cellEditTpl", {static: true})
     cellEditTpl: TemplateRef<any>;
 
@@ -129,6 +141,24 @@ export class TableComponent implements OnInit, OnDestroy {
 
     clientHeight: number = document.body.clientHeight;
 
+    // false for one tick to rebuild the table; see onWindowResize
+    stAlive = true;
+
+    // The scroll box depends on the viewport, so it must follow window resizes (mobile <-> desktop).
+    // Crossing the breakpoint swaps scroll.x, and nz-table keeps the auto column widths it measured
+    // in the other layout (they feed its own colgroup, so a fixed layout measures them back), which
+    // leaves the table wider than it started: a fresh table measures again
+    @HostListener("window:resize")
+    onWindowResize() {
+        const wide = this.clientWidth > 768;
+        this.clientWidth = document.body.clientWidth;
+        this.clientHeight = document.body.clientHeight;
+        if (wide !== this.clientWidth > 768) {
+            this.stAlive = false;
+            setTimeout(() => this.stAlive = true);
+        }
+    }
+
     get tableScrollY(): string {
         if (this.clientWidth > 768) {
             return (this.clientHeight > 814 ? 525 + (this.clientHeight - 814) : 525) + 'px';
@@ -157,6 +187,9 @@ export class TableComponent implements OnInit, OnDestroy {
     showTable: boolean = true;
 
     downloading: boolean = false;
+
+    // import/export formats offered by the server; Excel first, the rest behind the caret
+    tableFormats: TableFormat[] = [];
 
     _drill: DrillInput;
 
@@ -188,6 +221,12 @@ export class TableComponent implements OnInit, OnDestroy {
     };
 
     vis: Vis[];
+
+    // current search, forwarded to a CUBE view as chart filters
+    cubeConditions: QueryCondition[] = [];
+
+    // server-side totals of the @View(statistic) columns, one chip per column; empty = none
+    statChips: { title: string; value: string }[] = [];
 
     selectedVisIndex: number = 0;
 
@@ -318,7 +357,7 @@ export class TableComponent implements OnInit, OnDestroy {
 
     get hasPrintConfig(): boolean {
         // a model that withholds printing has no layout to configure either
-        return !!(this.eruptBuildModel?.eruptModel?.eruptJson?.power?.print
+        return !!(canPrint(this.eruptBuildModel?.eruptModel?.eruptJson?.power)
             && this.isEruptPrint && null != this.menuSrv.getItem("PRINT_CONFIG"));
     }
 
@@ -372,6 +411,12 @@ export class TableComponent implements OnInit, OnDestroy {
             && this.eruptBuildModel.eruptModel.eruptJson.power.comment !== false;
     }
 
+    // erupt-revision module present and the model has not opted out via @Power(revision = false)
+    get isRevisionEnabled(): boolean {
+        return !!EruptAppData.get().properties["erupt-revision"]
+            && this.eruptBuildModel.eruptModel.eruptJson.power.revision !== false;
+    }
+
     // comment count per record id of the current page, shown as a badge on the row button
     commentCounts: Record<string, number> = {};
 
@@ -381,8 +426,10 @@ export class TableComponent implements OnInit, OnDestroy {
         this.dataService.commentCounts(this.eruptBuildModel.eruptModel.eruptName, ids).subscribe(res => {
             if (!res.success) return;
             this.commentCounts = res.data || {};
-            // button texts are computed when st optimizes the rows, so rebuild them with the counts in
-            this.st?.resetColumns();
+            // button texts are computed when st optimizes the rows, so re-run that over the current
+            // page. Not resetColumns(): it rebuilds the columns from a deep copy, which drops the
+            // header's sort state and makes the next click restart at "ascend" (#167).
+            this.st?.reload();
         });
     }
 
@@ -535,8 +582,16 @@ export class TableComponent implements OnInit, OnDestroy {
                 if (savedSettings.aiPanelOpen && window.innerWidth > 768) this.showAiPanel = true;
                 if (savedSettings.aiPanelWidth) this.aiPanelWidth = savedSettings.aiPanelWidth;
                 this.dataHandler.initErupt(eb);
+                if (eb.scope) {
+                    // a column the scope pins to one value would repeat it on every row
+                    eb.eruptModel.tableColumns = eb.eruptModel.tableColumns
+                        .filter(v => !this.scopeFixed(eb, v.eruptFieldModel.fieldName));
+                }
                 callback && callback(eb);
                 this.eruptBuildModel = eb;
+                if (eb.eruptModel.eruptJson.power.export) {
+                    this.dataService.tableFormats(formats => this.tableFormats = formats);
+                }
                 const _menuPath = this.menuSrv.getPathByUrl(this.router.url.split('?')[0]);
                 const _menuName = _menuPath.length ? _menuPath[_menuPath.length - 1].text : null;
                 const _m = eb.eruptModel;
@@ -552,6 +607,10 @@ export class TableComponent implements OnInit, OnDestroy {
                 this.searchErupt = <EruptModel>cloneDeep(this.eruptBuildModel.eruptModel);
                 for (let fieldModel of this.searchErupt.eruptFieldModels) {
                     let edit = fieldModel.eruptFieldJson.edit;
+                    // the header scope decides a bound field, so it is not searched here too
+                    if (edit && eb.scope && eb.scope.bind.indexOf(fieldModel.fieldName) !== -1) {
+                        edit.search.value = false;
+                    }
                     if (edit) {
                         if (edit.search.value) {
                             this.hasSearchFields = true;
@@ -595,14 +654,17 @@ export class TableComponent implements OnInit, OnDestroy {
     visChange(e: number) {
         this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {visIndex: e});
         this.st?.resetColumns();
-        const vis = this.vis[e];
-        if (vis?.type === VisType.BOARD) {
-            const savedPs = this.dataPage.ps;
-            this.query(1, 1000);
-            this.dataPage.ps = savedPs;
-        } else {
-            this.query(1);
-        }
+        this.query(1);
+    }
+
+    // Views that lay every row out at once (board columns, calendar cells, map markers) fetch
+    // one big page and hide the pager; cube charts query the cube instead of the rows.
+    private static readonly FULL_LOAD_VIS = [VisType.BOARD, VisType.CALENDAR, VisType.MAP, VisType.CUBE];
+
+    fullLoadVis(): boolean {
+        const vis = this.vis[this.selectedVisIndex];
+        // a grouped table splits rows by field, which only makes sense over the whole result
+        return TableComponent.FULL_LOAD_VIS.includes(vis?.type) || (vis?.type === VisType.TABLE && !!vis.tableView?.groupField);
     }
 
     toggleCondition() {
@@ -614,7 +676,7 @@ export class TableComponent implements OnInit, OnDestroy {
         const body: any = {
             condition: this.dataHandler.buildSearchConditions(this.searchErupt),
             pageIndex: this.dataPage.pi,
-            pageSize: this.dataPage.ps,
+            pageSize: this.fullLoadVis() ? 1000 : this.dataPage.ps,
             vis: this.vis[this.selectedVisIndex]?.code,
             sort: null
         };
@@ -645,6 +707,8 @@ export class TableComponent implements OnInit, OnDestroy {
         this.selectedRows = [];
         this.dataPage.querying = true;
         this.setVisTplData(null)
+        // a fresh array each query so the cube view re-runs its charts on the new search
+        this.cubeConditions = this.dataHandler.buildSearchConditions(this.searchErupt);
         const loaded = new Promise<any[]>(resolve => {
             this.dataService.queryEruptTableData(this.eruptBuildModel.eruptModel.eruptName, this.dataPage.url,
                 this.buildQueryBody(), this.header).subscribe(page => {
@@ -664,7 +728,29 @@ export class TableComponent implements OnInit, OnDestroy {
             });
         });
         this.extraRowFun(this.buildQueryBody());
+        this.loadAggregate(this.buildQueryBody());
         return loaded;
+    }
+
+    // Totals cover every row the query matches, not the page, so they come from the server;
+    // the chips are prepared here once per response, never recomputed during change detection.
+    private loadAggregate(query: Page) {
+        const statColumns = (this.columns || []).filter(c => !!c[UiBuildService.STATISTIC_KEY]);
+        if (!statColumns.length) {
+            this.statChips = [];
+            return;
+        }
+        this.dataService.aggregate(this.eruptBuildModel.eruptModel.eruptName, query, this.header).subscribe(result => {
+            this.statChips = statColumns.map(col => {
+                const index = Array.isArray(col.index) ? col.index[0] : col.index as string;
+                const value = result?.[index];
+                return {
+                    title: typeof col.title === 'string' ? col.title : (col.title as any)?.text ?? index,
+                    value: value == null ? '-' : typeof value === 'number'
+                        ? value.toLocaleString(undefined, {maximumFractionDigits: 2}) : String(value)
+                };
+            });
+        }, () => this.statChips = []);
     }
 
     setVisTplData(data: any[]) {
@@ -1060,6 +1146,7 @@ export class TableComponent implements OnInit, OnDestroy {
             link: this.recordLink(record),
             ai: this.recordAi(),
             comment: this.recordComment(record),
+            revision: this.recordRevision(record),
             remove: this.recordRemove(record, (r, ref) => this.openView(r, ref)),
             more: this.recordActions(record),
             footer: ref => [
@@ -1104,6 +1191,7 @@ export class TableComponent implements OnInit, OnDestroy {
             link: this.recordLink(record),
             ai: this.recordAi(),
             comment: this.recordComment(record),
+            revision: this.recordRevision(record),
             remove: this.recordRemove(record, (r, ref) => this.openEdit(r, ref)),
             more: this.recordActions(record),
             footer: ref => [
@@ -1130,6 +1218,8 @@ export class TableComponent implements OnInit, OnDestroy {
                 {
                     label: this.i18n.fanyi("global.save_close"),
                     type: "primary",
+                    // runs through nzOnOk, whose progress nz-modal tracks on the config
+                    loading: () => ref.getConfig().nzOkLoading,
                     onClick: () => ref.triggerOk()
                 },
             ],
@@ -1175,7 +1265,7 @@ export class TableComponent implements OnInit, OnDestroy {
     // "More" menu of the panel: printing when the print module is on and the model allows it.
     private recordActions(record: any): FormAction[] {
         const actions: FormAction[] = [];
-        if (this.isEruptPrint && this.eruptBuildModel?.eruptModel?.eruptJson?.power?.print) {
+        if (this.isEruptPrint && canPrint(this.eruptBuildModel?.eruptModel?.eruptJson?.power)) {
             actions.push({label: this.i18n.fanyi("global.print"), icon: "printer", run: () => this.printRecord(record[this.pkCol])});
         }
         return actions;
@@ -1191,6 +1281,25 @@ export class TableComponent implements OnInit, OnDestroy {
             nzWidth: window.innerWidth <= 768 ? "100%" : 420,
             nzBodyStyle: {padding: "0", height: "100%"}
         }, "form-comment").afterClose.subscribe(() => this.loadCommentCounts());
+    }
+
+    // Change history of the record in a drawer, opened from the record panel's title bar only (the
+    // table rows carry no entry); only when the erupt-revision module is present. A rollback edits
+    // the record, so the page is re-queried afterwards.
+    private recordRevision(record: any): ((ref: NzModalRef<EditComponent>) => void) | undefined {
+        if (!this.isRevisionEnabled) return undefined;
+        return () => openResizableDrawer(this.drawerService, {
+            nzContent: RecordRevisionComponent,
+            nzContentParams: {
+                eruptName: this.eruptBuildModel.eruptModel.eruptName,
+                id: record[this.pkCol],
+                canRollback: !!this.eruptBuildModel.eruptModel.eruptJson.power.edit,
+                onRolledBack: () => this.query()
+            },
+            nzTitle: this.i18n.fanyi("form.revisions"),
+            nzWidth: window.innerWidth <= 768 ? "100%" : 460,
+            nzBodyStyle: {padding: "0", height: "100%"}
+        }, "form-revision");
     }
 
     // AI chat in a drawer, primed with the module context plus the record currently in the panel.
@@ -1459,6 +1568,55 @@ export class TableComponent implements OnInit, OnDestroy {
         this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {searchOperators: ops});
     }
 
+    // on by default: every row runs the cell edit pipeline, so a table that may be edited
+    // offers it unless @Power(batchEdit = false) withdraws it
+    batchEditPower(): boolean {
+        const power = this.eruptBuildModel.eruptModel.eruptJson.power;
+        return power.edit && power.batchEdit;
+    }
+
+    // one field of the selected rows set to the same value; a row that withdrew edit via __power__ is left out
+    batchEdit() {
+        const pk = this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol;
+        const ids = this.selectedRows.filter(row => this.cellEditAllowed(row)).map(row => row[pk]);
+        if (ids.length === 0) {
+            this.msg.warning(this.i18n.fanyi("table.batch_edit.select"));
+            return;
+        }
+        const ref: NzModalRef = this.modal.create({
+            nzDraggable: true,
+            nzKeyboard: true,
+            nzMaskClosable: false,
+            nzTitle: this.i18n.fanyi("table.batch_edit"),
+            nzOkText: this.i18n.fanyi("global.ok"),
+            nzCancelText: this.i18n.fanyi("global.cancel"),
+            nzContent: BatchEditComponent,
+            nzOnOk: async () => {
+                const content = ref.getContentComponent();
+                if (!content.model) {
+                    this.msg.warning(this.i18n.fanyi("table.batch_edit.field"));
+                    return false;
+                }
+                content.saving = true;
+                try {
+                    const res = await this.dataService.updateEruptCells(this.eruptBuildModel.eruptModel.eruptName,
+                        ids, content.fieldName, content.value()).toPromise();
+                    if (res.status !== Status.SUCCESS) {
+                        return false;
+                    }
+                } finally {
+                    content.saving = false;
+                }
+                this.msg.success(this.i18n.fanyi("table.batch_edit.success").replace("{}", ids.length + ""));
+                this.selectedRows = [];
+                this.query();
+                return true;
+            }
+        });
+        ref.getContentComponent().eruptBuildModel = this.eruptBuildModel;
+        ref.getContentComponent().count = ids.length;
+    }
+
     //batch delete
     delRows() {
         if (!this.selectedRows || this.selectedRows.length === 0) {
@@ -1574,8 +1732,8 @@ export class TableComponent implements OnInit, OnDestroy {
         this.dataService.downloadExcelTemplate(this.eruptBuildModel.eruptModel.eruptName);
     }
 
-    // export to Excel
-    exportExcel() {
+    // export in a server format; Excel when none is given
+    exportExcel(format?: string) {
         const ids = this.selectedRows.length > 0
             ? this.selectedRows.map(r => r[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])
             : null;
@@ -1586,7 +1744,8 @@ export class TableComponent implements OnInit, OnDestroy {
                 this.downloading = false;
                 if (err?.message) this.msg.warning(err.message);
             },
-            ids
+            ids,
+            format
         );
     }
 
@@ -1630,6 +1789,8 @@ export class TableComponent implements OnInit, OnDestroy {
     //provides callable functions for custom expressions
     execExpr(expr: string) {
         let ev = {
+            // copies text with the http fallback and tells the user; success: the message, or none
+            copy: (text: string, success?: string) => this.clipboard.copy(text, success),
             codeModal: (lang: string, code: any) => {
                 let ref = this.modal.create({
                     nzDraggable: true,
@@ -2431,6 +2592,8 @@ export class TableComponent implements OnInit, OnDestroy {
     private _printPk: any;
     private _printSelectRef: NzModalRef;
     printLoading: boolean = false;
+
+    readonly canPrint = canPrint;
     printConfigLoading: boolean = false;
 
     printSelectedRows() {
@@ -2468,13 +2631,17 @@ export class TableComponent implements OnInit, OnDestroy {
     }
 
     onPrintSelect(cfg: any) {
-        this._printSelectRef?.close();
         const eruptName = this.eruptBuildModel.eruptModel.eruptName;
-        if (!cfg) {
-            this.builtinPrint(this._printPk);
-        } else {
-            this.doTemplatePrint(eruptName, this._printPk, cfg);
-        }
+        // go on only once the picker is gone: the print dialog blocks the page, and a modal still
+        // animating out when it opens never finishes, leaving its mask behind
+        this._printSelectRef.afterClose.subscribe(() => {
+            if (!cfg) {
+                this.builtinPrint(this._printPk);
+            } else {
+                this.doTemplatePrint(eruptName, this._printPk, cfg);
+            }
+        });
+        this._printSelectRef.close();
     }
 
     private builtinPrint(pk: any) {
@@ -2508,19 +2675,14 @@ export class TableComponent implements OnInit, OnDestroy {
         modal.getContentComponent().eruptBuildModel = printBuildModel;
     }
 
-    private doTemplatePrint(eruptName: string, pk: any, config: { content: string, pageConfig: any }) {
+    private doTemplatePrint(eruptName: string, pk: any, config: { id: number, pageConfig: any }) {
         const msgLoading = this.msg.loading(this.i18n.fanyi("global.print"), {nzDuration: 0});
-        this.dataService.renderPrint(eruptName, pk, config.content).subscribe({
+        this.dataService.renderPrint(eruptName, pk, config.id).subscribe({
             next: res => {
                 this.msg.remove(msgLoading.messageId);
                 const pc = config.pageConfig || {};
-                const pageSize = (!pc.paperSize || pc.paperSize === 'Custom') ? 'auto' : `${pc.paperSize} ${pc.orientation || 'portrait'}`;
-                const margin = `${pc.marginTop || 10}mm ${pc.marginRight || 10}mm ${pc.marginBottom || 10}mm ${pc.marginLeft || 10}mm`;
-                printJS({
-                    printable: res.data,
-                    type: 'raw-html',
-                    style: `* { font-family: 'Heiti SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } @page { size: ${pageSize}; margin: ${margin}; }`
-                });
+                printHtml(res.data, printPageCss(pc.paperSize, pc.orientation || 'portrait',
+                    `${pc.marginTop ?? 10}mm ${pc.marginRight ?? 10}mm ${pc.marginBottom ?? 10}mm ${pc.marginLeft ?? 10}mm`));
             },
             error: () => this.msg.remove(msgLoading.messageId)
         });

@@ -35,7 +35,9 @@ export class HomeComponent implements OnInit, OnDestroy {
         if (path) {
             this.router.navigateByUrl(path).then();
         } else {
-            let url = "home.html?v=" + EruptAppData.get().hash;
+            // the version busts the browser cache of the page and, through this same parameter, of the
+            // i18n sheet the page loads; both ship with erupt-web and change only with a release
+            let url = "home.html?v=" + encodeURIComponent(EruptAppData.get().version || EruptAppData.get().hash);
             url += "&_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang;
             this.url = url;
         }
@@ -63,11 +65,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     // a white sheet. The frame stays theme-free; the host just hands it the
     // one property that decides this.
     private syncColorScheme(): void {
-        const doc = this.frame?.nativeElement?.contentDocument;
-        if (!doc) {
+        // an iframe still loading has a document without a root element yet
+        const root = this.frame?.nativeElement?.contentDocument?.documentElement;
+        if (!root) {
             return;
         }
-        doc.documentElement.style.colorScheme =
+        root.style.colorScheme =
             document.documentElement.classList.contains("dark") ? "dark" : "light";
     }
 

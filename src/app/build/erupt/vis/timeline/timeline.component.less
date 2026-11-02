@@ -1,0 +1,227 @@
+// the feed scrolls inside the view instead of growing the page
+:host {
+    display: block;
+    max-height: calc(100vh - 300px);
+    min-height: 320px;
+    overflow-y: auto;
+    // same frame as the pager below it, which drops its own top edge
+    border: 1px solid var(--ant-border-color-split);
+    background: var(--erupt-bg-container, #fff);
+    padding: 20px 24px 8px;
+
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: var(--erupt-fill, #d1d5db);
+    }
+}
+
+.tl-empty {
+    padding: 32px 0;
+}
+
+// ── Axis ───────────────────────────────────────────────────────────────
+.tl-wrap {
+    max-width: 1080px;
+
+    ::ng-deep {
+        .ant-timeline-item {
+            padding-bottom: 12px;
+        }
+
+        .ant-timeline-item-tail {
+            border-left: 1px solid var(--ant-border-color-split);
+        }
+
+        // the entry dot takes the row color as a ring
+        .ant-timeline-item-head {
+            width: 11px;
+            height: 11px;
+            margin-left: -5px;
+            border-width: 2px;
+            background: var(--erupt-bg-container, #fff);
+        }
+
+        // a day heading sits a little apart from the cards above it (nz renders the li outside
+        // the nz-timeline-item host, so it is matched by the heading it contains)
+        .ant-timeline-item:has(.tl-day) {
+            padding-top: 6px;
+            padding-bottom: 10px;
+
+            .ant-timeline-item-head-custom {
+                padding: 0;
+                margin-left: 1px;
+            }
+        }
+
+        .ant-timeline-item-label {
+            font-size: 11px;
+            color: var(--erupt-text-tertiary, #a0aab4);
+            font-variant-numeric: tabular-nums;
+            top: 1px;
+        }
+    }
+
+    // alternate / right: the day heading sits centered on the axis and is the marker itself
+    &.tl-alternate {
+        margin: 0 auto;
+
+        ::ng-deep .ant-timeline-item:has(.tl-day) {
+            .ant-timeline-item-head-custom {
+                display: none;
+            }
+
+            .ant-timeline-item-content {
+                position: relative;
+                left: 50% !important;
+                width: auto !important;
+                margin: 0 !important;
+                transform: translateX(-50%);
+                text-align: center;
+            }
+        }
+    }
+}
+
+// ── Day heading ────────────────────────────────────────────────────────
+.tl-day-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+    color: var(--erupt-text-secondary, #4a5568);
+    background: var(--erupt-bg-container, #fff);
+    border: 1px solid var(--erupt-border, #cdd3db);
+}
+
+.tl-day {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    height: 22px;
+    padding: 0 10px;
+    border: 1px solid var(--ant-border-color-split);
+    background: var(--erupt-fill-secondary, #f6f7f9);
+    line-height: 20px;
+    font-size: 12px;
+}
+
+.tl-day-date {
+    font-weight: 600;
+    color: var(--erupt-text, #1e2330);
+    font-variant-numeric: tabular-nums;
+}
+
+.tl-day-week {
+    color: var(--erupt-text-tertiary, #8a94a6);
+}
+
+.tl-day-count {
+    align-self: center;
+    min-width: 18px;
+    padding: 0 5px;
+    line-height: 16px;
+    font-size: 11px;
+    text-align: center;
+    color: var(--erupt-text-tertiary, #8a94a6);
+    background: var(--erupt-bg-container, #fff);
+    border: 1px solid var(--ant-border-color-split);
+}
+
+// ── Entry card ─────────────────────────────────────────────────────────
+.tl-card {
+    position: relative;
+    display: inline-block;
+    min-width: 260px;
+    max-width: 640px;
+    width: 100%;
+    padding: 9px 14px 9px 16px;
+    border: 1px solid var(--ant-border-color-split);
+    background: var(--erupt-bg-container, #fff);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    // row color as a left stripe
+    &::before {
+        content: '';
+        position: absolute;
+        left: -1px;
+        top: -1px;
+        bottom: -1px;
+        width: 3px;
+        background: var(--tl-color);
+    }
+
+    &:hover {
+        border-color: var(--erupt-border, #cdd3db);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+
+        .tl-title {
+            color: var(--ant-primary-color, #1890ff);
+        }
+    }
+}
+
+.tl-card-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.tl-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.5;
+    color: var(--erupt-text, #1e2330);
+    word-break: break-word;
+    transition: color 0.15s ease;
+}
+
+.tl-time {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--erupt-text-tertiary, #a0aab4);
+    font-variant-numeric: tabular-nums;
+}
+
+// fields flow inline and wrap, one "key value" pair per item
+.tl-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3px 16px;
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--ant-border-color-split);
+}
+
+.tl-meta-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    font-size: 12px;
+    line-height: 1.6;
+    max-width: 100%;
+}
+
+.tl-meta-key {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 11px;
+    color: var(--erupt-text-tertiary, #a0aab4);
+}
+
+.tl-meta-val {
+    min-width: 0;
+    color: var(--erupt-text-secondary, #4a5568);
+    word-break: break-word;
+}

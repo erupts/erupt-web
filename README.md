@@ -111,7 +111,7 @@ Most customization needs no rebuild. `src/app.js` (served as `/app.js`) sets `wi
 | `tabReuse`                    | Enable multi-tab route reuse by default                      |
 | `registerPage`                | URL of a custom registration page shown on the login screen  |
 | `copyright` / `copyrightTxt`  | Show the copyright footer / custom footer text               |
-| `amapKey` / `amapSecurityJsCode` | AMap credentials for map fields                          |
+| `map`                            | Map vendor for map fields and the map view: `{provider: "amap" \| "baidu" \| "tencent" \| "tianditu" \| "google" \| "osm", key, securityJsCode (amap), mapId (google), darkStyleId (baidu / tencent), tileUrl (osm), center}`; the SDK loads from the vendor CDN at runtime. The legacy `amapKey` / `amapSecurityJsCode` keys still work |
 | `r_tools` / `userTools`       | Custom items in the header's right toolbar and user menu     |
 | `upload(files)`               | Override the upload URL and headers                          |
 

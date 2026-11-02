@@ -1,0 +1,23 @@
+:host {
+    display: block;
+}
+
+.print-config-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    border-radius: 6px;
+    background: var(--erupt-bg-spotlight, #f5f5f5);
+
+    .print-config-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        > label {
+            color: var(--erupt-text-secondary, #666);
+        }
+    }
+}

@@ -66,6 +66,12 @@
             margin-right: 7px;
         }
 
+        // .erupt-input stretches the picker to the row and ant-color-picker centres its trigger's
+        // content, so the swatch floats mid-row with a blank left half; keep it at the left edge
+        nz-color-picker.erupt-input .ant-color-picker-trigger {
+            justify-content: flex-start;
+        }
+
 
         form.ant-form-horizontal {
             se .ant-form-item-label {

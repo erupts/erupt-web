@@ -36,8 +36,16 @@ export interface Userinfo {
     indexMenuType: string;
     indexMenuValue: string;
     resetPwd: boolean;
+    //filled from /tenant/info for a tenant session
+    tenantName?: string;
+}
+
+export interface TenantInfo {
     tenantId: string;
     tenantName: string;
+    status: string;
+    expireDate: string;
+    packages: string[];
 }
 
 export interface NoticeChannel extends VL {

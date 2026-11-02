@@ -26,7 +26,7 @@ Add one or more new multilingual entries to `src/erupt.i18n.csv`.
 
 ### 1. Read the CSV file
 
-Read `/Users/liyuepeng/git/erupt-web/src/erupt.i18n.csv` and confirm:
+Read `~/Code/erupt-web/src/erupt.i18n.csv` and confirm:
 - Header order: `key,zh-CN,zh-TW,en-US,fr-FR,ja-JP,ko-KR,ru-RU,es-ES,de-DE,pt-PT,id-ID,ar-SA`
 - Check whether the key provided in `$ARGUMENTS` already exists (if so, notify the user and ask whether to overwrite)
 

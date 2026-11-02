@@ -156,10 +156,10 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
         return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");
     }
 
-    // Notices and announcements are keyed by platform user id; tenant sessions get no entry point
-    // (bell, unread polling, announcement popups all hang off this flag)
+    // Bell, unread polling and announcement popups all hang off this flag. Tenant sessions are
+    // ordinary erupt-upms sessions whose user ids are unique across tenants, so they get it too
     get isEruptNotice(): boolean {
-        return EruptAppData.get().properties["erupt-notice"] && !this.utilsService.isTenantToken();
+        return EruptAppData.get().properties["erupt-notice"];
     }
 
     openDrawer() {

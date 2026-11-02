@@ -180,7 +180,7 @@
                             <i nz-icon nzType="arrow-down" nzTheme="outline"></i>{{ 'tree.add_children'|translate }}
                         </button>
                     }
-                    @if (eruptBuildModel.eruptModel.eruptJson.power.print) {
+                    @if (canPrint(eruptBuildModel.eruptModel.eruptJson.power)) {
                         <button nz-button nzSize="small" [nzLoading]="printLoading" (click)="printNode()"
                                 id="erupt-btn-print">
                             <i nz-icon nzType="printer" nzTheme="outline"></i>{{ 'global.print'|translate }}

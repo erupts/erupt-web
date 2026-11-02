@@ -1,0 +1,37 @@
+<div class="share-landing">
+    <div class="share-landing__card">
+        <div class="share-landing__brand">
+            @if (logoPath) {
+                <img class="share-landing__logo" [src]="logoPath" alt="logo">
+            }
+            <span class="share-landing__site">{{ title }}</span>
+        </div>
+        @if (loading) {
+            <nz-skeleton [nzActive]="true" [nzParagraph]="{ rows: 3 }"></nz-skeleton>
+        } @else if (!meta || !meta.available) {
+            <nz-result nzStatus="warning" [nzTitle]="meta?.reason || ('share.unavailable' | translate)"></nz-result>
+        } @else {
+            <nz-tag [nzColor]="meta.type === 'FORM' ? 'blue' : 'green'">
+                {{ (meta.type === 'FORM' ? 'share.type.form' : 'share.type.page') | translate }}
+            </nz-tag>
+            <h2 class="share-landing__title">{{ meta.title }}</h2>
+            @if (meta.issuer) {
+                <p class="share-landing__issuer">{{ 'share.issuer' | translate }}: {{ meta.issuer }}</p>
+            }
+            @if (meta.requirePassword) {
+                <nz-input-group [nzPrefix]="lock" class="share-landing__password">
+                    <input nz-input type="password" [(ngModel)]="password" (keyup.enter)="open()"
+                           [placeholder]="'share.password.placeholder' | translate" autofocus/>
+                </nz-input-group>
+                <ng-template #lock><i nz-icon nzType="lock"></i></ng-template>
+            }
+            @if (error) {
+                <nz-alert nzType="error" [nzMessage]="error" nzShowIcon class="share-landing__error"></nz-alert>
+            }
+            <button nz-button nzType="primary" nzBlock nzSize="large" [nzLoading]="opening"
+                    [disabled]="meta.requirePassword && !password" (click)="open()">
+                {{ (meta.type === 'FORM' ? 'share.open.form' : 'share.open.page') | translate }}
+            </button>
+        }
+    </div>
+</div>

@@ -1,5 +1,6 @@
 import {openResizableDrawer, resizableDrawerContent} from "@shared/component/resizable-drawer.component";
-import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, inject} from '@angular/core';
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {
     ApprovalView,
     FlowInstance,
@@ -40,6 +41,8 @@ import {UpmsDataService} from "@flow/service/upms-data.service";
     styleUrls: ['./flow-approval-detail.component.less']
 })
 export class FlowApprovalDetailComponent implements OnInit {
+
+    private clipboard = inject(ClipboardService);
 
     activeTabIndex: number = 0;
 
@@ -99,6 +102,9 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     @Output() reloadFlows = new EventEmitter<void>();
 
+    /** Instance no from the route when opened standalone (table drawer / shared link). */
+    private readonly routeNo: string | null;
+
     constructor(private modal: NzModalService,
                 private message: NzMessageService,
                 private upmsApiService: FlowUpmsApiService,
@@ -110,25 +116,35 @@ export class FlowApprovalDetailComponent implements OnInit {
                 public upmsDataService: UpmsDataService,
                 @Inject(NzDrawerService) private drawerService: NzDrawerService,
                 private route: ActivatedRoute) {
-        const no = this.route.snapshot.paramMap.get('no');
-        if (no) {
-            flowInstanceApiService.detail(no).subscribe({
-                next: (res) => {
-                    this.onSelectFlow(ApprovalView.TODO, res.data);
-                    flowInstanceApiService.list({
-                        flowInstanceNo: no,
-                        approvalView: ApprovalView.TODO,
-                        page: 0,
-                        size: 1
-                    }).subscribe(res => {
-                        if (res.data.list.length === 0) return;
-                        this.instanceDetail.taskId = res.data.list[0].taskId;
-                        this.instanceDetail.taskType = res.data.list[0].taskType;
-                        this.nodeInfo = res.data.list[0].taskNodeInfo;
-                    })
-                }
-            })
+        this.routeNo = this.route.snapshot.paramMap.get('no');
+        if (this.routeNo) {
+            this.loadByNo(this.routeNo);
         }
+    }
+
+    /**
+     * Route entry (table drawer / shared link). Unlike a row picked from the approval list, the
+     * no alone carries no task context, so resolve the view the same way the list would: my todo
+     * task first (its row carries the node, so approve / handle / assigned-node pickers work), then
+     * my own submission (urge / withdraw), otherwise a read-only detail.
+     */
+    private loadByNo(no: string) {
+        const query = (view: ApprovalView) => this.flowInstanceApiService.list({
+            flowInstanceNo: no, approvalView: view, page: 0, size: 1
+        });
+        query(ApprovalView.TODO).subscribe(todo => {
+            if (todo.data.list.length) {
+                this.onSelectFlow(ApprovalView.TODO, todo.data.list[0]);
+                return;
+            }
+            query(ApprovalView.CREATED).subscribe(created => {
+                if (created.data.list.length) {
+                    this.onSelectFlow(ApprovalView.CREATED, created.data.list[0]);
+                    return;
+                }
+                this.flowInstanceApiService.detail(no).subscribe(res => this.onSelectFlow(ApprovalView.DONE, res.data));
+            });
+        });
     }
 
     ngOnInit(): void {
@@ -143,6 +159,11 @@ export class FlowApprovalDetailComponent implements OnInit {
     }
 
     onReloadFlows() {
+        // Standalone there is no list to go back to: show the instance in its new state instead
+        if (this.routeNo) {
+            this.loadByNo(this.routeNo);
+            return;
+        }
         this.selectedInstance = null;
         this.reloadFlows.emit()
     }
@@ -158,7 +179,7 @@ export class FlowApprovalDetailComponent implements OnInit {
                 this.instanceDetail.taskNodeInfo = this.selectedInstance.taskNodeInfo;
                 this.nodeInfo = this.selectedInstance.taskNodeInfo;
                 this.onTabChange(this.activeTabIndex)
-                this.findAssignedNodes(this.instanceDetail.rule, this.nodeInfo.id);
+                this.findAssignedNodes(this.instanceDetail.rule, this.nodeInfo?.id);
             }
         });
     }
@@ -492,9 +513,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     copyToClipboard(no: string) {
         if (!no) return;
-        navigator.clipboard.writeText(no).then(() => {
-            this.message.success(this.i18n.fanyi('flow.success.no_copied'));
-        });
+        this.clipboard.copy(no, this.i18n.fanyi('flow.success.no_copied'));
     }
 
     withdraw() {
@@ -670,9 +689,7 @@ export class FlowApprovalDetailComponent implements OnInit {
 
     copyLink() {
         let link = location.origin + "/#/fill/flow/approval-detail/" + this.selectedInstance.no;
-        navigator.clipboard.writeText(link).then(() => {
-            this.message.success(this.i18n.fanyi('flow.success.link_copied'));
-        });
+        this.clipboard.copy(link, this.i18n.fanyi('flow.success.link_copied'));
     }
 
     // Print preview feature
@@ -684,8 +701,11 @@ export class FlowApprovalDetailComponent implements OnInit {
             nzWidth: '700px',
             nzStyle: {top: "30px"},
             nzOkText: this.i18n.fanyi("global.print"),
+            // stays open like the built-in preview: closing it while the print dialog blocks the page
+            // would leave its mask behind
             nzOnOk: () => {
                 (modalRef.componentInstance as FlowPrintPreviewComponent).print();
+                return false;
             },
             nzBodyStyle: {
                 maxHeight: "75vh",

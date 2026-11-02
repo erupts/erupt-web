@@ -1,0 +1,13 @@
+<nz-alert nzType="info" nzShowIcon style="margin-bottom: 16px"
+          [nzMessage]="('table.batch_edit.hint'|translate).replace('{}', count + '')"></nz-alert>
+<nz-select style="width: 100%; margin-bottom: 16px" nzShowSearch [nzDisabled]="saving"
+           [nzPlaceHolder]="'table.batch_edit.field'|translate"
+           [(ngModel)]="fieldName" (ngModelChange)="pick($event)">
+    @for (field of fields; track field.fieldName) {
+        <nz-option [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title"></nz-option>
+    }
+</nz-select>
+@if (model) {
+    <erupt-edit-type [eruptBuildModel]="model" [col]="col" size="default" layout="vertical"
+                     [mode]="Scene.EDIT" [readonly]="saving"/>
+}

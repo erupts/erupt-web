@@ -17,6 +17,7 @@ import {FormModalService} from "../../service/form-modal.service";
 import {LocalSettingsService} from "../../service/local-settings.service";
 import {PrintTypeComponent} from "../../components/print-type/print-type";
 import {cloneDeep} from "lodash";
+import {canPrint} from "../../model/erupt.model";
 
 @Component({
     standalone: false,
@@ -60,6 +61,8 @@ export class TreeComponent implements OnInit, OnDestroy {
     selectedKeys: any[] = [];
 
     printLoading: boolean = false;
+
+    readonly canPrint = canPrint;
 
     // Default matches the skeleton's .sk-nav width so there is no jump on load
     treeWidth: number = 235;

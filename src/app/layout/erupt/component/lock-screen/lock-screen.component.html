@@ -1,4 +1,54 @@
-<div class="lock-screen" role="dialog" aria-modal="true" cdkTrapFocus cdkTrapFocusAutoCapture>
+<div class="lock-screen" role="dialog" aria-modal="true" cdkTrapFocus cdkTrapFocusAutoCapture
+     (click)="panel = null">
+  <!-- appearance: inline controls, the cover covers every overlay -->
+  <div class="lock-tools" (click)="$event.stopPropagation()">
+    <button type="button" class="lock-tool" (click)="toggleDarkTheme()"
+            [title]="'setting.dark' | translate" [attr.aria-label]="'setting.dark' | translate">
+      <i nz-icon [nzType]="darkTheme ? 'sun' : 'moon'" nzTheme="outline"></i>
+    </button>
+    <!-- skin and theme color are branding: hidden when the site config locks the appearance -->
+    @if (appearanceCustomizable) {
+      <button type="button" class="lock-tool" [class.lock-tool--on]="panel === LockPanel.SKIN"
+              (click)="togglePanel(LockPanel.SKIN)"
+              [title]="'setting.skin' | translate" [attr.aria-label]="'setting.skin' | translate"
+              [attr.aria-expanded]="panel === LockPanel.SKIN">
+        <i nz-icon nzType="bulb" [nzTheme]="skin === Skin.DEFAULT ? 'outline' : 'fill'"></i>
+      </button>
+      <button type="button" class="lock-tool" [class.lock-tool--on]="panel === LockPanel.COLOR"
+              (click)="togglePanel(LockPanel.COLOR)"
+              [title]="'setting.theme-color' | translate" [attr.aria-label]="'setting.theme-color' | translate"
+              [attr.aria-expanded]="panel === LockPanel.COLOR">
+        <i nz-icon nzType="bg-colors" nzTheme="outline"></i>
+      </button>
+      @if (panel === LockPanel.SKIN) {
+        <div class="lock-panel lock-skin-panel">
+          @for (item of skins; track item.value) {
+            <div class="lock-skin" [class.lock-skin--active]="skin === item.value" (click)="setSkin(item.value)">
+              {{ item.label | translate }}
+            </div>
+          }
+        </div>
+      }
+      @if (panel === LockPanel.COLOR) {
+        <div class="lock-panel lock-color-panel">
+          @for (c of activePresetColors; track c) {
+            <span class="lock-swatch" [style.background]="c"
+                  [class.lock-swatch--active]="themeColorHex.toLowerCase() === c"
+                  (click)="setThemeColor(c)"></span>
+          }
+          <!-- custom color: a conic-rainbow swatch wrapping a native color input -->
+          <label class="lock-swatch lock-swatch--custom"
+                 [class.lock-swatch--active]="!activePresetColors.includes(themeColorHex.toLowerCase())">
+            <input type="color" [value]="themeColorHex" (change)="setThemeColor($any($event.target).value)">
+          </label>
+          <span class="lock-swatch lock-swatch--reset" (click)="resetThemeColor()" [title]="'global.reset' | translate">
+            <i nz-icon nzType="undo" nzTheme="outline"></i>
+          </span>
+        </div>
+      }
+    }
+  </div>
+
   <div class="lock-clock">
     <div class="lock-time">{{ now | date:'HH:mm' }}</div>
     <div class="lock-date">{{ now | date:'fullDate' }}</div>

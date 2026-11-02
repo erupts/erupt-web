@@ -7,5 +7,7 @@ export interface EruptBuildModel {
     combineErupts?: { [key: string]: EruptModel };
     referenceErupts?: { [key: string]: EruptModel };
     operationErupts?: { [key: string]: EruptModel };
+    // the scope the model lives in: bind lists the fields the scope filters and fills
+    scope?: { name: string, bind: string[] };
 }
 

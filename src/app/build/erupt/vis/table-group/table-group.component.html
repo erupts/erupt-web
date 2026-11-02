@@ -1,0 +1,52 @@
+@if (!data || data.length === 0) {
+    <div class="tg-empty">
+        <nz-empty nzNotFoundImage="simple"/>
+    </div>
+} @else {
+    <div class="tg-toolbar">
+        <span class="tg-total">{{ groups.length }} / {{ total }}</span>
+        <a (click)="setAll(true)">{{ 'group.expand_all' | translate }}</a>
+        <a (click)="setAll(false)">{{ 'group.collapse_all' | translate }}</a>
+    </div>
+
+    @for (group of groups; track group.key; let gi = $index) {
+        <div class="tg-group" [class.tg-collapsed]="!group.expanded"
+             [style.--group-color]="group.color || 'var(--erupt-text-tertiary, #8a94a6)'">
+            <div class="tg-header" (click)="toggle(group)">
+                <i nz-icon [nzType]="group.expanded ? 'caret-down' : 'caret-right'" class="tg-caret"></i>
+                <span class="tg-indicator"></span>
+                <span class="tg-label" [innerHTML]="group.label | safeHtml"></span>
+                <span class="tg-count">{{ group.rows.length }}</span>
+                <span class="tg-stats">
+                    @for (stat of group.stats; track stat.title) {
+                        <span class="tg-chip"><span class="tg-chip-key">{{ stat.title }}</span>{{ stat.value }}</span>
+                    }
+                </span>
+            </div>
+            @if (group.expanded) {
+                @if (gi < mounted) {
+                    <div class="tg-body">
+                        <st resizable [columns]="groupColumns" [data]="group.rows" [page]="{show: false}"
+                            size="small" [loading]="loading" [widthMode]="{strictBehavior: 'truncate'}"
+                            [scroll]="{x: '100%'}" (change)="onChange($event)"/>
+                    </div>
+                } @else {
+                    <!-- placeholder sized like a few rows until this group's table mounts -->
+                    <div class="tg-body tg-pending" [style.height.px]="Math.min(group.rows.length, 5) * 39 + 39"></div>
+                }
+            }
+        </div>
+    }
+
+    @if (totalStats.length) {
+        <div class="tg-footer">
+            <span class="tg-footer-label">Σ</span>
+            <span class="tg-count">{{ total }}</span>
+            <span class="tg-stats">
+                @for (stat of totalStats; track stat.title) {
+                    <span class="tg-chip"><span class="tg-chip-key">{{ stat.title }}</span>{{ stat.value }}</span>
+                }
+            </span>
+        </div>
+    }
+}

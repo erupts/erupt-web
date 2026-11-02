@@ -1,4 +1,5 @@
-import {Injectable} from "@angular/core";
+import {Injectable, inject} from "@angular/core";
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {ModalButtonOptions, ModalOptions, NzModalRef, NzModalService, NzModalState} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {SettingsService} from "@delon/theme";
@@ -60,6 +61,8 @@ export interface FormModalOptions {
     ai?: (ref: NzModalRef<EditComponent>) => void;
     // comment stream of this record (erupt-comment module)
     comment?: (ref: NzModalRef<EditComponent>) => void;
+    // change history of this record (erupt-revision module)
+    revision?: (ref: NzModalRef<EditComponent>) => void;
     // delete this record; asked for confirmation first (text is the popconfirm title)
     remove?: { confirm: string; run: (ref: NzModalRef<EditComponent>) => void };
     // further actions in the "more" menu
@@ -85,6 +88,8 @@ interface PanelEntry {
  */
 @Injectable()
 export class FormModalService {
+
+    private clipboard = inject(ClipboardService);
 
     private readonly panels = new Map<NzModalRef<EditComponent>, PanelEntry>();
 
@@ -134,6 +139,7 @@ export class FormModalService {
         comp.canToggleEdit = !!opts.toggleEdit;
         comp.aiAction = opts.ai ? () => opts.ai(ref) : undefined;
         comp.commentAction = opts.comment ? () => opts.comment(ref) : undefined;
+        comp.revisionAction = opts.revision ? () => opts.revision(ref) : undefined;
         comp.removeAction = opts.remove ? {confirm: opts.remove.confirm, run: () => opts.remove.run(ref)} : undefined;
         comp.menuActions = [
             ...(opts.link ? [{label: this.i18n.fanyi("global.copy_link"), icon: "link", run: () => this.copyLink(ref)}] : []),
@@ -176,10 +182,8 @@ export class FormModalService {
     private copyLink(ref: NzModalRef<EditComponent>) {
         const link = this.panels.get(ref)?.opts.link;
         if (!link) return;
-        navigator.clipboard.writeText(link)
-            .then(() => this.msg.success(this.i18n.fanyi("global.copy_success")))
-            // clipboard access refused (insecure context / unfocused document): show the link instead
-            .catch(() => this.msg.info(link, {nzDuration: 8000}));
+        // not copied (clipboard refused on http and selection copy blocked): show the link instead
+        this.clipboard.copy(link).then(ok => ok || this.msg.info(link, {nzDuration: 8000}));
     }
 
     // True when the panel may be left: nothing changed, or the user chose to discard.

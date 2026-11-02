@@ -16,6 +16,7 @@ export interface EruptModel {
 
 export interface Erupt {
     primaryKeyCol: string;
+    name: string;
     desc: string;
     power: Power;
     tree: Tree;
@@ -39,7 +40,11 @@ export interface Vis {
     boardView: BoardView
     ganttView: GanttView;
     calendarView: CalendarView;
-    tplView: Tpl
+    tplView: Tpl;
+    tableView: TableView;
+    timelineView: TimelineView;
+    mapView: MapView;
+    cubeView: CubeView;
 }
 
 export enum VisType {
@@ -48,6 +53,9 @@ export enum VisType {
     CARD = "CARD",
     BOARD = "BOARD",
     CALENDAR = "CALENDAR",
+    TIMELINE = "TIMELINE",
+    MAP = "MAP",
+    CUBE = "CUBE",
     TPL = "TPL"
 }
 
@@ -58,17 +66,89 @@ export enum FieldVisibility {
 
 export interface BoardView {
     groupField: string;
+    // second grouping: one horizontal lane per value
+    swimlaneField: string;
+    // numeric field summed in every column header
+    sumField: string;
+    // cards per column before the header turns red, 0 = no limit
+    wipLimit: number;
 }
 
 export interface CalendarView {
     dateField: string;
     endDateField: string;
     colorField: string;
+    mode: CalendarMode;
+}
+
+export enum CalendarMode {
+    MONTH = "MONTH",
+    WEEK = "WEEK",
+    YEAR = "YEAR"
+}
+
+export interface TableView {
+    // rows are split into collapsible groups by this field; empty = plain table
+    groupField: string;
+    collapsed: boolean;
+}
+
+export interface TimelineView {
+    dateField: string;
+    colorField: string;
+    descending: boolean;
+    mode: TimelineMode;
+}
+
+export enum TimelineMode {
+    LEFT = "LEFT",
+    ALTERNATE = "ALTERNATE",
+    RIGHT = "RIGHT"
+}
+
+export interface MapView {
+    // EditType.MAP field whose JSON carries lng / lat; empty uses lngField / latField
+    locationField: string;
+    lngField: string;
+    latField: string;
+    colorField: string;
+    cluster: boolean;
+}
+
+export interface CubeView {
+    // simple name of the @EruptCube class; "Void" = the model itself
+    cube: string;
+    explore: string;
+    linkSearch: boolean;
+    // search field -> cube field; unmapped fields keep their own name
+    searchMapping: KVMap;
+    columns: number;
+    height: number;
+    charts: CubeChart[];
+}
+
+export interface CubeChart {
+    title: string;
+    // one of erupt-cube's ReportType names
+    type: string;
+    x: string[];
+    y: string[];
+    series: string;
+    span: number;
+    ui: KVMap;
+}
+
+// what a @ToMap(key = "key") KV[] attribute serializes to
+export type KVMap = Record<string, { value: string; desc?: string }>;
+
+export function kvValues(map: KVMap): Record<string, string> {
+    return Object.fromEntries(Object.entries(map || {}).map(([k, v]) => [k, v?.value]));
 }
 
 export interface CardView {
     coverField: string;
     coverEffect: CoverEffect;
+    layout: CardLayout;
     viewFields: string[];
 }
 
@@ -86,6 +166,12 @@ export interface GanttView {
 
     groupField: string;
 
+    // predecessors of a row: a reference or a collection of references to this same model
+    dependencyField: string;
+
+    // boolean field: true rows are drawn as a milestone diamond on their start date
+    milestoneField: string;
+
 }
 
 export interface DrillInput {
@@ -98,6 +184,14 @@ export interface DrillInput {
 export enum CoverEffect {
     FIT = "FIT", //fit
     CLIP = "CLIP", //clip
+}
+
+// values match backend CardView.Layout
+export enum CardLayout {
+    // equal-size cards in rows
+    GRID = "GRID",
+    // cards keep their cover's own height and fill columns
+    MASONRY = "MASONRY",
 }
 
 interface Layout {
@@ -210,7 +304,14 @@ export interface Power {
     copy: boolean;
     ai: boolean;
     cellEdit: boolean;      // in-place cell editing, on unless the model opts out
+    batchEdit: boolean;     // one field of the selected rows set at once, on unless the model opts out
     comment: boolean;       // record comment stream (erupt-comment module), on unless the model opts out
+    revision: boolean;      // record change history with rollback (erupt-revision module), on unless the model opts out
+}
+
+// A printout is the record's details: printing also needs the right to read a record (the server's rule)
+export function canPrint(power: Power): boolean {
+    return !!power?.print && (power.viewDetails || power.edit);
 }
 
 export interface Row {

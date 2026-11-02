@@ -1,0 +1,30 @@
+<nz-spin [nzSpinning]="loading">
+    <div [hidden]="readonly" class="search-container">
+        <input nz-input [ngModel]="keyword" (ngModelChange)="search($event)" [nzAutocomplete]="auto"
+               [placeholder]="'global.keyword'|translate" style="width: 300px" [disabled]="!loaded"
+               (blur)="blur()" (keydown.enter)="confirm()"/> &nbsp;
+        <button nz-button nzType="default" [disabled]="!loaded" (click)="confirm()">&nbsp; {{ "global.ok"|translate }} &nbsp;
+        </button>
+        <button nz-button [nzType]="pointSelectMode ? 'primary' : 'default'" [disabled]="!loaded"
+                style="padding: 4px 10px" nz-tooltip
+                [nzTooltipTitle]="(pointSelectMode ? 'map.close_point_select' : 'map.point_select') | translate"
+                (click)="togglePointSelect()"><i nz-icon nzType="aim" nzTheme="outline"></i>
+        </button>
+        @if (place) {
+            <button nz-button nzType="default" nzDanger [disabled]="!loaded" style="padding: 4px 10px"
+                    (click)="clear()"><i nz-icon nzType="close" nzTheme="outline"></i>
+            </button>
+        }
+    </div>
+    <nz-autocomplete #auto (selectionChange)="select($event.nzValue)">
+        @for (p of places; track p.id || p.lng + ',' + p.lat) {
+            <nz-auto-option [nzValue]="p" [nzLabel]="p.name">
+                {{ p.name }}
+                @if (p.address) {
+                    <span class="map-edit-address">{{ p.address }}</span>
+                }
+            </nz-auto-option>
+        }
+    </nz-autocomplete>
+    <div #mapEl class="map-edit-canvas" tabindex="0"></div>
+</nz-spin>

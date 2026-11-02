@@ -7,20 +7,25 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
 import {GanttHostComponent} from "./vis/gantt/gantt-host.component";
 import {DataHandlerService} from "./service/data-handler.service";
 import {EditTypeComponent} from "./components/edit-type/edit-type.component";
+import {ScopeFormComponent} from "./components/scope-form/scope-form.component";
+import {ScopeGateComponent} from "./view/scope-gate/scope-gate.component";
 import {PrintTypeComponent} from "./components/print-type/print-type";
+import {PrintConfigBarComponent} from "./components/print-type/print-config-bar";
 import {ViewTypeComponent} from "./components/view-type/view-type.component";
 import {TabTableComponent} from "./components/tab-table/tab-table.component";
 import {MultiFormComponent} from "./components/multi-form/multi-form.component";
 import {TreeSelectComponent} from "./components/tree-select/tree-select.component";
 import {ExcelImportComponent} from "./components/excel-import/excel-import.component";
+import {BatchEditComponent} from "./components/batch-edit/batch-edit.component";
 import {ReferenceTableComponent} from "./components/reference-table/reference-table.component";
-import {AmapComponent} from "./components/amap/amap.component";
+import {MapEditComponent} from "./components/map-edit/map-edit.component";
 import {EruptRoutingModule} from "./erupt-routing.module";
 import {TreeComponent} from "./view/tree/tree.component";
 import {TableViewComponent} from "./view/table-view/table-view.component";
 import {EditComponent} from "./view/edit/edit.component";
 import {FormModalService} from "./service/form-modal.service";
 import {RecordCommentComponent} from "./components/record-comment/record-comment.component";
+import {RecordRevisionComponent} from "./components/record-revision/record-revision.component";
 import {TableComponent} from './view/table/table.component';
 import {LayoutTreeComponent} from './view/layout-tree/layout-tree.component';
 import {FormViewComponent} from './view/form-view/form-view.component';
@@ -58,7 +63,12 @@ import {SignaturePadComponent} from './components/signature-pad/signature-pad.co
 import {SmartSearchComponent} from './components/smart-search/smart-search.component';
 import {NzSegmentedModule} from "ng-zorro-antd/segmented";
 import {CalendarComponent} from "./vis/calendar/calendar.component";
+import {TimelineComponent} from "./vis/timeline/timeline.component";
+import {MapComponent} from "./vis/map/map.component";
+import {TableGroupComponent} from "./vis/table-group/table-group.component";
+import {CubeReportModule} from "../cube/cube-report.module";
 import {NzCalendarModule} from "ng-zorro-antd/calendar";
+import {NzTimelineModule} from "ng-zorro-antd/timeline";
 import {NzButtonModule} from "ng-zorro-antd/button";
 import {NzSpaceModule} from "ng-zorro-antd/space";
 import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
@@ -84,6 +94,8 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         NzEmptyModule,
         NzSegmentedModule,
         NzCalendarModule,
+        NzTimelineModule,
+        CubeReportModule,
         NzButtonModule,
         NzSpaceModule,
         NzTooltipDirective,
@@ -104,19 +116,25 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
     exports: [
         EditTypeComponent,
         PrintTypeComponent,
+        PrintConfigBarComponent,
         ViewTypeComponent,
         TabTableComponent,
         SmartSearchComponent
     ],
     declarations: [
+        ScopeFormComponent,
+        ScopeGateComponent,
         RecordCommentComponent,
+        RecordRevisionComponent,
         EditTypeComponent,
         PrintTypeComponent,
+        PrintConfigBarComponent,
         TreeSelectComponent,
         TabTableComponent,
         MultiFormComponent,
-        AmapComponent,
+        MapEditComponent,
         ExcelImportComponent,
+        BatchEditComponent,
         ReferenceTableComponent,
         ViewTypeComponent,
         EditComponent,
@@ -160,6 +178,9 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         SignaturePadComponent,
         SmartSearchComponent,
         CalendarComponent,
+        TimelineComponent,
+        MapComponent,
+        TableGroupComponent,
         FormViewComponent
     ]
 })

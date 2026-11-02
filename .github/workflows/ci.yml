@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
+
+# A newer push to the same branch or PR supersedes the run in progress
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # yarn.lock is not committed, so setup-node's built-in yarn cache cannot key on it;
+      # cache the yarn download cache by package.json instead
+      - name: Locate yarn cache
+        id: yarn-cache
+        run: echo "dir=$(yarn cache dir)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: yarn-${{ runner.os }}-${{ hashFiles('package.json') }}
+          restore-keys: yarn-${{ runner.os }}-
+
+      # --ignore-scripts: no step here needs a package install script, and without a lockfile a
+      # fresh resolution can pull one that breaks yarn (plyr 3.8.5, via @delon/abc, ships
+      # "preinstall: npx only-allow pnpm")
+      - name: Install dependencies
+        run: yarn install --non-interactive --ignore-scripts --network-timeout 600000
+
+      - name: Type check
+        run: npx tsc --noEmit -p tsconfig.app.json
+
+      - name: Unit tests
+        run: yarn test

@@ -1,0 +1,91 @@
+:host {
+    display: block;
+    min-width: 0;
+}
+
+.ad-md-plain {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.ad-md {
+    line-height: 1.7;
+    word-break: break-word;
+    color: var(--erupt-text, rgba(0, 0, 0, 0.85));
+
+    ::ng-deep {
+        > :first-child {
+            margin-top: 0;
+        }
+
+        > :last-child {
+            margin-bottom: 0;
+        }
+
+        p, ul, ol, blockquote, pre, table {
+            margin: 0 0 8px;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            margin: 12px 0 6px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        h1 { font-size: 18px; }
+        h2 { font-size: 16px; }
+        h3, h4, h5, h6 { font-size: 14px; }
+
+        ul, ol {
+            padding-left: 20px;
+        }
+
+        code {
+            padding: 1px 5px;
+            font-size: 12px;
+            border-radius: 4px;
+            font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+            background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.05));
+        }
+
+        pre {
+            padding: 10px 12px;
+            overflow: auto;
+            border-radius: 6px;
+            background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.04));
+            border: 1px solid var(--erupt-border, #e5e7eb);
+
+            code {
+                padding: 0;
+                background: none;
+                white-space: pre;
+            }
+        }
+
+        blockquote {
+            padding: 2px 12px;
+            color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+            border-left: 3px solid var(--erupt-border, #e5e7eb);
+        }
+
+        table {
+            border-collapse: collapse;
+
+            th, td {
+                padding: 4px 10px;
+                border: 1px solid var(--erupt-border, #e5e7eb);
+            }
+        }
+
+        a {
+            color: var(--ant-primary-color, #1890ff);
+        }
+
+        // highlight.js tokens, kept to a small palette that reads in both themes
+        .hljs-keyword, .hljs-selector-tag, .hljs-built_in { color: #c026d3; }
+        .hljs-string, .hljs-attr { color: #16a34a; }
+        .hljs-number, .hljs-literal { color: #d97706; }
+        .hljs-comment { color: #8c8c8c; font-style: italic; }
+        .hljs-title, .hljs-function { color: #2563eb; }
+    }
+}

@@ -1,4 +1,5 @@
-import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild, inject} from '@angular/core';
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {Location} from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DomSanitizer, SafeHtml} from '@angular/platform-browser';
@@ -30,6 +31,8 @@ interface PickedElement {
     providers: [CanvasApiService]
 })
 export class AiCanvasComponent implements OnInit, OnDestroy {
+
+    private clipboard = inject(ClipboardService);
 
     @ViewChild('bubblesRef') bubblesRef?: ElementRef<HTMLDivElement>;
 
@@ -470,8 +473,7 @@ export class AiCanvasComponent implements OnInit, OnDestroy {
 
     /** Copy the access URL — mount it as a menu or share to logged-in users */
     copyLink(): void {
-        navigator.clipboard.writeText(this.accessUrl()).then(() =>
-            this.message.success(this.i18n.fanyi('ai.canvas.link_copied')));
+        this.clipboard.copy(this.accessUrl(), this.i18n.fanyi('ai.canvas.link_copied'));
     }
 
     /** Show the active version's page source in a modal, in the readonly code editor */

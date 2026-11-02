@@ -1,13 +1,13 @@
+import {ScopeStore} from "@shared/service/scope.service";
 import {Inject, Injectable} from "@angular/core";
 import {_HttpClient} from "@delon/theme";
 import {HttpResponse} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {Announcement, LoginModel, MfaStatus, NoticeChannel, NoticeMessageDetail, NoticeScene, SsoProvider, Userinfo} from "../model/user.model";
+import {Announcement, LoginModel, MfaStatus, NoticeChannel, NoticeMessageDetail, NoticeScene, SsoProvider, TenantInfo, Userinfo} from "../model/user.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {WindowModel} from "@shared/model/window.model";
 import {MenuVo} from "@shared/model/erupt-menu";
 import {I18NService} from "@core";
-import {UtilsService} from "@shared/service/utils.service";
 import {downloadFile} from "@shared/util/erupt.util";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {VL} from "../../build/erupt/model/erupt-field.model";
@@ -17,7 +17,13 @@ import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {R, SimplePage} from "@shared/model/api.model";
 import {MentionUser, RecordComment} from "../../build/erupt/model/record-comment.model";
+import {RecordRevision} from "../../build/erupt/model/record-revision.model";
 import {NoticeStatus} from "@shared/model/notice.model";
+
+export interface TableFormat {
+    format: string;
+    name: string;
+}
 
 @Injectable()
 export class DataService {
@@ -34,7 +40,6 @@ export class DataService {
 
     constructor(private _http: _HttpClient,
                 private i18n: I18NService,
-                private utilsService: UtilsService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         DataService.tokenService = this.tokenService;
     }
@@ -113,6 +118,17 @@ export class DataService {
     }
 
     //custom rows
+    // totals of the @View(statistic) columns over everything the query matches
+    aggregate(eruptName: string, query: Page, header?: object): Observable<Record<string, any>> {
+        return this._http.post(RestPath.data + "/aggregate/" + eruptName, query, null, {
+            observe: 'body',
+            headers: {
+                erupt: eruptName,
+                ...header
+            }
+        });
+    }
+
     extraRow(eruptName: string, condition?: object): Observable<Row[]> {
         return this._http.post(RestPath.data + "/extra-row/" + eruptName, condition, null, {
             observe: 'body',
@@ -143,17 +159,27 @@ export class DataService {
 
     getEruptOperationTpl(eruptName: string, operationCode: string, ids: any[]) {
         return RestPath.tpl + "/operation-tpl/" + eruptName + "/" + operationCode +
-            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName + "&ids=" + ids;
+            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName + "&ids=" + ids
+            + DataService.scopeParam();
     }
 
     getEruptVisTpl(eruptName: string, visCode: string) {
         return RestPath.tpl + "/vis-tpl/" + eruptName + "/" + visCode +
-            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName;
+            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName
+            + DataService.scopeParam();
+    }
+
+    // A tpl page is a plain URL, so it cannot send the erupt-scope header: the same value rides as
+    // _scope, encoded once more since the servlet decodes a parameter before the server reads it
+    private static scopeParam(): string {
+        const scope = ScopeStore.header();
+        return scope ? "&_scope=" + encodeURIComponent(scope) : "";
     }
 
     getEruptViewTpl(eruptName: string, field: string, id: any) {
         return RestPath.tpl + "/view-tpl/" + eruptName + "/" + field + "/" + id +
-            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName;
+            "?_token=" + this.tokenService.get().token + "&_lang=" + this.i18n.currentLang + "&_erupt=" + eruptName
+            + DataService.scopeParam();
     }
 
     //paginated data object
@@ -200,9 +226,12 @@ export class DataService {
         });
     }
 
-    updateBoardGroup(eruptName: string, visCode: string, pk: any, groupValue: any): Observable<any> {
+    // swimlane is only sent when the card moved to another lane; its value may be null (lane "unset")
+    updateBoardGroup(eruptName: string, visCode: string, pk: any, groupValue: any, swimlane?: { value: any }): Observable<any> {
         return this._http.post(RestPath.dataModify + "/board/" + eruptName + "/update_group", {
-            visCode, pk, groupValue
+            visCode, pk, groupValue,
+            swimlaneChanged: !!swimlane,
+            swimlaneValue: swimlane?.value ?? null
         }, {}, {
             observe: "body",
             headers: {erupt: eruptName}
@@ -219,6 +248,20 @@ export class DataService {
                 erupt: eruptName
             }
         });
+    }
+
+    // predecessor ids of the given gantt rows, keyed by row id
+    ganttLinks(eruptName: string, visCode: string, pks: any[]): Observable<R<Record<string, string[]>>> {
+        return this._http.post<R<Record<string, string[]>>>(RestPath.dataModify + "/gantt/" + eruptName + "/links", {
+            visCode, pks
+        }, {}, {observe: "body", headers: {erupt: eruptName}});
+    }
+
+    // add (remove = false) or remove one predecessor of a gantt row
+    updateGanttLink(eruptName: string, visCode: string, pk: any, predecessorPk: any, remove: boolean): Observable<any> {
+        return this._http.post(RestPath.dataModify + "/gantt/" + eruptName + "/link", {
+            visCode, pk, predecessorPk, remove
+        }, {}, {observe: "body", headers: {erupt: eruptName}});
     }
 
     updateCalendarDate(eruptName: string, visCode: string, pk: any, date: string, endDate?: string): Observable<any> {
@@ -412,6 +455,18 @@ export class DataService {
     }
 
     //in-table cell edit: update a single field of one row
+    updateEruptCells(eruptName: string, ids: any[], field: string, value: any): Observable<EruptApiModel> {
+        return this._http.post(RestPath.dataModify + "/" + eruptName + "/update-cells", {
+            ids: ids,
+            field: field,
+            value: value
+        }, null, {
+            headers: {
+                erupt: eruptName
+            }
+        });
+    }
+
     updateEruptCell(eruptName: string, id: any, field: string, value: any): Observable<EruptApiModel> {
         return this._http.post(RestPath.dataModify + "/" + eruptName + "/update-cell", {
             id: id,
@@ -443,15 +498,6 @@ export class DataService {
         return this._http.post(RestPath.dataModify + "/" + eruptName + "/delete", ids, null, {
             headers: {
                 erupt: eruptName
-            }
-        });
-    }
-
-    eruptDataValidate(eruptName: string, data: any, eruptParent?: string): Observable<EruptApiModel> {
-        return this._http.post(RestPath.data + "/validate-erupt/" + eruptName, data, null, {
-            headers: {
-                erupt: eruptName,
-                eruptParent: eruptParent || ""
             }
         });
     }
@@ -498,8 +544,9 @@ export class DataService {
     }
 
     //single sign-on providers offered on the login page
-    ssoProviders(): Observable<SsoProvider[]> {
-        return this._http.get<SsoProvider[]>(RestPath.erupt + "/sso/providers");
+    //the platform's providers, or with a tenant code the tenant's own
+    ssoProviders(tenantCode?: string): Observable<SsoProvider[]> {
+        return this._http.get<SsoProvider[]>(RestPath.erupt + "/sso/providers", tenantCode ? {tenant: tenantCode} : null);
     }
 
     //the callback redirect carries a one-time ticket, never the session token itself
@@ -508,8 +555,9 @@ export class DataService {
     }
 
     //a full page navigation, the provider has to see the browser
-    static ssoAuthorizeUrl(code: string): string {
-        return RestPath.erupt + "/sso/authorize/" + encodeURIComponent(code);
+    static ssoAuthorizeUrl(code: string, tenantCode?: string): string {
+        const url = RestPath.erupt + "/sso/authorize/" + encodeURIComponent(code);
+        return tenantCode ? url + "?tenant=" + encodeURIComponent(tenantCode) : url;
     }
 
     mfaStatus(): Observable<MfaStatus> {
@@ -543,18 +591,9 @@ export class DataService {
         );
     }
 
-    tenantChangePwd(pwd: string, newPwd: string, newPwd2: string): Observable<EruptApiModel> {
-        const encode = (p: string) => EruptAppData.get().pwdTransferEncrypt ? this.pwdEncode(p, 3) : p;
-        return this._http.post(RestPath.erupt + "/tenant/change-pwd", {
-                pwd: encode(pwd),
-                newPwd: encode(newPwd),
-                newPwd2: encode(newPwd2)
-            }
-        );
-    }
-
-    tenantUserinfo(): Observable<Userinfo> {
-        return this._http.get<Userinfo>(RestPath.erupt + "/tenant/userinfo");
+    //the tenant of a tenant session; the user itself is the platform's /userinfo
+    tenantInfo(): Observable<TenantInfo> {
+        return this._http.get<TenantInfo>(RestPath.erupt + "/tenant/info");
     }
 
     logout(): Observable<any> {
@@ -588,10 +627,9 @@ export class DataService {
     }
 
     //get menu, pass flush=true to rebuild the menu cache from the database;
-    //tenant sessions use their own endpoint so the flush recomputes tenant menus, never platform ones
+    //a tenant session gets the menus of its packages from the same endpoint
     getMenu(flush?: boolean): Observable<MenuVo[]> {
-        let path = this.utilsService.isTenantToken() ? "/tenant/menu" : "/menu";
-        return this._http.get<MenuVo[]>(RestPath.erupt + path, flush ? {flush: true} : null, {
+        return this._http.get<MenuVo[]>(RestPath.erupt + "/menu", flush ? {flush: true} : null, {
             observe: "body"
         });
     }
@@ -602,6 +640,20 @@ export class DataService {
 
     userinfo(): Observable<Userinfo> {
         return this._http.get<Userinfo>(RestPath.erupt + "/userinfo");
+    }
+
+    // the import/export formats the server offers; one call per session
+    private static formatsCache: TableFormat[] = null;
+
+    tableFormats(callback: (formats: TableFormat[]) => void) {
+        if (DataService.formatsCache) {
+            callback(DataService.formatsCache);
+            return;
+        }
+        this._http.get(RestPath.excel + "/formats").subscribe((formats: TableFormat[]) => {
+            DataService.formatsCache = formats;
+            callback(formats);
+        });
     }
 
     downloadExcelTemplate(eruptName: string, callback?) {
@@ -623,11 +675,11 @@ export class DataService {
         });
     }
 
-    downloadExcel(eruptName: string, body: any, header: any, callback: Function, ids?: any[]) {
-        let url = RestPath.excel + "/export/" + eruptName;
-        if (ids && ids.length > 0) {
-            url += "?" + ids.map(id => "ids=" + id).join("&");
-        }
+    downloadExcel(eruptName: string, body: any, header: any, callback: Function, ids?: any[], format?: string) {
+        let params: string[] = [];
+        if (ids && ids.length > 0) params.push(...ids.map(id => "ids=" + id));
+        if (format) params.push("format=" + format);
+        let url = RestPath.excel + "/export/" + eruptName + (params.length ? "?" + params.join("&") : "");
         this._http.post(url, body, null, {
             responseType: "arraybuffer",
             observe: 'events',
@@ -760,6 +812,20 @@ export class DataService {
         });
     }
 
+    // ---------- record revisions (erupt-revision module) ----------
+
+    revisionList(eruptName: string, id: any) {
+        return this._http.get<R<RecordRevision[]>>(RestPath.revision + "/" + eruptName + "/" + encodeURIComponent(id), null, {
+            observe: "body", headers: {erupt: eruptName}
+        });
+    }
+
+    // put the values a revision replaced back onto the record; runs the regular update pipeline
+    revisionRollback(eruptName: string, id: any, revisionId: number) {
+        return this._http.post<R<void>>(RestPath.revision + "/" + eruptName + "/" + encodeURIComponent(id) + "/" + revisionId + "/rollback",
+            null, null, {observe: "body", headers: {erupt: eruptName}});
+    }
+
     printConfigList(eruptName: string) {
         return this._http.get<R<{ id: number, erupt: string, title: string, content: string, pageConfig: any }[]>>(
             RestPath.erupt + "/print/config/" + eruptName + "/list", null, {
@@ -782,9 +848,10 @@ export class DataService {
             RestPath.erupt + "/print/config/" + eruptName + "/delete?id=" + id, null);
     }
 
-    renderPrint(eruptName: string, id: any, content: string) {
+    // the template is named by id and read server side; its content never travels with the request
+    renderPrint(eruptName: string, id: any, configId: number) {
         return this._http.post<R<string>>(
-            RestPath.erupt + "/print/" + eruptName + "/" + id, content, null, {
+            RestPath.erupt + "/print/" + eruptName + "/" + id, null, {config: configId}, {
                 observe: "body", headers: {erupt: eruptName}
             });
     }

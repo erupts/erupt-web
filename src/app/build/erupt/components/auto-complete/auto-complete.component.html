@@ -1,6 +1,7 @@
 <input nz-input
   [nzSize]="size"
   (input)="onAutoCompleteInput($event, field)"
+  (focus)="onAutoCompleteFocus(field)"
   [placeholder]="field.eruptFieldJson.edit.placeHolder"
   [name]="field.fieldName"
   [(ngModel)]="field.eruptFieldJson.edit.$value"

@@ -1,13 +1,14 @@
 :host {
     display: block;
     background: var(--erupt-bg-container, #fff);
+    user-select: none;
 
     .cal-event {
         color: #fff;
         font-size: 11px;
         line-height: 18px;
         padding: 0 5px;
-        border-radius: 3px;
+        border-radius: 0;
         margin-bottom: 2px;
         cursor: pointer;
         overflow: hidden;
@@ -17,5 +18,197 @@
         &:hover {
             opacity: 0.82;
         }
+    }
+}
+
+// ── Toolbar ────────────────────────────────────────────────────────
+.cal-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--ant-border-color-split);
+}
+
+.cal-toolbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cal-period {
+    margin-left: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--erupt-text, #1e2330);
+}
+
+// ── Month ──────────────────────────────────────────────────────────
+.cal-cell {
+    min-height: 100%;
+}
+
+.cal-more {
+    display: inline-block;
+    font-size: 11px;
+    line-height: 18px;
+    color: var(--erupt-text-tertiary, #8a94a6);
+
+    &:hover {
+        color: var(--ant-primary-color, #1890ff);
+    }
+}
+
+// ── Week ───────────────────────────────────────────────────────────
+.cal-week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--ant-border-color-split);
+    border: 1px solid var(--ant-border-color-split);
+    border-top: none;
+}
+
+.cal-week-col {
+    display: flex;
+    flex-direction: column;
+    min-height: 60vh;
+    background: var(--erupt-bg-container, #fff);
+
+    &.cal-today .cal-week-head {
+        color: var(--ant-primary-color, #1890ff);
+        background: color-mix(in srgb, var(--ant-primary-color, #1890ff) 8%, transparent);
+    }
+}
+
+.cal-week-head {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--ant-border-color-split);
+    font-weight: 600;
+    color: var(--erupt-text, #1e2330);
+}
+
+.cal-week-dow {
+    font-size: 12px;
+}
+
+.cal-week-date {
+    font-size: 12px;
+    color: var(--erupt-text-tertiary, #8a94a6);
+}
+
+.cal-week-body {
+    flex: 1;
+    padding: 6px;
+    overflow-y: auto;
+}
+
+// ── Day ────────────────────────────────────────────────────────────
+// ── year view: twelve mini months, cells shaded by event count ──────────
+.cal-year {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    padding: 12px;
+
+    @media (max-width: 1200px) {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    @media (max-width: 768px) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.cal-year-month {
+    border: 1px solid var(--ant-border-color-split);
+    border-radius: 0;
+    padding: 8px 10px 10px;
+    background: var(--erupt-bg-container, #fff);
+}
+
+.cal-year-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    cursor: pointer;
+
+    &:hover .cal-year-title {
+        color: var(--ant-primary-color, #1890ff);
+    }
+}
+
+.cal-year-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--erupt-text, #1e2330);
+}
+
+.cal-year-count {
+    font-size: 11px;
+    color: var(--erupt-text-tertiary, #8a94a6);
+    background: var(--erupt-fill-secondary, #f0f2f5);
+    border-radius: 0;
+    padding: 0 7px;
+    line-height: 16px;
+}
+
+.cal-year-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+}
+
+.cal-year-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    border-radius: 0;
+    color: var(--erupt-text-secondary, #4a5568);
+    // the event color at an opacity that follows the day's share of the busiest day
+    background: color-mix(in srgb, var(--ev-color, transparent) calc(var(--heat, 0) * 70% + 15%), transparent);
+    cursor: pointer;
+
+    &.cal-year-out {
+        cursor: default;
+        background: transparent;
+    }
+
+    &.cal-today {
+        outline: 1px solid var(--ant-primary-color, #1890ff);
+        outline-offset: -1px;
+        font-weight: 600;
+    }
+
+    &:not(.cal-year-out):hover {
+        outline: 1px solid var(--erupt-border, #cdd3db);
+    }
+}
+
+.cal-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    opacity: 0.4;
+}
+
+// ── CDK drag ───────────────────────────────────────────────────────
+::ng-deep {
+    .cdk-drag-preview .cal-event {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    .cal-cell.cdk-drop-list-receiving,
+    .cal-week-body.cdk-drop-list-receiving {
+        outline: 2px dashed color-mix(in srgb, var(--ant-primary-color, #1890ff) 40%, transparent);
+        outline-offset: -2px;
+        border-radius: 0;
     }
 }

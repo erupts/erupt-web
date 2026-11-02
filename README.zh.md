@@ -111,7 +111,7 @@ yarn start
 | `tabReuse`                    | 默认开启多页签路由复用                                 |
 | `registerPage`                | 登录页显示的自定义注册页地址                           |
 | `copyright` / `copyrightTxt`  | 是否显示版权信息 / 自定义版权文案                      |
-| `amapKey` / `amapSecurityJsCode` | 地图字段使用的高德地图凭证                         |
+| `map`                            | 地图字段与地图视图的厂商：`{provider: "amap" \| "baidu" \| "tencent" \| "tianditu" \| "google" \| "osm", key, securityJsCode（高德）, mapId（谷歌）, darkStyleId（百度/腾讯）, tileUrl（osm）, center}`，SDK 运行时从厂商 CDN 加载；旧的 `amapKey` / `amapSecurityJsCode` 仍然有效 |
 | `r_tools` / `userTools`       | 顶栏右侧工具栏与用户菜单中的自定义项                   |
 | `upload(files)`               | 覆盖上传地址与请求头                                   |
 

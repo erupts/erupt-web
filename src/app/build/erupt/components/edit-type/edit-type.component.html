@@ -112,12 +112,10 @@
                 [optionalHelp]="field.eruptFieldJson.edit.desc">
                 @if (field.eruptFieldJson.edit.inputType.prefix.length == 0 && field.eruptFieldJson.edit.inputType.suffix.length == 0) {
                     <nz-input-wrapper class="erupt-input" nzAllowClear>
-                        @if (supportCopy) {
-                            <div nzInputAddonBefore>
-                                <span nz-icon nzType="copy" (click)="copy(field.eruptFieldJson.edit.$value)"
-                                      style="cursor: pointer" nzTheme="outline"></span>
-                            </div>
-                        }
+                        <div nzInputAddonBefore>
+                            <span nz-icon nzType="copy" (click)="copy(field.eruptFieldJson.edit.$value)"
+                                  style="cursor: pointer" nzTheme="outline"></span>
+                        </div>
                         <input nz-input [nzSize]="size" autocomplete="off" nz-tooltip
                                nzTooltipTrigger="focus"
                                nzTooltipPlacement="topLeft"
@@ -316,6 +314,7 @@
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
                             <nz-color-picker class="erupt-input"
                                              [(ngModel)]="field.eruptFieldJson.edit.$value"
+                                             (ngModelChange)="colorModelChange(field, $event)"
                                              [name]="field.fieldName"
                                              [nzSize]="size"
                                              nzFormat="hex"
@@ -666,8 +665,8 @@
                             [required]="field.eruptFieldJson.edit.notNull"
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
                             @if (!loading) {
-                                <amap [(value)]="field.eruptFieldJson.edit.$value"
-                                      [mapType]="field.eruptFieldJson.edit.mapType"></amap>
+                                <map-edit [(value)]="field.eruptFieldJson.edit.$value"
+                                          [mapType]="field.eruptFieldJson.edit.mapType"></map-edit>
                             }
                         </se>
                     </div>

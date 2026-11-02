@@ -1,4 +1,5 @@
-import {Component, DoCheck, Inject, Input, KeyValueDiffers, OnDestroy, OnInit} from "@angular/core";
+import {Component, DoCheck, Inject, Input, KeyValueDiffers, OnDestroy, OnInit, inject} from "@angular/core";
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 import {Edit, EruptFieldModel, FormCtrl} from "../../model/erupt-field.model";
 import {
@@ -34,6 +35,8 @@ import {AiAssistVariant} from "../ai-assist/ai-assist.component";
     styleUrls: ["./edit-type.component.less"]
 })
 export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
+
+    private clipboard = inject(ClipboardService);
 
     @Input() loading: boolean = false;
 
@@ -75,8 +78,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     uploadFilesStatus: { [key: string]: boolean } = {};
 
     buttonLoading: { [key: string]: boolean } = {};
-
-    supportCopy: boolean;
 
     divideCollapsed: { [key: string]: boolean } = {};
 
@@ -122,7 +123,6 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
                 @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzMessageService) private msg: NzMessageService,
                 private imageService: NzImageService) {
-        this.supportCopy = "clipboard" in navigator
     }
 
     ngOnInit() {
@@ -565,9 +565,7 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
         if (!val) {
             val = "";
         }
-        navigator.clipboard.writeText(val).then(() => {
-            this.msg.success(this.i18n.fanyi("global.copy_success"))
-        });
+        this.clipboard.copy(val);
     }
 
     // NUMBER thousands separator (display only). Stable references so nz-input-number
@@ -592,6 +590,15 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
             this.colorPresetsCache.set(key, [{label: this.i18n.fanyi("edit_type.color_presets"), colors: presets}]);
         }
         return this.colorPresetsCache.get(key);
+    }
+
+    // ng-zorro's clear button leaves an alpha of 0 behind, and with alpha disabled no slider can
+    // undo it: every later pick keeps the colour transparent. An 8-digit hex ending in 00 is that
+    // cleared state, so the model empties and the panel starts over from an opaque colour.
+    colorModelChange(field: EruptFieldModel, value: string): void {
+        if (!field.eruptFieldJson.edit.colorType?.alpha && /^#[0-9a-f]{6}00$/i.test(value || '')) {
+            field.eruptFieldJson.edit.$value = null;
+        }
     }
 
     onAttachmentDrop(event: CdkDragDrop<any>, field: EruptFieldModel): void {

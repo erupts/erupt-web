@@ -82,14 +82,22 @@ export class EruptMicroAppComponent implements OnInit, OnChanges, OnDestroy {
     constructor(private zone: NgZone, private cdr: ChangeDetectorRef) {
     }
 
+    /** The url the current mount was started for; guards against mounting twice. */
+    private mountedUrl: string | null = null;
+
     ngOnInit() {
         if (this.height) {
             this.style['height'] = this.height;
         }
+        // A modal host assigns `url` straight onto the instance, which never fires
+        // ngOnChanges; a template binding does and has already mounted by now.
+        if (this.url && this.mountedUrl !== this.url) {
+            this.mount();
+        }
     }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes['url'] && this.url) {
+        if (changes['url'] && this.url && this.mountedUrl !== this.url) {
             this.mount();
         }
     }
@@ -102,6 +110,7 @@ export class EruptMicroAppComponent implements OnInit, OnChanges, OnDestroy {
      */
     private mount() {
         this.teardown();
+        this.mountedUrl = this.url;
         this.loading = true;
         this.reason = null;
         this.raw = null;

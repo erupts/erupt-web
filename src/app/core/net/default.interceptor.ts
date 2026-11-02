@@ -1,4 +1,5 @@
 import {Inject, Injectable, Injector} from "@angular/core";
+import {ScopeStore} from "@shared/service/scope.service";
 import {Router} from "@angular/router";
 import {
     HttpErrorResponse,
@@ -19,6 +20,7 @@ import {EruptApiModel, PromptWay, Status} from "../../build/erupt/model/erupt-ap
 import {CacheService} from "@delon/cache";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
+import {ShareSession} from "@shared/model/share-session";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzNotificationService} from "ng-zorro-antd/notification";
 import {NzMessageService} from "ng-zorro-antd/message";
@@ -150,6 +152,12 @@ export class DefaultInterceptor implements HttpInterceptor {
                 }
                 return of(event);
             case 401: // Not logged in
+                // A share session has ended: the visitor has no account to log in with, the link is the way back
+                if (ShareSession.active()) {
+                    ShareSession.clear();
+                    this.msg.warning(this.i18n.fanyi("share.session_expired"));
+                    return throwError(() => event);
+                }
                 if (this.router.url !== "/passport/login") {
                     this.cacheService.set(GlobalKeys.loginBackPath, this.router.url);
                 }
@@ -263,9 +271,15 @@ export class DefaultInterceptor implements HttpInterceptor {
         // Receive JSON responses as text and parse them ourselves, so 64-bit ids
         // beyond Number.MAX_SAFE_INTEGER are kept as strings instead of losing precision
         const expectJson = req.responseType === "json";
+        let headers = req.headers.set("lang", this.i18n.currentLang || '');
+        // the scope picks every erupt-api call runs in; the server verifies their signatures
+        const scope = ScopeStore.header();
+        if (scope && url.indexOf("erupt-api") !== -1 && !headers.has(ScopeStore.HEADER)) {
+            headers = headers.set(ScopeStore.HEADER, scope);
+        }
         const newReq = req.clone({
             url: url,
-            headers: req.headers.set("lang", this.i18n.currentLang || ''),
+            headers: headers,
             ...(expectJson ? {responseType: "text" as const} : {})
         });
         return next.handle(newReq).pipe(

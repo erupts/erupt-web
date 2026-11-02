@@ -81,7 +81,7 @@
           <ul nz-menu nzSelectable>
             @for (item of skins; track item.value) {
               <li nz-menu-item [nzSelected]="skin === item.value" (click)="setSkin(item.value)">
-                {{ item.value === Skin.DEFAULT ? ('setting.skin-default' | translate) : item.label }}
+                {{ item.label | translate }}
               </li>
             }
           </ul>

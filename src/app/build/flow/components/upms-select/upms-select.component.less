@@ -40,13 +40,13 @@
 
             &:hover {
                 color: var(--ant-primary-color);
-                background-color: rgba(24, 144, 255, 0.04);
+                background-color: color-mix(in srgb, var(--ant-primary-color, #1890ff) 4%, transparent);
             }
 
             &.active {
                 color: var(--ant-primary-color);
                 border-bottom-color: var(--ant-primary-color);
-                background-color: rgba(24, 144, 255, 0.04);
+                background-color: color-mix(in srgb, var(--ant-primary-color, #1890ff) 4%, transparent);
             }
 
             span[nz-icon] {
@@ -74,7 +74,7 @@
                     &:focus,
                     &:hover {
                         border-color: var(--ant-primary-color);
-                        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+                        box-shadow: 0 0 0 2px color-mix(in srgb, var(--ant-primary-color, #1890ff) 10%, transparent);
                     }
                 }
             }
@@ -109,7 +109,7 @@
                 cursor: pointer;
 
                 &:hover {
-                    color: #40a9ff;
+                    color: var(--ant-primary-color-hover, #40a9ff);
                 }
             }
         }
@@ -166,7 +166,7 @@
             }
 
             &.selected {
-                background-color: rgba(24, 144, 255, 0.05);
+                background-color: color-mix(in srgb, var(--ant-primary-color, #1890ff) 5%, transparent);
                 border-left: 3px solid var(--ant-primary-color);
                 padding-left: 9px;
             }
@@ -188,7 +188,7 @@
                 .level {
                     font-size: 11px;
                     color: var(--ant-primary-color);
-                    background: rgba(24, 144, 255, 0.1);
+                    background: color-mix(in srgb, var(--ant-primary-color, #1890ff) 10%, transparent);
                     padding: 2px 6px;
                     border-radius: 3px;
                 }
@@ -301,7 +301,7 @@
             gap: 4px;
 
             &:hover {
-                background-color: rgba(255, 77, 79, 0.1);
+                background-color: color-mix(in srgb, var(--ant-error-color, #ff4d4f) 10%, transparent);
             }
 
             &:disabled {
@@ -315,12 +315,12 @@
         }
 
         .clear-all-btn {
-            color: #ff4d4f;
-            border-color: #ff4d4f;
+            color: var(--ant-error-color, #ff4d4f);
+            border-color: var(--ant-error-color, #ff4d4f);
 
             &:hover {
-                background-color: rgba(255, 77, 79, 0.1);
-                border-color: #ff7875;
+                background-color: color-mix(in srgb, var(--ant-error-color, #ff4d4f) 10%, transparent);
+                border-color: var(--ant-error-color-hover, #ff7875);
             }
         }
 
@@ -413,12 +413,12 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            color: #ff4d4f;
-            border-color: #ff4d4f;
+            color: var(--ant-error-color, #ff4d4f);
+            border-color: var(--ant-error-color, #ff4d4f);
 
             &:hover {
-                background-color: rgba(255, 77, 79, 0.1);
-                border-color: #ff7875;
+                background-color: color-mix(in srgb, var(--ant-error-color, #ff4d4f) 10%, transparent);
+                border-color: var(--ant-error-color-hover, #ff7875);
             }
 
             span[nz-icon] {

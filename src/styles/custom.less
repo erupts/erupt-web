@@ -161,3 +161,9 @@ nz-picker, nz-picker .ant-calendar-picker {
         max-width: 935px !important;
     }
 }
+
+// ng-zorro-antd 21.3 color picker: with nzDisabledAlpha the slider group turns into a flex row
+// but the hue slider gets no flex basis, so its rail collapses to 0 width and only the handle shows
+.ant-color-picker-slider-group-disabled-alpha .ant-color-picker-slider {
+    flex: 1;
+}

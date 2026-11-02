@@ -219,7 +219,7 @@
     }
     @if (!loading) {
       @for (group of list; track group) {
-        @if (group.group) {
+        @if (group.group && menuGroups) {
           <li class="sidebar-nav__item sidebar-nav__group-title">
             <span [innerHTML]="group._text"></span>
           </li>

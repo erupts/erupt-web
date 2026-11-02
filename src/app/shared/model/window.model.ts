@@ -1,3 +1,5 @@
+import {MapConfig, MapProvider} from "@shared/model/map.model";
+
 export class WindowModel {
 
     public static VIS_TPL_DATA_KEY: string = "visTplData";
@@ -19,9 +21,8 @@ export class WindowModel {
         }
     }
 
-    public static amapKey: string;
-
-    public static amapSecurityJsCode: string;
+    // eruptSiteConfig.map — the map vendor and its key (MapService loads that vendor's SDK on demand)
+    public static map: MapConfig;
 
     public static title: string;
 
@@ -56,13 +57,15 @@ export class WindowModel {
         // false | true | "auto" (follow the OS color scheme)
         dark?: boolean | "auto",
         compact?: boolean,
-        // "default" | "brutalist" | "liquid-glass" | "workspace" | "classic" (Skin in @shared/util/theme.util)
+        // "default" | "brutalist" | "liquid-glass" | "workspace" | "classic" | "terminal" | "material" (Skin in @shared/util/theme.util)
         skin?: string,
         // Workspace skin only: a frame gradient preset key (WORKSPACE_FRAME_PRESETS in
         // @shared/util/theme.util); unset = the frame is derived from the primary color
         workspaceFrame?: string,
         // "normal" | "split" | "dual" | "top" | "group" | "top-split" (MenuMode)
         menuMode?: string,
+        // false hides the sidebar's section titles by module group (business, AI, dev tools, ops)
+        menuGroups?: boolean,
         // "center" | "side" | "full" (FormPanelMode): how record forms open
         formPanelMode?: string,
         // "center" | "cover" | "wide" | "wallpaper" | "poster" (LoginLayout): the login page layout
@@ -94,8 +97,13 @@ export class WindowModel {
     public static init() {
         WindowModel.r_tools = WindowModel.config["r_tools"] || [];
         WindowModel.userTools = WindowModel.config["userTools"] || [];
-        WindowModel.amapKey = WindowModel.config["amapKey"];
-        WindowModel.amapSecurityJsCode = WindowModel.config["amapSecurityJsCode"];
+        // the legacy top-level amapKey / amapSecurityJsCode still configure the amap vendor
+        WindowModel.map = {
+            provider: MapProvider.AMAP,
+            key: WindowModel.config["amapKey"],
+            securityJsCode: WindowModel.config["amapSecurityJsCode"],
+            ...(WindowModel.config["map"] || {})
+        };
         WindowModel.title = WindowModel.config["title"] === null ? 'Erupt Engine' : WindowModel.config["title"];
         WindowModel.desc = WindowModel.config["desc"] || undefined;
         // Logo keys: leaving one out means the default, setting it to null or ''

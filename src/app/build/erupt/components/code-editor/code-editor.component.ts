@@ -1,4 +1,5 @@
-import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild, inject} from '@angular/core';
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {Edit} from "../../model/erupt-field.model";
 import {JoinedEditorOptions, NzCodeEditorComponent} from "ng-zorro-antd/code-editor";
 import {DataService} from "@shared/service/data.service";
@@ -10,6 +11,8 @@ import {DataService} from "@shared/service/data.service";
     styleUrls: ["./code-editor.component.less"]
 })
 export class CodeEditorComponent implements OnInit, OnDestroy {
+
+    private clipboard = inject(ClipboardService);
 
     /**
      * choice field or value
@@ -135,7 +138,7 @@ export class CodeEditorComponent implements OnInit, OnDestroy {
 
     copyCode() {
         if (this.edit.$value) {
-            navigator.clipboard.writeText(this.edit.$value);
+            this.clipboard.copy(this.edit.$value);
         }
     }
 

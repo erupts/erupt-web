@@ -53,7 +53,7 @@
         </span>
       </span>
     }
-    @if (canToggleEdit || commentAction || aiAction || removeAction || menuActions.length) {
+    @if (canToggleEdit || commentAction || revisionAction || aiAction || removeAction || menuActions.length) {
       <!-- record actions as small outlined buttons, ant style; the mode switch keeps its own pill -->
       <span class="erupt-form-title__actions" (mousedown)="$event.stopPropagation()">
         @if (canToggleEdit) {
@@ -66,6 +66,12 @@
           <span class="erupt-form-title__btn erupt-form-title__btn--icon" nz-tooltip
                 [nzTooltipTitle]="'form.comments' | translate" (click)="commentAction()">
             <i nz-icon nzType="message"></i>
+          </span>
+        }
+        @if (revisionAction) {
+          <span class="erupt-form-title__btn erupt-form-title__btn--icon" nz-tooltip
+                [nzTooltipTitle]="'form.revisions' | translate" (click)="revisionAction()">
+            <i nz-icon nzType="history"></i>
           </span>
         }
         @if (aiAction) {

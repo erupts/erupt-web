@@ -1,0 +1,135 @@
+<div class="fc">
+    <div class="fc-toolbar">
+        <div class="fc-crumbs">
+            @for (crumb of crumbs(); track crumb.path; let last = $last) {
+                <a (click)="openCrumb(crumb.path)" [class.last]="last">{{ crumb.name }}</a>
+                @if (!last) {
+                    <span class="sep">/</span>
+                }
+            }
+        </div>
+        <input nz-input class="fc-search" [(ngModel)]="filter" [placeholder]="t('search')">
+        <input type="file" #picker multiple hidden (change)="upload(currentDir(), picker.files)">
+        <button nz-button nzType="primary" [disabled]="!writable" (click)="pick(picker)">
+            <i class="fa fa-upload"></i> {{ t('upload') }}
+        </button>
+        <button nz-button [disabled]="!writable || !columns.length" (click)="startMkdir()">
+            <i class="fa fa-folder-o"></i> {{ t('new_folder') }}
+        </button>
+        <button nz-button [disabled]="!writable || !selected()" (click)="startRename()">
+            <i class="fa fa-i-cursor"></i> {{ t('rename') }}
+        </button>
+        <button nz-button nzDanger [disabled]="!writable || !selected()"
+                nz-popconfirm [nzPopconfirmTitle]="t('confirm_delete')" nzPopconfirmPlacement="bottomRight"
+                (nzOnConfirm)="remove()">
+            <i class="fa fa-trash-o"></i> {{ t('delete') }}
+        </button>
+    </div>
+
+    <div class="fc-body">
+        <div class="fc-stores">
+            <div class="fc-stores-title">{{ t('stores') }}</div>
+            @for (s of stores; track s) {
+                <div class="fc-store" [class.active]="s === store" (click)="openStore(s)">
+                    <i class="fa" [class.fa-cloud]="s.startsWith('S3')" [class.fa-hdd-o]="!s.startsWith('S3')"></i>
+                    <span>{{ s }}</span>
+                </div>
+            }
+        </div>
+
+        <div class="fc-columns">
+            @for (col of columns; track col.path; let depth = $index) {
+                <div class="fc-column" nz-resizable [nzMinWidth]="160" [nzMaxWidth]="640" [style.width.px]="col.width"
+                     [class.dropping]="col.dropping"
+                     (nzResize)="onColumnResize($event, col)"
+                     (dragover)="onDragOver($event, col)" (dragleave)="col.dropping = false" (drop)="onDrop($event, col)">
+                    <nz-resize-handles [nzDirections]="['right']"></nz-resize-handles>
+                    <nz-spin [nzSpinning]="col.loading" nzSize="small" class="fc-spin">
+                        <div class="fc-rows">
+                            @if (editing && editing.kind === 'mkdir' && editing.depth === depth) {
+                                <div class="fc-row editing">
+                                    <i class="fa fa-folder kind-folder"></i>
+                                    <input class="fc-edit-input" nz-input nzSize="small" [(ngModel)]="editing.value"
+                                           (keydown.enter)="commitEdit()" (keydown.escape)="cancelEdit()" (blur)="commitEdit()">
+                                </div>
+                            }
+                            @for (e of shown(col, depth); track e.path) {
+                                <div class="fc-row" [class.selected]="col.selected?.path === e.path"
+                                     (click)="select(depth, e)" (dblclick)="!e.dir && openRaw()" [title]="e.name">
+                                    <i class="fa" [ngClass]="iconClass(e, col.selected?.path === e.path && e.dir)"></i>
+                                    @if (editing && editing.kind === 'rename' && editing.path === e.path) {
+                                        <input class="fc-edit-input" nz-input nzSize="small" [(ngModel)]="editing.value"
+                                               (keydown.enter)="commitEdit()" (keydown.escape)="cancelEdit()" (blur)="commitEdit()"
+                                               (click)="$event.stopPropagation()">
+                                    } @else {
+                                        <span class="name">{{ e.name }}</span>
+                                        @if (e.dir) {
+                                            <i class="fa fa-angle-right arrow"></i>
+                                        }
+                                    }
+                                </div>
+                            }
+                            @if (!col.loading && !shown(col, depth).length && !(editing && editing.depth === depth)) {
+                                <div class="fc-empty">{{ t('empty') }}</div>
+                            }
+                        </div>
+                    </nz-spin>
+                </div>
+            }
+        </div>
+
+        <div class="fc-preview" nz-resizable [nzMinWidth]="240" [nzMaxWidth]="800" [style.width.px]="previewWidth"
+             (nzResize)="onPreviewResize($event)">
+            <nz-resize-handles [nzDirections]="['left']"></nz-resize-handles>
+            <div class="fc-preview-body">
+            @if (preview; as p) {
+                <div class="fc-media" [class.tall]="p.kind === 'pdf' || p.kind === 'text'">
+                    @switch (p.kind) {
+                        @case ('image') {
+                            <img [src]="p.url" alt="">
+                        }
+                        @case ('video') {
+                            <video [src]="p.url" controls></video>
+                        }
+                        @case ('audio') {
+                            <audio [src]="p.url" controls></audio>
+                        }
+                        @case ('pdf') {
+                            <iframe [src]="p.url | safeUrl"></iframe>
+                        }
+                        @case ('text') {
+                            @if (p.textTooLarge) {
+                                <div class="fc-big"><i class="fa fa-file-text-o"></i><div>{{ t('too_large') }}</div></div>
+                            } @else {
+                                <pre>{{ p.text ?? '…' }}</pre>
+                            }
+                        }
+                        @default {
+                            <div class="fc-big"><i class="fa" [ngClass]="iconClass(p.entry)"></i></div>
+                        }
+                    }
+                </div>
+                <h3>{{ p.entry.name }}</h3>
+                <dl>
+                    <dt>{{ t('size') }}</dt><dd>{{ size(p.entry.size) }}</dd>
+                    <dt>{{ t('modified') }}</dt><dd>{{ p.entry.modified ? (p.entry.modified | date:'yyyy-MM-dd HH:mm:ss') : '' }}</dd>
+                    <dt>{{ t('type') }}</dt><dd>{{ p.entry.contentType }}</dd>
+                </dl>
+                <div class="fc-actions">
+                    <button nz-button nzSize="small" (click)="openRaw()"><i class="fa fa-external-link"></i> {{ t('open') }}</button>
+                    <button nz-button nzSize="small" (click)="download()"><i class="fa fa-download"></i> {{ t('download') }}</button>
+                    @if (p.link) {
+                        <button nz-button nzSize="small" (click)="copyLink()"><i class="fa fa-link"></i> {{ t('copy_link') }}</button>
+                    }
+                </div>
+            } @else if (columns.length) {
+                <div class="fc-folder-info">
+                    <i class="fa fa-folder-open kind-folder"></i>
+                    <h3>{{ selected()?.name || store }}</h3>
+                    <div class="muted">{{ columns[columns.length - 1].entries.length }} {{ t('items') }}</div>
+                </div>
+            }
+            </div>
+        </div>
+    </div>
+</div>

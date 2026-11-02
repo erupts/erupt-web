@@ -1,4 +1,5 @@
-import {AfterViewInit, Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, inject} from '@angular/core';
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
 import {VL} from "../../../../erupt/model/erupt-field.model";
@@ -25,6 +26,8 @@ import {eruptToPrintVars, PrintTemplate, PrintVar} from "@shared/component/print
     styleUrls: ['./flow-config.component.less']
 })
 export class FlowConfigComponent implements OnInit, AfterViewInit {
+
+    private clipboard = inject(ClipboardService);
 
     @Input() flowId: number;
 
@@ -236,9 +239,7 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     copyConfig() {
         if (this.flowConfig.rule) {
-            navigator.clipboard.writeText(JSON.stringify(this.flowConfig.rule, null, 2)).then(() => {
-                this.msg.success(this.i18n.fanyi('flow.success.copied'));
-            });
+            this.clipboard.copy(JSON.stringify(this.flowConfig.rule, null, 2), this.i18n.fanyi('flow.success.copied'));
         }
     }
 

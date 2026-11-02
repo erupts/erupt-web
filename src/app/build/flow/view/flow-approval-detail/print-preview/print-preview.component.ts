@@ -2,7 +2,8 @@ import {Component, ElementRef, Input, OnInit} from '@angular/core';
 import {FlowInstance, FlowInstanceTask} from "@flow/model/flow-instance.model";
 import {EruptBuildModel} from "../../../../erupt/model/erupt-build.model";
 import {NodeType} from "@flow/model/node.model";
-import printJS from 'print-js';
+import {loadBuiltinPrintConfig, printElement, printPageCss} from "@shared/util/print.util";
+import {BuiltinPrintConfig, PaperOrientation, PaperSize} from "@shared/model/erupt-print";
 import {SettingsService} from "@delon/theme";
 import {PrintSetting} from "@flow/model/flow.model";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
@@ -25,6 +26,9 @@ export class FlowPrintPreviewComponent implements OnInit {
 
     currentDate = new Date();
 
+    // settings of the default layout, shared with the built-in print of erupt models
+    config: BuiltinPrintConfig = loadBuiltinPrintConfig();
+
     constructor(private elementRef: ElementRef,
                 protected settingsService: SettingsService,
                 private flowInstanceApiService: FlowInstanceApiService) {
@@ -43,42 +47,17 @@ export class FlowPrintPreviewComponent implements OnInit {
         }
     }
 
-    // Print method - prints only the current component's content
+    // A custom layout keeps the page setup saved with its template; the default one follows the config bar
     print() {
-        // Get page configuration
-        const pageConfig = this.instance.eruptFlowConfig.setting.printPageConfig || {
-            paperSize: 'A4',
-            orientation: 'portrait',
-            marginTop: 10,
-            marginRight: 10,
-            marginBottom: 10,
-            marginLeft: 10
-        };
-
-        // Build the @page style
-        const pageSize = pageConfig.paperSize === 'Custom'
-            ? 'auto'
-            : `${pageConfig.paperSize} ${pageConfig.orientation}`;
-
-        const margin = `${pageConfig.marginTop}mm ${pageConfig.marginRight}mm ${pageConfig.marginBottom}mm ${pageConfig.marginLeft}mm`;
-
-        printJS({
-            printable: this.elementRef.nativeElement.querySelector('.print-preview-container'),
-            type: 'html',
-            targetStyles: ['*'],
-            style: `
-                * {
-                    font-family: 'Heiti SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
-                    -webkit-print-color-adjust: exact !important;
-                    print-color-adjust: exact !important;
-                }
-
-                @page {
-                    size: ${pageSize};
-                    margin: ${margin};
-                }
-              `
-        });
+        let css: string;
+        if (this.instance.eruptFlowConfig.setting.printSetting == PrintSetting.CUSTOM) {
+            const pc = this.instance.eruptFlowConfig.setting.printPageConfig;
+            css = printPageCss(pc?.paperSize || PaperSize.A4, pc?.orientation || PaperOrientation.PORTRAIT,
+                `${pc?.marginTop ?? 10}mm ${pc?.marginRight ?? 10}mm ${pc?.marginBottom ?? 10}mm ${pc?.marginLeft ?? 10}mm`);
+        } else {
+            css = printPageCss(this.config.paperSize, this.config.orientation, `${this.config.margin}mm`);
+        }
+        printElement(this.elementRef.nativeElement, css);
     }
 
     protected readonly NodeType = NodeType;

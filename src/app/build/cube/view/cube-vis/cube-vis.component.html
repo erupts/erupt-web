@@ -1,0 +1,31 @@
+@if (unavailable) {
+    <div class="vis-cube-empty">
+        <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="'cube.vis.unavailable' | translate"/>
+    </div>
+} @else {
+    <nz-spin [nzSpinning]="loading">
+        @if (linked.length) {
+            <div class="vis-cube-links">
+                @for (f of linked; track f.field) {
+                    <nz-tag nzMode="closeable" nzColor="blue" (nzOnClose)="removeLink(f)">
+                        {{ f.title }}: {{ f.value }}
+                    </nz-tag>
+                }
+                <a class="vis-cube-clear" (click)="clearLinks()">
+                    <i nz-icon nzType="close-circle" nzTheme="outline"></i>
+                </a>
+            </div>
+        }
+        <div class="vis-cube-grid" [style.grid-template-columns]="'repeat(' + gridColumns + ', minmax(0, 1fr))'">
+            @for (report of reports; track $index) {
+                <div class="vis-cube-cell"
+                     [style.grid-column]="'span ' + span(vis.cubeView.charts[$index])"
+                     [style.height.px]="vis.cubeView.height || 320">
+                    <cube-puzzle-report [report]="report" [dashboard]="dashboard" [dsl]="dsl"
+                                        [filters]="filters" [cubeMeta]="cubeMeta"
+                                        (filterLink)="onFilterLink($event)"/>
+                </div>
+            }
+        </div>
+    </nz-spin>
+}

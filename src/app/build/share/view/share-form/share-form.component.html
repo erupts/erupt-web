@@ -1,0 +1,30 @@
+<div class="share-form">
+    <div class="share-form__card">
+        @if (loading || !eruptBuildModel) {
+            <div style="padding: 16px">
+                <nz-skeleton [nzActive]="true" [nzTitle]="true" [nzParagraph]="{ rows: 8 }"></nz-skeleton>
+            </div>
+        } @else if (submitted) {
+            <nz-result nzStatus="success" [nzTitle]="'share.submit.success' | translate">
+                <div nz-result-extra>
+                    <button nz-button nzType="primary" (click)="another()">{{ 'share.submit.again' | translate }}</button>
+                </div>
+            </nz-result>
+        } @else {
+            <h2 class="share-form__title">{{ eruptBuildModel.eruptModel.eruptJson.name }}</h2>
+            @if (eruptBuildModel.eruptModel.eruptJson.desc) {
+                <p class="share-form__desc">{{ eruptBuildModel.eruptModel.eruptJson.desc }}</p>
+            }
+            <nz-spin [nzSpinning]="submitting">
+                <erupt-edit-type #eruptEdit [loading]="submitting" [eruptBuildModel]="eruptBuildModel"
+                                 [mode]="Scene.ADD"></erupt-edit-type>
+            </nz-spin>
+            <div class="share-form__footer">
+                <button nz-button nzType="primary" nzSize="large" [nzLoading]="submitting" (click)="submit()">
+                    {{ 'share.submit' | translate }}
+                </button>
+            </div>
+        }
+    </div>
+    <p class="share-form__powered">{{ title }}</p>
+</div>

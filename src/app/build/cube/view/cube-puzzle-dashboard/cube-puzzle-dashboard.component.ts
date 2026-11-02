@@ -1,4 +1,5 @@
-import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren} from '@angular/core';
+import {Component, ElementRef, Inject, Input, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren, inject} from '@angular/core';
+import {ClipboardService} from '@shared/service/clipboard.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
 import {CubeApiService} from "../../service/cube-api.service";
@@ -38,6 +39,8 @@ import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
     styleUrls: ['./cube-puzzle-dashboard.component.less']
 })
 export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
+
+    private clipboard = inject(ClipboardService);
 
     @Input() editModel: boolean = true;
 
@@ -793,9 +796,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             if (Object.keys(filterValues).length > 0) {
                 newUrl += '?filters=' + encodeURIComponent(JSON.stringify(filterValues));
             }
-            navigator.clipboard.writeText(newUrl).then(() => {
-                this.message.success(this.i18n.fanyi('cube.dashboard.copy_success'));
-            });
+            this.clipboard.copy(newUrl, this.i18n.fanyi('cube.dashboard.copy_success'));
         }
     }
 

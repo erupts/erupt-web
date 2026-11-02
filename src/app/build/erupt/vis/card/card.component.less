@@ -1,4 +1,21 @@
 :host {
+    .card-masonry {
+        columns: 260px;
+        column-gap: 12px;
+    }
+
+    // padding, not margin: a margin at the bottom of a column is truncated,
+    // which would leave the last cards touching the paginator
+    .card-masonry-item {
+        break-inside: avoid;
+        padding-bottom: 12px;
+
+        // the theme gives every card a 16px bottom margin; here the item padding alone spaces them
+        ::ng-deep .ant-card {
+            margin-bottom: 0;
+        }
+    }
+
     ::ng-deep {
         .erupt-card {
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
@@ -65,6 +82,13 @@
                     background-repeat: no-repeat;
                     background-position: center center
                 }
+            }
+
+            // masonry cover: full width at the image's own height
+            .card-img-masonry {
+                display: block;
+                width: 100%;
+                height: auto;
             }
 
             .title {
