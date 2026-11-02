@@ -157,12 +157,20 @@ describe("DataHandlerService", () => {
         it("converts to zorro nodes, expanding up to the given level and marking leaves", () => {
             const [one, two] = service.dataTreeToZorroTree(nodes, 1);
             expect(one).toMatchObject({key: "1", title: "L1", expanded: true, data: {id: "1"}});
-            expect(one.isLeaf).toBeUndefined();
+            expect(one.isLeaf).toBe(false);
+            expect(one.selectable).toBeUndefined();
             expect(one.children[0]).toMatchObject({key: "1-1", expanded: false});
             expect(one.children[0].children[0].isLeaf).toBe(true);
             // an empty children array is a leaf too
             expect(one.children[1].isLeaf).toBe(true);
             expect(two.isLeaf).toBe(true);
+        });
+
+        it("leaf-only mode keeps parents visible but not pickable", () => {
+            const [one, two] = service.dataTreeToZorroTree(nodes, 1, true);
+            expect(one).toMatchObject({isLeaf: false, selectable: false, disableCheckbox: true});
+            expect(one.children[0].children[0].selectable).toBeUndefined();
+            expect(two.selectable).toBeUndefined();
         });
     });
 
