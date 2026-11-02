@@ -13,7 +13,7 @@ export interface MenuVo {
 }
 
 // The module groups in the order the sidebar and the module center show them (ModuleGroup on the server).
-export const MODULE_GROUPS = ['PLATFORM', 'BUSINESS', 'AI', 'DEV_TOOLS', 'OPS', 'DATA'];
+export const MODULE_GROUPS = ['PLATFORM', 'BUSINESS', 'AI', 'DEV_TOOLS', 'OPS', 'DATA', 'DEMO'];
 
 // The sidebar's sections, cut from the root menus in their sort order: a run of root menus of one
 // module group becomes a titled section; platform menus and menus without a group (the user's own)
