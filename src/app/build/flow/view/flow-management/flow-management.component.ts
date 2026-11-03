@@ -248,7 +248,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
 
         this.modal.confirm({
             nzTitle: this.i18n.fanyi('flow.modal.confirm_delete'),
-            nzContent: `${this.i18n.fanyi('flow.management.confirm_delete_group_prefix')}${item.name}${this.i18n.fanyi('flow.management.confirm_delete_group_suffix')}`,
+            nzContent: this.i18n.fanyi('flow.management.confirm_delete_group').replace('{0}', item.name),
             nzOkText: this.i18n.fanyi('global.ok'),
             nzCancelText: this.i18n.fanyi('global.cancel'),
             nzOnOk: () => {
@@ -411,7 +411,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
 
         this.modal.confirm({
             nzTitle: this.i18n.fanyi('flow.modal.confirm_copy'),
-            nzContent: `${this.i18n.fanyi('flow.config.confirm_copy_prefix')}${config.name}${this.i18n.fanyi('flow.config.confirm_copy_suffix')}`,
+            nzContent: this.i18n.fanyi('flow.config.confirm_copy').replace('{0}', config.name),
             nzOkText: this.i18n.fanyi('global.ok'),
             nzCancelText: this.i18n.fanyi('global.cancel'),
             nzOnOk: () => {
@@ -473,7 +473,7 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
 
         this.modal.confirm({
             nzTitle: this.i18n.fanyi('flow.modal.confirm_delete'),
-            nzContent: `${this.i18n.fanyi('flow.config.confirm_delete_prefix')}${config.name}${this.i18n.fanyi('flow.config.confirm_delete_suffix')}`,
+            nzContent: this.i18n.fanyi('flow.config.confirm_delete').replace('{0}', config.name),
             nzOkText: this.i18n.fanyi('global.ok'),
             nzCancelText: this.i18n.fanyi('global.cancel'),
             nzOkDanger: true,
