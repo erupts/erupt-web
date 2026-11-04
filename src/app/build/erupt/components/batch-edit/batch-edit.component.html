@@ -7,7 +7,8 @@
         <nz-option [nzValue]="field.fieldName" [nzLabel]="field.eruptFieldJson.edit.title"></nz-option>
     }
 </nz-select>
-@if (model) {
-    <erupt-edit-type [eruptBuildModel]="model" [col]="col" size="default" layout="vertical"
+<!-- erupt-edit-type reads its model once in ngOnInit: tracking by field rebuilds it on every pick -->
+@for (m of model ? [model] : []; track fieldName) {
+    <erupt-edit-type [eruptBuildModel]="m" [col]="col" size="default" layout="vertical"
                      [mode]="Scene.EDIT" [readonly]="saving"/>
 }

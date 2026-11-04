@@ -32,7 +32,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         let path = this.settingsService.user["indexPath"];
-        if (path) {
+        // an index menu pointing at this page itself (the built-in $home menu is "/") must not
+        // navigate: same-URL navigation is ignored, so the frame would never be created
+        if (path && this.router.parseUrl(path).toString() !== "/") {
             this.router.navigateByUrl(path).then();
         } else {
             // the version busts the browser cache of the page and, through this same parameter, of the
