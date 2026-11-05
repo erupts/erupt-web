@@ -161,8 +161,12 @@ export class ScopeService {
             ScopeStore.picks[scope] = accepted;
             this.remember();
             const url = target || this.router.url;
-            this.reuseTab.clear(true);
-            this.router.navigateByUrl("/", {skipLocationChange: true}).then(() => this.router.navigateByUrl(url));
+            // cleared once the current page is left: leaving it caches it again, and returning would
+            // then restore the page of the old scope instead of building it anew
+            this.router.navigateByUrl("/", {skipLocationChange: true}).then(() => {
+                this.reuseTab.clear(true);
+                this.router.navigateByUrl(url);
+            });
         }));
     }
 
