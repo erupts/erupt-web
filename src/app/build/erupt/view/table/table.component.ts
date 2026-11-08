@@ -1512,6 +1512,7 @@ export class TableComponent implements OnInit, OnDestroy {
             params: {
                 eruptBuildModel: this.eruptBuildModel,
                 behavior: Scene.ADD,
+                fillData: this.dataHandler.searchFillValues(this.searchErupt),
                 header: this._drill ? DataService.drillToHeader(this._drill) : {}
             },
             onOk: async ref => {

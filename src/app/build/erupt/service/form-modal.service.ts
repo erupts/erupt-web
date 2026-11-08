@@ -22,6 +22,8 @@ export interface FormParams {
     id?: any;
     readonly?: boolean;
     prefillData?: object;
+    // values laid over the init value of a new record (the search bar's fillAdd conditions)
+    fillData?: object;
     header?: object;
 }
 
@@ -132,6 +134,7 @@ export class FormModalService {
         comp.id = p.id;
         comp.readonly = !!p.readonly;
         comp.prefillData = p.prefillData;
+        comp.fillData = p.fillData;
         comp.header = p.header || {};
         comp.title = opts.title;
         comp.panelMode = this.mode;

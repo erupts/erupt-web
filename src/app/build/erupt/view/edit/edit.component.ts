@@ -37,6 +37,9 @@ export class EditComponent implements OnInit {
 
     @Input() prefillData?: object;
 
+    // laid over the init value of a new record
+    @Input() fillData?: object;
+
     @ViewChild("eruptEdit", {static: false}) eruptEditComponent: EditTypeComponent;
 
     // ---- modal title with the panel-mode switch (installed as nzTitle by FormModalService) ----
@@ -146,7 +149,7 @@ export class EditComponent implements OnInit {
             } else {
                 this.loading = true;
                 this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName, null, this.header).subscribe(data => {
-                    this.dataHandlerService.objectToEruptValue(data, this.eruptBuildModel);
+                    this.dataHandlerService.objectToEruptValue({...data, ...this.fillData}, this.eruptBuildModel);
                     this.loading = false;
                     this.takeSnapshot();
                 }, () => {
