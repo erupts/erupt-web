@@ -147,6 +147,19 @@ export class DataHandlerService {
         return queryCondition;
     }
 
+    // Values for a new record, taken from the equals conditions of fields marked @Search(fillAdd = true)
+    searchFillValues(searchErupt: EruptModel): object {
+        if (!searchErupt) return {};
+        const fillFields = new Set(searchErupt.eruptFieldModels
+            .filter(f => f.eruptFieldJson.edit?.search?.fillAdd)
+            .map(f => f.fieldName));
+        const values = {};
+        for (const c of this.buildSearchConditions(searchErupt)) {
+            if (fillFields.has(c.key) && c.expression === QueryExpression.EQ) values[c.key] = c.value;
+        }
+        return values;
+    }
+
     buildSearchConditions(eruptModel: EruptModel): QueryCondition[] {
         const conditions: QueryCondition[] = [];
         for (const field of eruptModel.eruptFieldModels) {

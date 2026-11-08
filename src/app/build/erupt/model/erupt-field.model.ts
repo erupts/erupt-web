@@ -171,6 +171,8 @@ interface Search {
     operator?: QueryExpression;
     // Lock the operator: the operator selector is hidden so users cannot change it
     lockOperator?: boolean;
+    // Fill the add form with this field's equals condition from the search bar
+    fillAdd?: boolean;
 }
 
 interface CodeEditType {
