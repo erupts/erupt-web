@@ -208,6 +208,8 @@ interface Layout {
     // false lets an overflowing cell wrap instead of being cut off with an ellipsis
     tableTruncate: boolean;
     collapseActionButton: boolean;
+    // query as soon as a pick-type search condition changes
+    autoQuery: boolean;
 }
 
 

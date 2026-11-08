@@ -9,6 +9,7 @@ import {Alert, Drill, DrillInput, EruptModel, FieldVisibility, Page, Power, Row,
 import {MenuService, SettingsService} from "@delon/theme";
 import {EditTypeComponent} from "../../components/edit-type/edit-type.component";
 import {EditComponent} from "../edit/edit.component";
+import {SearchComponent} from "../../components/search/search.component";
 import {FormAction, FormModalService, FormNavigator} from "../../service/form-modal.service";
 import {RecordCommentComponent} from "../../components/record-comment/record-comment.component";
 import {RecordRevisionComponent} from "../../components/record-revision/record-revision.component";
@@ -28,7 +29,7 @@ import {
     TableSize,
     ViewType
 } from "../../model/erupt.enum";
-import {DataHandlerService} from "../../service/data-handler.service";
+import {DataHandlerService, parseTags} from "../../service/data-handler.service";
 import {ExcelImportComponent} from "../../components/excel-import/excel-import.component";
 import {BatchEditComponent} from "../../components/batch-edit/batch-edit.component";
 import {Status} from "../../model/erupt-api.model";
@@ -105,6 +106,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
     @ViewChild("st", {static: false})
     st: STComponent;
+
+    @ViewChild(SearchComponent)
+    searchComponent: SearchComponent;
 
     private scopeFixed(eb: EruptBuildModel, field: string): boolean {
         if (eb.scope.bind.indexOf(field) === -1) return false;
@@ -1662,6 +1666,7 @@ export class TableComponent implements OnInit, OnDestroy {
         this.dataHandler.emptyEruptValue({eruptModel: this.searchErupt}, true);
         this.dataHandler.resetSearchOperators(this.searchErupt);
         this.selectedSorts = [];
+        this.searchComponent?.sync();
         this.query(1);
     }
 
@@ -2201,22 +2206,14 @@ export class TableComponent implements OnInit, OnDestroy {
         return "html";
     }
 
-    // tags are stored joined by a separator, or as a JSON array when the separator is "[]"
+    // tags are stored joined by a separator, as a JSON array string when the separator is "[]", or as an array
     cellTags(item: any, col: STColumn): string[] {
         const fieldName = this.colIndexStr(col);
         const value = item[fieldName];
         if (this.blankCell(value)) {
             return [];
         }
-        const sep = this.cellFieldModel(fieldName)?.eruptFieldJson.edit?.tagsType?.joinSeparator;
-        if (sep === "[]") {
-            try {
-                return JSON.parse(value);
-            } catch (e) {
-                return [value];
-            }
-        }
-        return String(value).split(sep);
+        return parseTags(value, this.cellFieldModel(fieldName)?.eruptFieldJson.edit?.tagsType?.joinSeparator);
     }
 
     // percentage a PROGRESS column would fill, using the slider bounds when the field has them
