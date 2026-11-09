@@ -102,7 +102,8 @@ export class MarkdownComponent implements OnInit, AfterViewInit, DoCheck, OnDest
     }
 
     ngDoCheck() {
-        if (this.vditor && this.eruptField) {
+        // vditor is assigned before it is ready: setValue throws until its `after` callback ends the loading
+        if (this.vditor && !this.loading && this.eruptField) {
             const currentValue = this.eruptField.eruptFieldJson?.edit?.$value;
             if (currentValue !== this._lastValue) {
                 this._lastValue = currentValue;
