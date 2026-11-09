@@ -5,7 +5,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {Subject, Subscription, timer} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
-import {I18NService} from '@core';
+import {I18NService, setReuseTabTitle} from '@core';
+import {ReuseTabService} from '@delon/abc/reuse-tab';
 import {DataService} from '@shared/service/data.service';
 import {ScopeService, ScopeStore} from '@shared/service/scope.service';
 import {Status} from '../../../erupt/model/erupt-api.model';
@@ -127,7 +128,8 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
                 private data: DataService,
                 private scope: ScopeService,
                 private i18n: I18NService,
-                private msg: NzMessageService) {
+                private msg: NzMessageService,
+                private reuseTab: ReuseTabService) {
     }
 
     ngOnInit(): void {
@@ -175,7 +177,11 @@ export class PoolDetailComponent implements OnInit, OnDestroy {
             }
             const stageChanged = this.detail?.requirement.stage !== detail.requirement.stage;
             this.detail = detail;
-            if (first) this.title.setTitle(detail.requirement.code + ' · ' + detail.requirement.title);
+            if (first) {
+                const name = detail.requirement.code + ' · ' + detail.requirement.title;
+                this.title.setTitle(name);
+                setReuseTabTitle(this.reuseTab, this.route, name);
+            }
             if (first || stageChanged) this.view = stepOf(detail.requirement.stage);
             // git is read for the workspace only when something could have changed it
             if (first || stageChanged) this.loadWorkspace();
