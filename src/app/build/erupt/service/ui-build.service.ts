@@ -17,6 +17,7 @@ import {EruptMicroAppComponent} from "@shared/component/micro-app.component";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
 import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
 import {Router} from "@angular/router";
+import {parseTags} from "./data-handler.service";
 
 
 @Injectable()
@@ -149,15 +150,8 @@ export class UiBuildService {
                         let value = item[view.column];
                         if (value) {
                             let result = "<div style='display: flex; flex-wrap: wrap; gap: 5px;'>";
-                            const sep = labelField.eruptFieldJson.edit.tagsType.joinSeparator;
-                            let tags: string[];
-                            if (sep === '[]') {
-                                try { tags = JSON.parse(value); } catch { tags = [value]; }
-                            } else {
-                                tags = value.split(sep);
-                            }
-                            for (let ele of tags) {
-                                result += "<span class='e-tag'>" + ele + "</span>";
+                            for (let ele of parseTags(value, labelField.eruptFieldJson.edit.tagsType.joinSeparator)) {
+                                result += "<span class='e-tag'>" + UiBuildService.escapeHtml(ele) + "</span>";
                             }
                             result += "</div>";
                             return result;

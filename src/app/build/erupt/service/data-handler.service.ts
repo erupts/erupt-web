@@ -13,6 +13,31 @@ import {NzUploadFile} from "ng-zorro-antd/upload";
 import {NzTreeNodeOptions} from "ng-zorro-antd/core/tree";
 import {I18NService} from "@core";
 
+// Collection types a TAGS field may be bound to besides an array (String[] reports as "String[]")
+const PLURAL_TYPES = ['List', 'Set', 'Collection', 'ArrayList', 'LinkedList', 'HashSet', 'LinkedHashSet', 'TreeSet'];
+
+// A TAGS field bound to String[] / List<String> / Set<String> travels as a JSON array, not a joined string
+export function isPluralField(field: EruptFieldModel): boolean {
+    const type = field.fieldReturnName;
+    return !!type && (type.endsWith('[]') || PLURAL_TYPES.includes(type));
+}
+
+// Tags out of a stored value: an array as is, else split by the separator, or a JSON array when it is "[]"
+export function parseTags(raw: any, sep: string): string[] {
+    if (raw === null || raw === undefined || raw === '') return [];
+    if (Array.isArray(raw)) return raw.map(String);
+    const text = String(raw);
+    if (sep === '[]') {
+        try {
+            const parsed = JSON.parse(text);
+            return Array.isArray(parsed) ? parsed.map(String) : [text];
+        } catch {
+            return [text];
+        }
+    }
+    return text.split(sep);
+}
+
 @Injectable()
 export class DataHandlerService {
 
@@ -371,9 +396,10 @@ export class DataHandlerService {
                         break;
                     case EditType.TAGS:
                         if (edit.$value || edit.$value === 0) {
-                            let val = edit.tagsType.joinSeparator === '[]'
-                                ? JSON.stringify(edit.$value)
-                                : (<string[]>edit.$value).join(edit.tagsType.joinSeparator);
+                            let val = isPluralField(field) ? edit.$value
+                                : edit.tagsType.joinSeparator === '[]'
+                                    ? JSON.stringify(edit.$value)
+                                    : (<string[]>edit.$value).join(edit.tagsType.joinSeparator);
                             if (val) {
                                 eruptData[field.fieldName] = val;
                             }
@@ -682,20 +708,7 @@ export class DataHandlerService {
                     edit.$value = isNotNull(object[field.fieldName]) ? object[field.fieldName] + '' : null;
                     break;
                 case EditType.TAGS:
-                    if (object[field.fieldName]) {
-                        const raw = String(object[field.fieldName]);
-                        if (edit.tagsType.joinSeparator === '[]') {
-                            try {
-                                edit.$value = JSON.parse(raw);
-                            } catch {
-                                edit.$value = raw ? [raw] : [];
-                            }
-                        } else {
-                            edit.$value = raw.split(edit.tagsType.joinSeparator);
-                        }
-                    } else {
-                        edit.$value = [];
-                    }
+                    edit.$value = parseTags(object[field.fieldName], edit.tagsType.joinSeparator);
                     break;
                 case EditType.CODE_EDITOR:
                 case EditType.HTML_EDITOR:

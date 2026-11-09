@@ -34,6 +34,16 @@ export class SearchComponent implements OnInit, DoCheck {
 
     @Output() operatorChange = new EventEmitter<void>();
 
+    // @Layout(autoQuery): a changed pick-type condition queries the table on its own
+    @Input() autoQuery: boolean = false;
+
+    @Output() autoSearch = new EventEmitter<void>();
+
+    // Pick-type conditions as last seen, so only a real change triggers autoSearch
+    private picked: string;
+
+    private static readonly PICK_TYPES = [EditType.CHOICE, EditType.BOOLEAN, EditType.DATE, EditType.REFERENCE_TABLE];
+
     readonly VISIBLE_COUNT = 4;
 
     constructor(private differs: KeyValueDiffers, private i18n: I18NService) {
@@ -60,6 +70,28 @@ export class SearchComponent implements OnInit, DoCheck {
                 eruptFieldModel.eruptFieldJson.edit.$valueSubject.next(eruptFieldModel.eruptFieldJson.edit.$value);
             }
         }
+        if (this.autoQuery) {
+            const picked = this.pickedValues();
+            if (this.picked !== undefined && picked !== this.picked) {
+                // out of this check pass: the query changes the table's bindings
+                Promise.resolve().then(() => this.autoSearch.emit());
+            }
+            this.picked = picked;
+        }
+    }
+
+    // Accept the current conditions as already queried, e.g. after the table cleared them and queried itself
+    sync(): void {
+        this.picked = this.pickedValues();
+    }
+
+    private pickedValues(): string {
+        return JSON.stringify(this.searchFields
+            .filter(f => SearchComponent.PICK_TYPES.includes(this.getDisplayType(f)))
+            .map(f => {
+                const edit = f.eruptFieldJson.edit;
+                return [edit.$value, edit.$l_val, edit.$r_val];
+            }));
     }
 
     ngOnInit(): void {

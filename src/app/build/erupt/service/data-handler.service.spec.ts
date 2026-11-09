@@ -1,5 +1,5 @@
 import {DatePipe} from "@angular/common";
-import {DataHandlerService} from "./data-handler.service";
+import {DataHandlerService, parseTags} from "./data-handler.service";
 import {DateEnum, EditType} from "../model/erupt.enum";
 import {QueryExpression} from "../model/erupt.vo";
 import {EruptModel, Tree} from "../model/erupt.model";
@@ -192,6 +192,31 @@ describe("DataHandlerService", () => {
             [DateEnum.TIME, "13:05:09"]
         ])("%s → %s", (type, expected) => {
             expect(service.dateFormat(date, {dateType: {type}} as any)).toBe(expected);
+        });
+    });
+
+    describe("tags bound to an array or a collection", () => {
+        const tags = (fieldReturnName: string, joinSeparator: string, $value?: any): any =>
+            ({fieldName: "stack", fieldReturnName, eruptFieldJson: {edit: {type: EditType.TAGS, tagsType: {joinSeparator}, $value}}});
+
+        it("parses an array as is, a JSON array string, or a joined string", () => {
+            expect(parseTags(["Java", "LLM"], ",")).toEqual(["Java", "LLM"]);
+            expect(parseTags('["Java","LLM"]', "[]")).toEqual(["Java", "LLM"]);
+            expect(parseTags("Java,LLM", ",")).toEqual(["Java", "LLM"]);
+            expect(parseTags(null, "[]")).toEqual([]);
+        });
+
+        it("submits String[] and List<String> as an array, a String as a joined value", () => {
+            const value = (f: any) => (service.eruptValueToObject({eruptModel: model(f)} as any) as any).stack;
+            expect(value(tags("String[]", "[]", ["Java", "LLM"]))).toEqual(["Java", "LLM"]);
+            expect(value(tags("List", ",", ["Java", "LLM"]))).toEqual(["Java", "LLM"]);
+            expect(value(tags("String", ",", ["Java", "LLM"]))).toBe("Java,LLM");
+        });
+
+        it("loads an array value into the tags", () => {
+            const f = tags("List", "[]");
+            service.objectToEruptFieldValue(f, {stack: ["Java", "LLM"]});
+            expect(f.eruptFieldJson.edit.$value).toEqual(["Java", "LLM"]);
         });
     });
 });

@@ -445,7 +445,9 @@
                                 <erupt-search [searchEruptModel]="searchErupt" (search)="query()" [size]="'default'"
                                               [collapsed]="searchFieldsCollapsed"
                                               (collapsedChange)="onSearchFieldsCollapsedChange($event)"
-                                              (operatorChange)="saveSearchOperators()"/>
+                                              (operatorChange)="saveSearchOperators()"
+                                              [autoQuery]="eruptBuildModel.eruptModel.eruptJson.layout?.autoQuery"
+                                              (autoSearch)="query(1)"/>
                             </div>
                         }
                         @if (extraContent) {
