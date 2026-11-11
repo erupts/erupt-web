@@ -4,6 +4,8 @@ export interface EruptColumnConfig {
     show?: boolean;
     width?: number | string;
     fixed?: 'left' | 'right';
+    // the width a column without one of its own holds while pinned (a pinned column needs a width)
+    pinWidth?: number | string;
 }
 
 export interface EruptLocalSettings {
