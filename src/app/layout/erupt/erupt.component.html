@@ -16,6 +16,8 @@
 @if (themes.length) {
     <theme-btn cdkDrag [devTips]="null" [types]="themes"></theme-btn>
 }
+<!-- before the back-to-top button: erupt.component.less lifts that one while this one shows -->
+<layout-ai-float></layout-ai-float>
 <nz-float-button-top></nz-float-button-top>
 <ng-template #settingHost></ng-template>
 <footer class="licence">Powered by Erupt © 2018 - {{ nowYear }}</footer>

@@ -45,6 +45,7 @@ import {HeaderRTLComponent} from "./erupt/header/components/rtl.component";
 import {MenuComponent} from './erupt/menu/menu.component';
 import {NzBreadCrumbModule} from "ng-zorro-antd/breadcrumb";
 import {LayoutEruptComponent} from "./erupt/erupt.component";
+import {AiFloatComponent} from "./erupt/component/ai-float/ai-float.component";
 import {NzWatermarkModule} from "ng-zorro-antd/watermark";
 import {NzSegmentedModule} from "ng-zorro-antd/segmented";
 import {NoticeComponent} from './erupt/component/notice/notice.component';
@@ -55,7 +56,7 @@ import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
 import {A11yModule} from "@angular/cdk/a11y";
 import {LockScreenComponent} from "./erupt/component/lock-screen/lock-screen.component";
 
-const COMPONENTS = [LayoutEruptComponent, LayoutBlankComponent, LockScreenComponent];
+const COMPONENTS = [LayoutEruptComponent, LayoutBlankComponent, LockScreenComponent, AiFloatComponent];
 
 const HEADER_COMPONENTS = [
     HeaderSearchComponent,

@@ -13,6 +13,9 @@ import {EruptTenantInfoData} from "../../../build/erupt/model/erupt-tenant";
 import {DataService} from "@shared/service/data.service";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
+import {NzContextMenuService, NzDropdownMenuComponent} from "ng-zorro-antd/dropdown";
+import {AiLauncherService} from "@shared/service/ai-launcher.service";
+import {AI_ICON} from "@shared/util/ai-icon";
 import {NoticeComponent} from "../component/notice/notice.component";
 import {UtilsService} from "@shared/service/utils.service";
 import {NzNotificationComponent, NzNotificationService} from "ng-zorro-antd/notification";
@@ -150,11 +153,7 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     unreadCount: number = 0;
 
-    aiLoading: boolean = false;
-
-    get isEruptAi(): boolean {
-        return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");
-    }
+    readonly AI_ICON = AI_ICON;
 
     // Bell, unread polling and announcement popups all hang off this flag. Tenant sessions are
     // ordinary erupt-upms sessions whose user ids are unique across tenants, so they get it too
@@ -179,7 +178,9 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
                 private menuSrv: MenuService,
                 private utilsService: UtilsService,
                 private i18n: I18NService,
-                @Inject(NzDrawerService) private drawer: NzDrawerService,
+                public ai: AiLauncherService,
+                private contextMenuService: NzContextMenuService,
+                @Inject(NzDrawerService) public drawer: NzDrawerService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzNotificationService) private notification: NzNotificationService,
@@ -278,33 +279,8 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    async openEruptAi() {
-        if (this.aiLoading) return;
-        this.aiLoading = true;
-        const {AiChatComponent} = await import('../../../build/ai/view/ai-chat/ai-chat.component');
-        // await on the native import() promise escapes the Angular zone (zone.js cannot
-        // patch native async/await), so re-enter the zone before creating the drawer —
-        // otherwise every async operation inside the drawer misses change detection.
-        this.ngZone.run(() => {
-            this.aiLoading = false;
-            openResizableDrawer(this.drawer, {
-                nzTitle: null,
-                nzContent: AiChatComponent,
-                nzWidth: "520px",
-                nzMask: false,
-                nzClosable: false,
-                nzKeyboard: true,
-                nzPlacement: "right",
-                nzBodyStyle: {
-                    padding: "0",
-                    overflow: "hidden"
-                },
-                nzContentParams: {
-                    embedded: true,
-                    drawerTitle: this.i18n.fanyi('ai.chat.title')
-                }
-            }, "header-ai");
-        });
+    aiContextMenu(event: MouseEvent, menu: NzDropdownMenuComponent): void {
+        this.contextMenuService.create(event, menu);
     }
 
     openEruptNotice() {

@@ -1015,6 +1015,13 @@ html.brutalist-theme {
     .ant-modal-confirm-body > .anticon { color: var(--raft-ink); }
 
     /* --- Float button / BackTop --------------------------------------- */
+    /* the host sets the shape its inner button follows (erupt.component.less)
+     * and casts a soft shadow of its own: square, and only the hard one */
+    .ant-float-btn {
+        border-radius: 0;
+        box-shadow: none;
+    }
+
     .ant-float-btn .ant-float-btn-body, .ant-back-top {
         border: 2px solid var(--raft-line);
         box-shadow: var(--raft-sh);
