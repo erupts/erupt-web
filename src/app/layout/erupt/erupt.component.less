@@ -46,17 +46,20 @@
         --collapsed-width: 60px;
     }
 
-    .erupt-side:after {
-        border-right: 1px solid var(--ant-border-color-split);
-    }
-
     .alain-default__aside {
         min-height: calc(100vh - @header-h);
         width: ~"var(--sidebar-width, 200px)";
     }
 
-    .alain-default__aside:after {
-        border-right: 1px solid var(--ant-border-color-split);
+    // The column's outer edge, the only place it is drawn: above everything
+    // that fills the column and would otherwise cover it (the opaque bottom
+    // utility bar at z-index 5, the loading overlay's wash at 10), below
+    // only the resize handle (20). Skins set --erupt-aside-edge (tokens.less)
+    // instead of restyling this rule.
+    .alain-default__aside::after {
+        z-index: 11;
+        border-right: var(--erupt-aside-edge);
+        pointer-events: none;
     }
 
     .erupt_content {

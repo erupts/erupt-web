@@ -198,9 +198,8 @@ html.workspace .alain-default__aside .alain-default__aside-inner::-webkit-scroll
 }
 
 /* the stock 1px right rule would draw a seam through the frame */
-html.workspace .alain-default__aside::after,
-html.workspace .erupt-side::after {
-    display: none;
+html.workspace {
+    --erupt-aside-edge: none;
 }
 
 html.workspace {
@@ -332,7 +331,6 @@ html.workspace {
     .alain-default__aside .fold {
         .ws-frame-paint();
         border-top: 1px solid var(--ws-divider);
-        border-right: 0;
         color: var(--ws-text-muted);
     }
 

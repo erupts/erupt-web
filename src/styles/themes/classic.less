@@ -96,9 +96,8 @@ html.classic .alain-default__aside {
 }
 
 /* the stock 1px right rule would draw a gray seam on the navy */
-html.classic .alain-default__aside::after,
-html.classic .erupt-side::after {
-    display: none;
+html.classic {
+    --erupt-aside-edge: none;
 }
 
 /* delon styles the menu scrollbar itself: translucent white thumb, no track */
@@ -210,7 +209,6 @@ html.classic {
     .alain-default__aside .fold {
         background: var(--cp-aside-deep);
         border-top: 1px solid var(--cp-divider);
-        border-right: 0;
         color: var(--cp-text-muted);
     }
 

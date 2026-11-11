@@ -4,6 +4,7 @@ import {
     applyWorkspaceFrame,
     BRUTALIST_DEFAULT_COLOR,
     BRUTALIST_PRESET_COLORS,
+    POLARIS_PRESET_COLORS,
     currentSkin,
     DEFAULT_THEME_COLOR,
     headerColorLocked,
@@ -99,6 +100,7 @@ describe("theme.util", () => {
         it("offers each skin its own palette", () => {
             expect(skinPresetColors(Skin.BRUTALIST)).toBe(BRUTALIST_PRESET_COLORS);
             expect(skinPresetColors(Skin.MATERIAL)).toBe(THEME_PRESET_COLORS);
+            expect(skinPresetColors(Skin.POLARIS)).toBe(POLARIS_PRESET_COLORS);
         });
     });
 

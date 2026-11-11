@@ -1,0 +1,429 @@
+/**
+ * Erupt Theme — "Linear": the developer-SaaS shell (Linear / Vercel / Raycast).
+ *
+ * Design language
+ *   - No chrome. The top bar, the menu column and the canvas are ONE surface;
+ *     a 1px hairline is the only thing between them. Nothing is a colored
+ *     band, nothing casts a shadow onto the page.
+ *   - Dark first: a cool near-black canvas with cards one step up, text in
+ *     three quiet grays. The light variant is the same idea on near-white.
+ *   - Dense and small: 13px type, 30px rows, 6px controls, 8px surfaces. The
+ *     current menu row is a faint neutral fill under brighter text, never a
+ *     color block.
+ *   - The theme color is spent sparingly: primary buttons, focus, checked
+ *     controls. Navigation never wears it.
+ *
+ * OPTIONAL OVERRIDE
+ *   Every rule is scoped under `html.linear`. Toggle at runtime via
+ *       document.documentElement.classList.toggle('linear')
+ *   (see `src/app.js` -> `eruptSiteConfig.theme.skin = "linear"`). Add `dark`
+ *   as well (`html.linear.dark`) for the dark variant. Mutually exclusive
+ *   with the other skins — the settings drawer turns them off.
+ */
+
+/* ------------------------------------------------------------------ *
+ * Design tokens (scoped so they never leak into the default theme)
+ * ------------------------------------------------------------------ */
+html.linear {
+    /* Geometry */
+    --ln-radius: 8px;
+    --ln-radius-sm: 6px;
+
+    /* The one surface, and the hairline that divides it */
+    --ln-bg: #fafafa;
+    --ln-line: rgba(0, 0, 0, 0.08);
+
+    /* Three grays of text */
+    --ln-text: #1f2023;
+    --ln-text-secondary: #62656c;
+    --ln-text-tertiary: #9a9da3;
+
+    /* Neutral state layers */
+    --ln-hover: rgba(0, 0, 0, 0.04);
+    --ln-active: rgba(0, 0, 0, 0.07);
+
+    /* Floating surfaces: a hairline ring and one soft drop */
+    --ln-shadow-pop: 0 0 0 1px var(--ln-line), 0 8px 24px -6px rgba(0, 0, 0, 0.14);
+
+    /* Semantic tokens */
+    --erupt-bg-layout: var(--ln-bg);
+    --erupt-bg-spotlight: #f7f7f8;
+    --erupt-text: var(--ln-text);
+    --erupt-text-secondary: var(--ln-text-secondary);
+    --erupt-text-tertiary: var(--ln-text-tertiary);
+    --erupt-border: #dcdde0;
+    --ant-border-color-split: var(--ln-line);
+    --erupt-fill-secondary: var(--ln-active);
+    --erupt-fill-tertiary: var(--ln-hover);
+
+    /* The bar is the canvas (a user-picked header color still wins:
+     * applyHeaderColor() sets these inline on <html>) */
+    --erupt-header-bg: var(--ln-bg);
+    --erupt-header-text: var(--ln-text);
+    --erupt-header-text-secondary: var(--ln-text-secondary);
+    --erupt-header-fill: var(--ln-hover);
+    --erupt-header-fill-strong: var(--ln-active);
+    --erupt-header-active-bg: var(--ln-active);
+    --erupt-header-active-text: var(--ln-text);
+    --erupt-header-border: var(--ln-line);
+
+    /* never wash the selected <li> — it CONTAINS the expanded submenu <ul> */
+    --alain-default-aside-nav-selected-bg: transparent;
+}
+
+/* Dark — the canvas is a cool near-black; containers stay on the compiled
+ * dark surface (ant components are painted in it), one step above */
+html.linear.dark {
+    --ln-bg: #0c0d0e;
+    --ln-line: rgba(255, 255, 255, 0.08);
+
+    --ln-text: #f2f3f4;
+    --ln-text-secondary: #9b9ea6;
+    --ln-text-tertiary: #686b72;
+
+    --ln-hover: rgba(255, 255, 255, 0.05);
+    --ln-active: rgba(255, 255, 255, 0.09);
+
+    --ln-shadow-pop: 0 0 0 1px var(--ln-line), 0 12px 32px -8px rgba(0, 0, 0, 0.7);
+
+    --erupt-bg-spotlight: #191a1c;
+    --erupt-border: #34363a;
+}
+
+/* ================================================================== *
+ * CANVAS
+ * ================================================================== */
+html.linear body {
+    font-family: Inter, var(--erupt-font);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ================================================================== *
+ * TOP BAR — the canvas with a hairline under it
+ * ================================================================== */
+html.linear .erupt-header,
+html.linear .alain-default__header {
+    box-shadow: none;
+}
+
+html.linear .alain-default__header-logo {
+    border-right-color: transparent;
+}
+
+html.linear .alain-default__nav-item {
+    border-radius: var(--ln-radius-sm);
+}
+
+/* Top-split mode: the second nav row is the canvas too */
+html.linear .erupt-header .erupt-subnav {
+    background: var(--erupt-header-bg);
+}
+
+html.linear .subnav-menu.ant-menu-horizontal {
+    color: var(--erupt-header-text-secondary);
+
+    > .ant-menu-item,
+    > .ant-menu-submenu {
+        color: var(--erupt-header-text-secondary);
+
+        &::after {
+            border-bottom: 1px solid transparent;
+        }
+
+        &:hover,
+        &.ant-menu-item-active,
+        &.ant-menu-submenu-active,
+        &.ant-menu-item-selected,
+        &.ant-menu-submenu-selected {
+            color: var(--erupt-header-text);
+
+            &::after {
+                border-bottom-color: var(--erupt-header-text);
+            }
+        }
+    }
+
+    > .ant-menu-submenu > .ant-menu-submenu-title {
+        color: inherit;
+    }
+}
+
+/* ================================================================== *
+ * SIDEBAR — the canvas, a hairline on its edge, rows as faint fills
+ * ================================================================== */
+html.linear .alain-default__aside {
+    background: var(--ln-bg);
+}
+
+html.linear .alain-default__aside .alain-default__aside-inner::-webkit-scrollbar-track {
+    box-shadow: none;
+}
+
+html.linear .alain-default__aside .alain-default__aside-inner::-webkit-scrollbar-thumb {
+    background-color: var(--ln-active);
+}
+
+html.linear {
+
+    /* Breathing room above the first row. On the scroll container, not the
+     * menu: erupt-menu carries an inline `padding-top: 0 !important`. */
+    .alain-default__aside .alain-default__aside-inner {
+        padding-top: 8px;
+    }
+
+    /* drop delon's 3px guide bar; the fill carries the selection */
+    .alain-default__aside .sidebar-nav__item {
+        border-left: 0 !important;
+    }
+
+    .alain-default__aside .sidebar-nav__item-link {
+        margin: 1px 8px;
+        /* a dense 30px row: 13px type on a 22px line */
+        padding-top: 4px;
+        padding-bottom: 4px;
+        border-radius: var(--ln-radius-sm);
+        color: var(--ln-text-secondary);
+        font-size: 13px;
+        font-weight: 500;
+        transition: background-color 0.12s ease, color 0.12s ease;
+
+        &:hover {
+            background-color: var(--ln-hover);
+            color: var(--ln-text);
+        }
+    }
+
+    /* a top-level row without an icon lines its label up with the others'
+     * (the row's 16px plus the icon slot), so the column keeps one left edge */
+    .alain-default__aside .sidebar-nav__item-link:not(:has(.sidebar-nav__item-icon)):not(.sidebar-nav__sub *) {
+        padding-left: 39px;
+    }
+
+    .alain-default__aside .sidebar-nav__item-icon {
+        color: var(--ln-text-tertiary);
+    }
+
+    .alain-default__aside .sidebar-nav__item-link:hover .sidebar-nav__item-icon,
+    .alain-default__aside .sidebar-nav__selected > .sidebar-nav__item-link .sidebar-nav__item-icon {
+        color: var(--ln-text-secondary);
+    }
+
+    /* disclosure chevron: the quietest gray */
+    .alain-default__aside .sidebar-nav__sub-arrow {
+        color: var(--ln-text-tertiary);
+    }
+
+    .alain-default__aside .sidebar-nav__sub-arrow::before,
+    .alain-default__aside .sidebar-nav__sub-arrow::after {
+        background: currentColor;
+        background-image: none;
+    }
+
+    /* active-trail parents only brighten their own title, never the subtree */
+    .alain-default__aside .sidebar-nav__selected {
+        background-color: transparent;
+    }
+
+    .alain-default__aside .sidebar-nav .sidebar-nav__selected > .sidebar-nav__item-link {
+        color: var(--ln-text);
+    }
+
+    /* selected leaf (leaves carry href) — a faint neutral fill */
+    .alain-default__aside .sidebar-nav__selected > .sidebar-nav__item-link[href] {
+        background-color: var(--ln-active);
+
+        &:hover {
+            background-color: var(--ln-active);
+        }
+    }
+
+    /* pin / inline spinner in the row's right slot */
+    .alain-default__aside .sidebar-nav__pin {
+        color: var(--ln-text-tertiary);
+
+        &:hover,
+        &--active {
+            color: var(--ln-text);
+        }
+    }
+
+    .alain-default__aside .sidebar-nav__loading {
+        color: var(--ln-text);
+    }
+
+    .alain-default__aside .sidebar-nav__item span.ripple {
+        background: var(--ln-active) !important;
+    }
+
+    .alain-default__aside .sidebar-nav__group-title {
+        /* on the rows' own left edge: their 8px margin + 16px padding */
+        padding: 14px 24px 4px;
+        color: var(--ln-text-tertiary);
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .alain-default__aside .sidebar-nav__drag-placeholder {
+        border-color: var(--ln-text-tertiary);
+        border-radius: var(--ln-radius-sm);
+    }
+
+    /* Collapsed rail — the fill hugs the icon */
+    .alain-default__collapsed .alain-default__aside .sidebar-nav__item-link {
+        margin: 1px 6px;
+    }
+
+    /* Dual-column mode fills the column exactly (menu.component sizes it to the
+     * viewport); take the top padding off, or the overflow makes the whole
+     * two-column block scrollable by that much */
+    .alain-default__aside .dual-menu {
+        height: calc(100vh - 44px - 38px - 8px);
+    }
+
+    /* Dual-column mode: the rail is the canvas behind a hairline */
+    .alain-default__aside .dual-menu__rail {
+        background: transparent;
+        border-right-color: var(--ln-line);
+    }
+
+    .alain-default__aside .dual-menu__rail-item {
+        border-radius: var(--ln-radius-sm);
+        color: var(--ln-text-secondary);
+
+        &:hover {
+            background: var(--ln-hover);
+            color: var(--ln-text);
+        }
+
+        &--active {
+            background: var(--ln-active);
+            color: var(--ln-text);
+        }
+    }
+
+    /* Bottom utility bar — the canvas above a hairline */
+    .alain-default__aside .fold {
+        background: var(--ln-bg);
+        border-top-color: var(--ln-line);
+        color: var(--ln-text-tertiary);
+    }
+
+    .alain-default__aside .fold__btn {
+        border-radius: var(--ln-radius-sm);
+    }
+
+    .alain-default__aside .fold__btn:hover {
+        background: var(--ln-hover);
+        color: var(--ln-text);
+    }
+
+    .alain-default__aside .aside-loading-overlay {
+        background: color-mix(in srgb, var(--ln-bg) 75%, transparent);
+    }
+}
+
+/* ================================================================== *
+ * MULTI-TAB BAR — on the canvas, tabs as faint fills
+ * (!important — erupt.component.less pins the pill look the same way.)
+ * ================================================================== */
+html.linear .reuse-tab__card {
+    background: var(--ln-bg);
+
+    .ant-tabs-tab {
+        border-radius: var(--ln-radius-sm) !important;
+        color: var(--ln-text-secondary);
+
+        &:hover {
+            background: var(--ln-hover) !important;
+            color: var(--ln-text);
+        }
+    }
+
+    .ant-tabs-tab-active,
+    .ant-tabs-tab-active:hover {
+        background: var(--ln-active) !important;
+
+        .ant-tabs-tab-btn {
+            color: var(--ln-text);
+        }
+    }
+}
+
+html.linear reuse-tab .ant-tabs-tab-arrow-show {
+    color: var(--ln-text);
+}
+
+/* ================================================================== *
+ * COMPONENTS — 6px controls, 8px surfaces, hairlines instead of shadows
+ * ================================================================== */
+html.linear {
+
+    .ant-btn {
+        border-radius: var(--ln-radius-sm);
+        font-weight: 500;
+        box-shadow: none;
+    }
+
+    .ant-btn-primary {
+        text-shadow: none;
+    }
+
+    .ant-input, .ant-input-affix-wrapper, .ant-input-number,
+    .ant-select:not(.ant-select-customize-input) .ant-select-selector,
+    .ant-picker, .ant-alert, .ant-tag, .ant-segmented, .ant-segmented-item,
+    .ant-pagination-item,
+    .ant-pagination-prev .ant-pagination-item-link,
+    .ant-pagination-next .ant-pagination-item-link,
+    .ant-tooltip-inner, .ant-message-notice-content,
+    .ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title, .ant-select-item {
+        border-radius: var(--ln-radius-sm);
+    }
+
+    .ant-checkbox-inner {
+        border-radius: 4px;
+    }
+
+    .ant-card, .ant-dropdown-menu, .ant-popover-inner,
+    .ant-notification-notice, .ant-select-dropdown,
+    .ant-picker-dropdown .ant-picker-panel-container {
+        border-radius: var(--ln-radius);
+    }
+
+    .ant-modal-content {
+        border-radius: 12px;
+        box-shadow: var(--ln-shadow-pop);
+    }
+
+    .ant-modal-header {
+        border-radius: 12px 12px 0 0;
+    }
+
+    /* cards lie flat on the canvas inside a hairline */
+    .ant-card {
+        border: 1px solid var(--ln-line);
+        box-shadow: none;
+    }
+
+    .ant-dropdown-menu,
+    .ant-popover-inner,
+    .ant-select-dropdown,
+    .ant-picker-dropdown .ant-picker-panel-container {
+        box-shadow: var(--ln-shadow-pop);
+    }
+
+    /* table head: a small quiet caption row */
+    .ant-table-thead > tr > th {
+        background: var(--erupt-bg-spotlight);
+        color: var(--ln-text-secondary);
+        font-size: 12px;
+        font-weight: 500;
+    }
+}
+
+/* Reduced motion — rows stop animating for users who ask */
+@media (prefers-reduced-motion: reduce) {
+    html.linear .alain-default__aside .sidebar-nav__item-link,
+    html.linear .alain-default__aside .dual-menu__rail-item {
+        transition: none;
+    }
+}

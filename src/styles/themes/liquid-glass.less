@@ -138,9 +138,8 @@ html.liquid-glass .alain-default__aside {
 }
 
 /* the stock 1px right rule would cut across the floating panel */
-html.liquid-glass .alain-default__aside::after,
-html.liquid-glass .erupt-side::after {
-    display: none;
+html.liquid-glass {
+    --erupt-aside-edge: none;
 }
 
 html.liquid-glass .alain-default__aside-wrap {
@@ -328,7 +327,6 @@ html.liquid-glass {
         backdrop-filter: var(--lg-fold-blur);
         -webkit-backdrop-filter: var(--lg-fold-blur);
         border-top: 1px solid var(--lg-divider);
-        border-right: 0;
     }
 
     /* Short scrim above the bar so a row scrolling in fades out rather than

@@ -45,8 +45,9 @@
         display: flex;
         // Neutral ink — the utility bar should not follow the theme color
         color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+        // no right border: the column draws its own edge over the bar
+        // (--erupt-aside-edge)
         border-top: 1px solid var(--ant-border-color-split);
-        border-right: 1px solid var(--ant-border-color-split);
         background: var(--erupt-bg-container, #fff);
     }
 

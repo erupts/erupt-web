@@ -1,0 +1,598 @@
+/**
+ * Erupt Theme — "Polaris": the Shopify admin shell.
+ *
+ * Design language
+ *   - A near-black top bar over a gray workbench. The menu column and the
+ *     page are two close grays with no rule between them, and the frame's
+ *     top corners are rounded into the bar, so the bar reads as a lid.
+ *   - Ink, not brand: text is #303030, the primary button is an ink block
+ *     with a pressed-in bevel, the current menu row is a white chip carrying
+ *     bold ink text. The skin keeps its own theme color slot, ink by
+ *     default (SKIN_PALETTES in theme.util), so links, focus, checkboxes
+ *     and switches are ink too; a picked color only reaches those accents
+ *     and never paints the primary button.
+ *   - Soft but small geometry: 8px controls and rows, 12px cards, dialogs
+ *     and frame. Surfaces are lifted by a hairline bevel, not a blur.
+ *
+ * OPTIONAL OVERRIDE
+ *   Every rule is scoped under `html.polaris`. Toggle at runtime via
+ *       document.documentElement.classList.toggle('polaris')
+ *   (see `src/app.js` -> `eruptSiteConfig.theme.skin = "polaris"`). Add `dark`
+ *   as well (`html.polaris.dark`) for the dark variant, where the ink block
+ *   inverts to a pale one. Mutually exclusive with the other skins — the
+ *   settings drawer turns them off.
+ */
+
+/* ------------------------------------------------------------------ *
+ * Design tokens (scoped so they never leak into the default theme)
+ * ------------------------------------------------------------------ */
+html.polaris {
+    /* Geometry */
+    --po-radius: 12px;
+    --po-radius-sm: 8px;
+
+    /* The workbench: menu column, its rows */
+    --po-nav: #ebebeb;
+    --po-nav-hover: #f1f1f1;
+    --po-nav-selected: #fafafa;
+
+    /* Ink */
+    --po-text: #303030;
+    --po-text-secondary: #616161;
+    --po-text-tertiary: #8a8a8a;
+    --po-icon: #4a4a4a;
+    --po-hover: rgba(0, 0, 0, 0.05);
+    --po-pressed: rgba(0, 0, 0, 0.08);
+
+    /* Bevels: a hairline ring with a heavier bottom edge */
+    --po-shadow-card: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 1px 0 1px rgba(26, 26, 26, 0.07);
+    --po-shadow-pop: 0 0 0 1px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(26, 26, 26, 0.2);
+
+    /* Primary button: the ink block */
+    --po-btn-primary-bg: linear-gradient(180deg, rgba(48, 48, 48, 0) 63.53%, rgba(255, 255, 255, 0.15) 100%), #303030;
+    --po-btn-primary-bg-hover: linear-gradient(180deg, rgba(48, 48, 48, 0) 63.53%, rgba(255, 255, 255, 0.15) 100%), #1a1a1a;
+    --po-btn-primary-bg-active: #1a1a1a;
+    --po-btn-primary-text: #fff;
+    --po-btn-primary-shadow: 0 -1px 0 1px rgba(0, 0, 0, 0.8) inset, 0 0 0 1px #303030 inset, 0 0.5px 0 1.5px rgba(255, 255, 255, 0.25) inset;
+    --po-btn-primary-shadow-active: 0 3px 0 0 #000 inset;
+
+    /* Default button: a white key */
+    --po-btn-bg: #fff;
+    --po-btn-bg-hover: #fafafa;
+    --po-btn-bg-active: #f7f7f7;
+    --po-btn-shadow: 0 -1px 0 0 #b5b5b5 inset, 0 0 0 1px rgba(0, 0, 0, 0.1) inset, 0 0.5px 0 1.5px #fff inset;
+    --po-btn-shadow-active: 0 2px 1px 0 rgba(26, 26, 26, 0.2) inset, 0 0 0 1px rgba(0, 0, 0, 0.1) inset;
+
+    /* Semantic tokens */
+    --erupt-bg-layout: #f1f1f1;
+    --erupt-bg-spotlight: #f7f7f7;
+    --erupt-text: var(--po-text);
+    --erupt-text-secondary: var(--po-text-secondary);
+    --erupt-text-tertiary: var(--po-text-tertiary);
+    --erupt-border: #ccc;
+    --ant-border-color-split: #e3e3e3;
+
+    /* The bar (a user-picked header color still wins: applyHeaderColor()
+     * sets these inline on <html>, and the frame corners follow it) */
+    --erupt-header-bg: #1a1a1a;
+    --erupt-header-text: #e3e3e3;
+    --erupt-header-text-secondary: #b5b5b5;
+    --erupt-header-fill: rgba(255, 255, 255, 0.1);
+    --erupt-header-fill-strong: rgba(255, 255, 255, 0.17);
+    --erupt-header-active-bg: #303030;
+    --erupt-header-active-text: #fff;
+    --erupt-header-border: transparent;
+    --erupt-header-progress: #fff;
+
+    /* ng-zorro derives the palette's pale steps (selected / hover fills) for
+     * a hue; from ink it yields mid grays that swallow the text on them.
+     * Rebuild the three as faint tints of whatever the accent is. */
+    --ant-primary-1: color-mix(in srgb, var(--ant-primary-color) 7%, #fff);
+    --ant-primary-2: color-mix(in srgb, var(--ant-primary-color) 12%, #fff);
+    --ant-primary-3: color-mix(in srgb, var(--ant-primary-color) 20%, #fff);
+
+    /* never wash the selected <li> — it CONTAINS the expanded submenu <ul> */
+    --alain-default-aside-nav-selected-bg: transparent;
+}
+
+/* Dark — the workbench sinks to the compiled dark surfaces, the ink block
+ * inverts, the bevels become plain hairlines */
+html.polaris.dark {
+    --po-nav: #141414;
+    --po-nav-hover: rgba(255, 255, 255, 0.06);
+    --po-nav-selected: #2a2a2a;
+
+    --po-text: #e3e3e3;
+    --po-text-secondary: #b5b5b5;
+    --po-text-tertiary: #8a8a8a;
+    --po-icon: #b5b5b5;
+    --po-hover: rgba(255, 255, 255, 0.06);
+    --po-pressed: rgba(255, 255, 255, 0.1);
+
+    --po-shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.08);
+    --po-shadow-pop: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 4px 12px rgba(0, 0, 0, 0.5);
+
+    --po-btn-primary-bg: #e3e3e3;
+    --po-btn-primary-bg-hover: #fff;
+    --po-btn-primary-bg-active: #ccc;
+    --po-btn-primary-text: #1a1a1a;
+    --po-btn-primary-shadow: none;
+    --po-btn-primary-shadow-active: none;
+
+    --po-btn-bg: #1f1f1f;
+    --po-btn-bg-hover: #2a2a2a;
+    --po-btn-bg-active: #303030;
+    --po-btn-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset;
+    --po-btn-shadow-active: 0 0 0 1px rgba(255, 255, 255, 0.14) inset;
+
+    /* Ink vanishes on a dark surface: accents take the theme color lifted
+     * toward white (ng-zorro writes the picked color as --ant-primary-6) */
+    --ant-primary-color: color-mix(in srgb, var(--ant-primary-6) 55%, #fff);
+    --ant-primary-color-hover: color-mix(in srgb, var(--ant-primary-6) 40%, #fff);
+    --ant-primary-color-active: color-mix(in srgb, var(--ant-primary-6) 70%, #fff);
+    /* same recipe as tokens.less under html.dark, restated because the light
+     * tints above would otherwise win here */
+    --ant-primary-1: color-mix(in srgb, var(--ant-primary-color) 16%, #141414);
+    --ant-primary-2: color-mix(in srgb, var(--ant-primary-color) 24%, #141414);
+    --ant-primary-3: color-mix(in srgb, var(--ant-primary-color) 32%, #141414);
+
+    --erupt-bg-layout: #000;
+    --erupt-bg-spotlight: #1d1d1d;
+    --erupt-border: #434343;
+    --ant-border-color-split: #303030;
+}
+
+/* ================================================================== *
+ * FRAME — the shell (not <body>, so pages outside it keep their own
+ * canvas) is painted in the bar color: it shows only through the rounded
+ * top corners of the menu column and the page.
+ * ================================================================== */
+html.polaris .alain-default {
+    display: block;
+    background: var(--erupt-header-bg);
+}
+
+html.polaris body {
+    font-family: Inter, var(--erupt-font);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ================================================================== *
+ * TOP BAR
+ * ================================================================== */
+html.polaris .erupt-header,
+html.polaris .alain-default__header {
+    border-bottom-color: transparent;
+    box-shadow: none;
+}
+
+html.polaris .alain-default__header-logo {
+    border-right-color: transparent;
+}
+
+html.polaris .alain-default__nav-item {
+    border-radius: var(--po-radius-sm);
+}
+
+/* Top-split mode: the second nav row belongs to the bar, so the frame
+ * corners still cut into one color */
+html.polaris .erupt-header .erupt-subnav {
+    background: var(--erupt-header-bg);
+    border-bottom: 0;
+}
+
+html.polaris .subnav-menu.ant-menu-horizontal {
+    color: var(--erupt-header-text-secondary);
+
+    > .ant-menu-item,
+    > .ant-menu-submenu {
+        color: var(--erupt-header-text-secondary);
+
+        &::after {
+            border-bottom: 2px solid transparent;
+        }
+
+        &:hover,
+        &.ant-menu-item-active,
+        &.ant-menu-submenu-active,
+        &.ant-menu-item-selected,
+        &.ant-menu-submenu-selected {
+            color: var(--erupt-header-text);
+
+            &::after {
+                border-bottom-color: var(--erupt-header-text);
+            }
+        }
+    }
+
+    > .ant-menu-submenu > .ant-menu-submenu-title {
+        color: inherit;
+    }
+}
+
+/* ================================================================== *
+ * SIDEBAR — the gray column, rows as 8px chips
+ * ================================================================== */
+html.polaris .alain-default__aside {
+    background: var(--po-nav);
+}
+
+html.polaris.ltr .alain-default__aside {
+    border-top-left-radius: var(--po-radius);
+}
+
+html.polaris.rtl .alain-default__aside {
+    border-top-right-radius: var(--po-radius);
+}
+
+/* no rule between column and page: the step in gray is the edge */
+html.polaris {
+    --erupt-aside-edge: none;
+}
+
+html.polaris .alain-default__aside .alain-default__aside-inner::-webkit-scrollbar-track {
+    box-shadow: none;
+}
+
+html.polaris .alain-default__aside .alain-default__aside-inner::-webkit-scrollbar-thumb {
+    background-color: var(--po-pressed);
+}
+
+html.polaris {
+
+    /* Breathing room above the first row. On the scroll container, not the
+     * menu: erupt-menu carries an inline `padding-top: 0 !important`. */
+    .alain-default__aside .alain-default__aside-inner {
+        padding-top: 8px;
+    }
+
+    /* drop delon's 3px guide bar; the chip carries the selection */
+    .alain-default__aside .sidebar-nav__item {
+        border-left: 0 !important;
+    }
+
+    .alain-default__aside .sidebar-nav__item-link {
+        margin: 1px 8px;
+        /* a dense 32px row: 13px type on a 22px line */
+        padding-top: 5px;
+        padding-bottom: 5px;
+        border-radius: var(--po-radius-sm);
+        color: var(--po-text);
+        font-size: 13px;
+        font-weight: 500;
+        transition: background-color 0.15s ease, color 0.15s ease;
+
+        &:hover {
+            background-color: var(--po-nav-hover);
+            color: var(--po-text);
+        }
+    }
+
+    /* icons sit back a step from the label; the current row brings them to ink */
+    .alain-default__aside .sidebar-nav__item-icon {
+        color: var(--po-icon);
+    }
+
+    .alain-default__aside .sidebar-nav__selected > .sidebar-nav__item-link .sidebar-nav__item-icon {
+        color: var(--po-text);
+    }
+
+    /* a top-level row without an icon lines its label up with the others'
+     * (the row's 16px plus the icon slot), so the column keeps one left edge */
+    .alain-default__aside .sidebar-nav__item-link:not(:has(.sidebar-nav__item-icon)):not(.sidebar-nav__sub *) {
+        padding-left: 39px;
+    }
+
+    /* children: lighter and quieter than their section title */
+    .alain-default__aside .sidebar-nav__sub .sidebar-nav__item-link {
+        color: var(--po-text-secondary);
+        font-weight: 400;
+
+        &:hover {
+            color: var(--po-text);
+        }
+    }
+
+    .alain-default__aside .sidebar-nav__sub-arrow {
+        color: var(--po-text-tertiary);
+    }
+
+    /* disclosure chevron follows the row color */
+    .alain-default__aside .sidebar-nav__sub-arrow::before,
+    .alain-default__aside .sidebar-nav__sub-arrow::after {
+        background: currentColor;
+        background-image: none;
+    }
+
+    /* active-trail parents only embolden their own title, never the subtree */
+    .alain-default__aside .sidebar-nav__selected {
+        background-color: transparent;
+    }
+
+    .alain-default__aside .sidebar-nav .sidebar-nav__selected > .sidebar-nav__item-link {
+        color: var(--po-text);
+        font-weight: 600;
+    }
+
+    /* selected leaf (leaves carry href) — the white chip */
+    .alain-default__aside .sidebar-nav__selected > .sidebar-nav__item-link[href] {
+        background-color: var(--po-nav-selected);
+
+        &:hover {
+            background-color: var(--po-nav-selected);
+        }
+    }
+
+    /* pin / inline spinner in the row's right slot */
+    .alain-default__aside .sidebar-nav__pin {
+        color: var(--po-text-tertiary);
+
+        &:hover,
+        &--active {
+            color: var(--po-text);
+        }
+    }
+
+    .alain-default__aside .sidebar-nav__loading {
+        color: var(--po-text);
+    }
+
+    .alain-default__aside .sidebar-nav__item span.ripple {
+        background: var(--po-pressed) !important;
+    }
+
+    .alain-default__aside .sidebar-nav__group-title {
+        /* on the rows' own left edge: their 8px margin + 16px padding */
+        padding: 14px 24px 4px;
+        color: var(--po-text-secondary);
+        font-size: 12px;
+        font-weight: 550;
+    }
+
+    .alain-default__aside .sidebar-nav--pinned {
+        border-bottom-color: var(--ant-border-color-split);
+    }
+
+    .alain-default__aside .sidebar-nav__divider {
+        background-color: var(--ant-border-color-split);
+    }
+
+    .alain-default__aside .sidebar-nav__drag-placeholder {
+        border-color: var(--po-text-tertiary);
+        border-radius: var(--po-radius-sm);
+    }
+
+    /* Collapsed rail — the chip hugs the icon */
+    .alain-default__collapsed .alain-default__aside .sidebar-nav__item-link {
+        margin: 1px 6px;
+    }
+
+    /* Dual-column mode fills the column exactly (menu.component sizes it to the
+     * viewport); take the top padding off, or the overflow makes the whole
+     * two-column block scrollable by that much */
+    .alain-default__aside .dual-menu {
+        height: calc(100vh - 44px - 38px - 8px);
+    }
+
+    /* Dual-column mode: the first-level rail is a deeper gray, rounded so it
+     * never pokes through the column's top corner */
+    .alain-default__aside .dual-menu__rail {
+        background: var(--po-pressed);
+        border-right-color: transparent;
+        border-radius: var(--po-radius-sm);
+    }
+
+    .alain-default__aside .dual-menu__rail-item {
+        border-radius: var(--po-radius-sm);
+        color: var(--po-text-secondary);
+
+        &:hover {
+            background: var(--po-nav-hover);
+            color: var(--po-text);
+        }
+
+        &--active {
+            background: var(--po-nav-selected);
+            color: var(--po-text);
+        }
+    }
+
+    /* Bottom utility bar — the column's gray, no rules */
+    .alain-default__aside .fold {
+        background: var(--po-nav);
+        border-top: 0;
+        color: var(--po-text-secondary);
+    }
+
+    .alain-default__aside .fold__btn {
+        border-radius: var(--po-radius-sm);
+    }
+
+    .alain-default__aside .fold__btn:hover {
+        background: var(--po-nav-hover);
+        color: var(--po-text);
+    }
+
+    .alain-default__aside .aside-loading-overlay {
+        background: color-mix(in srgb, var(--po-nav) 75%, transparent);
+    }
+}
+
+/* ================================================================== *
+ * PAGE — the canvas, its free top corner rounded into the bar. The
+ * fixed multi-tab bar floats over that corner, so it is rounded too.
+ * ================================================================== */
+html.polaris .erupt_content {
+    overflow: hidden;
+    /* short pages never leave a bar-colored hole under them */
+    background: var(--erupt-bg-layout);
+}
+
+html.polaris.ltr .erupt_content,
+html.polaris.ltr .alain-default__fixed .reuse-tab {
+    border-top-right-radius: var(--po-radius);
+}
+
+html.polaris.rtl .erupt_content,
+html.polaris.rtl .alain-default__fixed .reuse-tab {
+    border-top-left-radius: var(--po-radius);
+}
+
+html.polaris .alain-default__fixed .reuse-tab {
+    overflow: hidden;
+    /* delon bleeds the bar 24px past the page edge with a negative margin,
+     * which would carry the rounded corner off screen */
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* No column beside the page (the drawer under pad, top-menu modes on
+ * desktop): both top corners are free */
+@media (max-width: 767px) {
+    html.polaris .erupt_content {
+        border-radius: var(--po-radius) var(--po-radius) 0 0;
+    }
+}
+
+@media (min-width: 768px) {
+    html.polaris .alain-default__top-menu {
+        .erupt_content,
+        &.alain-default__fixed .reuse-tab {
+            border-radius: var(--po-radius) var(--po-radius) 0 0;
+        }
+    }
+}
+
+/* Tabs in the Polaris tab language: quiet labels on the page surface, the
+ * current one a gray 8px chip under bold ink text.
+ * (!important — erupt.component.less pins the pill look the same way.) */
+html.polaris .reuse-tab__card {
+    .ant-tabs-tab {
+        border-radius: var(--po-radius-sm) !important;
+        color: var(--po-text-secondary);
+
+        &:hover {
+            background: var(--po-hover) !important;
+            color: var(--po-text);
+        }
+    }
+
+    .ant-tabs-tab-active,
+    .ant-tabs-tab-active:hover {
+        background: var(--po-pressed) !important;
+        font-weight: 600;
+
+        .ant-tabs-tab-btn {
+            color: var(--po-text);
+        }
+    }
+}
+
+html.polaris reuse-tab .ant-tabs-tab-arrow-show {
+    color: var(--po-text);
+}
+
+/* ================================================================== *
+ * COMPONENTS — beveled buttons, 8px controls, 12px surfaces
+ * ================================================================== */
+html.polaris {
+
+    .ant-btn {
+        border-radius: var(--po-radius-sm);
+        font-weight: 500;
+    }
+
+    /* the ink block — whatever the theme color is */
+    .ant-btn-primary:not([disabled]):not(.ant-btn-dangerous):not(.ant-btn-background-ghost) {
+        border-color: transparent;
+        background: var(--po-btn-primary-bg);
+        box-shadow: var(--po-btn-primary-shadow);
+        color: var(--po-btn-primary-text);
+        text-shadow: none;
+
+        &:hover,
+        &:focus {
+            border-color: transparent;
+            background: var(--po-btn-primary-bg-hover);
+            color: var(--po-btn-primary-text);
+        }
+
+        &:active {
+            background: var(--po-btn-primary-bg-active);
+            box-shadow: var(--po-btn-primary-shadow-active);
+        }
+    }
+
+    /* the white key */
+    /* (a bare nz-button carries no ant-btn-default class, so name what it is not) */
+    .ant-btn:not(.ant-btn-primary):not(.ant-btn-dashed):not(.ant-btn-link):not(.ant-btn-text):not([disabled]):not(.ant-btn-dangerous):not(.ant-btn-background-ghost) {
+        border-color: transparent;
+        background: var(--po-btn-bg);
+        box-shadow: var(--po-btn-shadow);
+        color: var(--po-text);
+
+        &:hover,
+        &:focus {
+            border-color: transparent;
+            background: var(--po-btn-bg-hover);
+            color: var(--po-text);
+        }
+
+        &:active {
+            background: var(--po-btn-bg-active);
+            box-shadow: var(--po-btn-shadow-active);
+        }
+    }
+
+    .ant-input, .ant-input-affix-wrapper, .ant-input-number,
+    .ant-select:not(.ant-select-customize-input) .ant-select-selector,
+    .ant-picker, .ant-alert, .ant-tag, .ant-segmented, .ant-segmented-item,
+    .ant-pagination-item,
+    .ant-pagination-prev .ant-pagination-item-link,
+    .ant-pagination-next .ant-pagination-item-link,
+    .ant-tooltip-inner, .ant-message-notice-content,
+    .ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title, .ant-select-item {
+        border-radius: var(--po-radius-sm);
+    }
+
+    .ant-checkbox-inner {
+        border-radius: 4px;
+    }
+
+    .ant-card, .ant-modal-content, .ant-dropdown-menu, .ant-popover-inner,
+    .ant-notification-notice, .ant-select-dropdown,
+    .ant-picker-dropdown .ant-picker-panel-container {
+        border-radius: var(--po-radius);
+    }
+
+    .ant-modal-header {
+        border-radius: var(--po-radius) var(--po-radius) 0 0;
+    }
+
+    /* cards sit on the canvas by a bevel instead of a border */
+    .ant-card {
+        border-color: transparent;
+        box-shadow: var(--po-shadow-card);
+    }
+
+    .ant-dropdown-menu,
+    .ant-popover-inner,
+    .ant-select-dropdown {
+        box-shadow: var(--po-shadow-pop);
+    }
+
+    /* table head: a quiet gray band, secondary ink */
+    .ant-table-thead > tr > th {
+        background: var(--erupt-bg-spotlight);
+        color: var(--po-text-secondary);
+        font-weight: 550;
+    }
+}
+
+/* Reduced motion — rows stop animating for users who ask */
+@media (prefers-reduced-motion: reduce) {
+    html.polaris .alain-default__aside .sidebar-nav__item-link,
+    html.polaris .alain-default__aside .dual-menu__rail-item {
+        transition: none;
+    }
+}

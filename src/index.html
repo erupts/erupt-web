@@ -377,6 +377,16 @@
         if (_m3Pref === "true" && _nbPref !== "true" && _lgPref !== "true" && _wsPref !== "true" && _cpPref !== "true" && _tmPref !== "true") {
             document.documentElement.classList.add("material");
         }
+        // Optional Polaris skin (Shopify admin shell) — same treatment.
+        var _poPref = localStorage.getItem("polaris");
+        if (_poPref === "true" && _nbPref !== "true" && _lgPref !== "true" && _wsPref !== "true" && _cpPref !== "true" && _tmPref !== "true" && _m3Pref !== "true") {
+            document.documentElement.classList.add("polaris");
+        }
+        // Optional Linear skin (hairline developer-SaaS shell) — same treatment.
+        var _lnPref = localStorage.getItem("linear");
+        if (_lnPref === "true" && _nbPref !== "true" && _lgPref !== "true" && _wsPref !== "true" && _cpPref !== "true" && _tmPref !== "true" && _m3Pref !== "true" && _poPref !== "true") {
+            document.documentElement.classList.add("linear");
+        }
         // A saved workspace frame gradient (settings drawer stores the whole
         // preset) tints the preloader the same way the app shell will be.
         var _paintWorkspacePreloader = function () {
@@ -743,17 +753,17 @@
                 // been chosen. Light/dark and compact stay per-user comfort settings.
                 // startup.service reads the same keys afterwards and finds them gone too.
                 if (!look.customizable) {
-                    ["brutalist-theme", "liquid-glass", "workspace", "classic", "terminal", "material",
-                        "theme-color", "theme-color-brutalist", "theme-color-terminal", "header-color", "workspace-frame", "login-layout"]
+                    ["brutalist-theme", "liquid-glass", "workspace", "classic", "terminal", "material", "polaris", "linear",
+                        "theme-color", "theme-color-brutalist", "theme-color-terminal", "theme-color-polaris", "header-color", "workspace-frame", "login-layout"]
                         .forEach(function (k) { localStorage.removeItem(k); });
-                    document.documentElement.classList.remove("brutalist-theme", "liquid-glass", "workspace", "classic", "terminal", "material");
+                    document.documentElement.classList.remove("brutalist-theme", "liquid-glass", "workspace", "classic", "terminal", "material", "polaris", "linear");
                     _preloaderEl.style.removeProperty("--pl-accent");
                     _preloaderEl.style.removeProperty("background-image");
                     _preloaderEl.style.removeProperty("background-color");
-                    _nbPref = _lgPref = _wsPref = _cpPref = _tmPref = _m3Pref = _tcPref = null;
+                    _nbPref = _lgPref = _wsPref = _cpPref = _tmPref = _m3Pref = _poPref = _lnPref = _tcPref = null;
                 }
-                // No saved skin choice — theme.skin ("default" | "brutalist" | "liquid-glass" | "workspace" | "classic" | "terminal" | "material")
-                if (_nbPref === null && _lgPref === null && _wsPref === null && _cpPref === null && _tmPref === null && _m3Pref === null) {
+                // No saved skin choice — theme.skin ("default" | "brutalist" | "liquid-glass" | "workspace" | "classic" | "terminal" | "material" | "polaris" | "linear")
+                if (_nbPref === null && _lgPref === null && _wsPref === null && _cpPref === null && _tmPref === null && _m3Pref === null && _poPref === null && _lnPref === null) {
                     if (look.skin === "brutalist") {
                         document.documentElement.classList.add("brutalist-theme");
                     } else if (look.skin === "liquid-glass") {
@@ -767,6 +777,10 @@
                         document.documentElement.classList.add("terminal");
                     } else if (look.skin === "material") {
                         document.documentElement.classList.add("material");
+                    } else if (look.skin === "polaris") {
+                        document.documentElement.classList.add("polaris");
+                    } else if (look.skin === "linear") {
+                        document.documentElement.classList.add("linear");
                     }
                 }
                 // theme.dark: true | false | "auto"
