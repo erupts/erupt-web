@@ -1,4 +1,5 @@
-import {getStatusColor, insertFlexNodeFun, reloadNodeId} from "@flow/util/flow.util";
+import {getStatusColor, insertFlexNodeFun, isChange, reloadNodeId} from "@flow/util/flow.util";
+import {FlowAction} from "@flow/model/flow.model";
 import {NodeType} from "@flow/model/node.model";
 import {InstanceStatus, TaskStatus} from "@flow/model/flow-instance.model";
 
@@ -57,6 +58,16 @@ describe("flow.util", () => {
 
         it("falls back to the default tag for unknown statuses", () => {
             expect(getStatusColor("SOMETHING_ELSE" as any)).toBeNull();
+        });
+    });
+
+    describe("isChange", () => {
+        it("is an edit or a delete of an existing record, not an add or a dashboard request", () => {
+            expect(isChange(FlowAction.EDIT)).toBe(true);
+            expect(isChange("DELETE")).toBe(true);
+            expect(isChange(FlowAction.ADD)).toBe(false);
+            expect(isChange(null)).toBe(false);
+            expect(isChange(undefined)).toBe(false);
         });
     });
 });

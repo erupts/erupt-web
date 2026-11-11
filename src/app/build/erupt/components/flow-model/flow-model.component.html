@@ -1,0 +1,151 @@
+<!-- the toolbar buttons, rendered by the host view where its other actions are -->
+<ng-template #actions>
+    @if (pendingChanges.length) {
+        <button nz-button nzSize="small" class="flow-pending-btn" (click)="pendingVisible = true"
+                id="erupt-btn-flow-pending">
+            <i nz-icon nzType="clock-circle" nzTheme="outline"></i>
+            <span>{{ 'table.flow_pending'|translate }}</span>
+            <span class="flow-pending-count">{{ pendingChanges.length }}</span>
+        </button>
+    }
+    @if (flowConfigurable) {
+        <button nz-button nzSize="small" id="erupt-btn-flow-settings"
+                nz-popover nzPopoverTrigger="click" nzPopoverPlacement="bottomRight"
+                [(nzPopoverVisible)]="flowSettingsVisible"
+                [nzPopoverTitle]="'table.flow_settings'|translate"
+                [nzPopoverContent]="flowSettingsTpl">
+            <i nz-icon nzType="apartment" nzTheme="outline"></i>{{ 'table.flow_settings'|translate }}
+        </button>
+    }
+</ng-template>
+
+<!-- the current user's changes waiting for approval: an insert is not a row until approved -->
+@if (pendingChanges.length) {
+    <nz-drawer [nzVisible]="pendingVisible" (nzOnClose)="pendingVisible = false" nzWidth="480px"
+               [nzTitle]="pendingTitle" [nzBodyStyle]="{padding: '12px 16px'}">
+        <ng-container *nzDrawerContent>
+            @for (item of pendingChanges; track item.id) {
+                <div class="flow-pending-card" (click)="openFlowDetail(item.no)">
+                    <div class="fpc-head">
+                        <span class="fpc-action" [class.fpc-delete]="item.action === 'DELETE'" [class.fpc-edit]="item.action === 'EDIT'">
+                            {{ ('table.flow_pending.' + item.action.toLowerCase())|translate }}
+                        </span>
+                        <span class="fpc-no">{{ item.no }}</span>
+                        <span class="fpc-time">{{ item.createTime | date:'yyyy-MM-dd HH:mm' }}</span>
+                    </div>
+                    <div class="fpc-fields">
+                        @for (f of pendingFields; track f.fieldName) {
+                            <div class="fpc-field">
+                                <span class="fpc-label">{{ f.eruptFieldJson.views[0].title }}</span>
+                                <span class="fpc-value">{{ pendingCell(item.form, f.fieldName) }}</span>
+                            </div>
+                        }
+                    </div>
+                    <div class="fpc-foot">
+                        {{ 'VIEW_FLOW'|translate }}<i nz-icon nzType="right"></i>
+                    </div>
+                </div>
+            }
+        </ng-container>
+    </nz-drawer>
+    <ng-template #pendingTitle>
+        <div class="flow-pending-title">
+            <span>{{ 'table.flow_pending'|translate }}</span>
+            <span class="flow-pending-count">{{ pendingChanges.length }}</span>
+        </div>
+        <div class="flow-pending-hint">{{ 'table.flow_pending.hint'|translate }}</div>
+    </ng-template>
+}
+
+<!-- the approvals concerning one row, when there is more than one: listed as the approval page lists instances -->
+<nz-drawer [nzVisible]="recordFlowsVisible" (nzOnClose)="recordFlowsVisible = false" nzWidth="400px"
+           [nzTitle]="'table.flow_records'|translate" [nzBodyStyle]="{padding: '12px'}">
+    <ng-container *nzDrawerContent>
+        @for (item of recordFlows; track item.no) {
+            <div class="flow-record-item" (click)="openFlowDetail(item.no)">
+                <div class="item-header">
+                    <div class="item-title">@if (flowIsChange(item.action)) {{{ ('table.flow_pending.' + item.action.toLowerCase())|translate }} · }{{ item.flow }}</div>
+                    <div class="item-tags">
+                        <nz-tag [nzColor]="flowStatusColor(item.status)">{{ item.status|translate }}</nz-tag>
+                    </div>
+                </div>
+                <div class="item-subtitle">{{ item.no }}</div>
+                <div class="item-footer">
+                    <div class="submitter-info">
+                        <nz-avatar [nzText]="item.initiator?.substring(0,1)" nzSize="small"
+                                   [ngStyle]="{backgroundColor: flowAvatarColor(item.initiator?.substring(0,1) || '?')}"></nz-avatar>
+                        <span class="submitter-name">{{ item.initiator }}</span>
+                    </div>
+                    <span class="process-time">{{ item.createTime | local }}</span>
+                </div>
+            </div>
+        }
+    </ng-container>
+</nz-drawer>
+
+<!-- the flows bound to the model, for a user who may design flows -->
+<ng-template #flowSettingsTpl>
+    <div class="flow-settings">
+        @for (flow of boundFlows; track flow.id) {
+            <div class="fs-item" [class.fs-disabled]="!flow.enable" (click)="openFlowConfig(flow.id)">
+                <div class="fs-head">
+                    <span class="fs-name">{{ flow.name }}</span>
+                    @if (!flow.enable) {
+                        <span class="fs-off">{{ 'table.flow_settings.disabled'|translate }}</span>
+                    }
+                    <i nz-icon nzType="edit" class="fs-edit"></i>
+                </div>
+                <div class="fs-meta">
+                    @for (action of flow.actions; track action) {
+                        <span class="fs-action fs-act-{{ action.toLowerCase() }}">{{ ('flow.action.' + action.toLowerCase())|translate }}</span>
+                    } @empty {
+                        <span class="fs-none">{{ 'flow.action.none'|translate }}</span>
+                    }
+                    @if (flow.actions.includes('ADD')) {
+                        <span class="fs-persist">{{ ('flow.persist.' + flow.persist.toLowerCase())|translate }}</span>
+                    }
+                </div>
+            </div>
+        } @empty {
+            <div class="fs-empty">{{ 'table.flow_settings.empty'|translate }}</div>
+        }
+        <button nz-button nzType="dashed" nzBlock nzSize="small" class="fs-new" (click)="openFlowConfig()">
+            <i nz-icon nzType="plus"></i>{{ 'table.flow_settings.new'|translate }}
+        </button>
+    </div>
+</ng-template>
+
+<!-- the flow to submit to when several serve the operation, and the people its self-select nodes need -->
+<ng-template #flowPickTpl>
+    @if (flowChoices.length > 1) {
+        <div class="flow-pick-list">
+            @for (flow of flowChoices; track flow.id) {
+                <div class="flow-pick-item" [class.active]="flowChoice === flow.id" (click)="flowChoice !== flow.id && chooseFlow(flow.id)">
+                    <span class="flow-pick-icon" [style.background]="flow.color || '#1677ff'"><i [class]="flow.icon || 'fa fa-user'"></i></span>
+                    <span class="flow-pick-text">
+                        <span class="flow-pick-name">{{ flow.name }}</span>
+                        @if (flow.remark) {
+                            <span class="flow-pick-remark">{{ flow.remark }}</span>
+                        }
+                    </span>
+                    <i nz-icon nzType="check-circle" nzTheme="fill" class="flow-pick-check"></i>
+                </div>
+            }
+        </div>
+    }
+    @if (selfSelectNodes.length) {
+        <div class="flow-pick-assignees">
+            @for (node of selfSelectNodes; track node.key) {
+                <div class="flow-pick-assignee">
+                    <label class="flow-pick-assignee-label"><span class="required">*</span>{{ node.value }}</label>
+                    <nz-select nzMode="multiple" nzShowSearch [(ngModel)]="selfSelectPicks[node.key]"
+                               [nzPlaceHolder]="'table.flow_pick.assignee_placeholder'|translate" style="width: 100%">
+                        @for (user of selfSelectOptions[node.key]; track user.id) {
+                            <nz-option [nzValue]="user.id" [nzLabel]="user.name"></nz-option>
+                        }
+                    </nz-select>
+                </div>
+            }
+        </div>
+    }
+</ng-template>

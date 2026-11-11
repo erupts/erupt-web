@@ -14,12 +14,34 @@ export enum FlowPermission {
     NO = 'NO'
 }
 
+/** Table operation a flow serves, mirrors xyz.erupt.flow.constant.FlowAction. */
+export enum FlowAction {
+    ADD = 'ADD',
+    EDIT = 'EDIT',
+    DELETE = 'DELETE'
+}
+
+/** When a new record launched into a flow reaches the table, mirrors xyz.erupt.flow.constant.FlowPersist. */
+export enum FlowPersist {
+    BEFORE = 'BEFORE',
+    AFTER_APPROVAL = 'AFTER_APPROVAL'
+}
+
+/** A model a flow can be designed on: declaring @EruptFlow, or one the user may open from a menu. */
+export interface FlowModel {
+    value: string;
+    label: string;
+    declared: boolean;
+}
+
 export class FlowConfig {
     id: number;
     code: string;
     name: string;
     remark: string;
     erupt: string;
+    actions: FlowAction[] = [];
+    persist: FlowPersist = FlowPersist.BEFORE;
     channels: string[] = [];
     icon: string = 'fa fa-user';
     color: string = '#1890ff';

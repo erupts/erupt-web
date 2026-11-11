@@ -2,9 +2,8 @@ import {Injectable} from "@angular/core";
 import {Observable} from "rxjs";
 import {RestPath} from "../../erupt/model/erupt.enum";
 import {_HttpClient} from "@delon/theme";
-import {FlowConfig, FlowGroup} from "@flow/model/flow.model";
+import {FlowConfig, FlowGroup, FlowModel} from "@flow/model/flow.model";
 import {R} from "@shared/model/api.model";
-import {VL} from "../../erupt/model/erupt-field.model";
 import {EruptBuildModel} from "../../erupt/model/erupt-build.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {NodeRule} from "@flow/model/node.model";
@@ -50,8 +49,8 @@ export class FlowApiService {
         return this._http.post<R<void>>(RestPath.erupt + "/flow/sort/" + group, ids);
     }
 
-    eruptFlows(): Observable<R<VL[]>> {
-        return this._http.get<R<VL[]>>(RestPath.erupt + "/flow/flex/erupts");
+    eruptFlows(): Observable<R<FlowModel[]>> {
+        return this._http.get<R<FlowModel[]>>(RestPath.erupt + "/flow/flex/erupts");
     }
 
     eruptFlowBuild(erupt: string): Observable<R<EruptBuildModel>> {

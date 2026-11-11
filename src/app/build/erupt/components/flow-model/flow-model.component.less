@@ -1,0 +1,420 @@
+// ── Changes waiting for approval ─────────────────────────────────────────────
+.flow-pending-btn {
+  display: inline-flex;
+  align-items: center;
+
+  // nz-button already spaces the icon from the text; only the count needs its own gap
+  .flow-pending-count {
+    margin-left: 6px;
+  }
+}
+
+.flow-pending-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #fa8c16;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.flow-pending-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.flow-pending-hint {
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: normal;
+  color: var(--erupt-text-tertiary, rgba(0, 0, 0, .45));
+}
+
+.flow-pending-card {
+  margin-bottom: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--erupt-border, #f0f0f0);
+  border-left: 3px solid #1677ff;
+  border-radius: 6px;
+  background: var(--erupt-bg-container, #fff);
+  cursor: pointer;
+  transition: box-shadow .2s, border-color .2s;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+
+    .fpc-foot {
+      opacity: 1;
+    }
+  }
+
+  // the edge takes the colour of the operation's tag
+  &:has(.fpc-delete) {
+    border-left-color: #ff4d4f;
+  }
+
+  &:has(.fpc-edit) {
+    border-left-color: #fa8c16;
+  }
+
+  .fpc-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .fpc-action {
+    padding: 0 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 20px;
+    color: #1677ff;
+    background: rgba(22, 119, 255, .08);
+
+    &.fpc-delete {
+      color: #ff4d4f;
+      background: rgba(255, 77, 79, .08);
+    }
+
+    &.fpc-edit {
+      color: #d46b08;
+      background: rgba(250, 140, 22, .1);
+    }
+  }
+
+  .fpc-no {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    color: var(--erupt-text-secondary, rgba(0, 0, 0, .65));
+  }
+
+  .fpc-time {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, .45));
+    white-space: nowrap;
+  }
+
+  .fpc-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 16px;
+    margin-top: 10px;
+  }
+
+  .fpc-field {
+    display: flex;
+    gap: 8px;
+    min-width: 0;
+    font-size: 13px;
+  }
+
+  .fpc-label {
+    flex-shrink: 0;
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, .45));
+  }
+
+  .fpc-value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--erupt-text, rgba(0, 0, 0, .88));
+  }
+
+  .fpc-foot {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 2px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #1677ff;
+    opacity: .7;
+    transition: opacity .2s;
+  }
+}
+
+// ── Picking the flow to submit to ────────────────────────────────────────────
+.flow-pick-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.flow-pick-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--erupt-border, #f0f0f0);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+
+  &:hover {
+    border-color: #1677ff;
+  }
+
+  &.active {
+    border-color: #1677ff;
+    background: rgba(22, 119, 255, .04);
+
+    .flow-pick-check {
+      opacity: 1;
+    }
+  }
+
+  .flow-pick-icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 15px;
+  }
+
+  .flow-pick-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .flow-pick-name {
+    font-weight: 500;
+    color: var(--erupt-text, rgba(0, 0, 0, .88));
+  }
+
+  .flow-pick-remark {
+    overflow: hidden;
+    font-size: 12px;
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, .45));
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .flow-pick-check {
+    color: #1677ff;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+}
+
+.flow-pick-assignees {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .flow-pick-list + & {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--erupt-border, #f0f0f0);
+  }
+}
+
+.flow-pick-assignee-label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: var(--erupt-text, rgba(0, 0, 0, .88));
+
+  .required {
+    margin-right: 4px;
+    color: #ff4d4f;
+  }
+}
+
+// ── Flows bound to the model (flow designers only) ───────────────────────────
+.flow-settings {
+  width: 300px;
+  max-height: 360px;
+  overflow-y: auto;
+
+  .fs-item {
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border: 1px solid var(--erupt-border, #f0f0f0);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+
+    &:hover {
+      border-color: #1677ff;
+      background: rgba(22, 119, 255, .03);
+
+      .fs-edit {
+        opacity: 1;
+      }
+    }
+
+    &.fs-disabled .fs-name {
+      color: var(--erupt-text-tertiary, rgba(0, 0, 0, .45));
+    }
+  }
+
+  .fs-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .fs-name {
+    overflow: hidden;
+    font-weight: 500;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .fs-off {
+    flex-shrink: 0;
+    padding: 0 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    line-height: 18px;
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, .45));
+    background: rgba(0, 0, 0, .04);
+  }
+
+  .fs-edit {
+    margin-left: auto;
+    color: #1677ff;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+
+  .fs-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+    font-size: 12px;
+  }
+
+  // the same colours as the pending changes: add blue, edit orange, delete red
+  .fs-action {
+    padding: 0 6px;
+    border-radius: 4px;
+    line-height: 20px;
+    color: #1677ff;
+    background: rgba(22, 119, 255, .08);
+
+    &.fs-act-edit {
+      color: #d46b08;
+      background: rgba(250, 140, 22, .1);
+    }
+
+    &.fs-act-delete {
+      color: #ff4d4f;
+      background: rgba(255, 77, 79, .08);
+    }
+  }
+
+  .fs-none, .fs-persist {
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, .45));
+  }
+
+  .fs-persist::before {
+    content: "·";
+    margin: 0 4px;
+  }
+
+  .fs-empty {
+    padding: 12px 0;
+    text-align: center;
+    color: var(--erupt-text-tertiary, rgba(0, 0, 0, .45));
+  }
+
+  .fs-new {
+    margin-top: 2px;
+  }
+}
+
+// ── A row's approvals: the instance item of the approval page ───────────────
+.flow-record-item {
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--erupt-bg-container, #fff);
+  border: 1px solid var(--ant-border-color-split);
+  border-radius: 6px;
+
+  &:hover {
+    border-color: var(--ant-primary-color, #1890ff);
+    box-shadow: 0 1px 6px rgba(24, 144, 255, 0.12);
+  }
+
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .item-title {
+    flex: 1;
+    min-width: 0;
+    margin-right: 6px;
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--erupt-text, #262626);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .item-tags {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 4px;
+
+    nz-tag {
+      margin: 0;
+      font-size: 11px;
+      border-radius: 2px;
+    }
+  }
+
+  .item-subtitle {
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: var(--erupt-text-tertiary, #8c8c8c);
+  }
+
+  .item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .submitter-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .submitter-name {
+    font-size: 12px;
+    color: var(--erupt-text-secondary, #595959);
+  }
+
+  .process-time {
+    font-size: 11px;
+    color: var(--erupt-text-quaternary, #bfbfbf);
+  }
+}

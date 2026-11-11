@@ -74,7 +74,7 @@
                         <div class="approval-item" [class.active]="item?.id === selectedInstance?.id"
                              (click)="onInstanceClick(item)">
                             <div class="item-header">
-                                <span class="item-title">{{ item?.eruptFlowConfig?.name }}</span>
+                                <span class="item-title">@if (isChange(item?.action)) {{{ ('table.flow_pending.' + item.action.toLowerCase()) | translate }} · }{{ item?.eruptFlowConfig?.name }}</span>
                                 <div class="item-tags">
                                     @if (item?.parent) {
                                         <nz-tag nzColor="orange">{{ 'SUB_FLOW' | translate }}</nz-tag>

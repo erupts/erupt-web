@@ -21,6 +21,7 @@ import {ReferenceTableComponent} from "./components/reference-table/reference-ta
 import {MapEditComponent} from "./components/map-edit/map-edit.component";
 import {EruptRoutingModule} from "./erupt-routing.module";
 import {TreeComponent} from "./view/tree/tree.component";
+import {FlowModelComponent} from "./components/flow-model/flow-model.component";
 import {TableViewComponent} from "./view/table-view/table-view.component";
 import {EditComponent} from "./view/edit/edit.component";
 import {FormModalService} from "./service/form-modal.service";
@@ -52,6 +53,7 @@ import {SearchComponent} from './components/search/search.component';
 import {AutoCompleteComponent} from './components/auto-complete/auto-complete.component';
 import {ReferenceComponent} from './components/reference/reference.component';
 import {NzPipesModule} from "ng-zorro-antd/pipes";
+import {NzHighlightPipe} from "ng-zorro-antd/core/highlight";
 import {NzImageModule} from "ng-zorro-antd/image";
 import {SearchSeComponent} from "./components/search-se/search-se.component";
 import {NzQRCodeModule} from "ng-zorro-antd/qr-code";
@@ -88,6 +90,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         TagSelectModule,
         NzCodeEditorModule,
         NzPipesModule,
+        NzHighlightPipe,
         NzImageModule,
         NzQRCodeModule,
         NzRateModule,
@@ -139,6 +142,7 @@ import {NzDropdownDirective, NzDropdownMenuComponent} from "ng-zorro-antd/dropdo
         ViewTypeComponent,
         EditComponent,
         TreeComponent,
+        FlowModelComponent,
         TableViewComponent,
         TableComponent,
         LayoutTreeComponent,

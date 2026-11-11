@@ -2,7 +2,7 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {ApprovalView, FlowInstance} from "@flow/model/flow-instance.model";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {NodeType} from "@flow/model/node.model";
-import {getAvatarColor, getStatusColor} from "@flow/util/flow.util";
+import {isChange, getAvatarColor, getStatusColor} from "@flow/util/flow.util";
 import {FlowApprovalDetailComponent} from "@flow/view/flow-approval-detail/flow-approval-detail.component";
 import {SettingsService} from "@delon/theme";
 import {NzDrawerService} from "ng-zorro-antd/drawer";
@@ -172,6 +172,8 @@ export class FlowApprovalComponent implements OnInit {
     protected readonly getAvatarColor = getAvatarColor;
 
     protected readonly getStatusColor = getStatusColor;
+
+    protected readonly isChange = isChange;
 
     protected readonly JSON = JSON;
 }

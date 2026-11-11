@@ -229,6 +229,26 @@
         flex-wrap: wrap;
     }
 
+    // a node whose edit or deletion awaits approval
+    .tree-node-pending {
+        margin-left: 6px;
+        font-size: 12px;
+        color: #fa8c16;
+    }
+
+    // a node with a change awaiting approval
+    .tree-flow-pending {
+        color: #fa8c16;
+        border-color: #fa8c16;
+    }
+
+    // pending approvals and flow settings follow the node's own actions
+    .tree-flow-actions {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 8px;
+    }
+
     .tree-detail-body {
         flex: 1;
         min-height: 0;

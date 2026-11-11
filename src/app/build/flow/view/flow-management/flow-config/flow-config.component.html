@@ -126,12 +126,40 @@
                                    (ngModelChange)="changeErupt($event)"
                                    [nzShowSearch]="true"
                                    class="form-select">
-                            @for (option of eruptFlows; track option) {
-                                <nz-option
-                                    [nzValue]="option.value"
-                                    [nzLabel]="option.label"></nz-option>
+                            @if (declaredModels.length) {
+                                <nz-option-group [nzLabel]="'flow.config.model_group.declared' | translate">
+                                    @for (option of declaredModels; track option.value) {
+                                        <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+                                    }
+                                </nz-option-group>
+                            }
+                            @if (otherModels.length) {
+                                <nz-option-group [nzLabel]="'flow.config.model_group.permitted' | translate">
+                                    @for (option of otherModels; track option.value) {
+                                        <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+                                    }
+                                </nz-option-group>
                             }
                         </nz-select>
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">{{ 'flow.config.label.bind_action' | translate }}</label>
+                        <!-- empty: launched from the flow dashboard only -->
+                        <nz-select [(ngModel)]="flowConfig.actions" class="form-select" nzMode="multiple" nzAllowClear
+                                   [nzPlaceHolder]="'flow.action.none' | translate">
+                            <nz-option [nzValue]="FlowAction.ADD" [nzLabel]="'flow.action.add' | translate"></nz-option>
+                            <nz-option [nzValue]="FlowAction.EDIT" [nzLabel]="'flow.action.edit' | translate"></nz-option>
+                            <nz-option [nzValue]="FlowAction.DELETE" [nzLabel]="'flow.action.delete' | translate"></nz-option>
+                        </nz-select>
+                        <div class="form-hint">{{ 'flow.config.hint.bind_action' | translate }}</div>
+                    </div>
+                    <div class="form-item">
+                        <label class="form-label">{{ 'flow.config.label.persist' | translate }}</label>
+                        <nz-radio-group [(ngModel)]="flowConfig.persist">
+                            <label nz-radio [nzValue]="FlowPersist.BEFORE">{{ 'flow.persist.before' | translate }}</label>
+                            <label nz-radio [nzValue]="FlowPersist.AFTER_APPROVAL">{{ 'flow.persist.after_approval' | translate }}</label>
+                        </nz-radio-group>
+                        <div class="form-hint">{{ 'flow.config.hint.persist' | translate }}</div>
                     </div>
                     <div class="form-item">
                         <label class="form-label required">{{ 'flow.config.label.notify_channel' | translate }}</label>

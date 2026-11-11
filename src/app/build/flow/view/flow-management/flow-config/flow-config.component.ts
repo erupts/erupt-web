@@ -2,9 +2,8 @@ import {AfterViewInit, Component, EventEmitter, HostListener, Input, OnInit, Out
 import {ClipboardService} from '@shared/service/clipboard.service';
 import {NzPopoverComponent} from 'ng-zorro-antd/popover';
 import {IconColorConfig} from '@flow/components/icon-color-picker/icon-color-picker.component';
-import {VL} from "../../../../erupt/model/erupt-field.model";
 import {FlowApiService} from "@flow/service/flow-api.service";
-import {FlowConfig, FlowGroup, FlowPermission, PrintSetting} from "@flow/model/flow.model";
+import {FlowAction, FlowConfig, FlowGroup, FlowModel, FlowPermission, FlowPersist, PrintSetting} from "@flow/model/flow.model";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {EditType, FormSize} from "../../../../erupt/model/erupt.enum";
@@ -31,6 +30,9 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
 
     @Input() flowId: number;
 
+    // the model a new flow is designed on, when opened from its table
+    @Input() erupt: string;
+
     flowConfig: FlowConfig;
 
     eruptBuild: EruptBuildModel;
@@ -53,7 +55,15 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     // The model's own formSize, restored when previewing on desktop
     private originFormSize: FormSize;
 
-    eruptFlows: VL[] = [];
+    eruptFlows: FlowModel[] = [];
+    // listed in two groups: the models declaring @EruptFlow, then the others the user may open
+    get declaredModels(): FlowModel[] {
+        return this.eruptFlows.filter(m => m.declared);
+    }
+
+    get otherModels(): FlowModel[] {
+        return this.eruptFlows.filter(m => !m.declared);
+    }
 
     // Group options
     groupOptions: FlowGroup[] = [];
@@ -88,6 +98,9 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
                 this.flowApiService.configGet(this.flowId).subscribe(configRes => {
                     if (configRes.success && configRes.data) {
                         this.flowConfig = configRes.data;
+                        // a flow saved before table operations existed has neither set
+                        this.flowConfig.actions = this.flowConfig.actions || [];
+                        this.flowConfig.persist = this.flowConfig.persist || FlowPersist.BEFORE;
                         // Ensure the flowGroup object reference matches
                         this.matchFlowGroupReference();
                         if (this.flowConfig.erupt) {
@@ -95,6 +108,11 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
                         }
                     }
                 });
+            } else if (this.erupt) {
+                this.flowConfig.erupt = this.erupt;
+                // designed from a table: meant for its operations, all three until unticked
+                this.flowConfig.actions = [FlowAction.ADD, FlowAction.EDIT, FlowAction.DELETE];
+                this.changeErupt(this.erupt);
             }
         });
 
@@ -118,6 +136,8 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
         this.flowApiService.eruptFlowBuild(erupt).subscribe(res => {
             this.dataHandlerService.initErupt(res.data)
             this.eruptBuild = res.data;
+            // a new flow starts under the model's display name, in the designer's language, rather than unnamed
+            if (!this.flowId && !this.flowConfig.name) this.flowConfig.name = res.data.eruptModel.eruptJson.name;
             this.originFormSize = res.data.eruptModel.eruptJson.layout?.formSize;
             this.previewDeviceChange();
         })
@@ -273,6 +293,8 @@ export class FlowConfigComponent implements OnInit, AfterViewInit {
     }
 
     protected readonly FlowPermission = FlowPermission;
+    protected readonly FlowAction = FlowAction;
+    protected readonly FlowPersist = FlowPersist;
 
     configPrintTemplate() {
         let vars: PrintVar[] = []

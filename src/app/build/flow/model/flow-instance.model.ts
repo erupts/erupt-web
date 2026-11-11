@@ -1,4 +1,4 @@
-import {FlowConfig} from "@flow/model/flow.model";
+import {FlowAction, FlowConfig} from "@flow/model/flow.model";
 import {NodeRule} from "@flow/model/node.model";
 
 export enum ApprovalView {
@@ -26,6 +26,10 @@ export interface FlowInstance {
     erupt: string;
     eruptModelId: string;
     status: InstanceStatus;
+    /** the table operation the instance carries, applied once approved */
+    action?: FlowAction;
+    /** why the table refused the approved change; the instance is then TERMINATED */
+    commitError?: string;
     rule: NodeRule[];
     initiatorUser: User;
     finishTime: string;

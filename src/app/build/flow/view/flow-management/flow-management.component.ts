@@ -9,6 +9,8 @@ import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
 import {FlowConfigComponent} from "@flow/view/flow-management/flow-config/flow-config.component";
 import {FlowDataService} from "@flow/service/flow-data.service";
 import {I18NService} from "@core";
+import {ActivatedRoute, Router} from "@angular/router";
+import {Location} from "@angular/common";
 
 // Extend the FlowGroup interface to add a count property
 interface FlowGroupWithCount extends FlowGroup {
@@ -54,6 +56,9 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         private flowDataService: FlowDataService,
         @Inject(NzDrawerService) private drawerService: NzDrawerService,
         private i18n: I18NService,
+        private route: ActivatedRoute,
+        private router: Router,
+        private location: Location,
     ) {
     }
 
@@ -66,6 +71,14 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.loadGroups();
         this.loadFlowConfigs();
+        // opened from a table's approval settings: edit one of its flows, or design a new one on its model.
+        // Watched rather than read once: the page is kept alive between visits (reuse tab), and each visit
+        // carries a fresh `t` so opening the same flow again still reaches here
+        this.route.queryParams.subscribe(({flowId, erupt}) => {
+            if (!flowId && !erupt) return;
+            this.configDrawerRef?.close();
+            this.onCreateApproval(flowId ? Number(flowId) : undefined, erupt, true);
+        });
     }
 
     // Load group data
@@ -369,7 +382,8 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
         });
     }
 
-    onCreateApproval(id?: number): void {
+    // `back`: the designer was opened from a table, so closing it returns there
+    onCreateApproval(id?: number, erupt?: string, back = false): void {
         this.configDrawerRef = this.drawerService.create({
             nzTitle: null,
             nzWidth: "100%",
@@ -377,7 +391,8 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
             nzMaskClosable: false,
             nzContent: FlowConfigComponent,
             nzContentParams: {
-                flowId: id
+                flowId: id,
+                erupt: erupt
             },
             nzBodyStyle: {
                 padding: '0px'
@@ -389,6 +404,12 @@ export class FlowManagementComponent implements OnInit, OnDestroy {
             if (componentInstance) {
                 componentInstance.closeConfig.subscribe(() => {
                     this.configDrawerRef.close();
+                    if (back && window.history.length > 1) {
+                        this.location.back();
+                        return;
+                    }
+                    // drop the table's query so a reload does not open the designer again
+                    if (back) this.router.navigate([], {relativeTo: this.route, queryParams: {}});
                     this.loadFlowConfigs();
                 });
             } else {

@@ -135,6 +135,7 @@
                              [nzSelectedKeys]="selectedKeys"
                              [nzSearchValue]="searchValue"
                              [nzBlockNode]="true"
+                             [nzTreeTemplate]="flow.active ? flowNodeTpl : null"
                              (nzClick)="nodeClickEvent($event)"
                              (nzDblClick)="nzDblClick($event)">
                     </nz-tree>
@@ -180,6 +181,13 @@
                             <i nz-icon nzType="arrow-down" nzTheme="outline"></i>{{ 'tree.add_children'|translate }}
                         </button>
                     }
+                    @if (nodeFlows.length) {
+                        <!-- a node with a change awaiting approval shows it on the flow button -->
+                        <button nz-button nzSize="small" (click)="flow.openFlows(nodeFlows)" [disabled]="loading"
+                                [class.tree-flow-pending]="nodeFlowPending" id="erupt-btn-flow">
+                            <i nz-icon [nzType]="nodeFlowPending ? 'clock-circle' : 'node-index'" nzTheme="outline"></i>{{ 'VIEW_FLOW'|translate }}
+                        </button>
+                    }
                     @if (canPrint(eruptBuildModel.eruptModel.eruptJson.power)) {
                         <button nz-button nzSize="small" [nzLoading]="printLoading" (click)="printNode()"
                                 id="erupt-btn-print">
@@ -195,6 +203,8 @@
                         </button>
                     }
                 }
+                <!-- pending approvals and flow settings of the model, apart from the node's own actions -->
+                <span class="tree-flow-actions"><ng-container [ngTemplateOutlet]="flow.actions"></ng-container></span>
                 <erupt-page-desc class="page-desc--end" [desc]="eruptBuildModel.eruptModel.eruptJson.desc" [key]="eruptName"
                                  [mode]="PageDescMode.ICON"></erupt-page-desc>
             </div>
@@ -223,3 +233,14 @@
         <div class="tree-resize-overlay"></div>
     }
 }
+
+<!-- a node as the tree draws it, plus what it is waiting on -->
+<ng-template #flowNodeTpl let-node>
+    <span class="ant-tree-title" [innerHTML]="node.title | nzHighlight: searchValue : 'i' : 'font-highlight'"></span>
+    @if (flow.mark(node.key)?.pending; as pending) {
+        <i nz-icon nzType="clock-circle" nzTheme="outline" class="tree-node-pending"
+           nz-tooltip [nzTooltipTitle]="('table.flow_pending.' + pending.toLowerCase())|translate"></i>
+    }
+</ng-template>
+
+<erupt-flow-model #flow (ready)="onFlowReady()" (changed)="onFlowChanged()"></erupt-flow-model>
