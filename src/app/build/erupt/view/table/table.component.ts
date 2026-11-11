@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild, inject} from "@angular/core";
+import {ChangeDetectorRef, Component, ElementRef, HostListener, Inject, Input, OnDestroy, OnInit, TemplateRef, ViewChild, inject} from "@angular/core";
 import {ClipboardService} from '@shared/service/clipboard.service';
 import {ScopeStore} from "@shared/service/scope.service";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -68,6 +68,8 @@ import {printHtml, printPageCss} from "@shared/util/print.util";
 export class TableComponent implements OnInit, OnDestroy {
 
     private clipboard = inject(ClipboardService);
+
+    private cdr = inject(ChangeDetectorRef);
 
     // How many icon actions the operation column is sized for when cells wrap (@Layout
     // tableTruncate = false); the rest flow onto further lines.
@@ -612,7 +614,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 _lines.push(`Always refer to this module as "${_displayName}" in your responses, never use the technical model name directly.`);
                 this.aiContext = _lines.join('\n');
                 // first: a model declaring @EruptFlow is known to be one before the row operations are built
-                this.flowMarked = false;
+                this.operatorSlots = 0;
                 this.flow.load(this.eruptBuildModel);
                 this.buildTableConfig();
                 this.searchErupt = <EruptModel>cloneDeep(this.eruptBuildModel.eruptModel);
@@ -732,6 +734,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 if (this.vis[this.selectedVisIndex]?.type == VisType.TPL) {
                     this.setVisTplData(this.dataPage.data);
                 }
+                this.fitOperatorColumn();
                 this.loadCommentCounts();
                 this.loadFlowMarks();
                 resolve(this.dataPage.data);
@@ -1036,8 +1039,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 });
             }
         }
-        // only while a row of the page has an approval: the button would widen the column for nothing otherwise
-        if (this.flowMarked) {
+        if (this.flow.active) {
             tableOperators.push({
                 // a row whose edit or deletion awaits approval shows it on the flow button
                 icon: (record: any) => this.flow.mark(record[this.pkCol])?.pending ? {type: "clock-circle"} : {type: "node-index"},
@@ -1076,18 +1078,11 @@ export class TableComponent implements OnInit, OnDestroy {
             });
         }
         if (tableOperators.length > 0) {
-            // 35px per icon button, 60px for the "more" dropdown
-            const foldWidth = isFoldButtons ? 60 : 0;
-            const btnCount = tableOperators.length + (this.eruptBuildModel.eruptModel.tags?.size || 0);
-            // when cells wrap the column only has to fit one line of icons, the rest flow down;
-            // truncating tables keep the full row width or they would lose actions to the ellipsis
-            const autoWidth = (wrapCells
-                ? Math.min(btnCount - (isFoldButtons ? 1 : 0), TableComponent.ONE_LINE_OPERATORS)
-                : btnCount) * 35 + 18 + foldWidth;
+            this.operators = {buttons: tableOperators, fold: isFoldButtons, wrap: wrapCells};
             _columns.push({
                 title: this.i18n.fanyi("table.operation"),
                 fixed: "right",
-                width: eruptJson.layout.tableOperatorWidth || autoWidth,
+                width: eruptJson.layout.tableOperatorWidth || this.operatorWidth(),
                 className: wrapCells ? ["text-center", "erupt-op-col"] : "text-center",
                 buttons: tableOperators,
                 resizable: false
@@ -1100,6 +1095,74 @@ export class TableComponent implements OnInit, OnDestroy {
         } else {
             this.tableWidth = UiBuildService.calcTableWidth(_columns);
         }
+    }
+
+    // ---------- operation column width ----------
+
+    // the row buttons of the operation column, kept to size it by the rows on screen
+    private operators?: { buttons: STColumnButton[], fold: boolean, wrap: boolean };
+
+    // The most buttons a row has shown since the table opened. A button hidden by its condition on every row
+    // (a custom operation's ifExpr, a row power, a flow mark) takes no room; the column only ever grows while
+    // the table stays open, so paging back and forth does not make it jump.
+    private operatorSlots = 0;
+
+    private operatorWidth(): number {
+        const {buttons, fold, wrap} = this.operators;
+        // the "more" dropdown is counted apart
+        const plain = buttons.filter(b => !b.children);
+        const shown = (b: STColumnButton, row: any): boolean => {
+            // a disabled button still takes its place
+            if (!b.iif || b.iifBehavior === "disabled") return true;
+            try {
+                return !!b.iif(row, b, null);
+            } catch (e) {
+                return true;
+            }
+        };
+        const rows = this.dataPage.data || [];
+        // before the first rows arrive: the buttons no condition can hide
+        const widest = rows.length ? Math.max(...rows.map(row => plain.filter(b => shown(b, row)).length))
+            : plain.filter(b => !b.iif || b.iifBehavior === "disabled").length;
+        this.operatorSlots = Math.max(this.operatorSlots, widest);
+        // 35px per icon button, 60px more for the "more" dropdown, which holds a slot of its own unless cells wrap;
+        // when cells wrap the column only has to fit one line of icons, the rest flow down, while truncating
+        // tables keep the full row width or they would lose actions to the ellipsis
+        const slots = wrap ? Math.min(this.operatorSlots, TableComponent.ONE_LINE_OPERATORS)
+            : this.operatorSlots + (fold ? 1 : 0) + (this.eruptBuildModel.eruptModel.tags?.size || 0);
+        return Math.max(slots, 1) * 35 + 18 + (fold ? 60 : 0);
+    }
+
+    // Resize the operation column to the rows now on screen; a width set on the model stays as it is
+    private fitOperatorColumn() {
+        const layout = this.eruptBuildModel.eruptModel.eruptJson.layout;
+        const column = this.operators && this.columns?.find(col => col.buttons === this.operators.buttons);
+        if (!column || layout.tableOperatorWidth) return;
+        const width = this.operatorWidth();
+        if (width === column.width) return;
+        column.width = width;
+        if (!layout.tableWidth) this.tableWidth = UiBuildService.calcTableWidth(this.columns);
+        this.remountTable();
+    }
+
+    // nz-table keeps the auto widths it measured for the other columns (see onWindowResize), so a wider
+    // operation column would push the table past its box: a fresh table measures again. The header's sort
+    // state lives in the table and is carried over, or the next click would restart at "ascend" (#167)
+    private remountTable() {
+        const key = (col: any) => JSON.stringify(col.index);
+        const sorted = new Map<string, any>(((this.st as any)?._columns || [])
+            .filter((col: any) => col._sort?.default).map((col: any) => [key(col), col._sort.default]));
+        // checked in between, so the table is really taken down and built again rather than left as it is
+        this.stAlive = false;
+        this.cdr.detectChanges();
+        this.stAlive = true;
+        this.cdr.detectChanges();
+        const st: any = this.st;
+        (st?._columns || []).forEach((col: any) => {
+            const direction = sorted.get(key(col));
+            if (direction && col._sort) col._sort.default = direction;
+        });
+        st?.cd?.();
     }
 
     // ---------- record form panel (view / edit) ----------
@@ -1334,25 +1397,19 @@ export class TableComponent implements OnInit, OnDestroy {
     @ViewChild("flow", {static: true})
     flow: FlowModelComponent;
 
+    // the flow button joins the row operations
     onFlowReady() {
+        this.buildTableConfig();
         this.loadFlowMarks();
     }
-
-    // whether a row of the current page has an approval, so the row operations hold the flow button
-    private flowMarked = false;
 
     // which rows of the current page approvals concern; buttons are computed when st optimizes the rows,
     // so that is re-run once the marks are in (as the comment counts do)
     private loadFlowMarks() {
         this.flow.loadMarks(this.dataPage.data.map(r => r[this.pkCol]), () => {
-            const marked = Object.keys(this.flow.marks).length > 0;
-            if (marked === this.flowMarked) {
-                this.st?.reload();
-            } else {
-                // the button joins or leaves the row operations, and the column takes or gives back its width
-                this.flowMarked = marked;
-                this.buildTableConfig();
-            }
+            // a row with an approval shows the flow button, which may ask for room
+            this.fitOperatorColumn();
+            this.st?.reload();
         });
     }
 
