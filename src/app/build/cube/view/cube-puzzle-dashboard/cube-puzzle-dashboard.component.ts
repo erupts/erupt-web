@@ -31,6 +31,7 @@ import {CubePuzzleDashboardConfig} from "../cube-puzzle-dashboard-config/cube-pu
 import {CubePuzzleSubModelConfig} from "../cube-puzzle-sub-model-config/cube-puzzle-sub-model-config";
 import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
 import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
+import {AI_ICON} from "@shared/util/ai-icon";
 
 @Component({
     standalone: false,
@@ -678,6 +679,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             }, this.dsl.settings.autoRefreshInterval * 1000);
         }
     }
+
+    readonly AI_ICON = AI_ICON;
 
     get isAiEnabled(): boolean {
         return EruptAppData.get().properties["erupt-ai"] && null != this.menuSrv.getItem("ai-chat");

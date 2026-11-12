@@ -57,6 +57,8 @@ export enum Skin {
     LIQUID_GLASS = "liquid-glass",
     WORKSPACE = "workspace",
     MATERIAL = "material",
+    POLARIS = "polaris",
+    LINEAR = "linear",
     CLASSIC = "classic",
     TERMINAL = "terminal"
 }
@@ -67,6 +69,8 @@ const SKIN_CLASS: Record<Exclude<Skin, Skin.DEFAULT>, string> = {
     [Skin.LIQUID_GLASS]: "liquid-glass",
     [Skin.WORKSPACE]: "workspace",
     [Skin.MATERIAL]: "material",
+    [Skin.POLARIS]: "polaris",
+    [Skin.LINEAR]: "linear",
     [Skin.CLASSIC]: "classic",
     [Skin.TERMINAL]: "terminal"
 };
@@ -87,6 +91,8 @@ export const SKINS: SkinOption[] = [
     {value: Skin.CLASSIC, label: "setting.skin-classic", shellOnly: true},
     {value: Skin.WORKSPACE, label: "setting.skin-workspace"},
     {value: Skin.MATERIAL, label: "setting.skin-material"},
+    {value: Skin.POLARIS, label: "setting.skin-polaris"},
+    {value: Skin.LINEAR, label: "setting.skin-linear"},
     {value: Skin.LIQUID_GLASS, label: "setting.skin-liquid-glass"},
     {value: Skin.BRUTALIST, label: "setting.skin-brutalist"},
     {value: Skin.TERMINAL, label: "setting.skin-terminal"}
@@ -363,6 +369,12 @@ export const TERMINAL_PRESET_COLORS: string[] = [
     "#e6e6e6"  // P4 white
 ];
 
+// The polaris skin's accents are ink by default, so its own color leads the
+// row; the normal mid-tones follow for sites that want a brand accent back.
+export const POLARIS_DEFAULT_COLOR = "#303030";
+
+export const POLARIS_PRESET_COLORS: string[] = [POLARIS_DEFAULT_COLOR, ...THEME_PRESET_COLORS];
+
 export const DEFAULT_THEME_COLOR = "#1677ff";
 
 // The brutalist skin's own default accent: raft's signal yellow
@@ -372,8 +384,9 @@ export const BRUTALIST_DEFAULT_COLOR = "#ffd440";
 export const TERMINAL_DEFAULT_COLOR = "#39ff14";
 
 // Skins whose brief needs a palette of its own. The brutalist pastels belong
-// UNDER ink borders, the terminal phosphors ON black; the normal mid-tones
-// belong UNDER white text. None survives in another skin, so each of these
+// UNDER ink borders, the terminal phosphors ON black, the polaris ink IS the
+// accent; the normal mid-tones belong UNDER white text. None survives in
+// another skin (ink as the default skin's brand would read as disabled), so each of these
 // keeps its own storage slot for the theme color, and switching skins swaps
 // which slot is live. Every other skin shares the normal slot.
 interface SkinPalette {
@@ -384,7 +397,8 @@ interface SkinPalette {
 
 const SKIN_PALETTES: Partial<Record<Skin, SkinPalette>> = {
     [Skin.BRUTALIST]: {storageKey: "theme-color-brutalist", defaultColor: BRUTALIST_DEFAULT_COLOR, presets: BRUTALIST_PRESET_COLORS},
-    [Skin.TERMINAL]: {storageKey: "theme-color-terminal", defaultColor: TERMINAL_DEFAULT_COLOR, presets: TERMINAL_PRESET_COLORS}
+    [Skin.TERMINAL]: {storageKey: "theme-color-terminal", defaultColor: TERMINAL_DEFAULT_COLOR, presets: TERMINAL_PRESET_COLORS},
+    [Skin.POLARIS]: {storageKey: "theme-color-polaris", defaultColor: POLARIS_DEFAULT_COLOR, presets: POLARIS_PRESET_COLORS}
 };
 
 // The preset swatches a picker offers while `skin` is on

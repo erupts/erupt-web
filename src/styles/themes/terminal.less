@@ -205,9 +205,8 @@ html.terminal .alain-default__aside {
     background: var(--tm-bg);
 }
 
-html.terminal .alain-default__aside::after,
-html.terminal .erupt-side::after {
-    border-right: 1px dashed var(--tm-rule);
+html.terminal {
+    --erupt-aside-edge: 1px dashed var(--tm-rule);
 }
 
 /* delon styles the menu scrollbar itself: a phosphor wash thumb, no track */
@@ -335,7 +334,6 @@ html.terminal {
     .alain-default__aside .fold {
         background: var(--tm-bg);
         border-top: 1px dashed var(--tm-rule);
-        border-right: 1px dashed var(--tm-rule);
         color: var(--tm-text-muted);
     }
 

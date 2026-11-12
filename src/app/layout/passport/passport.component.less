@@ -737,6 +737,129 @@
     }
 }
 
+// ── Polaris skin ──────────────────────────────────────────────────
+// Only active when <html> has the .polaris class (--po-* tokens from
+// styles/themes/polaris.less, swapped under html.polaris.dark). The page is
+// the gray workbench, the card a beveled 12px surface, the nav actions a
+// white key. A configured picture and the wallpaper layout keep their image,
+// and the cover layout keeps its card dissolved into the panel.
+:host-context(html.polaris) ::ng-deep {
+
+    .lp-page:not(.lp-page--has-wallpaper):not(.lp-page--wallpaper) {
+        background-color: var(--erupt-bg-layout, #f1f1f1);
+        background-image: none;
+    }
+
+    .lp-side-nav-actions {
+        border-radius: 10px;
+        background: var(--erupt-bg-container, #fff);
+        box-shadow: var(--po-shadow-card);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .lp-nav-btn,
+    .lp-nav-lang i[nz-icon] {
+        border-radius: var(--po-radius-sm, 8px);
+
+        &:hover {
+            background: var(--po-hover, rgba(0, 0, 0, 0.05));
+        }
+    }
+
+    .lp-page:not(.lp-page--cover) .lp-card {
+        border-radius: var(--po-radius, 12px);
+    }
+
+    .lp-page:not(.lp-page--cover):not(.lp-page--wallpaper) .lp-card {
+        box-shadow: var(--po-shadow-card), 0 8px 24px -8px rgba(26, 26, 26, 0.12);
+    }
+
+    // cover: the panel meets the workbench on a hairline, no cast shadow
+    .lp-page--cover .lp-side {
+        box-shadow: none;
+    }
+
+    // wide: the brand pane is the ink block, not the theme color
+    .lp-page--wide:not(.lp-page--has-wallpaper) .lp-card__brand {
+        background-image: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, 0.14), transparent 42%),
+        radial-gradient(circle at 10% 95%, rgba(255, 255, 255, 0.08), transparent 46%),
+        linear-gradient(135deg, #303030 0%, #1a1a1a 100%);
+    }
+
+    // The submit button is the skin's ink block: the login forms' own soft
+    // lift and brand glow on hover would replace its bevel
+    .lp-card .ant-btn-primary {
+        font-weight: 600;
+        letter-spacing: 0;
+
+        &:not([disabled]):hover {
+            transform: none;
+            opacity: 1;
+            box-shadow: var(--po-btn-primary-shadow);
+        }
+
+        &:not([disabled]):active {
+            box-shadow: var(--po-btn-primary-shadow-active);
+        }
+    }
+}
+
+// ── Linear skin ───────────────────────────────────────────────────
+// Only active when <html> has the .linear class (--ln-* tokens from
+// styles/themes/linear.less, swapped under html.linear.dark). The page is the
+// bare canvas, the card and the nav actions sit inside a hairline with no
+// shadow. A configured picture and the wallpaper layout keep their image,
+// and the cover layout keeps its card dissolved into the panel.
+:host-context(html.linear) ::ng-deep {
+
+    .lp-page:not(.lp-page--has-wallpaper):not(.lp-page--wallpaper) {
+        background-color: var(--ln-bg, #fafafa);
+        background-image: none;
+    }
+
+    .lp-side-nav-actions {
+        border-radius: 8px;
+        background: var(--erupt-bg-container, #fff);
+        box-shadow: inset 0 0 0 1px var(--ln-line, rgba(0, 0, 0, 0.08));
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .lp-nav-btn,
+    .lp-nav-lang i[nz-icon] {
+        border-radius: var(--ln-radius-sm, 6px);
+
+        &:hover {
+            background: var(--ln-hover, rgba(0, 0, 0, 0.04));
+        }
+    }
+
+    .lp-page:not(.lp-page--cover) .lp-card {
+        border-radius: 10px;
+    }
+
+    .lp-page:not(.lp-page--cover):not(.lp-page--wallpaper) .lp-card {
+        box-shadow: 0 0 0 1px var(--ln-line, rgba(0, 0, 0, 0.08));
+    }
+
+    // cover: the panel meets the canvas on a hairline, no cast shadow
+    .lp-page--cover .lp-side {
+        box-shadow: none;
+    }
+
+    // The submit button stays flat: no lift, no brand glow
+    .lp-card .ant-btn-primary {
+        letter-spacing: 0;
+
+        &:not([disabled]):hover,
+        &:not([disabled]):active {
+            transform: none;
+            box-shadow: none;
+        }
+    }
+}
+
 // ── Terminal skin ─────────────────────────────────────────────────
 // Only active when <html> has the .terminal class. The page is the console
 // canvas (--tm-* tokens from styles/themes/terminal.less, swapped under

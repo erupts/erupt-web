@@ -10,6 +10,7 @@ import {EditTypeComponent} from "../../components/edit-type/edit-type.component"
 import {DataService} from "@shared/service/data.service";
 import {I18NService} from "@core";
 import {NzMessageService} from "ng-zorro-antd/message";
+import {AI_ICON} from "@shared/util/ai-icon";
 
 @Component({
     standalone: false,
@@ -77,6 +78,8 @@ export class EditComponent implements OnInit {
 
     // record actions installed by FormModalService (already bound to the modal ref)
     aiAction?: () => void;
+
+    readonly AI_ICON = AI_ICON;
 
     commentAction?: () => void;
 

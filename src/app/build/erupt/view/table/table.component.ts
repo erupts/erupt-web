@@ -47,6 +47,7 @@ import {CodeEditorComponent} from "../../components/code-editor/code-editor.comp
 import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
 import {openResizableDrawer} from "@shared/component/resizable-drawer.component";
 import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
+import {AI_ICON} from "@shared/util/ai-icon";
 import {QueryCondition, TableStyle} from "../../model/erupt.vo";
 import {colRules} from "@shared/model/util.model";
 import {EruptIframeComponent} from "@shared/component/iframe.component";
@@ -402,6 +403,8 @@ export class TableComponent implements OnInit, OnDestroy {
         this.treeCollapsed = !this.treeCollapsed;
         this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {treeCollapsed: this.treeCollapsed});
     }
+
+    readonly AI_ICON = AI_ICON;
 
     get isAiEnabled(): boolean {
         return EruptAppData.get().properties["erupt-ai"]

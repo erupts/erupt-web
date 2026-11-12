@@ -46,17 +46,20 @@
         --collapsed-width: 60px;
     }
 
-    .erupt-side:after {
-        border-right: 1px solid var(--ant-border-color-split);
-    }
-
     .alain-default__aside {
         min-height: calc(100vh - @header-h);
         width: ~"var(--sidebar-width, 200px)";
     }
 
-    .alain-default__aside:after {
-        border-right: 1px solid var(--ant-border-color-split);
+    // The column's outer edge, the only place it is drawn: above everything
+    // that fills the column and would otherwise cover it (the opaque bottom
+    // utility bar at z-index 5, the loading overlay's wash at 10), below
+    // only the resize handle (20). Skins set --erupt-aside-edge (tokens.less)
+    // instead of restyling this rule.
+    .alain-default__aside::after {
+        z-index: 11;
+        border-right: var(--erupt-aside-edge);
+        pointer-events: none;
     }
 
     .erupt_content {
@@ -348,10 +351,42 @@
     }
 
     ::ng-deep {
+        // A float button is nested boxes: the host (which casts the shadow),
+        // an inner <button> that carries the fill, and a transparent body.
+        // The inner button is an .ant-btn, a circle by default and reshaped
+        // by every skin's button radius, so it is pinned to the host's
+        // radius: otherwise the fill and the shadow are two different shapes.
+        @float-radius: 4px;
+
         .ant-float-btn {
             bottom: 30px;
             right: 30px;
-            border-radius: 4px;
+            border-radius: @float-radius;
+        }
+
+        // !important: skins round .ant-btn with selectors of every weight
+        .ant-float-btn .ant-btn.ant-float-btn-inner {
+            border-radius: inherit !important;
+        }
+
+        .ant-float-btn .ant-float-btn-body {
+            border-radius: @float-radius;
+        }
+
+        // draggable (layout-ai-float); "move" would read as a canvas tool
+        .ai-float {
+            cursor: grab;
+
+            &.cdk-drag-dragging {
+                cursor: grabbing;
+                transition: none;
+            }
+        }
+
+        // The AI entry owns the corner; back-to-top stacks above it
+        layout-ai-float:has(.ant-float-btn) ~ nz-float-button-top,
+        layout-ai-float:has(.ant-float-btn) ~ nz-float-button-top .ant-float-btn {
+            bottom: 84px;
         }
 
         .theme-btn {

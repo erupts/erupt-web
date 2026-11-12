@@ -3,6 +3,7 @@ import {SettingsService, TitleService} from "@delon/theme";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 
 import {ICONS_AUTO} from "../../../style-icons-auto";
+import {AI_ICON, AI_ICON_SVG} from "@shared/util/ai-icon";
 import {WindowModel} from "@shared/model/window.model";
 import {hasMenuModeChoice, isHeaderMenuMode, MenuMode, menuModeFlags} from "@shared/model/erupt-menu";
 import {GlobalKeys} from "@shared/model/erupt-const";
@@ -37,6 +38,7 @@ export class StartupService {
                 @Inject(NzMessageService) private msg: NzMessageService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         iconSrv.addIcon(...ICONS_AUTO);
+        iconSrv.addIconLiteral(AI_ICON, AI_ICON_SVG);
     }
 
     // Site config supplies the default theme; a color the user picked in the

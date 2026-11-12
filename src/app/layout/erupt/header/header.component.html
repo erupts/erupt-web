@@ -91,15 +91,25 @@
       </li>
     }
 
-    @if (isEruptAi) {
+    <!-- the AI entry docked into the toolbar (it floats bottom right otherwise, see AiLauncherService) -->
+    @if (ai.available && !ai.floating) {
       <li class="hidden-mobile">
-        <div class="alain-default__nav-item" (click)="openEruptAi()">
-          @if (aiLoading) {
+        <div class="alain-default__nav-item" (click)="ai.openDrawer(drawer)"
+             (contextmenu)="aiContextMenu($event, aiMenu)">
+          @if (ai.loading) {
             <i nz-icon nzType="loading" nzTheme="outline"></i>
           } @else {
-            <i nz-icon nzType="comment" nzTheme="outline"></i>
+            <i nz-icon [nzType]="AI_ICON"></i>
           }
         </div>
+        <nz-dropdown-menu #aiMenu="nzDropdownMenu">
+          <ul nz-menu>
+            <li nz-menu-item (click)="ai.openDrawer(drawer)">{{ 'ai.entry.open' | translate }}</li>
+            <li nz-menu-item (click)="ai.openPage()">{{ 'ai.entry.page' | translate }}</li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item (click)="ai.setFloating(true)">{{ 'ai.entry.float' | translate }}</li>
+          </ul>
+        </nz-dropdown-menu>
       </li>
     }
 

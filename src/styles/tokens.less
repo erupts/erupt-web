@@ -31,6 +31,13 @@ html {
     --erupt-scrollbar-thumb: #888;
     --erupt-scrollbar-thumb-hover: #767676;
 
+    // The menu column's outer edge, drawn once by the column itself
+    // (.alain-default__aside::after in erupt.component.less) above everything
+    // inside it. A skin restyles or removes the edge by setting this token
+    // alone ("none", a dashed rule, a heavier one), never by styling the
+    // pieces of the column.
+    --erupt-aside-edge: 1px solid var(--ant-border-color-split);
+
     // Header (top bar). A user-configured header color (settings drawer) sets
     // these as inline styles on <html> — inline wins over both theme blocks,
     // so one mechanism covers light and dark. Defaults follow the theme.
@@ -97,9 +104,9 @@ html.dark {
 // ── Dark-aside menu language ─────────────────────────────────────
 // Sidebar menu states for the global dark theme. Scoped selectors out-specify
 // the compiled dark bundle. The brutalist, liquid-glass, workspace, classic,
-// terminal and material skins own their own menu rows; colors here are dark-surface constants, so no
+// terminal, material, polaris and linear skins own their own menu rows; colors here are dark-surface constants, so no
 // --erupt-* tokens.
-html.dark:not(.brutalist-theme):not(.liquid-glass):not(.workspace):not(.classic):not(.terminal):not(.material) {
+html.dark:not(.brutalist-theme):not(.liquid-glass):not(.workspace):not(.classic):not(.terminal):not(.material):not(.polaris):not(.linear) {
     // never wash the selected <li> through the hook — it paints the <li>,
     // which CONTAINS the expanded submenu <ul>
     --alain-default-aside-nav-selected-bg: transparent;
@@ -270,8 +277,8 @@ html.compact {
 // sidebar states (hover text, selected guide bar, selected link) in the stock
 // blue literal. Re-anchor them to the runtime brand color. The dark sidebar is
 // excluded — its menu states come from the dark-aside block above — and the
-// brutalist, liquid-glass, workspace, classic, terminal and material skins own their own sidebar look.
-html.compact:not(.dark):not(.brutalist-theme):not(.liquid-glass):not(.workspace):not(.classic):not(.terminal):not(.material) {
+// brutalist, liquid-glass, workspace, classic, terminal, material, polaris and linear skins own their own sidebar look.
+html.compact:not(.dark):not(.brutalist-theme):not(.liquid-glass):not(.workspace):not(.classic):not(.terminal):not(.material):not(.polaris):not(.linear) {
     .alain-default__aside {
         .sidebar-nav__item-link:hover {
             color: var(--ant-primary-color);

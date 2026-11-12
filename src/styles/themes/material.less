@@ -184,9 +184,8 @@ html.material .alain-default__aside {
 }
 
 /* the stock 1px right rule would draw a seam through the tone */
-html.material .alain-default__aside::after,
-html.material .erupt-side::after {
-    display: none;
+html.material {
+    --erupt-aside-edge: none;
 }
 
 /* delon styles the menu scrollbar itself: an on-surface wash, no track */
@@ -328,7 +327,6 @@ html.material {
     .alain-default__aside .fold {
         background: var(--m3-surface-container);
         border-top: 0;
-        border-right: 0;
         color: var(--m3-on-surface-variant);
     }
 
