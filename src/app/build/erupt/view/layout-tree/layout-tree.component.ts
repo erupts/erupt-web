@@ -35,6 +35,9 @@ export class LayoutTreeComponent implements OnInit {
 
     @Input() showCollapseBtn: boolean = false;
 
+    // The node to pick once the tree has loaded (the one a link names), instead of the default one
+    @Input() initialKey: string | null = null;
+
     @Output() trigger: EventEmitter<string[]> = new EventEmitter();
 
     @Output() collapseTree = new EventEmitter<void>();
@@ -100,7 +103,17 @@ export class LayoutTreeComponent implements OnInit {
             } else {
                 this.list = this.dataHandler.dataTreeToZorroTree(data, this.eruptModel.eruptJson.tree.expandLevel);
             }
-            if (this.eruptModel.eruptJson.linkTree.dependNode) {
+            const initial = this.findKey(this.list, this.initialKey);
+            // once: a reload of the tree (after an add or a delete) falls back to the default
+            this.initialKey = null;
+            if (initial !== undefined) {
+                if (!this.eruptModel.eruptJson.linkTree.dependNode) {
+                    this.list.unshift({key: undefined, title: this.i18n.fanyi('global.all'), isLeaf: true});
+                }
+                this.trigger.emit(this.getSubKeys(this.list, initial));
+                this.selectedKeys = [initial];
+                this.selectedKey = initial;
+            } else if (this.eruptModel.eruptJson.linkTree.dependNode) {
                 if (data.length > 0) {
                     this.trigger.emit(this.getSubKeys(this.list, data[0].id));
                     this.selectedKeys = [data[0].id];
@@ -284,6 +297,17 @@ export class LayoutTreeComponent implements OnInit {
                 this.selectedKey = event.node.origin.key;
             }
         }
+    }
+
+    // The tree's own key for a key read from a URL, where a numeric id arrives as text
+    private findKey(nodes: NzTreeNodeOptions[], key: string | null): any {
+        if (key == null) return undefined;
+        for (const n of nodes || []) {
+            if (n.key != null && String(n.key) === key) return n.key;
+            const child = this.findKey(n.children, key);
+            if (child !== undefined) return child;
+        }
+        return undefined;
     }
 
     /**

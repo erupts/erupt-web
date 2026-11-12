@@ -370,7 +370,8 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     private openByUrl(url: string | null): void {
         const {menuSrv, recursivePath} = this;
-        menuSrv.open(menuSrv.find({url, recursive: recursivePath}));
+        // a menu links to a page, whatever state (view, search, scope) its url carries in the query
+        menuSrv.open(menuSrv.find({url: url?.split("?")[0], recursive: recursivePath}));
     }
 
     ngOnInit(): void {

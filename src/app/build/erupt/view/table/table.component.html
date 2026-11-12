@@ -84,7 +84,7 @@
         @if (linkTree) {
             <div class="tree-panel" [class.tree-panel-collapsed]="treeCollapsed"
                  [style.width.px]="treeCollapsed ? null : treeWidth">
-                <layout-tree [eruptModel]="eruptBuildModel.eruptModel" (trigger)="clickTreeNode($event)"
+                <layout-tree [eruptModel]="eruptBuildModel.eruptModel" [initialKey]="urlTreeNode" (trigger)="clickTreeNode($event)"
                              [showCollapseBtn]="true" (collapseTree)="toggleTreeCollapsed()"></layout-tree>
             </div>
             <div class="tree-resize-handle" (mousedown)="onResizeDragStart($event)"></div>

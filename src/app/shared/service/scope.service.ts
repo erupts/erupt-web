@@ -1,9 +1,9 @@
 import {Injectable} from "@angular/core";
-import {Router} from "@angular/router";
+import {NavigationEnd, Router} from "@angular/router";
 import {_HttpClient} from "@delon/theme";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {forkJoin, Observable, of, ReplaySubject, take, tap} from "rxjs";
-import {catchError} from "rxjs/operators";
+import {catchError, filter, map} from "rxjs/operators";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
 import {ShareSession} from "@shared/model/share-session";
 import {Userinfo} from "@shared/model/user.model";
@@ -141,6 +141,44 @@ export class ScopeService {
         return this.ofErupt(erupt).find(s => !ScopeStore.picks[s.name]);
     }
 
+    // `?scope=` on a model page: the picks the page was built in, so its link opens in the same scope
+    static readonly PARAM = "scope";
+
+    // What `?scope=` holds for a model's page: this window's picks of the scopes it declares, as
+    // JSON {"KubeScope":{"cluster":"orbstack"}}; null when it declares none
+    param(erupt: string): string | null {
+        const picks = this.ofErupt(erupt).filter(s => ScopeStore.picks[s.name]).map(s => [s.name, ScopeStore.picks[s.name].values]);
+        return picks.length ? JSON.stringify(Object.fromEntries(picks)) : null;
+    }
+
+    /**
+     * Takes over the picks a link carries for a model's scopes. Each goes through the same check as
+     * a pick made by hand, so a value this user may not pick is dropped and the window keeps its
+     * own. The tabs already open were built in the old scope and are closed once the page is up.
+     */
+    adopt(erupt: string, param: string): Observable<void> {
+        let linked: { [scope: string]: object };
+        try {
+            linked = JSON.parse(param) || {};
+        } catch (e) {
+            linked = {};
+        }
+        const scopes = this.ofErupt(erupt).filter(s => linked[s.name] && typeof linked[s.name] === "object");
+        if (!scopes.length) return of(undefined);
+        return forkJoin(scopes.map(s => this.check(s.name, linked[s.name]).pipe(catchError(() => of(null))))).pipe(map(accepted => {
+            let changed = false;
+            scopes.forEach((s, i) => {
+                if (!accepted[i]) return;
+                ScopeStore.picks[s.name] = accepted[i];
+                changed = true;
+            });
+            if (changed) {
+                this.remember();
+                this.router.events.pipe(filter(e => e instanceof NavigationEnd), take(1)).subscribe(() => this.reuseTab.clear(true));
+            }
+        }));
+    }
+
     current(scope: string): ScopeAccepted {
         return ScopeStore.picks[scope];
     }
@@ -160,7 +198,10 @@ export class ScopeService {
         return this.check(scope, values).pipe(tap(accepted => {
             ScopeStore.picks[scope] = accepted;
             this.remember();
-            const url = target || this.router.url;
+            // without the old pick the url may still carry: the guard writes the new one
+            const tree = this.router.parseUrl(target || this.router.url);
+            delete tree.queryParams[ScopeService.PARAM];
+            const url = tree.toString();
             // cleared once the current page is left: leaving it caches it again, and returning would
             // then restore the page of the old scope instead of building it anew
             this.router.navigateByUrl("/", {skipLocationChange: true}).then(() => {

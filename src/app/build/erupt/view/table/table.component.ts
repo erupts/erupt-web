@@ -361,6 +361,12 @@ export class TableComponent implements OnInit, OnDestroy {
                 this.deepLinkId = id;
                 this.openDeepLink();
             }
+            // a link naming another view, opened while this table's tab is already there
+            const index = this.visIndexOf(q.get(TableComponent.VIS_PARAM));
+            if (index !== null && index !== this.selectedVisIndex) {
+                this.selectedVisIndex = index;
+                this.visChange(index);
+            }
         });
     }
 
@@ -658,7 +664,17 @@ export class TableComponent implements OnInit, OnDestroy {
                 if (savedSettings.pageSize && this.dataPage.showPagination) {
                     this.dataPage.ps = savedSettings.pageSize;
                 }
-                if (savedSettings.visIndex !== undefined && savedSettings.visIndex < this.vis.length) {
+                // a link that carries a search opens on it, with the search bar open to show why
+                // the list is narrowed
+                if (this.routed() && this.dataHandler.applySearchState(this.searchErupt, this.urlSearchState())) {
+                    this.hideCondition = false;
+                }
+                this.urlTreeNode = this.routed() ? this.route.snapshot.queryParamMap.get(TableComponent.NODE_PARAM) : null;
+                // the view the URL names comes before the one this browser remembers
+                const urlVis = this.visIndexOf(this.route.snapshot.queryParamMap.get(TableComponent.VIS_PARAM));
+                if (urlVis !== null) {
+                    this.selectedVisIndex = urlVis;
+                } else if (savedSettings.visIndex !== undefined && savedSettings.visIndex < this.vis.length) {
                     this.selectedVisIndex = savedSettings.visIndex;
                 }
                 this.searchFieldsCollapsed = savedSettings.searchFieldsCollapsed ?? true;
@@ -674,8 +690,76 @@ export class TableComponent implements OnInit, OnDestroy {
         );
     }
 
+    // `?vis=` names the view on screen, so a view can be linked to and survives a reload
+    private static readonly VIS_PARAM = "vis";
+
+    // `?q=` holds the search form (DataHandlerService.searchState) as JSON
+    private static readonly SEARCH_PARAM = "q";
+
+    // `?node=` holds the node picked in the link tree
+    private static readonly NODE_PARAM = "node";
+
+    // the `?node=` this page was opened with, handed to the tree to pick once it has loaded
+    urlTreeNode: string | null = null;
+
+    // The table a route shows owns the URL; one in a drill or a reference dialog sits on another page's
+    private routed(): boolean {
+        return !this._drill && !this._reference;
+    }
+
+    private urlSearchState(): { [field: string]: any } | null {
+        try {
+            return JSON.parse(this.route.snapshot.queryParamMap.get(TableComponent.SEARCH_PARAM));
+        } catch (e) {
+            return null;
+        }
+    }
+
+    // Writes what narrows the list (search, tree node) to the URL, so the page can be linked to and
+    // reloaded as it is. Deferred: the first query runs while the navigation that built this table is
+    // still under way, and navigating again right then would cancel it
+    private syncUrl() {
+        if (!this.routed()) return;
+        const state = this.dataHandler.searchState(this.searchErupt);
+        const node = this.eruptBuildModel.eruptModel.eruptJson.linkTree?.value;
+        setTimeout(() => this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {
+                [TableComponent.SEARCH_PARAM]: state ? JSON.stringify(state) : null,
+                [TableComponent.NODE_PARAM]: node?.length ? node[0] : null
+            },
+            queryParamsHandling: "merge",
+            replaceUrl: true
+        }));
+    }
+
+    // what `?vis=` holds for the plain table, which has no @Vis code of its own
+    private static readonly VIS_RAW_TABLE = "_table";
+
+    // The view a `?vis=` value names: its index, undefined for the plain table, null when the value
+    // names none (or the table is not the routed one, whose URL belongs to another page)
+    private visIndexOf(code: string | null): number | undefined | null {
+        if (!code || this._drill || this._reference || !this.vis?.length) return null;
+        if (code === TableComponent.VIS_RAW_TABLE) {
+            return this.eruptBuildModel?.eruptModel.eruptJson.visRawTable ? undefined : null;
+        }
+        const index = this.vis.findIndex(v => v.code === code);
+        return index === -1 ? null : index;
+    }
+
     visChange(e: number) {
         this.eruptLocalSettings.patch(this.eruptBuildModel.eruptModel.eruptName, {visIndex: e});
+        if (this.routed()) {
+            this.router.navigate([], {
+                relativeTo: this.route,
+                queryParams: {[TableComponent.VIS_PARAM]: this.vis[e]?.code ?? TableComponent.VIS_RAW_TABLE},
+                queryParamsHandling: "merge",
+                replaceUrl: true
+            });
+        }
+        // The rows on screen belong to the view being left. A board or a calendar holds up to a
+        // thousand of them, and the next view would lay them all out before its own page arrives
+        this.dataPage.data = [];
         this.st?.resetColumns();
         this.query(1);
     }
@@ -730,6 +814,7 @@ export class TableComponent implements OnInit, OnDestroy {
         this.selectedRows = [];
         this.flow.refresh();
         this.dataPage.querying = true;
+        this.syncUrl();
         this.setVisTplData(null)
         // a fresh array each query so the cube view re-runs its charts on the new search
         this.cubeConditions = this.dataHandler.buildSearchConditions(this.searchErupt);
