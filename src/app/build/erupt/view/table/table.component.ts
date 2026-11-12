@@ -272,6 +272,9 @@ export class TableComponent implements OnInit, OnDestroy {
 
     aiContext: string = '';
 
+    // the menu the context is about, shown in the chat
+    aiContextName: string = '';
+
     aiResizing: boolean = false;
 
     private _aiResizeCleanup: (() => void) | null = null;
@@ -463,7 +466,7 @@ export class TableComponent implements OnInit, OnDestroy {
         }
         this.aiDrawerRef = this.drawerService.create<AiChatComponent>({
             nzContent: AiChatComponent,
-            nzContentParams: {collapseSidebar: true, embedded: true, context: this.aiContext},
+            nzContentParams: {collapseSidebar: true, embedded: true, context: this.aiContext, contextName: this.aiContextName},
             nzTitle: this.i18n.fanyi('ai.chat.title'),
             nzWidth: '100%',
             nzBodyStyle: {padding: '0', height: '100%'}
@@ -604,10 +607,14 @@ export class TableComponent implements OnInit, OnDestroy {
                 if (eb.eruptModel.eruptJson.power.export) {
                     this.dataService.tableFormats(formats => this.tableFormats = formats);
                 }
-                const _menuPath = this.menuSrv.getPathByUrl(this.router.url.split('?')[0]);
-                const _menuName = _menuPath.length ? _menuPath[_menuPath.length - 1].text : null;
                 const _m = eb.eruptModel;
-                const _displayName = _menuName || _m.eruptName;
+                // The menu is found by the model it opens, not by router.url: the table is built while
+                // the navigation is still under way, when the URL is the page the user came from
+                let _menuName: string = null;
+                this.menuSrv.visit(this.menuSrv.menus, i => {
+                    if (!_menuName && i.link && i.link.split('?')[0].split('/').pop() === _m.eruptName) _menuName = i.text;
+                });
+                const _displayName = _menuName || _m.eruptJson.name || _m.eruptName;
                 const _lines: string[] = [
                     `The user is currently viewing the data management module "${_displayName}".`,
                     `Technical model name: ${_m.eruptName}.`
@@ -615,6 +622,7 @@ export class TableComponent implements OnInit, OnDestroy {
                 if (_m.eruptJson.desc) _lines.push(`Module description: ${_m.eruptJson.desc}`);
                 _lines.push(`Always refer to this module as "${_displayName}" in your responses, never use the technical model name directly.`);
                 this.aiContext = _lines.join('\n');
+                this.aiContextName = _displayName;
                 // first: a model declaring @EruptFlow is known to be one before the row operations are built
                 this.operatorSlots = 0;
                 this.flow.load(this.eruptBuildModel);
@@ -1387,7 +1395,7 @@ export class TableComponent implements OnInit, OnDestroy {
             ].join("\n");
             openResizableDrawer(this.drawerService, {
                 nzContent: AiChatComponent,
-                nzContentParams: {collapseSidebar: true, embedded: true, context},
+                nzContentParams: {collapseSidebar: true, embedded: true, context, contextName: this.aiContextName},
                 nzTitle: this.i18n.fanyi("form.ai_assistant"),
                 nzWidth: window.innerWidth <= 768 ? "100%" : 480,
                 nzBodyStyle: {padding: "0", height: "100%"}

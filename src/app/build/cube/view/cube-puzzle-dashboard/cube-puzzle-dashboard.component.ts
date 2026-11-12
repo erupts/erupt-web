@@ -705,7 +705,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         }
         this.aiDrawerRef = this.drawerService.create<AiChatComponent>({
             nzContent: AiChatComponent,
-            nzContentParams: {collapseSidebar: true, embedded: true, context: this.aiContext},
+            nzContentParams: {collapseSidebar: true, embedded: true, context: this.aiContext, contextName: this.dashboard?.name},
             nzTitle: this.i18n.fanyi('ai.chat.title'),
             nzWidth: '100%',
             nzBodyStyle: {padding: '0', height: '100%'}

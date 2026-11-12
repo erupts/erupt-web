@@ -73,6 +73,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     @Input() context = '';
 
+    // What the context is about (a menu, a dashboard), shown above the input so the user knows the
+    // AI is answering with the page in mind; the context itself stays out of sight
+    @Input() contextName = '';
+
     @ViewChild('bubblesRef') bubblesRef!: ElementRef<HTMLDivElement>;
     @ViewChild('renameModalTpl') renameModalTpl!: TemplateRef<unknown>;
     @ViewChild('textareaRef') textareaRef!: ElementRef<HTMLTextAreaElement>;

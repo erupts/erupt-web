@@ -257,6 +257,7 @@ ai.chat.group.yesterday,昨天,昨天,Yesterday,Hier,昨日,어제,Вчера,Ay
 ai.chat.group.week,7 天内,7 天內,Previous 7 days,7 derniers jours,過去7日間,지난 7일,За 7 дней,Últimos 7 días,Letzte 7 Tage,Últimos 7 dias,7 hari terakhir,آخر 7 أيام
 ai.chat.group.earlier,更早,更早,Earlier,Plus ancien,それ以前,이전,Ранее,Anteriores,Früher,Anteriores,Sebelumnya,أقدم
 ai.chat.empty_title,开始一段对话,開始一段對話,Start a conversation,Commencer une conversation,会話を始めましょう,대화를 시작해보세요,Начните разговор,Iniciar una conversación,Gespräch beginnen,Iniciar uma conversa,Mulai percakapan,ابدأ محادثة
+ai.chat.context,上下文,上下文,Context,Contexte,コンテキスト,컨텍스트,Контекст,Contexto,Kontext,Contexto,Konteks,السياق
 ai.chat.empty_hint,在下方输入内容，AI 将为你解答,在下方輸入內容，AI 將為你解答,Type below and AI will respond,Tapez ci-dessous pour commencer,下に入力してAIが回答します,아래에 입력하면 AI가 답변합니다,Введите запрос ниже,Escribe abajo para comenzar,Unten eingeben für KI-Antwort,Digite abaixo para começar,Ketik di bawah untuk memulai,اكتب أدناه وسيرد الذكاء الاصطناعي
 ai.chat.new_session,新建会话,新建會話,New Chat,Nouvelle conversation,新しいチャット,새 대화,Новый чат,Nueva conversación,Neuer Chat,Nova conversa,Percakapan baru,محادثة جديدة
 ai.chat.more_actions,更多操作,更多操作,More actions,Plus d'actions,その他の操作,더 많은 작업,Ещё действия,Más acciones,Weitere Aktionen,Mais ações,Tindakan lainnya,المزيد من الإجراءات
