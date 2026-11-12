@@ -445,11 +445,12 @@ export class DataService {
     }
 
     //update data
-    updateEruptData(eruptName: string, data: object): Observable<any> {
+    updateEruptData(eruptName: string, data: object, headers?: object): Observable<any> {
         return this._http.post<EruptApiModel>(RestPath.dataModify + "/" + eruptName + "/update", data, null, {
             observe: null,
             headers: {
-                erupt: eruptName
+                erupt: eruptName,
+                ...headers
             }
         });
     }
@@ -488,15 +489,50 @@ export class DataService {
         });
     }
 
+    // the current user's changes to a flow-bound model still waiting for approval (an insert has no row yet)
+    flowPendingChanges(eruptName: string): Observable<EruptApiModel> {
+        return this._http.get(RestPath.erupt + "/flow/instance/pending-changes", {erupt: eruptName});
+    }
+
+    // whether the model runs through flows for the current tenant, and the table operations its flows serve
+    flowModel(eruptName: string): Observable<EruptApiModel> {
+        return this._http.get(RestPath.erupt + "/flow/instance/model-flow", {erupt: eruptName});
+    }
+
+    // the approvals concerning one row, latest first
+    flowRecordFlows(eruptName: string, id: any): Observable<EruptApiModel> {
+        return this._http.get(RestPath.erupt + "/flow/instance/record-flows", {erupt: eruptName, id});
+    }
+
+    // what the flow buttons of the listed records show, keyed by record id; records no approval concerns are absent
+    flowMarks(eruptName: string, ids: string[]): Observable<EruptApiModel> {
+        return this._http.post(RestPath.erupt + "/flow/instance/marks", ids, {erupt: eruptName});
+    }
+
+    // the flows the current user may send an add / edit / delete of the model through (none: no approval)
+    flowCandidates(eruptName: string, action: "ADD" | "EDIT" | "DELETE"): Observable<EruptApiModel> {
+        return this._http.get(RestPath.erupt + "/flow/instance/candidate-flows", {erupt: eruptName, action});
+    }
+
+    // a flow's nodes whose people the initiator picks, and whom each may be given
+    flowSelfSelectNodes(flowId: number): Observable<EruptApiModel> {
+        return this._http.get(RestPath.erupt + "/flow/self-select-nodes", {flowId});
+    }
+
+    flowSelfSelectNodeUsers(flowId: number, nodeId: string): Observable<EruptApiModel> {
+        return this._http.get(RestPath.erupt + "/flow/self-select-node/users", {flowId, nodeId});
+    }
+
     //delete data
-    deleteEruptData(eruptName: string, id): Observable<EruptApiModel> {
-        return this.deleteEruptDataList(eruptName, [id]);
+    deleteEruptData(eruptName: string, id, headers?: object): Observable<EruptApiModel> {
+        return this.deleteEruptDataList(eruptName, [id], headers);
     }
 
     //batch delete data
-    deleteEruptDataList(eruptName: string, ids: any[]): Observable<EruptApiModel> {
+    deleteEruptDataList(eruptName: string, ids: any[], headers?: object): Observable<EruptApiModel> {
         return this._http.post(RestPath.dataModify + "/" + eruptName + "/delete", ids, null, {
             headers: {
+                ...headers,
                 erupt: eruptName
             }
         });

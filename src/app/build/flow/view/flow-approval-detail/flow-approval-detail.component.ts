@@ -26,9 +26,9 @@ import {NzMessageService} from "ng-zorro-antd/message";
 import {FlowInstanceApiService} from "@flow/service/flow-instance-api.service";
 import {EruptUser} from "../../../cube/model/dashboard.model";
 import {forkJoin} from "rxjs";
-import {getAvatarColor, getStatusColor} from "@flow/util/flow.util";
+import {isChange, getAvatarColor, getStatusColor} from "@flow/util/flow.util";
 import {ActivatedRoute} from "@angular/router";
-import {FormAccessEnum, PrintSetting} from "@flow/model/flow.model";
+import {FlowAction, FormAccessEnum, PrintSetting} from "@flow/model/flow.model";
 import {Scene} from "../../../erupt/model/erupt.enum";
 import {FlowPrintPreviewComponent} from "./print-preview/print-preview.component";
 import {I18NService} from "@core";
@@ -662,6 +662,14 @@ export class FlowApprovalDetailComponent implements OnInit {
         })
     }
 
+    // What an edit request changes: the history entry written when it was submitted, the oldest one
+    showRequestedChange() {
+        this.flowInstanceApiService.dataHistories(this.selectedInstance.id).subscribe(res => {
+            const submitted = [...(res.data || [])].sort((a, b) => a.id - b.id)[0];
+            if (submitted) this.showDiff(submitted);
+        });
+    }
+
     showDiff(history: FlowInstanceDataHistory) {
         let ref = this.modal.create({
             nzDraggable: true,
@@ -727,6 +735,10 @@ export class FlowApprovalDetailComponent implements OnInit {
     protected readonly getAvatarColor = getAvatarColor;
 
     protected readonly getStatusColor = getStatusColor;
+
+    protected readonly isChange = isChange;
+
+    protected readonly FlowAction = FlowAction;
 
     protected readonly FormAccessEnum = FormAccessEnum;
 

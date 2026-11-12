@@ -54,6 +54,7 @@ import {EruptIframeComponent} from "@shared/component/iframe.component";
 import {WindowModel} from "@shared/model/window.model";
 import {PrintTypeComponent} from "../../components/print-type/print-type";
 import {EruptAppData} from "@shared/model/erupt-app.model";
+import {FlowModelComponent} from "../../components/flow-model/flow-model.component";
 import {eruptToPrintVars, PrintTemplate, PrintVar} from "@shared/component/print-template/print-template";
 import {printHtml, printPageCss} from "@shared/util/print.util";
 
@@ -610,6 +611,9 @@ export class TableComponent implements OnInit, OnDestroy {
                 if (_m.eruptJson.desc) _lines.push(`Module description: ${_m.eruptJson.desc}`);
                 _lines.push(`Always refer to this module as "${_displayName}" in your responses, never use the technical model name directly.`);
                 this.aiContext = _lines.join('\n');
+                // first: a model declaring @EruptFlow is known to be one before the row operations are built
+                this.flowMarked = false;
+                this.flow.load(this.eruptBuildModel);
                 this.buildTableConfig();
                 this.searchErupt = <EruptModel>cloneDeep(this.eruptBuildModel.eruptModel);
                 for (let fieldModel of this.searchErupt.eruptFieldModels) {
@@ -712,6 +716,7 @@ export class TableComponent implements OnInit, OnDestroy {
         this.dataPage.ps = size || this.dataPage.ps;
         this.dataPage.sort = sort || this.dataPage.sort;
         this.selectedRows = [];
+        this.flow.refresh();
         this.dataPage.querying = true;
         this.setVisTplData(null)
         // a fresh array each query so the cube view re-runs its charts on the new search
@@ -728,6 +733,7 @@ export class TableComponent implements OnInit, OnDestroy {
                     this.setVisTplData(this.dataPage.data);
                 }
                 this.loadCommentCounts();
+                this.loadFlowMarks();
                 resolve(this.dataPage.data);
             }, () => {
                 this.dataPage.querying = false;
@@ -962,10 +968,13 @@ export class TableComponent implements OnInit, OnDestroy {
             }
         }
         if (this.eruptBuildModel.eruptModel.eruptJson.power.delete) {
-            const _delClick = (record) => {
+            const _delClick = async (record) => {
+                const flow = await this.flow.header("DELETE");
+                if (!flow) return;
                 this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName,
-                    record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol])
+                    record[this.eruptBuildModel.eruptModel.eruptJson.primaryKeyCol], flow)
                     .subscribe(result => {
+                        if (this.submittedForApproval(result)) return;
                         if (result.status === Status.SUCCESS) {
                             if (this.dataPage.data.length <= 1) {
                                 this.query(this.dataPage.pi == 1 ? 1 : this.dataPage.pi - 1);
@@ -1027,33 +1036,16 @@ export class TableComponent implements OnInit, OnDestroy {
                 });
             }
         }
-        if (this.eruptBuildModel.eruptModel.tags?.["EruptFlow"]) {
+        // only while a row of the page has an approval: the button would widen the column for nothing otherwise
+        if (this.flowMarked) {
             tableOperators.push({
-                icon: "node-index",
+                // a row whose edit or deletion awaits approval shows it on the flow button
+                icon: (record: any) => this.flow.mark(record[this.pkCol])?.pending ? {type: "clock-circle"} : {type: "node-index"},
+                className: (record: any) => this.flow.mark(record[this.pkCol])?.pending ? "erupt-flow-pending-btn" : null,
                 tooltip: this.i18n.fanyi("VIEW_FLOW"),
-                click: (record: any, modal: any) => {
-                    openResizableDrawer(this.drawerService, {
-                        nzClosable: false,
-                        nzKeyboard: true,
-                        nzMaskClosable: true,
-                        // @ts-ignore
-                        nzPlacement: "right",
-                        nzWidth: "60%",
-                        nzBodyStyle: {
-                            padding: 0
-                        },
-                        nzFooter: null,
-                        nzContent: EruptIframeComponent,
-                        nzContentParams: {
-                            url: location.origin + "/#/fill/flow/approval-detail/" + record["__flow_id__"],
-                            height: "100%",
-                            width: '100%'
-                        }
-                    }, "flow-approval")
-                },
-                iif: (item) => {
-                    return item["__flow_id__"];
-                }
+                // one approval opens directly; several list the row's history to pick from
+                click: (record: any) => this.flow.openMark(record[this.pkCol]),
+                iif: (item) => !!this.flow.mark(item[this.pkCol])
             });
         }
         if (collapsedStd.length > 0) isFoldButtons = true;
@@ -1175,7 +1167,14 @@ export class TableComponent implements OnInit, OnDestroy {
         const doSave = async (ref: NzModalRef<EditComponent>): Promise<boolean> => {
             if (!ref.getContentComponent().beforeSaveValidate()) return false;
             let obj = this.dataHandler.eruptValueToObject(this.eruptBuildModel);
-            let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj).toPromise();
+            const flow = await this.flow.header("EDIT");
+            if (!flow) return false;
+            let res = await this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName, obj, flow).toPromise();
+            // INFO: taken over by an approval flow, whose dialog already told the user
+            if (res.status === Status.INFO) {
+                this.query();
+                return true;
+            }
             if (res.status === Status.SUCCESS) {
                 this.msg.success(this.i18n.fanyi("global.update.success"));
                 this.query();
@@ -1331,6 +1330,39 @@ export class TableComponent implements OnInit, OnDestroy {
         };
     }
 
+    // ── Flows of the model ─────────────────────────────────────────────────────
+    @ViewChild("flow", {static: true})
+    flow: FlowModelComponent;
+
+    onFlowReady() {
+        this.loadFlowMarks();
+    }
+
+    // whether a row of the current page has an approval, so the row operations hold the flow button
+    private flowMarked = false;
+
+    // which rows of the current page approvals concern; buttons are computed when st optimizes the rows,
+    // so that is re-run once the marks are in (as the comment counts do)
+    private loadFlowMarks() {
+        this.flow.loadMarks(this.dataPage.data.map(r => r[this.pkCol]), () => {
+            const marked = Object.keys(this.flow.marks).length > 0;
+            if (marked === this.flowMarked) {
+                this.st?.reload();
+            } else {
+                // the button joins or leaves the row operations, and the column takes or gives back its width
+                this.flowMarked = marked;
+                this.buildTableConfig();
+            }
+        });
+    }
+
+    // A delete an approval flow took over answers INFO: its dialog told the user, the rows stay and show it pending
+    private submittedForApproval(res: { status: Status }): boolean {
+        if (!this.flow.submitted(res)) return false;
+        this.query(this.dataPage.pi);
+        return true;
+    }
+
     // Delete action of the panel, when the model and the row allow it; `reopen` keeps the
     // panel's role (view / edit) for the neighbouring record.
     private recordRemove(record: any, reopen: (r: any, ref: NzModalRef<EditComponent>) => void) {
@@ -1344,7 +1376,13 @@ export class TableComponent implements OnInit, OnDestroy {
         const pk = record[this.pkCol];
         const i = this.dataPage.data.findIndex(r => r[this.pkCol] === pk);
         const neighbour = i < 0 ? undefined : (this.dataPage.data[i + 1] ?? this.dataPage.data[i - 1]);
-        const res = await this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, pk).toPromise();
+        const flow = await this.flow.header("DELETE");
+        if (!flow) return;
+        const res = await this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, pk, flow).toPromise();
+        if (this.submittedForApproval(res)) {
+            ref.close();
+            return;
+        }
         if (res.status !== Status.SUCCESS) return;
         this.msg.success(this.i18n.fanyi("global.delete.success"));
         // last row of a later page: fall back to the previous page
@@ -1539,9 +1577,13 @@ export class TableComponent implements OnInit, OnDestroy {
                         if (this._drill) {
                             Object.assign(header, DataService.drillToHeader(this._drill));
                         }
-                        await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
-                            this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise().then(res => res);
-                        this.msg.success(this.i18n.fanyi("global.add.success"));
+                        const flow = await this.flow.header("ADD");
+                        if (!flow) return false;
+                        Object.assign(header, flow);
+                        const res = await this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
+                            this.dataHandler.eruptValueToObject(this.eruptBuildModel), header).toPromise();
+                        // INFO: taken over by an approval flow, whose dialog already told the user
+                        if (res?.status !== Status.INFO) this.msg.success(this.i18n.fanyi("global.add.success"));
                         this.query();
                         return true;
                     }
@@ -1643,9 +1685,16 @@ export class TableComponent implements OnInit, OnDestroy {
                     nzOnOk: async () => {
                         this.deleting = true;
                         try {
-                            let res = await this.dataService.deleteEruptDataList(this.eruptBuildModel.eruptModel.eruptName, ids).toPromise().then(res => res);
+                            const flow = await this.flow.header("DELETE");
+                            if (!flow) {
+                                this.deleting = false;
+                                return;
+                            }
+                            let res = await this.dataService.deleteEruptDataList(this.eruptBuildModel.eruptModel.eruptName, ids, flow).toPromise().then(res => res);
                             this.deleting = false;
-                            if (res.status == Status.SUCCESS) {
+                            if (this.submittedForApproval(res)) {
+                                this.selectedRows = [];
+                            } else if (res.status == Status.SUCCESS) {
                                 if (this.selectedRows.length == this.dataPage.data.length) {
                                     this.query(this.dataPage.pi == 1 ? 1 : this.dataPage.pi - 1);
                                 } else {
@@ -2410,12 +2459,15 @@ export class TableComponent implements OnInit, OnDestroy {
                                 if (lt.dependNode && lt.value) header["link"] = lt.value;
                             }
                             if (this._drill) Object.assign(header, DataService.drillToHeader(this._drill));
-                            await this.dataService.addEruptData(
+                            const flow = await this.flow.header("ADD");
+                            if (!flow) return false;
+                            Object.assign(header, flow);
+                            const res = await this.dataService.addEruptData(
                                 eruptName,
                                 this.dataHandler.eruptValueToObject(this.eruptBuildModel),
                                 header
-                            ).toPromise().then(res => res);
-                            this.msg.success(this.i18n.fanyi("global.add.success"));
+                            ).toPromise();
+                            if (res?.status !== Status.INFO) this.msg.success(this.i18n.fanyi("global.add.success"));
                             this.query();
                             return true;
                         }

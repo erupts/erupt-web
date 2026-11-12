@@ -27,7 +27,7 @@
             <div class="detail-content">
                 <div class="detail-hero">
                     <div class="content-header">
-                        <h1 class="content-title">{{ selectedInstance?.eruptFlowConfig?.name }}</h1>
+                        <h1 class="content-title">@if (isChange(selectedInstance?.action)) {{{ ('table.flow_pending.' + selectedInstance.action.toLowerCase()) | translate }} · }{{ selectedInstance?.eruptFlowConfig?.name }}</h1>
                         <nz-tag [nzColor]="getStatusColor(selectedInstance?.status)">
                             {{ selectedInstance?.status | translate }}
                         </nz-tag>
@@ -46,6 +46,25 @@
                             <span class="submit-time">{{ 'flow.label.submitted_at' | translate }} {{ selectedInstance?.createTime | local }}</span>
                         </div>
                     </div>
+                    <!-- what approving does to the table, and whether the table took it -->
+                    @if (selectedInstance?.commitError) {
+                        <nz-alert class="change-alert" nzType="error" nzShowIcon
+                                  [nzMessage]="'flow.commit_failed' | translate"
+                                  [nzDescription]="selectedInstance.commitError"></nz-alert>
+                    } @else if (selectedInstance?.status === InstanceStatus.PENDING) {
+                        @if (selectedInstance?.action === FlowAction.DELETE) {
+                            <nz-alert class="change-alert" nzType="warning" nzShowIcon
+                                      [nzMessage]="'flow.change.delete_hint' | translate"></nz-alert>
+                        } @else if (selectedInstance?.action === FlowAction.EDIT) {
+                            <nz-alert class="change-alert" nzType="info" nzShowIcon
+                                      [nzMessage]="'flow.change.edit_hint' | translate" [nzAction]="viewChange"></nz-alert>
+                            <ng-template #viewChange>
+                                <button nz-button nzType="link" nzSize="small" (click)="showRequestedChange()">
+                                    {{ 'flow.change.view' | translate }}
+                                </button>
+                            </ng-template>
+                        }
+                    }
                 </div>
                 <!-- Tab navigation -->
                 <nz-tabs

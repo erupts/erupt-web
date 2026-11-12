@@ -1,6 +1,7 @@
 import {NodeType} from "@flow/model/node.model";
 import {FlexNodeModel} from "@flow/model/flex-node.model";
 import {InstanceStatus, TaskStatus} from "@flow/model/flow-instance.model";
+import {FlowAction} from "@flow/model/flow.model";
 
 export function geneNodeId(): string {
     return Math.random().toString(36).slice(2, 10).toUpperCase();
@@ -63,4 +64,12 @@ export function getStatusColor(status: InstanceStatus | TaskStatus): string {
         default:
             return null;
     }
+}
+
+/**
+ * Whether an instance changes an existing record. Its title then leads with the operation ("Delete · flow name"),
+ * translated where it is shown; an add is the ordinary request and keeps the flow's name alone.
+ */
+export function isChange(action: FlowAction | string): boolean {
+    return action === FlowAction.EDIT || action === FlowAction.DELETE;
 }

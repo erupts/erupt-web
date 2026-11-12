@@ -18,6 +18,7 @@ import {LocalSettingsService} from "../../service/local-settings.service";
 import {PrintTypeComponent} from "../../components/print-type/print-type";
 import {cloneDeep} from "lodash";
 import {canPrint} from "../../model/erupt.model";
+import {FlowModelComponent} from "../../components/flow-model/flow-model.component";
 
 @Component({
     standalone: false,
@@ -84,6 +85,11 @@ export class TreeComponent implements OnInit, OnDestroy {
 
     @ViewChild("tree", {static: false}) tree: NzTreeBaseService;
 
+    @ViewChild("flow", {static: true}) flow: FlowModelComponent;
+
+    // approvals concerning the selected node, the one in progress first
+    nodeFlows: any[] = [];
+
     constructor(private dataService: DataService,
                 public route: ActivatedRoute,
                 @Inject(NzMessageService)
@@ -109,6 +115,8 @@ export class TreeComponent implements OnInit, OnDestroy {
             this.dataService.getEruptBuild(this.eruptName).subscribe(eb => {
                 this.dataHandler.initErupt(eb);
                 this.eruptBuildModel = eb;
+                this.nodeFlows = [];
+                this.flow.load(eb);
                 this.fetchTreeData();
                 this.addBlock();
             });
@@ -124,6 +132,7 @@ export class TreeComponent implements OnInit, OnDestroy {
             this.tree.getSelectedNodeList()[0].isSelected = false;
         }
         this.behavior = Scene.ADD;
+        this.nodeFlows = [];
         this.dataService.getInitValue(this.eruptBuildModel.eruptModel.eruptName).subscribe(data => {
             this.loading = false;
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
@@ -152,27 +161,35 @@ export class TreeComponent implements OnInit, OnDestroy {
         });
     }
 
-    add() {
+    async add() {
+        const flow = await this.flow.header("ADD");
+        if (!flow) return;
         this.loading = true;
         this.behavior = Scene.ADD;
         this.dataService.addEruptData(this.eruptBuildModel.eruptModel.eruptName,
-            this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
+            this.dataHandler.eruptValueToObject(this.eruptBuildModel), flow).subscribe(result => {
             this.fetchTreeData();
             this.dataHandler.emptyEruptValue(this.eruptBuildModel);
-            this.msg.success(this.i18n.fanyi("global.add.success"));
+            // taken over by an approval flow: its dialog already told the user
+            if (!this.flow.submitted(result)) this.msg.success(this.i18n.fanyi("global.add.success"));
             this.loading = false;
         }, error => {
             this.loading = false;
         });
     }
 
-    update() {
+    async update() {
         //validate menu and data integrity
         if (this.validateParentIdValue()) {
+            const flow = await this.flow.header("EDIT");
+            if (!flow) return;
             this.loading = true;
             this.dataService.updateEruptData(this.eruptBuildModel.eruptModel.eruptName,
-                this.dataHandler.eruptValueToObject(this.eruptBuildModel)).subscribe(result => {
-                if (result.status == Status.SUCCESS) {
+                this.dataHandler.eruptValueToObject(this.eruptBuildModel), flow).subscribe(result => {
+                if (this.flow.submitted(result)) {
+                    // the node keeps its values until approved: show them again, with the approval now pending
+                    this.reloadNode();
+                } else if (result.status == Status.SUCCESS) {
                     this.msg.success(this.i18n.fanyi("global.update.success"));
                     this.fetchTreeData();
                 }
@@ -231,11 +248,14 @@ export class TreeComponent implements OnInit, OnDestroy {
                 params: {eruptBuildModel: this.eruptBuildModel, behavior: Scene.ADD, prefillData: data},
                 onOk: async ref => {
                     if (ref.getContentComponent().beforeSaveValidate()) {
-                        await this.dataService.addEruptData(
+                        const flow = await this.flow.header("ADD");
+                        if (!flow) return false;
+                        const res = await this.dataService.addEruptData(
                             eruptName,
-                            this.dataHandler.eruptValueToObject(this.eruptBuildModel)
-                        ).toPromise().then(res => res);
-                        this.msg.success(this.i18n.fanyi("global.add.success"));
+                            this.dataHandler.eruptValueToObject(this.eruptBuildModel),
+                            flow
+                        ).toPromise();
+                        if (!this.flow.submitted(res)) this.msg.success(this.i18n.fanyi("global.add.success"));
                         this.fetchTreeData();
                         return true;
                     }
@@ -253,10 +273,17 @@ export class TreeComponent implements OnInit, OnDestroy {
             this.modal.confirm({
                 nzTitle: this.i18n.fanyi("global.delete.hint"),
                 nzContent: "",
-                nzOnOk: () => {
-                    this.behavior = Scene.ADD;
-                    this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, nzTreeNode.origin.key)
+                nzOnOk: async () => {
+                    const flow = await this.flow.header("DELETE");
+                    if (!flow) return;
+                    this.dataService.deleteEruptData(this.eruptBuildModel.eruptModel.eruptName, nzTreeNode.origin.key, flow)
                         .subscribe(res => {
+                            // the node stays until its deletion is approved
+                            if (this.flow.submitted(res)) {
+                                this.reloadNode();
+                                return;
+                            }
+                            this.behavior = Scene.ADD;
                             if (res.status == Status.SUCCESS) {
                                 nzTreeNode.remove();
                                 if (nzTreeNode.parentNode) {
@@ -306,11 +333,17 @@ export class TreeComponent implements OnInit, OnDestroy {
             nzTitle: this.i18n.fanyi("global.delete.hint"),
             nzContent: "",
             nzOkDanger: true,
-            nzOnOk: () => {
+            nzOnOk: async () => {
+                const flow = await this.flow.header("DELETE");
+                if (!flow) return;
                 this.treeLoading = true;
-                this.dataService.deleteEruptDataList(this.eruptBuildModel.eruptModel.eruptName, keys).subscribe(res => {
+                this.dataService.deleteEruptDataList(this.eruptBuildModel.eruptModel.eruptName, keys, flow).subscribe(res => {
                     this.treeLoading = false;
-                    if (res.status == Status.SUCCESS) {
+                    if (this.flow.submitted(res)) {
+                        this.checkedKeys = [];
+                        this.checkedCount = 0;
+                        this.reloadNode();
+                    } else if (res.status == Status.SUCCESS) {
                         this.msg.success(this.i18n.fanyi("global.delete.success"));
                         this.checkedKeys = [];
                         this.checkedCount = 0;
@@ -402,8 +435,66 @@ export class TreeComponent implements OnInit, OnDestroy {
         }, () => { this.printLoading = false; });
     }
 
+    // A decision on an approval may have changed the tree, the selected node and what is still pending
+    onFlowChanged() {
+        this.fetchTreeData();
+        if (this.selectLeaf && this.currentKey) this.loadNode();
+    }
+
+    // the selected node as stored, and the approvals concerning it
+    private reloadNode() {
+        this.flow.refresh();
+        this.loadFlowMarks();
+        if (this.selectLeaf && this.currentKey) this.loadNode();
+    }
+
+    private loadNode() {
+        this.loading = true;
+        this.loadNodeFlows();
+        this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.currentKey).subscribe(data => {
+            this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
+            this.loading = false;
+        }, () => {
+            this.loading = false;
+            // gone since: an approved deletion
+            this.currentKey = null;
+            this.showEdit = false;
+        });
+    }
+
+    // the model turned out to run through flows: its nodes and the selected one show their approvals
+    onFlowReady() {
+        this.loadFlowMarks();
+        this.loadNodeFlows();
+    }
+
+    // which nodes approvals concern, so a node waiting on one shows it in the tree
+    private loadFlowMarks() {
+        const keys: any[] = [];
+        const walk = (nodes: any[]) => nodes.forEach(n => {
+            keys.push(n.key);
+            if (n.children?.length) walk(n.children);
+        });
+        walk(this.nodes);
+        this.flow.loadMarks(keys);
+    }
+
+    loadNodeFlows() {
+        this.nodeFlows = [];
+        if (!this.flow.active || !this.selectLeaf || !this.currentKey) return;
+        const key = this.currentKey;
+        this.flow.flowsOf(key).subscribe(flows => {
+            if (key === this.currentKey) this.nodeFlows = flows;
+        });
+    }
+
+    get nodeFlowPending(): boolean {
+        return this.nodeFlows[0]?.status === "PENDING";
+    }
+
     fetchTreeData() {
         this.sortAsc = null;
+        this.flow.refresh();
         this.treeLoading = true;
         const scrollTop = this.getTreeScrollTop();
         this.dataService.queryEruptTreeData(this.eruptName).subscribe(tree => {
@@ -411,6 +502,7 @@ export class TreeComponent implements OnInit, OnDestroy {
             if (tree) {
                 this.dataLength = this.dataHandler.countNodes(tree);
                 this.nodes = this.dataHandler.dataTreeToZorroTree(tree, this.eruptBuildModel.eruptModel.eruptJson.tree.expandLevel);
+                this.loadFlowMarks();
                 if (this.currentKey) {
                     this.selectedKeys = [this.currentKey];
                     setTimeout(() => this.locateNode(), 200);
@@ -508,6 +600,7 @@ private setExpanded(nodes: any[], expanded: boolean): void {
         }
         this.behavior = Scene.EDIT;
         this.showEdit = true;
+        this.loadNodeFlows();
         this.dataService.queryEruptDataById(this.eruptBuildModel.eruptModel.eruptName, this.currentKey).subscribe(data => {
             this.dataHandler.objectToEruptValue(data, this.eruptBuildModel);
             this.loading = false;

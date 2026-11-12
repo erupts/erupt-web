@@ -279,6 +279,7 @@
                                 <i nz-icon nzType="search" nzTheme="outline"></i>{{ 'table.query'|translate }}
                             </button>
                         }
+                        <ng-container [ngTemplateOutlet]="flow.actions"></ng-container>
                         @if (eruptBuildModel.eruptModel.eruptJson.rowOperation) {
                             @for (item of eruptBuildModel.eruptModel.eruptJson.rowOperation; track item.code) {
                                 @if (item.mode != operationMode.SINGLE && !item.fold) {
@@ -746,3 +747,5 @@
         </div>
     </div>
 }
+
+<erupt-flow-model #flow (ready)="onFlowReady()" (changed)="query()"></erupt-flow-model>
