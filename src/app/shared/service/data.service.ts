@@ -169,9 +169,9 @@ export class DataService {
             + DataService.scopeParam();
     }
 
-    // A tpl page is a plain URL, so it cannot send the erupt-scope header: the same value rides as
-    // _scope, encoded once more since the servlet decodes a parameter before the server reads it
-    private static scopeParam(): string {
+    // A tpl page or an EventSource is a plain URL, so it cannot send the erupt-scope header: the same value
+    // rides as _scope, encoded once more since the servlet decodes a parameter before the server reads it
+    static scopeParam(): string {
         const scope = ScopeStore.header();
         return scope ? "&_scope=" + encodeURIComponent(scope) : "";
     }
