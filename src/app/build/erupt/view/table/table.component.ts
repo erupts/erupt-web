@@ -71,6 +71,8 @@ export class TableComponent implements OnInit, OnDestroy {
 
     private cdr = inject(ChangeDetectorRef);
 
+    private host = inject(ElementRef);
+
     // How many icon actions the operation column is sized for when cells wrap (@Layout
     // tableTruncate = false); the rest flow onto further lines.
     private static readonly ONE_LINE_OPERATORS = 5;
@@ -2413,7 +2415,11 @@ export class TableComponent implements OnInit, OnDestroy {
         this.columns.forEach(col => {
             if (!col.index) return;
             const idx = this.colIndexStr(col);
-            columns[idx] = {show: col['show'], width: col.width, fixed: col.fixed as 'left' | 'right' | undefined};
+            const pinned = col[TableComponent.PIN_WIDTH];
+            columns[idx] = {
+                show: col['show'], width: pinned ? undefined : col.width,
+                fixed: col.fixed as 'left' | 'right' | undefined, pinWidth: pinned ? col.width : undefined
+            };
             if (col.title) columnOrder.push(idx);
         });
         this.eruptLocalSettings.patch(eruptName, {columns, columnOrder});
@@ -2430,6 +2436,11 @@ export class TableComponent implements OnInit, OnDestroy {
             if (cfg.show !== undefined) col['show'] = cfg.show;
             if (cfg.width !== undefined) col.width = cfg.width;
             col.fixed = cfg.fixed;
+            if (col.fixed && !col.width) {
+                // pinned before, or by a version that pinned without a width (which st ignores)
+                col.width = cfg.pinWidth || TableComponent.PIN_FALLBACK_WIDTH;
+                col[TableComponent.PIN_WIDTH] = true;
+            }
         });
         if (saved.columnOrder?.length) {
             const orderMap = new Map(saved.columnOrder.map((idx, i) => [idx, i]));
@@ -2459,12 +2470,35 @@ export class TableComponent implements OnInit, OnDestroy {
         this.saveColumnSettings();
     }
 
+    // marks a column whose width was taken only to pin it
+    private static readonly PIN_WIDTH = "_pinWidth";
+
+    private static readonly PIN_FALLBACK_WIDTH = 200;
+
+    // st pins a column only when it knows its width, and text columns have none of their own (they share the
+    // room left): such a column keeps the width it has on screen while pinned, and gives it back when unpinned
+    private fitPinWidth(col: STColumn) {
+        if (col.fixed && !col.width) {
+            const title = (typeof col.title === "string" ? col.title : col.title?.text) || "";
+            const th = Array.from((this.host.nativeElement as HTMLElement).querySelectorAll<HTMLElement>("thead th"))
+                .find(it => it.offsetParent && it.innerText.trim() === title.trim());
+            col.width = th ? Math.round(th.getBoundingClientRect().width) + "px" : TableComponent.PIN_FALLBACK_WIDTH;
+            col[TableComponent.PIN_WIDTH] = true;
+        } else if (!col.fixed && col[TableComponent.PIN_WIDTH]) {
+            col.width = null;
+            delete col[TableComponent.PIN_WIDTH];
+        }
+    }
+
     cycleColumnPin(col: STColumn) {
         if (!col.fixed) col.fixed = 'left';
         else if (col.fixed === 'left') col.fixed = 'right';
         else col.fixed = undefined;
+        this.fitPinWidth(col);
         this.columns = [...this.columns];
         this.saveColumnSettings();
+        // a column going back to sharing the room left has to be measured again
+        this.remountTable();
     }
 
     getColumnPinTooltip(col: STColumn): string {
