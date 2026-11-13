@@ -159,6 +159,15 @@
                 </div>
             }
             <div class="input-card">
+                @if (context) {
+                    <div class="context-strip">
+                        <span nz-icon nzType="paper-clip" nzTheme="outline"></span>
+                        <span>{{ 'ai.chat.context' | translate }}</span>
+                        @if (contextName) {
+                            <span class="context-name">{{ contextName }}</span>
+                        }
+                    </div>
+                }
                 @if (agents.length > 0 || llms.length > 1 || !embedded) {
                 <div class="input-toolbar">
                     <div class="toolbar-left">
