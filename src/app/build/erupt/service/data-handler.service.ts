@@ -185,6 +185,59 @@ export class DataHandlerService {
         return values;
     }
 
+    /**
+     * What the search form holds, as plain data a URL can carry: per field its value (v), display
+     * value (vv), range bounds (l, r) and operator (o). Null when nothing is filled in.
+     */
+    searchState(eruptModel: EruptModel): { [field: string]: any } | null {
+        const filled = (v: any) => v != null && v !== '' && !(Array.isArray(v) && !v.length);
+        const state: { [field: string]: any } = {};
+        for (const field of eruptModel.eruptFieldModels) {
+            const edit = field.eruptFieldJson.edit;
+            if (!edit?.search?.value) continue;
+            const one: any = {};
+            if (filled(edit.$value)) one.v = this.slimReference(edit, edit.$value);
+            if (filled(edit.$viewValue) && typeof edit.$viewValue !== 'object') one.vv = edit.$viewValue;
+            if (edit.$l_val != null) one.l = edit.$l_val;
+            if (edit.$r_val != null) one.r = edit.$r_val;
+            const noValue = edit.$operator === QueryExpression.NULL || edit.$operator === QueryExpression.NOT_NULL;
+            if (!Object.keys(one).length && !noValue) continue;
+            // the operator travels with the value: the reader's own default may differ
+            if (edit.$operator) one.o = edit.$operator;
+            state[field.fieldName] = one;
+        }
+        return Object.keys(state).length ? state : null;
+    }
+
+    // A picked reference is the whole row; the search only needs its id and label
+    private slimReference(edit: Edit, value: any): any {
+        const keys = edit.type === EditType.REFERENCE_TABLE ? [edit.referenceTableType.id, edit.referenceTableType.label]
+            : edit.type === EditType.REFERENCE_TREE ? ['id', 'label'] : null;
+        if (!keys) return value;
+        const slim = (v: any) => v && typeof v === 'object' ? Object.fromEntries(keys.map(k => [k, v[k]])) : v;
+        return Array.isArray(value) ? value.map(slim) : slim(value);
+    }
+
+    /** Fills the search form from {@link searchState}; fields the model does not search are ignored. */
+    applySearchState(eruptModel: EruptModel, state: { [field: string]: any }): boolean {
+        let applied = false;
+        // a date went into the URL as an ISO string, the pickers hold Date objects
+        const date = (v: any) => typeof v === 'string' && !isNaN(Date.parse(v)) ? new Date(v) : v;
+        for (const field of eruptModel.eruptFieldModels) {
+            const edit = field.eruptFieldJson.edit;
+            const one = state?.[field.fieldName];
+            if (!edit?.search?.value || !one || typeof one !== 'object') continue;
+            const revive = (v: any) => edit.type !== EditType.DATE ? v : Array.isArray(v) ? v.map(date) : date(v);
+            if (one.v !== undefined) edit.$value = revive(one.v);
+            if (one.vv !== undefined) edit.$viewValue = one.vv;
+            if (one.l !== undefined) edit.$l_val = revive(one.l);
+            if (one.r !== undefined) edit.$r_val = revive(one.r);
+            if (one.o && Object.values(QueryExpression).includes(one.o)) edit.$operator = one.o;
+            applied = true;
+        }
+        return applied;
+    }
+
     buildSearchConditions(eruptModel: EruptModel): QueryCondition[] {
         const conditions: QueryCondition[] = [];
         for (const field of eruptModel.eruptFieldModels) {

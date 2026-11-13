@@ -143,7 +143,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
     // modes, then scroll to it and flash it once. Pages without a menu item (a
     // detail route, a link opened from a table) have nothing to locate.
     locateCurrent() {
-        const path = this.menuSrv.getPathByUrl(this.router.url, true) as Nav[];
+        const path = this.menuSrv.getPathByUrl(this.router.url.split("?")[0], true) as Nav[];
         if (!path.length) {
             return;
         }

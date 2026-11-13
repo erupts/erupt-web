@@ -159,7 +159,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
             }
             const navUrl = (evt as NavigationEnd).urlAfterRedirects || (evt as NavigationEnd).url;
             // remember the menu this navigation landed on (the welcome page lists them)
-            const hit = this.menuSrv.find({url: navUrl, recursive: true});
+            const hit = this.menuSrv.find({url: navUrl.split("?")[0], recursive: true});
             if (hit && hit.link && !hit.hide) {
                 RecentMenus.push(hit.link, hit.text || '');
             }

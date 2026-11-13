@@ -324,7 +324,8 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     refreshPage() {
         const url = this.router.url;
         this.refreshing = true;
-        this.reuseTabSrv.close(url, true);
+        // tabs are kept by path, without the query
+        this.reuseTabSrv.close(url.split("?")[0], true);
         // shouldReuseRoute returns true for same-URL navigation so the component won't
         // be recreated. Go through '/' first (different routeConfig) with skipLocationChange
         // so the address bar never changes, then navigate to target URL for a clean reload.
