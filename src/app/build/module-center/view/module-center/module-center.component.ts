@@ -1,7 +1,6 @@
 import {Component, OnInit, Optional} from '@angular/core';
 import {NzMessageService} from 'ng-zorro-antd/message';
 import {I18NService} from '@core';
-import {MODULE_GROUPS} from '@shared/model/erupt-menu';
 import {LayoutEruptComponent} from '../../../../layout/erupt/erupt.component';
 import {Status} from '../../../erupt/model/erupt-api.model';
 import {ModuleCenterService, ModuleVo} from '../../module-center.service';
@@ -50,18 +49,18 @@ export class ModuleCenterComponent implements OnInit {
         return this.i18n.fanyi('module.' + key);
     }
 
-    groupTitle(group: string): string {
-        return this.t('group.' + group.toLowerCase());
-    }
-
-    /** Sections in the groups' order, a module without a group last, the filter applied. */
+    /** Sections as the server ordered them, the filter keeps that order; the group title arrives translated. */
     sections(): Section[] {
         const text = this.filter.trim().toLowerCase();
         const shown = this.modules.filter(m => !text || m.name.toLowerCase().includes(text)
             || (m.description || '').toLowerCase().includes(text));
-        return [...MODULE_GROUPS, 'OTHER']
-            .map(group => ({group, modules: shown.filter(m => (m.group || 'OTHER') === group)}))
-            .filter(s => s.modules.length > 0);
+        const sections: Section[] = [];
+        for (const m of shown) {
+            let section = sections.find(s => s.group === m.group);
+            if (!section) sections.push(section = {group: m.group, modules: []});
+            section.modules.push(m);
+        }
+        return sections;
     }
 
     /** The documentation link with the reader's language filled in: docs.erupt.xyz speaks zh and en. */

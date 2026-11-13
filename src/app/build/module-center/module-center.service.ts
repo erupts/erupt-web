@@ -7,7 +7,8 @@ import {EruptApiModel} from '../erupt/model/erupt-api.model';
 /** One registered module, as the module center lists it. */
 export interface ModuleVo {
     name: string;
-    group: string | null;
+    /** Translated group title, ready to display; the list arrives sorted by it */
+    group: string;
     description: string | null;
     /** May hold a {lang} placeholder for the reader's language */
     docs: string | null;
