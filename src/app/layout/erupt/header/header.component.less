@@ -205,6 +205,22 @@
                 .anticon {
                     font-size: 18px;
                 }
+
+                // The unread count: a notch below ant's small size, so it reads as a mark on
+                // the bell rather than a button beside it
+                ::ng-deep .ant-badge-count {
+                    min-width: 13px;
+                    height: 13px;
+                    padding: 0 3px;
+                    font-size: 10px;
+                    line-height: 13px;
+                    border-radius: 7px;
+
+                    // the digits scroll inside boxes sized for the original height
+                    .ant-scroll-number-only, .ant-scroll-number-only-unit {
+                        height: 13px;
+                    }
+                }
             }
 
             .spin {
