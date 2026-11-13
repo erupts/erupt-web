@@ -1,6 +1,8 @@
 import {Component, DestroyRef, inject} from "@angular/core";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {ActivatedRoute} from "@angular/router";
+import {ReuseTabService} from "@delon/abc/reuse-tab";
+import {MenuService} from "@delon/theme";
 import {ScopeService, ScopeView} from "@shared/service/scope.service";
 
 /**
@@ -37,14 +39,33 @@ export class ScopeGateComponent {
     // the page asked for; with none (a direct visit) the pick stays here
     target: string;
 
-    constructor(route: ActivatedRoute, scopeService: ScopeService) {
-        // the component is reused from one model page to the next: follow the params
-        route.paramMap.pipe(takeUntilDestroyed(inject(DestroyRef))).subscribe(params =>
-            this.scope = scopeService.scopes.find(s => s.name === params.get("scope")));
-        route.queryParamMap.pipe(takeUntilDestroyed(inject(DestroyRef))).subscribe(params => {
+    constructor(route: ActivatedRoute, scopeService: ScopeService, reuseTab: ReuseTabService, menuSrv: MenuService) {
+        // taken here, not inside the callbacks below: they run once the scopes arrive, outside the
+        // injection context, where inject() may not be called
+        const destroyed = inject(DestroyRef);
+        // the tab bar lists the page it shows even when the route is never cached (reuse: false),
+        // and no menu sits behind this route, so its raw path would show as the tab's title
+        const retitle = () => {
+            if (!this.scope) return;
+            // the tab stands for the page waiting behind the gate: name it after that page's menu
+            // entry, and after the scope itself only when the visit carries no target
+            const path = this.target ? menuSrv.getPathByUrl(this.target.split("?")[0]) : [];
+            reuseTab.title = path.length ? path[path.length - 1].text : this.scope.title;
+        };
+        // a hard load of this page builds it before the layout has fetched the scopes (the guard
+        // waits for them, this route has none): wait, then follow the params — paramMap replays
+        // its current value on subscribe
+        scopeService.ready().pipe(takeUntilDestroyed(destroyed)).subscribe(() => {
+            route.paramMap.pipe(takeUntilDestroyed(destroyed)).subscribe(params => {
+                this.scope = scopeService.scopes.find(s => s.name === params.get("scope"));
+                retitle();
+            });
+        });
+        route.queryParamMap.pipe(takeUntilDestroyed(destroyed)).subscribe(params => {
             const target = params.get("target");
             // only an in-app path: it is handed to navigateByUrl
             this.target = target?.startsWith("/") && !target.startsWith("//") ? target : null;
+            retitle();
         });
     }
 
