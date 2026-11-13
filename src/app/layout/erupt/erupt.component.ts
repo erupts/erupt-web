@@ -330,8 +330,7 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
                 link: "/"
             }]);
             const groups = new Map(res.filter(m => m.pid == null).map(m => [m.code, m.group]));
-            const menuItems = menuSections(generateTree(res, null), key => groups.get(key),
-                group => this.i18n.fanyi('module.group.' + group.toLowerCase()));
+            const menuItems = menuSections(generateTree(res, null), key => groups.get(key));
             if (hiddenMenus.length) {
                 menuItems.push({group: false, hide: true, text: '_hidden', children: hiddenMenus});
             }

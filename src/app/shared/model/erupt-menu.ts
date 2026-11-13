@@ -8,24 +8,18 @@ export interface MenuVo {
     type: MenuTypeEnum;
     value: string;
     pid: number;
-    /** Group of the module declaring a root menu, null for a user's own menu */
+    /** Translated section title of the root menu's group; null for the untitled platform section and a user's own menus */
     group?: string | null;
 }
 
-// The module groups in the order the sidebar and the module center show them (ModuleGroup on the server).
-export const MODULE_GROUPS = ['PLATFORM', 'BUSINESS', 'AI', 'DEV_TOOLS', 'OPS', 'DATA', 'DEMO'];
-
-// The sidebar's sections, cut from the root menus in their sort order: a run of root menus of one
-// module group becomes a titled section; platform menus and menus without a group (the user's own)
-// are untitled, except that one sorted inside a group's run stays in that section. Sort remains the
-// only order there is: an admin moves a whole section, or a menu into one, by changing sort.
-export function menuSections(tree: Menu[], groupOf: (key: string) => string | null | undefined,
-                             title: (group: string) => string): Menu[] {
-    // the titled kind of each root menu, null for the untitled ones
-    const kinds = tree.map(item => {
-        const group = groupOf(item.key!);
-        return group && group !== 'PLATFORM' ? group : null;
-    });
+// The sidebar's sections, cut from the root menus in their sort order: a run of root menus that
+// carry the same group title becomes a titled section; menus without one (the platform's and the
+// user's own) are untitled. The title arrives translated from the server, so it is shown as is.
+// Sort remains the only order there is: an admin moves a whole section, or a menu into one, by
+// changing sort.
+export function menuSections(tree: Menu[], groupOf: (key: string) => string | null | undefined): Menu[] {
+    // the kind of each root menu: its group title, null for the untitled ones
+    const kinds = tree.map(item => groupOf(item.key!) || null);
     const sections: Menu[] = [];
     let current: Menu | null = null;
     let currentKind: string | null = null;
@@ -38,7 +32,7 @@ export function menuSections(tree: Menu[], groupOf: (key: string) => string | nu
         }
         if (!current || kind !== currentKind) {
             current = kind
-                ? {group: true, hideInBreadcrumb: true, text: title(kind), children: []}
+                ? {group: true, hideInBreadcrumb: true, text: kind, children: []}
                 : {group: false, hideInBreadcrumb: true, text: '~', children: []};
             currentKind = kind;
             sections.push(current);
