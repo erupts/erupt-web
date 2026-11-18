@@ -24,6 +24,7 @@
           @if (!enableEdit) {
             <div
               class="row-text"
+              [title]="modelValue.name"
               (click)="onEnableEdit()">{{ modelValue.name }}
             </div>
           }
