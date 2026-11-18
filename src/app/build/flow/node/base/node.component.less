@@ -46,10 +46,15 @@
             & > div {
                 display: flex;
                 align-items: center;
+                min-width: 0;
 
                 & > div {
                     margin-left: 3px;
                     width: calc(@node-width - 50px);
+                    // Keep the title on one line; long names are truncated with an ellipsis
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             }
 

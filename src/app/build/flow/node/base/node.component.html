@@ -20,6 +20,7 @@
           @if (!enableEdit) {
             <div
               class="row-text"
+              [title]="model.name"
               (click)="onEnableEdit()">{{ model.name }}
             </div>
           }
