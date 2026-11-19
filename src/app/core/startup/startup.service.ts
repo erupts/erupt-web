@@ -8,7 +8,7 @@ import {WindowModel} from "@shared/model/window.model";
 import {hasMenuModeChoice, isHeaderMenuMode, MenuMode, menuModeFlags} from "@shared/model/erupt-menu";
 import {GlobalKeys} from "@shared/model/erupt-const";
 import {RestPath} from "../../build/erupt/model/erupt.enum";
-import {EruptAppData, EruptAppModel} from "@shared/model/erupt-app.model";
+import {EruptAppData, EruptAppModel, SiteConfig} from "@shared/model/erupt-app.model";
 import {NzIconService} from "ng-zorro-antd/icon";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {I18NService} from "../i18n/i18n.service";
@@ -45,6 +45,26 @@ export class StartupService {
     // settings drawer wins over it. The color comes from the active skin's own
     // slot (index.html has already put the skin class on <html>), so a
     // brutalist pastel never boots into another skin and vice versa.
+    // index.html applies the dark default and the appearance lock before Angular boots, from
+    // app.js alone; site settings arrive later, so the same two steps are repeated for them here.
+    private applySiteAppearance(theme: SiteConfig["theme"]): void {
+        if (!theme) return;
+        if (theme.dark !== undefined && localStorage.getItem("dark-theme") === null) {
+            const dark = theme.dark === "auto" ? !!window.matchMedia?.("(prefers-color-scheme: dark)").matches : !!theme.dark;
+            (window as any).eruptApplyDarkTheme?.(dark);
+        }
+        if (theme.customizable === false) {
+            // the keys index.html drops for a locked appearance; a dropped skin is already on the
+            // page, so reload once to boot without it (the keys are gone, so it never loops)
+            const skins = ["brutalist-theme", "liquid-glass", "workspace", "classic", "terminal", "material", "polaris", "linear"];
+            const colors = ["theme-color", "theme-color-brutalist", "theme-color-terminal", "theme-color-polaris",
+                "header-color", "workspace-frame", "login-layout"];
+            const hadSkin = skins.some(k => localStorage.getItem(k) !== null);
+            skins.concat(colors).forEach(k => localStorage.removeItem(k));
+            if (hadSkin) location.reload();
+        }
+    }
+
     private applyTheme(): void {
         // only the color entries go to ng-zorro; the layout-ish defaults are read elsewhere
         const {dark, compact, skin, menuMode, menuGroups, workspaceFrame, customizable, loginLayout, loginBackground, ...theme} = WindowModel.theme || {};
@@ -85,10 +105,15 @@ export class StartupService {
             xhr.onreadystatechange = () => {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     let eruptAppProp = <EruptAppModel>JSON.parse(xhr.responseText);
+                    // site settings may override erupt-app properties (the watermark)
+                    if (eruptAppProp.site?.app) {
+                        Object.assign(eruptAppProp, eruptAppProp.site.app);
+                    }
                     EruptAppData.put(eruptAppProp);
                     WindowModel.applyFileDomain(eruptAppProp.fileDomain);
                     if (WindowModel.applySite(eruptAppProp.site)) {
                         WindowModel.init();
+                        this.applySiteAppearance(eruptAppProp.site.theme);
                         this.applyTheme();
                         (window as any).eruptApplyFavicon?.(WindowModel.config["faviconPath"]);
                     }

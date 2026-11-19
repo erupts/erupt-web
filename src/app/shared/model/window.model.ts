@@ -1,3 +1,4 @@
+import {SiteConfig} from "@shared/model/erupt-app.model";
 import {MapConfig, MapProvider} from "@shared/model/map.model";
 
 export class WindowModel {
@@ -26,11 +27,12 @@ export class WindowModel {
     // rather than replace it — a saved key wins, every other key keeps its app.js value. Image
     // keys arrive as attachment paths and are resolved to URLs here. Returns whether anything
     // was applied, so the caller knows to re-run init().
-    public static applySite(site: { [key: string]: any } | null | undefined): boolean {
+    public static applySite(site: SiteConfig | null | undefined): boolean {
         if (!site || !Object.keys(site).length) {
             return false;
         }
-        const {theme, ...brand} = site;
+        // "app" overrides /erupt-app properties (watermark) and is applied by the startup service
+        const {theme, app, ...brand} = site;
         for (const key of ["logoPath", "logoFoldPath", "loginLogoPath", "faviconPath"]) {
             if (brand[key]) brand[key] = WindowModel.assetUrl(brand[key]);
         }
@@ -71,6 +73,14 @@ export class WindowModel {
     public static copyright: boolean;
 
     public static copyrightTxt: any; //license text
+
+    // Site settings: plain footer text replacing the default copyright line, the ICP number
+    // (linked to beian.miit.gov.cn) and the login notice, already filtered by its time window
+    public static footerText: string;
+
+    public static icpNumber: string;
+
+    public static loginNotice: string;
 
     // eruptSiteConfig.theme — appearance defaults. Every entry applies only while the
     // user has no saved choice in the settings drawer.
@@ -148,6 +158,9 @@ export class WindowModel {
         WindowModel.registerPage = WindowModel.config["registerPage"] || undefined; //registration page URL
         WindowModel.copyright = WindowModel.config["copyright"];
         WindowModel.copyrightTxt = WindowModel.config["copyrightTxt"]; //license text
+        WindowModel.footerText = WindowModel.config["footerText"] || undefined;
+        WindowModel.icpNumber = WindowModel.config["icpNumber"] || undefined;
+        WindowModel.loginNotice = WindowModel.config["loginNotice"] || undefined;
         WindowModel.upload = WindowModel.config["upload"] || false;
         // Legacy top-level switches (darkTheme / compactTheme / skin / brutalistTheme /
         // liquidGlass / menuMode) are folded into theme so the rest of the app reads one place;

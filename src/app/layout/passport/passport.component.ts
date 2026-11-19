@@ -37,6 +37,12 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     copyrightTxt = WindowModel.copyrightTxt;
 
+    footerText = WindowModel.footerText;
+
+    icpNumber = WindowModel.icpNumber;
+
+    loginNotice = WindowModel.loginNotice;
+
     tenantDomainInfo = EruptTenantInfoData.get();
 
     // Site config may lock the appearance (theme.customizable = false): the
