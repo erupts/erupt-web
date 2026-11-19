@@ -11,6 +11,7 @@ import {DomSanitizer} from "@angular/platform-browser";
 import {NzConfigService} from "ng-zorro-antd/core/config";
 import {Skin, switchSkin} from "@shared/util/theme.util";
 import {installModalDragClamp} from "@shared/util/pwa.util";
+import {PageAccountService} from "@shared/service/page-account.service";
 
 @Component({
     selector: 'app-root',
@@ -30,7 +31,8 @@ export class AppComponent implements OnInit {
         @Inject(NzModalService) private modal: NzModalService,
         @Inject(NzMessageService) private msg: NzMessageService,
         @Inject(NzNotificationService) private notification: NzNotificationService,
-        private nzConfigService: NzConfigService
+        private nzConfigService: NzConfigService,
+        private pageAccount: PageAccountService
     ) {
         renderer.setAttribute(el.nativeElement, 'ng-alain-version', VERSION_ALAIN.full);
         renderer.setAttribute(el.nativeElement, 'ng-zorro-version', VERSION_ZORRO.full);
@@ -51,6 +53,7 @@ export class AppComponent implements OnInit {
         // the header bar follow the skin instead of only the <html> class.
         window["eruptApplySkin"] = (skin: string) => switchSkin(this.nzConfigService, skin as Skin);
         installModalDragClamp();
+        this.pageAccount.start();
         let configLoad = false;
         this.router.events.subscribe(ev => {
             if (ev instanceof RouteConfigLoadStart) {

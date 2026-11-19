@@ -1,0 +1,77 @@
+:host {
+    display: block;
+}
+
+.rl {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px 0;
+    text-align: center;
+}
+
+.rl__name {
+    margin-top: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--erupt-text, rgba(0, 0, 0, .88));
+}
+
+.rl__tip {
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--erupt-text-secondary, rgba(0, 0, 0, .65));
+}
+
+.rl__form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin-top: 24px;
+    text-align: left;
+}
+
+.rl__otp {
+    text-align: center;
+    letter-spacing: 4px;
+}
+
+.rl__hint {
+    margin-top: -6px;
+    font-size: 12px;
+    color: var(--ant-warning-color, #faad14);
+}
+
+.rl__code {
+    display: flex;
+    gap: 8px;
+
+    img {
+        flex-shrink: 0;
+        height: 40px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+}
+
+.rl__error {
+    font-size: 13px;
+    color: var(--ant-error-color, #ff4d4f);
+}
+
+.rl__links {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+    font-size: 13px;
+
+    a {
+        color: var(--erupt-text-secondary, rgba(0, 0, 0, .65));
+    }
+
+    a:hover {
+        color: var(--ant-primary-color);
+    }
+}

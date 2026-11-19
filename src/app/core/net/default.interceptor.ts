@@ -25,12 +25,23 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzNotificationService} from "ng-zorro-antd/notification";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {I18NService} from "../i18n/i18n.service";
+import {ReloginService} from "../../layout/erupt/component/relogin/relogin.service";
+import {SessionService} from "@shared/service/session.service";
+import {PageAccountService} from "@shared/service/page-account.service";
 
 /**
  * Default HTTP interceptor.See registration for details `app.module.ts`
  */
 @Injectable()
 export class DefaultInterceptor implements HttpInterceptor {
+
+    // Set by the first call the session token got through. A token refused before that was dead
+    // when the page loaded: nothing is on screen to keep (a refresh can be stuck in a route guard
+    // waiting on its very first request), so that goes to the login page instead of the dialog.
+    private sessionLive = false;
+
+    private static readonly LOGOUT_API = "erupt-api/logout";
+
     constructor(private injector: Injector,
                 @Inject(NzModalService)
                 private modal: NzModalService,
@@ -158,10 +169,22 @@ export class DefaultInterceptor implements HttpInterceptor {
                     this.msg.warning(this.i18n.fanyi("share.session_expired"));
                     return throwError(() => event);
                 }
-                if (this.router.url !== "/passport/login") {
-                    this.cacheService.set(GlobalKeys.loginBackPath, this.router.url);
+                // logging out of a session that already ended: SessionService leaves either way
+                if ((event.url || "").indexOf(DefaultInterceptor.LOGOUT_API) !== -1) {
+                    return throwError(() => event);
                 }
-                if (event.url.indexOf("erupt-api/menu") !== -1) {
+                // a refresh can be refused while its first navigation is still running: return to
+                // where it was going, not to the "/" the router reports until it lands
+                const backPath = this.router.currentNavigation()?.finalUrl?.toString()
+                    || this.router.currentNavigation()?.extractedUrl?.toString()
+                    || this.router.url;
+                if (!backPath.startsWith("/passport")) {
+                    this.cacheService.set(GlobalKeys.loginBackPath, backPath);
+                }
+                // nothing worth keeping on screen (the shell never came up, or a lock screen covers it):
+                // straight to the login page
+                if (event.url.indexOf("erupt-api/menu") !== -1 || !this.sessionLive
+                    || this.injector.get(SessionService).locked) {
                     this.goTo("/passport/login");
                     this.modal.closeAll();
                     this.tokenService.clear();
@@ -241,33 +264,6 @@ export class DefaultInterceptor implements HttpInterceptor {
         if (!url.startsWith("https://") && !url.startsWith("http://") && !url.startsWith("//")) {
             url = environment.api.baseUrl + url;
         }
-        // Show the login page in a dialog
-        // if (this.whiteApi.indexOf(url.split("erupt-api/")[1]) == -1) {
-        //     let token = this.tokenService.get();
-        //     if (token) {
-        //         let expire = moment(token.expire).toDate().getTime() / 1000;
-        //         if (new Date().getTime() / 1000 >= expire) {
-        //             let modelRef = this.modal.create({
-        //                 // nzWrapClassName: "modal-xs",
-        //                 nzMaskClosable: false,
-        //                 nzKeyboard: false,
-        //                 nzClosable: true,
-        //                 nzFooter: null,
-        //                 nzTitle: "Login",
-        //                 nzContent: UserLoginComponent,
-        //                 nzData: {
-        //                     modelFun: () => {
-        //                         return modelRef.close();
-        //                     }
-        //                 }
-        //             });
-        //             modelRef.getContentComponent().modelFun = () => {
-        //                 return modelRef.close();
-        //             }
-        //             return of(null);
-        //         }
-        //     }
-        // }
         // Receive JSON responses as text and parse them ourselves, so 64-bit ids
         // beyond Number.MAX_SAFE_INTEGER are kept as strings instead of losing precision
         const expectJson = req.responseType === "json";
@@ -282,7 +278,7 @@ export class DefaultInterceptor implements HttpInterceptor {
             headers: headers,
             ...(expectJson ? {responseType: "text" as const} : {})
         });
-        return next.handle(newReq).pipe(
+        const send = (r: HttpRequest<any>) => next.handle(r).pipe(
             map((event: any) => {
                 if (expectJson && event instanceof HttpResponse && typeof event.body === "string") {
                     try {
@@ -294,6 +290,9 @@ export class DefaultInterceptor implements HttpInterceptor {
                 return event;
             }),
             mergeMap((event: any) => {
+                if (event instanceof HttpResponse && event.ok && r.headers.has(this.tokenService.options.token_send_key)) {
+                    this.sessionLive = true;
+                }
                 // Allow unified request error handling — needed when a business error returns HTTP 200
                 if (event instanceof HttpResponse && event.status === 200)
                     return this.handleData(event);
@@ -318,9 +317,45 @@ export class DefaultInterceptor implements HttpInterceptor {
                 if (err && typeof err === 'object' && 'status' in err && 'message' in err && 'promptWay' in err) {
                     return throwError(() => err);
                 }
+                // An expired session that can sign back in on the spot: hold the request until it has,
+                // then send it again, so the caller never sees the 401 and its UI state stays intact
+                if (err instanceof HttpErrorResponse && err.status === 401 && this.canRelogin(r, err)) {
+                    const key = this.tokenService.options.token_send_key;
+                    const resend = (token: string) => send(r.clone({setHeaders: {[key]: token}}));
+                    // sent with the old token but answered after the dialog already renewed it
+                    const current = this.tokenService.get();
+                    if (current.token !== r.headers.get(key)) {
+                        if (this.injector.get(PageAccountService).owns(current)) return resend(current.token);
+                        // another account signed in meanwhile (PageAccountService tells the user): the
+                        // request is this page's account's and must not go out as someone else
+                        return throwError(() => err);
+                    }
+                    return this.injector.get(ReloginService).wait().pipe(
+                        mergeMap(token => token
+                            ? resend(token)
+                            // closed without signing in: the caller gets its error, no second prompt
+                            : throwError(() => err))
+                    );
+                }
                 // For other HTTP errors, delegate to handleData
                 return this.handleData(err);
             })
         );
+        return send(newReq);
+    }
+
+    private canRelogin(req: HttpRequest<any>, err: HttpErrorResponse): boolean {
+        return this.sessionLive
+            && !!this.tokenService.get().token
+            // the dialog would sit under the lock screen, out of reach
+            && !this.injector.get(SessionService).locked
+            && (err.url || "").indexOf(DefaultInterceptor.LOGOUT_API) === -1
+            // only our own calls, which went out carrying the session token
+            && req.headers.has(this.tokenService.options.token_send_key)
+            && !ShareSession.active()
+            // the menu failing means the shell cannot come up: nothing on screen to keep
+            && (err.url || "").indexOf("erupt-api/menu") === -1
+            && !this.router.url.startsWith("/passport")
+            && this.injector.get(ReloginService).supported();
     }
 }

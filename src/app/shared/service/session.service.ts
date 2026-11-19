@@ -40,9 +40,10 @@ export class SessionService {
         this.tokenService.set(model);
     }
 
-    // Ends the session on both sides and returns to the matching sign-in page
+    // Ends the session on both sides and returns to the matching sign-in page; a session the
+    // server already dropped (the call is refused) is left all the same
     logout() {
-        this.dataService.logout().subscribe(() => {
+        const leave = () => {
             this.socketService.closeSocket();
             const token = this.tokenService.get().token;
             if (WindowModel.eruptEvent && WindowModel.eruptEvent.logout) {
@@ -50,7 +51,8 @@ export class SessionService {
             }
             this.router.navigateByUrl(this.utilsService.isTenantToken() ? "/passport/tenant" : this.tokenService.login_url);
             this.tokenService.clear();
-        });
+        };
+        this.dataService.logout().subscribe({next: leave, error: leave});
     }
 
 }
