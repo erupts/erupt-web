@@ -25,7 +25,7 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {NzNotificationService} from "ng-zorro-antd/notification";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {I18NService} from "../i18n/i18n.service";
-import {ReloginService} from "../../layout/erupt/component/relogin/relogin.service";
+import {ReloginService} from "@shared/service/relogin.service";
 import {SessionService} from "@shared/service/session.service";
 import {PageAccountService} from "@shared/service/page-account.service";
 

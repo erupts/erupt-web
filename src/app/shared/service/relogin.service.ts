@@ -1,14 +1,18 @@
-import {Inject, Injectable} from "@angular/core";
+import {Inject, Injectable, Type} from "@angular/core";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {NzModalRef, NzModalService} from "ng-zorro-antd/modal";
 import {AsyncSubject, Observable} from "rxjs";
 import {UtilsService} from "@shared/service/utils.service";
 import {EruptAppData} from "@shared/model/erupt-app.model";
-import {ReloginComponent} from "./relogin.component";
 
 // One sign-in dialog for an expired session, however many requests come back 401 at once
 @Injectable({providedIn: "root"})
 export class ReloginService {
+
+    // The dialog, registered by LayoutModule. Referencing it from here would pull the component into
+    // every build that reaches the http interceptor (the unit tests among them) without the module
+    // that declares it; with no layout loaded there is nothing on screen to keep anyway.
+    component: Type<unknown> = null;
 
     private ref: NzModalRef = null;
 
@@ -22,7 +26,8 @@ export class ReloginService {
     // Only a platform account known by name can sign back in on the spot; tenant sessions
     // and sites with their own login page keep going to that page
     supported(): boolean {
-        return !!this.tokenService.get()?.["account"]
+        return !!this.component
+            && !!this.tokenService.get()?.["account"]
             && !this.utilsService.isTenantToken()
             && !EruptAppData.get().loginPagePath;
     }
@@ -34,7 +39,7 @@ export class ReloginService {
         if (!this.ref) {
             const result = this.result = new AsyncSubject<string | null>();
             this.ref = this.modal.create({
-                nzContent: ReloginComponent,
+                nzContent: this.component,
                 nzWidth: 360,
                 nzCentered: true,
                 nzFooter: null,
