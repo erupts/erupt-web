@@ -23,6 +23,8 @@ import {AnnouncementDetailComponent} from "../component/announcement-detail/anno
 import {NoticeDetailComponent} from "../component/notice-detail/notice-detail.component";
 import {ReuseTabService} from "@delon/abc/reuse-tab";
 import {I18NService} from "@core";
+import {SessionService} from "@shared/service/session.service";
+import {PaletteCommand} from "./components/search.model";
 
 /** Payload of a notice pushed over the websocket. */
 export interface NoticePush {
@@ -184,7 +186,8 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
                 @Inject(DA_SERVICE_TOKEN) private tokenService: TokenService,
                 @Inject(NzModalService) private modal: NzModalService,
                 @Inject(NzNotificationService) private notification: NzNotificationService,
-                @Inject(ReuseTabService) private reuseTabSrv: ReuseTabService) {
+                @Inject(ReuseTabService) private reuseTabSrv: ReuseTabService,
+                private session: SessionService) {
         if (this.tenantDomainInfo && this.tenantDomainInfo.logo) {
             this.logoPath = DataService.previewAttachment(this.tenantDomainInfo.logo);
             // The tenant's logo is its own brand, so it also stands in for the
@@ -343,18 +346,55 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     search() {
         let model = this.modal.create({
-            nzWrapClassName: "modal-xs",
+            nzWidth: 560,
+            nzStyle: {top: "12vh"},
             nzDraggable: true,
             nzMaskClosable: true,
             nzKeyboard: true,
             nzFooter: null,
             nzClosable: false,
             nzBodyStyle: {
-                padding: "12px"
+                padding: "0"
             },
             nzContent: HeaderSearchComponent
         });
-        model.getContentComponent().menu = this.menu
+        const palette = model.getContentComponent();
+        palette.menu = this.menu;
+        palette.commands = this.paletteCommands();
+    }
+
+    // Actions the search palette offers; they live here because the header owns them
+    private paletteCommands(): PaletteCommand[] {
+        const dark = document.documentElement.classList.contains("dark");
+        const commands: PaletteCommand[] = [
+            {key: "refresh", label: this.i18n.fanyi("global.refresh"), icon: "reload", run: () => this.refreshPage()},
+            {key: "fullscreen", label: this.i18n.fanyi("global.fullscreen"), icon: "fullscreen", run: () => this.toggleScreen()},
+            {
+                key: "dark",
+                label: this.i18n.fanyi(dark ? "home.light" : "home.dark"),
+                icon: "bulb",
+                run: () => {
+                    // same storage as the settings drawer's light / dark switch
+                    localStorage.setItem("dark-theme", String(!dark));
+                    window["eruptApplyDarkTheme"](!dark);
+                }
+            },
+            {key: "settings", label: this.i18n.fanyi("setting.config"), icon: "setting", run: () => this.openDrawer()}
+        ];
+        // unlocking re-checks the password against the platform user, which a tenant session has none of
+        if (!this.utilsService.isTenantToken()) {
+            commands.push({key: "lock", label: this.i18n.fanyi("global.lock_screen"), icon: "lock", run: () => this.session.lock()});
+        }
+        commands.push({
+            key: "logout",
+            label: this.i18n.fanyi("global.logout"),
+            icon: "logout",
+            run: () => this.modal.confirm({
+                nzTitle: this.i18n.fanyi("global.confirm_logout"),
+                nzOnOk: () => this.session.logout()
+            })
+        });
+        return commands;
     }
 
     ngOnDestroy(): void {
