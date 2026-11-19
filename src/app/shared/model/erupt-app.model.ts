@@ -12,6 +12,8 @@ export interface EruptAppModel {
     mfa: { enable: boolean; issuer: string; window: number };
     resetPwdPrompt: boolean;  // whether to prompt users who haven't changed the default password
     fileDomain?: string;  // attachment host from the backend AttachmentProxy; null when erupt serves attachments itself
+    // site settings patch laid over window.eruptSiteConfig (WindowModel.applySite)
+    site?: { [key: string]: any };
     properties: object;
 }
 

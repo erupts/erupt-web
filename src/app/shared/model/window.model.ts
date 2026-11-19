@@ -21,6 +21,36 @@ export class WindowModel {
         }
     }
 
+    // Site settings saved in the admin UI (System Management > Site Settings), delivered by
+    // /erupt-app as a patch: only the keys an administrator filled in. They supplement app.js
+    // rather than replace it — a saved key wins, every other key keeps its app.js value. Image
+    // keys arrive as attachment paths and are resolved to URLs here. Returns whether anything
+    // was applied, so the caller knows to re-run init().
+    public static applySite(site: { [key: string]: any } | null | undefined): boolean {
+        if (!site || !Object.keys(site).length) {
+            return false;
+        }
+        const {theme, ...brand} = site;
+        for (const key of ["logoPath", "logoFoldPath", "loginLogoPath", "faviconPath"]) {
+            if (brand[key]) brand[key] = WindowModel.assetUrl(brand[key]);
+        }
+        Object.assign(WindowModel.config, brand);
+        if (theme) {
+            if (theme.loginBackground) theme.loginBackground = WindowModel.assetUrl(theme.loginBackground);
+            WindowModel.config["theme"] = {...(WindowModel.config["theme"] || {}), ...theme};
+        }
+        return true;
+    }
+
+    // An uploaded attachment path as a URL; absolute and data URLs pass through. Attachments are
+    // served without a session, so no token is appended (the login page has none to give).
+    private static assetUrl(path: string): string {
+        if (/^(https?:)?\/\//.test(path) || path.startsWith("data:")) {
+            return path;
+        }
+        return (WindowModel.fileDomain || WindowModel.domain + "erupt-attachment") + path;
+    }
+
     // eruptSiteConfig.map — the map vendor and its key (MapService loads that vendor's SDK on demand)
     public static map: MapConfig;
 

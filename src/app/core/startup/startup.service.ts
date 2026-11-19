@@ -87,6 +87,11 @@ export class StartupService {
                     let eruptAppProp = <EruptAppModel>JSON.parse(xhr.responseText);
                     EruptAppData.put(eruptAppProp);
                     WindowModel.applyFileDomain(eruptAppProp.fileDomain);
+                    if (WindowModel.applySite(eruptAppProp.site)) {
+                        WindowModel.init();
+                        this.applyTheme();
+                        (window as any).eruptApplyFavicon?.(WindowModel.config["faviconPath"]);
+                    }
                     if (!!EruptAppData.get().properties["erupt-tenant"]) {
                         let domainInfoXhr = new XMLHttpRequest();
                         domainInfoXhr.open('GET', RestPath.domainInfo + "?host=" + location.host);
