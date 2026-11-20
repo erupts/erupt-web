@@ -7,12 +7,16 @@ export interface SiteLink {
 
 // The site settings patch from /erupt-app: only the keys an administrator filled in
 export interface SiteConfig {
-    theme?: { dark?: boolean | "auto"; customizable?: boolean; skin?: string; loginBackground?: string; [key: string]: any };
+    theme?: { dark?: boolean | "auto"; compact?: boolean; customizable?: boolean; skin?: string; loginBackground?: string; [key: string]: any };
     // erupt-app properties the site settings override (watermark, offered languages)
     app?: Partial<EruptAppModel>;
     // header toolbar links, rendered as plain links next to app.js r_tools
     links?: SiteLink[];
     defaultLang?: string;
+    // installed app (PWA) icon, merged into eruptSiteConfig.pwa
+    pwa?: { icon?: string };
+    // maintenance mode is on: the text to show (non-administrators are refused)
+    maintenance?: string;
     [key: string]: any;
 }
 

@@ -150,10 +150,53 @@
         }
 
         // ── Copyright ────────────────────────────────────────────────
-        .lp-notice {
-            width: 100%;
-            max-width: 420px;
-            margin: 0 auto 16px;
+        // Site notices across the top of the form pane: a tint of the state color over whatever the
+        // card is (plain, frosted, dark), text aligned with the form's 24px gutter, line breaks kept
+        .lp-banner {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 10px 24px;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-line;
+            word-break: break-word;
+            color: inherit;
+
+            .anticon {
+                flex: none;
+                margin-top: 4px;
+            }
+
+            & + .lp-banner {
+                border-top: 1px solid rgba(128, 128, 128, 0.12);
+            }
+        }
+
+        // the form pane centres its content vertically (wide, cover): pin the banners to the top and
+        // centre the form in what is left, instead of floating both in the middle
+        .lp-banner:last-of-type {
+            margin-bottom: auto;
+        }
+
+        .lp-banner ~ :last-child {
+            margin-bottom: auto;
+        }
+
+        .lp-banner--warning {
+            background: rgba(250, 173, 20, 0.14);
+
+            .anticon {
+                color: #d48806;
+            }
+        }
+
+        .lp-banner--info {
+            background: color-mix(in srgb, var(--ant-primary-color, #1677ff) 10%, transparent);
+
+            .anticon {
+                color: var(--ant-primary-color, #1677ff);
+            }
         }
 
         .lp-copyright {

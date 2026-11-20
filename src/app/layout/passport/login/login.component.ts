@@ -64,6 +64,22 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
 
     registerPage: string = WindowModel.registerPage;
 
+    // Site settings: policy links under the form; ticking them may be required to sign in
+    privacyUrl = WindowModel.privacyUrl;
+
+    termsUrl = WindowModel.termsUrl;
+
+    requireConsent = WindowModel.requireConsent;
+
+    consented = false;
+
+    // refused with a hint while consent is required and not given
+    private consentMissing(): boolean {
+        if (!this.requireConsent || this.consented) return false;
+        this.msg.warning(this.i18n.fanyi("login.consent_required"));
+        return true;
+    }
+
     verifyCodeMark: number;
 
     //set once the password was accepted and a one-time code is still owed
@@ -169,6 +185,7 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
 
     submit() {
         this.error = "";
+        if (this.consentMissing()) return;
         if (this.mfaTicket) {
             this.submitMfa();
             return;
@@ -276,6 +293,7 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
 
     toSso(provider: SsoProvider) {
         this.error = "";
+        if (this.consentMissing()) return;
         this.ssoLoading = this.loading = true;
         //a full page navigation: the provider has to see the browser, not an XHR
         window.location.href = DataService.ssoAuthorizeUrl(provider.code);

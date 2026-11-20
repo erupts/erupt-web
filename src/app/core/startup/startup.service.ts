@@ -51,6 +51,9 @@ export class StartupService {
     // app.js alone; site settings arrive later, so the same two steps are repeated for them here.
     private applySiteAppearance(theme: SiteConfig["theme"]): void {
         if (!theme) return;
+        if (theme.compact !== undefined && localStorage.getItem("compact-theme") === null) {
+            (window as any).eruptApplyCompactTheme?.(!!theme.compact);
+        }
         if (theme.dark !== undefined && localStorage.getItem("dark-theme") === null) {
             const dark = theme.dark === "auto" ? !!window.matchMedia?.("(prefers-color-scheme: dark)").matches : !!theme.dark;
             (window as any).eruptApplyDarkTheme?.(dark);
@@ -124,6 +127,8 @@ export class StartupService {
                         this.applySiteAppearance(eruptAppProp.site.theme);
                         this.applyTheme();
                         (window as any).eruptApplyFavicon?.(WindowModel.config["faviconPath"]);
+                        // the manifest carries the title, colors and icon: rebuild it from the merged config
+                        (window as any).eruptApplyManifest?.(WindowModel.config);
                     }
                     if (!!EruptAppData.get().properties["erupt-tenant"]) {
                         let domainInfoXhr = new XMLHttpRequest();
