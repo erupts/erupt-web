@@ -1,3 +1,11 @@
+// The site settings patch from /erupt-app: only the keys an administrator filled in
+export interface SiteConfig {
+    theme?: { dark?: boolean | "auto"; customizable?: boolean; loginBackground?: string; [key: string]: any };
+    // erupt-app properties the site settings override (the watermark)
+    app?: Partial<EruptAppModel>;
+    [key: string]: any;
+}
+
 export interface EruptAppModel {
     verifyCodeCount: number;
     pwdTransferEncrypt: boolean;
@@ -12,6 +20,8 @@ export interface EruptAppModel {
     mfa: { enable: boolean; issuer: string; window: number };
     resetPwdPrompt: boolean;  // whether to prompt users who haven't changed the default password
     fileDomain?: string;  // attachment host from the backend AttachmentProxy; null when erupt serves attachments itself
+    // site settings patch laid over window.eruptSiteConfig (WindowModel.applySite)
+    site?: SiteConfig;
     properties: object;
 }
 

@@ -100,6 +100,9 @@
     </nav>
 
     <main class="lp-side-content">
+      @if (loginNotice) {
+        <nz-alert class="lp-notice" nzType="info" nzShowIcon [nzMessage]="loginNotice"></nz-alert>
+      }
       <div class="lp-card">
         <!-- wide layout: the brand pane shares the card with the form -->
         @if (layout === LoginLayout.WIDE) {
@@ -121,14 +124,19 @@
       </div>
     </main>
 
-    @if (copyright) {
+    @if (copyright || icpNumber) {
       <p class="lp-copyright">
-        @if (copyrightTxt) {
+        @if (copyright && footerText) {
+          <span>{{ footerText }}</span>
+        } @else if (copyright && copyrightTxt) {
           <span [innerHTML]="copyrightTxt"></span>
         }
-        @if (!copyrightTxt) {
+        @if (copyright && !footerText && !copyrightTxt) {
           &copy; 2018 – {{nowYear}}&nbsp;
           <a href="https://www.erupt.xyz" target="_blank">Erupt Engine</a>
+        }
+        @if (icpNumber) {
+          <a class="lp-icp" href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">{{ icpNumber }}</a>
         }
       </p>
     }
