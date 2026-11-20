@@ -595,6 +595,12 @@ export class EditTypeComponent implements OnInit, OnDestroy, DoCheck {
     // ng-zorro's clear button leaves an alpha of 0 behind, and with alpha disabled no slider can
     // undo it: every later pick keeps the colour transparent. An 8-digit hex ending in 00 is that
     // cleared state, so the model empties and the panel starts over from an opaque colour.
+    // A real clear: ng-zorro's own clear only drops the alpha to 0, which a field with alpha keeps
+    // as a transparent color instead of no value
+    colorClear(field: EruptFieldModel): void {
+        field.eruptFieldJson.edit.$value = null;
+    }
+
     colorModelChange(field: EruptFieldModel, value: string): void {
         if (!field.eruptFieldJson.edit.colorType?.alpha && /^#[0-9a-f]{6}00$/i.test(value || '')) {
             field.eruptFieldJson.edit.$value = null;

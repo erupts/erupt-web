@@ -1745,3 +1745,4 @@ login.consent_prefix,我已阅读并同意,我已閱讀並同意,I have read and
 login.consent_notice,登录即表示同意,登入即表示同意,By signing in you agree to,"En vous connectant, vous acceptez",ログインすると以下に同意したものとみなされます：,로그인하면 다음에 동의하는 것입니다:,"Входя, вы принимаете",Al iniciar sesión acepta,Mit der Anmeldung stimmen Sie zu:,"Ao entrar, você concorda com","Dengan masuk, Anda menyetujui",بتسجيل الدخول فإنك توافق على
 login.privacy_policy,隐私政策,隱私權政策,Privacy Policy,Politique de confidentialité,プライバシーポリシー,개인정보 처리방침,Политика конфиденциальности,Política de privacidad,Datenschutzerklärung,Política de privacidade,Kebijakan Privasi,سياسة الخصوصية
 login.terms,用户协议,使用者協議,Terms of Service,Conditions d'utilisation,利用規約,서비스 약관,Условия использования,Términos del servicio,Nutzungsbedingungen,Termos de serviço,Ketentuan Layanan,شروط الخدمة
+global.clear,清除,清除,Clear,Effacer,クリア,지우기,Очистить,Borrar,Löschen,Limpar,Hapus,مسح

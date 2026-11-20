@@ -312,9 +312,11 @@
                         <se [label]="field.eruptFieldJson.edit.title"
                             [required]="field.eruptFieldJson.edit.notNull"
                             [optionalHelp]="field.eruptFieldJson.edit.desc">
+                            <div class="erupt-color" [class.erupt-color-empty]="!field.eruptFieldJson.edit.$value">
                             <nz-color-picker class="erupt-input"
                                              [(ngModel)]="field.eruptFieldJson.edit.$value"
                                              (ngModelChange)="colorModelChange(field, $event)"
+                                             (nzOnClear)="colorClear(field)"
                                              [name]="field.fieldName"
                                              [nzSize]="size"
                                              nzFormat="hex"
@@ -323,6 +325,11 @@
                                              [nzDisabledAlpha]="!field.eruptFieldJson.edit.colorType.alpha"
                                              [nzPresets]="colorPresets(field)"
                                              [nzDisabled]="isReadonly(field)"></nz-color-picker>
+                            @if (field.eruptFieldJson.edit.$value && !field.eruptFieldJson.edit.notNull && !isReadonly(field)) {
+                                <i nz-icon nzType="close-circle" nzTheme="fill" class="erupt-color-clear"
+                                   [title]="'global.clear' | translate" (click)="colorClear(field)"></i>
+                            }
+                            </div>
                         </se>
                     </div>
                 }
