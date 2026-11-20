@@ -19,11 +19,13 @@ import {NzMessageService} from "ng-zorro-antd/message";
 
 import {NzConfigService} from "ng-zorro-antd/core/config";
 import {
+    applyDefaultSkin,
     applyHeaderColor,
     applyWorkspaceFrame,
     resolveHeaderColor,
     resolveThemeColor,
-    savedWorkspaceFrame
+    savedWorkspaceFrame,
+    skinStorageKeys
 } from "../../shared/util/theme.util";
 
 
@@ -56,12 +58,18 @@ export class StartupService {
         if (theme.customizable === false) {
             // the keys index.html drops for a locked appearance; a dropped skin is already on the
             // page, so reload once to boot without it (the keys are gone, so it never loops)
-            const skins = ["brutalist-theme", "liquid-glass", "workspace", "classic", "terminal", "material", "polaris", "linear"];
+            const skins = skinStorageKeys();
             const colors = ["theme-color", "theme-color-brutalist", "theme-color-terminal", "theme-color-polaris",
                 "header-color", "workspace-frame", "login-layout"];
             const hadSkin = skins.some(k => localStorage.getItem(k) !== null);
             skins.concat(colors).forEach(k => localStorage.removeItem(k));
-            if (hadSkin) location.reload();
+            if (hadSkin) {
+                location.reload();
+                return;
+            }
+        }
+        if (theme.skin) {
+            applyDefaultSkin(theme.skin);
         }
     }
 
@@ -226,7 +234,8 @@ export class StartupService {
                 }
                 let defaultLang = this.i18n.getDefaultLang();
                 if (!localesObj[defaultLang]) {
-                    defaultLang = locales[0]
+                    // not offered (any more): the site default when it is, else the first offered
+                    defaultLang = WindowModel.defaultLang && localesObj[WindowModel.defaultLang] ? WindowModel.defaultLang : locales[0];
                 }
                 this.settingSrv.setLayout('lang', defaultLang);
                 this.i18n.use(defaultLang)

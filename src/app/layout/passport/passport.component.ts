@@ -39,8 +39,6 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     footerText = WindowModel.footerText;
 
-    icpNumber = WindowModel.icpNumber;
-
     loginNotice = WindowModel.loginNotice;
 
     tenantDomainInfo = EruptTenantInfoData.get();

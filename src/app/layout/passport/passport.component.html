@@ -124,19 +124,16 @@
       </div>
     </main>
 
-    @if (copyright || icpNumber) {
+    @if (copyright) {
       <p class="lp-copyright">
-        @if (copyright && footerText) {
+        @if (footerText) {
           <span>{{ footerText }}</span>
-        } @else if (copyright && copyrightTxt) {
+        } @else if (copyrightTxt) {
           <span [innerHTML]="copyrightTxt"></span>
         }
-        @if (copyright && !footerText && !copyrightTxt) {
+        @if (!footerText && !copyrightTxt) {
           &copy; 2018 – {{nowYear}}&nbsp;
           <a href="https://www.erupt.xyz" target="_blank">Erupt Engine</a>
-        }
-        @if (icpNumber) {
-          <a class="lp-icp" href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">{{ icpNumber }}</a>
         }
       </p>
     }

@@ -1,8 +1,18 @@
+export interface SiteLink {
+    name: string;
+    url: string;
+    icon?: string;
+    newWindow: boolean;
+}
+
 // The site settings patch from /erupt-app: only the keys an administrator filled in
 export interface SiteConfig {
-    theme?: { dark?: boolean | "auto"; customizable?: boolean; loginBackground?: string; [key: string]: any };
-    // erupt-app properties the site settings override (the watermark)
+    theme?: { dark?: boolean | "auto"; customizable?: boolean; skin?: string; loginBackground?: string; [key: string]: any };
+    // erupt-app properties the site settings override (watermark, offered languages)
     app?: Partial<EruptAppModel>;
+    // header toolbar links, rendered as plain links next to app.js r_tools
+    links?: SiteLink[];
+    defaultLang?: string;
     [key: string]: any;
 }
 

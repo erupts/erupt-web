@@ -1,3 +1,4 @@
+import {WindowModel} from "@shared/model/window.model";
 // See: https://ng-alain.com/docs/i18n
 import {DatePipe, registerLocaleData} from '@angular/common';
 import ngEn from '@angular/common/locales/en';
@@ -196,6 +197,10 @@ export class I18NService implements OnInit {
     public getDefaultLang(): string {
         if (this.settings.layout.lang) {
             return this.settings.layout.lang;
+        }
+        // site settings: the default for a browser that never picked a language
+        if (WindowModel.defaultLang) {
+            return WindowModel.defaultLang;
         }
         let res = (navigator.languages ? navigator.languages[0] : null) || navigator.language;
         const arr = res.split('-');
