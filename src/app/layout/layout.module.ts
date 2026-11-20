@@ -55,8 +55,10 @@ import {NzSpaceComponent, NzSpaceItemDirective} from "ng-zorro-antd/space";
 import {NzTooltipDirective} from "ng-zorro-antd/tooltip";
 import {A11yModule} from "@angular/cdk/a11y";
 import {LockScreenComponent} from "./erupt/component/lock-screen/lock-screen.component";
+import {ReloginComponent} from "./erupt/component/relogin/relogin.component";
+import {ReloginService} from "@shared/service/relogin.service";
 
-const COMPONENTS = [LayoutEruptComponent, LayoutBlankComponent, LockScreenComponent, AiFloatComponent];
+const COMPONENTS = [LayoutEruptComponent, LayoutBlankComponent, LockScreenComponent, ReloginComponent, AiFloatComponent];
 
 const HEADER_COMPONENTS = [
     HeaderSearchComponent,
@@ -118,4 +120,9 @@ const PASSPORT = [LayoutPassportComponent];
     exports: [...COMPONENTS, ...PASSPORT]
 })
 export class LayoutModule {
+
+    constructor(relogin: ReloginService) {
+        relogin.component = ReloginComponent;
+    }
+
 }

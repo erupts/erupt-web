@@ -1,0 +1,53 @@
+<div class="rl">
+  <nz-avatar [nzSize]="56" [nzText]="settings.user.name && settings.user.name.substring(0, 1)"
+             [nzSrc]="settings.user.avatar || null"></nz-avatar>
+  <div class="rl__name">{{ settings.user.name || account }}</div>
+  <div class="rl__tip">
+    @if (step === Step.MFA) {
+      {{ (recoveryMode ? 'login.mfa.recovery_subtitle' : 'login.mfa.subtitle') | translate }}
+    } @else {
+      {{ 'relogin.tip' | translate }}
+    }
+  </div>
+
+  <form class="rl__form" (ngSubmit)="submit()">
+    @if (step === Step.MFA) {
+      <input #input nz-input nzSize="large" name="otp" class="rl__otp" autocomplete="one-time-code"
+             [attr.inputmode]="recoveryMode ? null : 'numeric'" [maxlength]="recoveryMode ? 32 : 6"
+             [placeholder]="(recoveryMode ? 'login.mfa.recovery_placeholder' : 'login.mfa.placeholder') | translate"
+             [ngModel]="otp" (ngModelChange)="onOtp($event)" [disabled]="loading">
+    } @else {
+      <nz-input-group nzSize="large" nzPrefixIcon="lock">
+        <input #input nz-input type="password" name="pwd" [(ngModel)]="pwd" autocomplete="current-password"
+               [placeholder]="'login.pwd' | translate" [disabled]="loading"
+               (keyup)="capsLock = $event.getModifierState('CapsLock')">
+      </nz-input-group>
+      @if (capsLock) {
+        <div class="rl__hint">{{ 'login.caps_lock' | translate }}</div>
+      }
+      @if (useVerifyCode) {
+        <div class="rl__code">
+          <input nz-input nzSize="large" name="verifyCode" [maxLength]="10" [(ngModel)]="verifyCode"
+                 [placeholder]="'login.validate_code' | translate" [disabled]="loading">
+          <img [src]="verifyCodeUrl" [alt]="'login.validate_code' | translate" (click)="changeVerifyCode()">
+        </div>
+      }
+    }
+    @if (error) {
+      <div class="rl__error">{{ error }}</div>
+    }
+    <button nz-button nzType="primary" nzSize="large" nzBlock type="submit" [nzLoading]="loading"
+            [disabled]="step === Step.MFA ? !otp : !pwd">
+      {{ (step === Step.MFA ? 'login.mfa.button' : 'login.button') | translate }}
+    </button>
+  </form>
+
+  <div class="rl__links">
+    @if (step === Step.MFA) {
+      <a (click)="switchRecovery()">
+        {{ (recoveryMode ? 'login.mfa.use_authenticator' : 'login.mfa.use_recovery') | translate }}
+      </a>
+    }
+    <a (click)="toLoginPage()">{{ 'login.mfa.switch_account' | translate }}</a>
+  </div>
+</div>
