@@ -90,6 +90,24 @@
         <a class="lf-link" [href]="registerPage">{{ 'login.register'|translate }}</a>
       </nz-form-item>
     }
+    @if (privacyUrl || termsUrl) {
+      <nz-form-item class="lf-consent" style="margin-bottom:12px">
+        @if (requireConsent) {
+          <label nz-checkbox [(ngModel)]="consented" [ngModelOptions]="{standalone: true}">{{ 'login.consent_prefix'|translate }}</label>
+        } @else {
+          <span>{{ 'login.consent_notice'|translate }}</span>&nbsp;
+        }
+        @if (privacyUrl) {
+          <a class="lf-link" [href]="privacyUrl" target="_blank" rel="noopener noreferrer">{{ 'login.privacy_policy'|translate }}</a>
+        }
+        @if (privacyUrl && termsUrl) {
+          <span>&nbsp;·&nbsp;</span>
+        }
+        @if (termsUrl) {
+          <a class="lf-link" [href]="termsUrl" target="_blank" rel="noopener noreferrer">{{ 'login.terms'|translate }}</a>
+        }
+      </nz-form-item>
+    }
     } @else {
       <div class="lf-mfa-account">
         <i nz-icon nzType="user" nzTheme="outline"></i>

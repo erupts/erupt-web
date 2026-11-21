@@ -32,11 +32,15 @@ export class WindowModel {
             return false;
         }
         // "app" overrides /erupt-app properties (watermark) and is applied by the startup service
-        const {theme, app, ...brand} = site;
+        const {theme, app, pwa, ...brand} = site;
         for (const key of ["logoPath", "logoFoldPath", "loginLogoPath", "faviconPath"]) {
             if (brand[key]) brand[key] = WindowModel.assetUrl(brand[key]);
         }
         Object.assign(WindowModel.config, brand);
+        if (pwa) {
+            // merged, so the app.js shortcuts stay
+            WindowModel.config["pwa"] = {...(WindowModel.config["pwa"] || {}), icon: pwa.icon ? WindowModel.assetUrl(pwa.icon) : undefined};
+        }
         if (theme) {
             if (theme.loginBackground) theme.loginBackground = WindowModel.assetUrl(theme.loginBackground);
             WindowModel.config["theme"] = {...(WindowModel.config["theme"] || {}), ...theme};
@@ -84,6 +88,16 @@ export class WindowModel {
     public static siteLinks: SiteLink[] = [];
 
     public static defaultLang: string;
+
+    // Site settings on the login page: policy links, whether ticking them is required, and the
+    // maintenance text while maintenance mode is on
+    public static privacyUrl: string;
+
+    public static termsUrl: string;
+
+    public static requireConsent: boolean;
+
+    public static maintenance: string;
 
     // eruptSiteConfig.theme — appearance defaults. Every entry applies only while the
     // user has no saved choice in the settings drawer.
@@ -165,6 +179,10 @@ export class WindowModel {
         WindowModel.loginNotice = WindowModel.config["loginNotice"] || undefined;
         WindowModel.siteLinks = WindowModel.config["links"] || [];
         WindowModel.defaultLang = WindowModel.config["defaultLang"] || undefined;
+        WindowModel.privacyUrl = WindowModel.config["privacyUrl"] || undefined;
+        WindowModel.termsUrl = WindowModel.config["termsUrl"] || undefined;
+        WindowModel.requireConsent = !!WindowModel.config["requireConsent"] && !!(WindowModel.privacyUrl || WindowModel.termsUrl);
+        WindowModel.maintenance = WindowModel.config["maintenance"] || undefined;
         WindowModel.upload = WindowModel.config["upload"] || false;
         // Legacy top-level switches (darkTheme / compactTheme / skin / brutalistTheme /
         // liquidGlass / menuMode) are folded into theme so the rest of the app reads one place;

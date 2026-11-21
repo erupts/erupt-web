@@ -41,6 +41,8 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     loginNotice = WindowModel.loginNotice;
 
+    maintenance = WindowModel.maintenance;
+
     tenantDomainInfo = EruptTenantInfoData.get();
 
     // Site config may lock the appearance (theme.customizable = false): the

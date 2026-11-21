@@ -72,6 +72,36 @@
             justify-content: flex-start;
         }
 
+        // the picker plus a clear icon beside it; an empty value shows antd's "no color" swatch
+        // (white with a red slash) instead of the picker's default blue
+        .erupt-color {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            nz-color-picker.erupt-input {
+                flex: 1;
+                min-width: 0;
+            }
+        }
+
+        .erupt-color-clear {
+            color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.25));
+            cursor: pointer;
+
+            &:hover {
+                color: var(--erupt-text-secondary, rgba(0, 0, 0, 0.45));
+            }
+        }
+
+        .erupt-color-empty .ant-color-picker-color-block-inner {
+            background: linear-gradient(-45deg, transparent calc(50% - 1px), #ff4d4f calc(50% - 1px), #ff4d4f calc(50% + 1px), transparent calc(50% + 1px)), #fff !important;
+        }
+
+        .erupt-color-empty .ant-color-picker-trigger-text {
+            visibility: hidden;
+        }
+
 
         form.ant-form-horizontal {
             se .ant-form-item-label {

@@ -100,9 +100,6 @@
     </nav>
 
     <main class="lp-side-content">
-      @if (loginNotice) {
-        <nz-alert class="lp-notice" nzType="info" nzShowIcon [nzMessage]="loginNotice"></nz-alert>
-      }
       <div class="lp-card">
         <!-- wide layout: the brand pane shares the card with the form -->
         @if (layout === LoginLayout.WIDE) {
@@ -119,6 +116,20 @@
           </div>
         }
         <div class="lp-card__form">
+          <!-- site notices: a strip across the top of the form pane, so every layout carries them
+               at the form's own width (wide splits the card, cover docks it, wallpaper frosts it) -->
+          @if (maintenance) {
+            <div class="lp-banner lp-banner--warning" role="alert">
+              <i nz-icon nzType="tool" nzTheme="outline"></i>
+              <span>{{ maintenance }}</span>
+            </div>
+          }
+          @if (loginNotice) {
+            <div class="lp-banner lp-banner--info" role="status">
+              <i nz-icon nzType="notification" nzTheme="outline"></i>
+              <span>{{ loginNotice }}</span>
+            </div>
+          }
           <router-outlet></router-outlet>
         </div>
       </div>
