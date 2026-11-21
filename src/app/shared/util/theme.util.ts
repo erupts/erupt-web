@@ -116,6 +116,19 @@ export function applySkin(skin: Skin): void {
     });
 }
 
+// The localStorage keys a saved skin choice lives under (one per non-default skin)
+export function skinStorageKeys(): string[] {
+    return Object.values(SKIN_CLASS);
+}
+
+// A site default skin arriving after boot (site settings): applied only while the user has no saved
+// choice, and not recorded as one, so a later change of the default still reaches them
+export function applyDefaultSkin(skin: string): void {
+    if (skinStorageKeys().some(k => localStorage.getItem(k) !== null)) return;
+    const root = document.documentElement;
+    (Object.keys(SKIN_CLASS) as Exclude<Skin, Skin.DEFAULT>[]).forEach(s => root.classList.toggle(SKIN_CLASS[s], skin === s));
+}
+
 // `resolvedThemeColor` short-circuits reading --ant-primary-color off <html>.
 // Callers that change the theme color and the bar in the same tick need it:
 // ng-zorro writes the custom property asynchronously, so at that point the

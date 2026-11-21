@@ -1,4 +1,4 @@
-import {SiteConfig} from "@shared/model/erupt-app.model";
+import {SiteConfig, SiteLink} from "@shared/model/erupt-app.model";
 import {MapConfig, MapProvider} from "@shared/model/map.model";
 
 export class WindowModel {
@@ -74,13 +74,16 @@ export class WindowModel {
 
     public static copyrightTxt: any; //license text
 
-    // Site settings: plain footer text replacing the default copyright line, the ICP number
-    // (linked to beian.miit.gov.cn) and the login notice, already filtered by its time window
+    // Site settings: plain footer text replacing the default copyright line and the login
+    // notice, already filtered by its time window
     public static footerText: string;
 
-    public static icpNumber: string;
-
     public static loginNotice: string;
+
+    // Site settings: header links, default language
+    public static siteLinks: SiteLink[] = [];
+
+    public static defaultLang: string;
 
     // eruptSiteConfig.theme — appearance defaults. Every entry applies only while the
     // user has no saved choice in the settings drawer.
@@ -159,8 +162,9 @@ export class WindowModel {
         WindowModel.copyright = WindowModel.config["copyright"];
         WindowModel.copyrightTxt = WindowModel.config["copyrightTxt"]; //license text
         WindowModel.footerText = WindowModel.config["footerText"] || undefined;
-        WindowModel.icpNumber = WindowModel.config["icpNumber"] || undefined;
         WindowModel.loginNotice = WindowModel.config["loginNotice"] || undefined;
+        WindowModel.siteLinks = WindowModel.config["links"] || [];
+        WindowModel.defaultLang = WindowModel.config["defaultLang"] || undefined;
         WindowModel.upload = WindowModel.config["upload"] || false;
         // Legacy top-level switches (darkTheme / compactTheme / skin / brutalistTheme /
         // liquidGlass / menuMode) are folded into theme so the rest of the app reads one place;

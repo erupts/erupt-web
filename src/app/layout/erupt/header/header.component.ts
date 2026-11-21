@@ -146,6 +146,9 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
 
     r_tools: CustomerTool[] = WindowModel.r_tools;
 
+    // site settings header links: plain links, never HTML
+    siteLinks = WindowModel.siteLinks;
+
     drawerVisible: boolean = false;
 
 

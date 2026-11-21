@@ -79,7 +79,19 @@
       </li>
     }
 
-    @if (r_tools.length > 0) {
+    @for (link of siteLinks; track link.url) {
+      <li class="hidden-mobile">
+        <a class="alain-default__nav-item r_tool_item" style="cursor:pointer" [href]="link.url" [title]="link.name"
+           [attr.target]="link.newWindow ? '_blank' : null" [attr.rel]="link.newWindow ? 'noopener noreferrer' : null">
+          @if (link.icon) {
+            <i class="fa {{link.icon}}"></i>&nbsp;
+          }
+          {{ link.name }}
+        </a>
+      </li>
+    }
+
+    @if (r_tools.length > 0 || siteLinks.length > 0) {
       <nz-divider nzType="vertical" class="hidden-mobile"></nz-divider>
     }
 
