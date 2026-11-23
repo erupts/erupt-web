@@ -5,6 +5,8 @@
  */
 import {HttpEvent} from "@angular/common/http";
 import {MenuTypeEnum} from "../model/erupt-menu";
+import {Router} from "@angular/router";
+import {SiteLink} from "../model/erupt-app.model";
 
 export function generateMenuPath(type: string, value: string) {
     let menuValue = value || '';
@@ -91,4 +93,17 @@ export function spliceArr(arr: any[], length: number): any[][] {
         res.push(chunk);
     }
     return res;
+}
+
+// A site-settings link set to open inside the app is shown as a framed page, like a link menu;
+// the href stays, so a modified click (new tab) still works. The other modes are plain anchors.
+export function openSiteLink(link: SiteLink, event: MouseEvent, router: Router): void {
+    if (link.openWay !== "frame" || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    event.preventDefault();
+    router.navigateByUrl(generateMenuPath(MenuTypeEnum.link, link.url));
+}
+
+// target / rel of a site-settings link: only a link that opens a new window gets them
+export function siteLinkTarget(link: SiteLink): string | null {
+    return link.openWay === "self" || link.openWay === "frame" ? null : "_blank";
 }

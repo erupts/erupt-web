@@ -1,3 +1,4 @@
+import {applyPageFilter} from "@shared/util/theme.util";
 import {
     AfterViewInit,
     Component,
@@ -211,6 +212,8 @@ export class LayoutEruptComponent implements OnInit, AfterViewInit, OnDestroy {
         );
         this.doc.documentElement.classList[layout["colorGray"] ? "add" : "remove"]("color-gray");
         this.doc.documentElement.classList[layout.colorWeak ? "add" : "remove"]("color-weak");
+        // the two switches above share the root filter with the site filter and the color vision assist
+        applyPageFilter();
         // show menu names under the icons when the sidebar is collapsed (off by default)
         this.doc.documentElement.classList[layout["collapsedText"] ? "add" : "remove"]("aside-collapsed-text");
     }

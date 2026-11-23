@@ -82,7 +82,8 @@
     @for (link of siteLinks; track link.url) {
       <li class="hidden-mobile">
         <a class="alain-default__nav-item r_tool_item" style="cursor:pointer" [href]="link.url" [title]="link.name"
-           [attr.target]="link.newWindow ? '_blank' : null" [attr.rel]="link.newWindow ? 'noopener noreferrer' : null">
+           [attr.target]="siteLinkTarget(link)" [attr.rel]="siteLinkTarget(link) ? 'noopener noreferrer' : null"
+           (click)="openSiteLink(link, $event)">
           @if (link.icon) {
             <i class="fa {{link.icon}}"></i>&nbsp;
           }
@@ -95,7 +96,7 @@
       <nz-divider nzType="vertical" class="hidden-mobile"></nz-divider>
     }
 
-    @if (menu) {
+    @if (menu && !toolHidden('search')) {
       <li>
         <div class="alain-default__nav-item" (click)="search()">
           <i nz-icon nzType="search"></i>
@@ -125,7 +126,7 @@
       </li>
     }
 
-    @if (isEruptNotice) {
+    @if (isEruptNotice && !toolHidden('notice')) {
       <li>
         <div class="alain-default__nav-item" (click)="openEruptNotice()">
           <nz-badge nzSize="small" [nzCount]="unreadCount" [nzOffset]="[2, -5]">
@@ -135,25 +136,29 @@
       </li>
     }
 
-    <li class="hidden-mobile" (click)="refreshPage()">
-      <div class="alain-default__nav-item">
-        <i nz-icon nzType="reload" [class.spin]="refreshing"></i>
-      </div>
-    </li>
+    @if (!toolHidden('refresh')) {
+      <li class="hidden-mobile" (click)="refreshPage()">
+        <div class="alain-default__nav-item">
+          <i nz-icon nzType="reload" [class.spin]="refreshing"></i>
+        </div>
+      </li>
+    }
 
-    <li class="hidden-mobile" (click)="toggleScreen()">
-      <div class="alain-default__nav-item">
-        <i nz-icon [nzType]="isFullScreen ? 'fullscreen-exit' : 'fullscreen'"></i>
-      </div>
-    </li>
+    @if (!toolHidden('fullscreen')) {
+      <li class="hidden-mobile" (click)="toggleScreen()">
+        <div class="alain-default__nav-item">
+          <i nz-icon [nzType]="isFullScreen ? 'fullscreen-exit' : 'fullscreen'"></i>
+        </div>
+      </li>
+    }
 
-    <li [hidden]="!showI18n">
+    <li [hidden]="!showI18n || toolHidden('language')">
       <div class="alain-default__nav-item">
         <i18n-choice></i18n-choice>
       </div>
     </li>
 
-    <li>
+    <li [hidden]="toolHidden('settings')">
       <div class="alain-default__nav-item hidden-mobile" (click)="openDrawer()">
         <i nz-icon nzType="setting" nzTheme="outline"></i>
       </div>

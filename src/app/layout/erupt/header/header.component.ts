@@ -8,7 +8,8 @@ import {Router} from "@angular/router";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {HeaderSearchComponent} from "./components/search.component";
 import {MenuVo, selectedTopMenu, topLevelMenus} from "@shared/model/erupt-menu";
-import {EruptAppData} from "@shared/model/erupt-app.model";
+import {EruptAppData, SiteLink} from "@shared/model/erupt-app.model";
+import {openSiteLink, siteLinkTarget} from "@shared/util/erupt.util";
 import {EruptTenantInfoData} from "../../../build/erupt/model/erupt-tenant";
 import {DataService} from "@shared/service/data.service";
 import {DA_SERVICE_TOKEN, TokenService} from "@delon/auth";
@@ -147,7 +148,18 @@ export class HeaderComponent implements OnInit, AfterViewInit, OnDestroy {
     r_tools: CustomerTool[] = WindowModel.r_tools;
 
     // site settings header links: plain links, never HTML
-    siteLinks = WindowModel.siteLinks;
+    siteLinks = WindowModel.linksAt("header");
+
+    siteLinkTarget = siteLinkTarget;
+
+    openSiteLink(link: SiteLink, event: MouseEvent): void {
+        openSiteLink(link, event, this.router);
+    }
+
+    // site settings may hide a built-in header button
+    toolHidden(tool: string): boolean {
+        return WindowModel.hiddenTools.includes(tool);
+    }
 
     drawerVisible: boolean = false;
 

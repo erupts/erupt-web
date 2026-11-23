@@ -67,6 +67,26 @@
     <nz-switch nzSize="small" [(ngModel)]="compactTheme"
                (ngModelChange)="toggleCompactTheme($event)"></nz-switch>
 </div>
+<!-- a per-user accessibility setting: stays available when the appearance is locked -->
+<div class="setting-item">
+    <span>{{'setting.color-assist' | translate}}</span>
+    <nz-select [(ngModel)]="colorAssist" (ngModelChange)="setColorAssist($event)" nzSize="small" style="width: 130px;">
+        <nz-option nzValue="" [nzLabel]="'setting.color-assist.off' | translate"></nz-option>
+        <nz-option nzValue="protan" [nzLabel]="'setting.color-assist.protan' | translate"></nz-option>
+        <nz-option nzValue="deutan" [nzLabel]="'setting.color-assist.deutan' | translate"></nz-option>
+        <nz-option nzValue="tritan" [nzLabel]="'setting.color-assist.tritan' | translate"></nz-option>
+    </nz-select>
+</div>
+<div class="setting-item">
+    <span>{{'setting.color-gray' | translate}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout['colorGray']"
+               (ngModelChange)="toggleColorGray(layout['colorGray'])"></nz-switch>
+</div>
+<div class="setting-item">
+    <span>{{'setting.color-weak' | translate}}</span>
+    <nz-switch nzSize="small" [(ngModel)]="layout.colorWeak"
+               (ngModelChange)="toggleColorWeak(layout.colorWeak)"></nz-switch>
+</div>
 @if (appearanceCustomizable) {
 <div class="setting-item setting-item--stack">
     <span>{{'setting.skin' | translate}}</span>
@@ -429,16 +449,6 @@
 
 <!-- ── Others ──────────────────────────────────────────────────── -->
 <div class="setting-group-title">{{'setting.group.other' | translate}}</div>
-<div class="setting-item">
-    <span>{{'setting.color-weak' | translate}}</span>
-    <nz-switch nzSize="small" [(ngModel)]="layout.colorWeak"
-               (ngModelChange)="toggleColorWeak(layout.colorWeak)"></nz-switch>
-</div>
-<div class="setting-item">
-    <span>{{'setting.color-gray' | translate}}</span>
-    <nz-switch nzSize="small" [(ngModel)]="layout['colorGray']"
-               (ngModelChange)="toggleColorGray(layout['colorGray'])"></nz-switch>
-</div>
 <div class="setting-item">
     <span>RTL</span>
     <nz-switch nzSize="small" [ngModel]="rtl.dir === 'rtl'" (ngModelChange)="rtl.toggle()"></nz-switch>

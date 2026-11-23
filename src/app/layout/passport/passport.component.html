@@ -135,6 +135,23 @@
       </div>
     </main>
 
+    @if (siteLinks.length) {
+      <p class="lp-copyright" style="padding-bottom:8px">
+        @for (link of siteLinks; track link.url; let last = $last) {
+          <!-- no app frame before sign-in: a link set to open inside the app opens in this window -->
+          <a [href]="link.url" [attr.target]="link.openWay === 'blank' || !link.openWay ? '_blank' : null"
+             [attr.rel]="link.openWay === 'blank' || !link.openWay ? 'noopener noreferrer' : null">
+            @if (link.icon) {
+              <i class="fa {{link.icon}}"></i>&nbsp;
+            }
+            {{ link.name }}</a>
+          @if (!last) {
+            <span>&nbsp;·&nbsp;</span>
+          }
+        }
+      </p>
+    }
+
     @if (copyright) {
       <p class="lp-copyright">
         @if (footerText) {

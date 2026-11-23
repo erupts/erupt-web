@@ -27,7 +27,12 @@ export class WindowModel {
     // rather than replace it — a saved key wins, every other key keeps its app.js value. Image
     // keys arrive as attachment paths and are resolved to URLs here. Returns whether anything
     // was applied, so the caller knows to re-run init().
+    // The site settings patch this page booted with, as delivered. A sign-in may change whose
+    // settings apply (a tenant's own instead of the platform's): the login pages compare and reload.
+    public static siteDelivered: string = "null";
+
     public static applySite(site: SiteConfig | null | undefined): boolean {
+        WindowModel.siteDelivered = JSON.stringify(site ?? null);
         if (!site || !Object.keys(site).length) {
             return false;
         }
@@ -86,6 +91,14 @@ export class WindowModel {
 
     // Site settings: header links, default language
     public static siteLinks: SiteLink[] = [];
+
+    // Site settings: the built-in header buttons an administrator hid
+    public static hiddenTools: string[] = [];
+
+    // The site links shown at one place; a link without a position belongs to the header
+    public static linksAt(position: "header" | "user" | "login"): SiteLink[] {
+        return (WindowModel.siteLinks || []).filter(link => (link.position || "header") === position);
+    }
 
     public static defaultLang: string;
 
@@ -178,6 +191,7 @@ export class WindowModel {
         WindowModel.footerText = WindowModel.config["footerText"] || undefined;
         WindowModel.loginNotice = WindowModel.config["loginNotice"] || undefined;
         WindowModel.siteLinks = WindowModel.config["links"] || [];
+        WindowModel.hiddenTools = WindowModel.config["hiddenTools"] || [];
         WindowModel.defaultLang = WindowModel.config["defaultLang"] || undefined;
         WindowModel.privacyUrl = WindowModel.config["privacyUrl"] || undefined;
         WindowModel.termsUrl = WindowModel.config["termsUrl"] || undefined;
