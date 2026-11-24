@@ -2,7 +2,8 @@ import {ScopeStore} from "@shared/service/scope.service";
 import {Inject, Injectable} from "@angular/core";
 import {_HttpClient} from "@delon/theme";
 import {HttpResponse} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {Observable, of} from "rxjs";
+import {catchError, map} from "rxjs/operators";
 import {Announcement, LoginModel, MfaStatus, NoticeChannel, NoticeMessageDetail, NoticeScene, SsoProvider, TenantInfo, Userinfo} from "../model/user.model";
 import {DA_SERVICE_TOKEN, ITokenService} from "@delon/auth";
 import {WindowModel} from "@shared/model/window.model";
@@ -14,7 +15,7 @@ import {VL} from "../../build/erupt/model/erupt-field.model";
 import {Checkbox, DrillInput, Page, Row, Tree} from "../../build/erupt/model/erupt.model";
 import {EruptApiModel} from "../../build/erupt/model/erupt-api.model";
 import {EruptBuildModel} from "../../build/erupt/model/erupt-build.model";
-import {EruptAppData} from "@shared/model/erupt-app.model";
+import {EruptAppData, EruptAppModel} from "@shared/model/erupt-app.model";
 import {R, SimplePage} from "@shared/model/api.model";
 import {MentionUser, RecordComment} from "../../build/erupt/model/record-comment.model";
 import {RecordRevision} from "../../build/erupt/model/record-revision.model";
@@ -42,6 +43,15 @@ export class DataService {
                 private i18n: I18NService,
                 @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService) {
         DataService.tokenService = this.tokenService;
+    }
+
+    // Whether the site settings in force for the current session differ from the ones this page
+    // booted with: a tenant's own settings only become known once its user signed in.
+    siteSettingsChanged(): Observable<boolean> {
+        return this._http.get<EruptAppModel>(RestPath.eruptApp).pipe(
+            map(app => JSON.stringify(app?.site ?? null) !== WindowModel.siteDelivered),
+            catchError(() => of(false))
+        );
     }
 
     static postExcelFile(url: string, params?: any) { //params are the parameters required for the POST request, url is the request URL

@@ -480,3 +480,71 @@ export function switchSkin(nzConfigService: NzConfigService, skin: Skin): string
     applyHeaderColor(resolveHeaderColor(), toHexColor(color));
     return color;
 }
+
+// ── Page filter ──────────────────────────────────────────────────────────────
+// One filter list on the root element (a filter there covers the viewport without re-anchoring fixed
+// elements): the site's forced filter (site settings: grayscale, high contrast), the user's invert and
+// grayscale switches, and the user's color vision assist, kept in localStorage like light/dark.
+const SITE_FILTERS: Record<string, string> = {grayscale: "grayscale(1)", contrast: "contrast(1.25)"};
+
+// Color vision assists: the part of a color the viewer cannot tell apart is moved into the channels
+// they can (daltonization), as one color matrix per type; grays are left as they are
+const COLOR_ASSISTS: Record<string, string> = {
+    protan: "1 0 0 0 0 -0.2549 1.2549 0 0 0 0.3031 -0.5451 1.242 0 0 0 0 0 1 0",
+    deutan: "1 0 0 0 0 -0.4375 1.4375 0 0 0 0.2625 -0.5625 1.3 0 0 0 0 0 1 0",
+    tritan: "1.05 -0.3825 0.3325 0 0 0 1.2345 -0.2345 0 0 0 0 1 0 0 0 0 0 1 0"
+};
+
+const COLOR_ASSIST_KEY = "color-assist";
+
+let siteFilter: string | undefined;
+
+// The user's saved color vision assist: "protan" | "deutan" | "tritan", or "" for none
+export function colorAssist(): string {
+    let saved: string | null = null;
+    try {
+        saved = localStorage.getItem(COLOR_ASSIST_KEY);
+    } catch (e) {
+    }
+    return saved && COLOR_ASSISTS[saved] ? saved : "";
+}
+
+export function setColorAssist(value: string): void {
+    try {
+        COLOR_ASSISTS[value] ? localStorage.setItem(COLOR_ASSIST_KEY, value) : localStorage.removeItem(COLOR_ASSIST_KEY);
+    } catch (e) {
+    }
+    applyPageFilter();
+}
+
+// Re-applies both layers; pass the site filter when it is (re)delivered, omit it to keep the last one
+export function applyPageFilter(site?: string | null): void {
+    if (site !== undefined) siteFilter = site || undefined;
+    const assist = colorAssist();
+    document.getElementById("erupt-page-filter")?.remove();
+    const parts: string[] = [];
+    if (siteFilter && SITE_FILTERS[siteFilter]) parts.push(SITE_FILTERS[siteFilter]);
+    // the user's own invert / grayscale switches (classes on <html>, see theme.less) join the same
+    // filter list: an inline filter would otherwise silently override the class rules
+    const root = document.documentElement.classList;
+    if (root.contains("color-gray") && siteFilter !== "grayscale") parts.push(SITE_FILTERS["grayscale"]);
+    if (root.contains("color-weak")) parts.push("invert(80%)");
+    if (assist) {
+        const ns = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(ns, "svg");
+        svg.setAttribute("id", "erupt-page-filter");
+        svg.setAttribute("aria-hidden", "true");
+        svg.setAttribute("style", "position:absolute;width:0;height:0");
+        const filter = document.createElementNS(ns, "filter");
+        filter.setAttribute("id", "erupt-page-filter-matrix");
+        filter.setAttribute("color-interpolation-filters", "sRGB");
+        const matrix = document.createElementNS(ns, "feColorMatrix");
+        matrix.setAttribute("type", "matrix");
+        matrix.setAttribute("values", COLOR_ASSISTS[assist]);
+        filter.appendChild(matrix);
+        svg.appendChild(filter);
+        document.body.appendChild(svg);
+        parts.push("url(#erupt-page-filter-matrix)");
+    }
+    document.documentElement.style.filter = parts.join(" ");
+}

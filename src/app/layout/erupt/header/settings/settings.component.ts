@@ -25,7 +25,10 @@ import {
     switchSkin,
     toHexColor,
     WorkspaceFrame,
-    workspaceFrameGroups
+    workspaceFrameGroups,
+    applyPageFilter,
+    colorAssist,
+    setColorAssist
 } from "@shared/util/theme.util";
 
 @Component({
@@ -182,6 +185,14 @@ export class SettingsComponent implements OnInit {
         window["eruptApplyDarkTheme"](dark);
     }
 
+    // color vision assist: "" | "protan" | "deutan" | "tritan"
+    colorAssist: string = colorAssist();
+
+    setColorAssist(value: string) {
+        this.colorAssist = value;
+        setColorAssist(value);
+    }
+
     toggleCompactTheme(value: boolean) {
         this.compactTheme = value;
         localStorage.setItem("compact-theme", String(value));
@@ -274,6 +285,7 @@ export class SettingsComponent implements OnInit {
         } else {
             document.documentElement.classList.remove("color-weak");
         }
+        applyPageFilter();
     }
 
     toggleColorGray(value: boolean) {
@@ -284,6 +296,7 @@ export class SettingsComponent implements OnInit {
         } else {
             document.documentElement.classList.remove("color-gray");
         }
+        applyPageFilter();
     }
 
     clear() {

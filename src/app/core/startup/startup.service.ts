@@ -25,7 +25,8 @@ import {
     resolveHeaderColor,
     resolveThemeColor,
     savedWorkspaceFrame,
-    skinStorageKeys
+    skinStorageKeys,
+    applyPageFilter
 } from "../../shared/util/theme.util";
 
 
@@ -112,6 +113,11 @@ export class StartupService {
         await new Promise<void>((resolve, reject) => {
             let xhr = new XMLHttpRequest();
             xhr.open('GET', RestPath.eruptApp);
+            // a signed-in tenant user gets the tenant's own site settings, not the platform's
+            const session = this.tokenService.get();
+            if (session?.token) {
+                xhr.setRequestHeader(this.tokenService.options.token_send_key, session.token);
+            }
             xhr.send();
             xhr.onreadystatechange = () => {
                 if (xhr.readyState == 4 && xhr.status == 200) {
@@ -130,6 +136,8 @@ export class StartupService {
                         // the manifest carries the title, colors and icon: rebuild it from the merged config
                         (window as any).eruptApplyManifest?.(WindowModel.config);
                     }
+                    // the site's forced filter (grayscale...) and the user's own color vision assist
+                    applyPageFilter(WindowModel.config["theme"]?.filter ?? null);
                     if (!!EruptAppData.get().properties["erupt-tenant"]) {
                         let domainInfoXhr = new XMLHttpRequest();
                         domainInfoXhr.open('GET', RestPath.domainInfo + "?host=" + location.host);

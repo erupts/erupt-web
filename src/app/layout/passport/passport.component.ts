@@ -39,6 +39,9 @@ export class LayoutPassportComponent implements AfterViewInit {
 
     footerText = WindowModel.footerText;
 
+    // site settings links placed on the login page: plain links, never HTML
+    siteLinks = WindowModel.linksAt("login");
+
     loginNotice = WindowModel.loginNotice;
 
     maintenance = WindowModel.maintenance;

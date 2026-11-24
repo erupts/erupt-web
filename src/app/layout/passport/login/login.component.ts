@@ -321,6 +321,12 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
         setTimeout(() => this.otpInput?.nativeElement?.focus());
     }
 
+    // The page booted with the settings known before sign-in; a tenant's own differ, and they
+    // reach every part of the shell (brand, theme, favicon), so the page is loaded again with them
+    private reloadForSite() {
+        this.data.siteSettingsChanged().subscribe(changed => changed && location.reload());
+    }
+
     private enterApp(token: string, account?: string) {
         //an account typed on this page is the only one worth remembering
         if (!account) {
@@ -346,9 +352,9 @@ export class UserLoginComponent implements OnDestroy, OnInit, AfterViewInit {
             let loginBackPath = this.cacheService.getNone(GlobalKeys.loginBackPath);
             if (loginBackPath) {
                 this.cacheService.remove(GlobalKeys.loginBackPath);
-                this.router.navigateByUrl(<string>loginBackPath).then();
+                this.router.navigateByUrl(<string>loginBackPath).then(() => this.reloadForSite());
             } else {
-                this.router.navigateByUrl("/").then();
+                this.router.navigateByUrl("/").then(() => this.reloadForSite());
             }
         } else {
             this.modelFun();

@@ -7,7 +7,9 @@ import {NzModalService} from "ng-zorro-antd/modal";
 import {MfaComponent} from "../../../../routes/mfa/mfa.component";
 import {ResetPwdComponent} from "../../../../routes/reset-pwd/reset-pwd.component";
 import {ProfileComponent} from "../../../../routes/profile/profile.component";
-import {EruptAppData} from "@shared/model/erupt-app.model";
+import {EruptAppData, SiteLink} from "@shared/model/erupt-app.model";
+import {Router} from "@angular/router";
+import {openSiteLink, siteLinkTarget} from "@shared/util/erupt.util";
 import {UtilsService} from "@shared/service/utils.service";
 import {SessionService} from "@shared/service/session.service";
 
@@ -38,6 +40,15 @@ import {SessionService} from "@shared/service/session.service";
                   <span [innerHTML]="tool.text | safeHtml"></span>
                 </div>
               }
+            }
+            @for (link of siteLinks; track link.url) {
+              <a nz-menu-item [href]="link.url" [attr.target]="siteLinkTarget(link)"
+                 [attr.rel]="siteLinkTarget(link) ? 'noopener noreferrer' : null" (click)="openSiteLink(link, $event)">
+                @if (link.icon) {
+                  <i class="fa {{link.icon}} mr-sm"></i>
+                }
+                {{ link.name }}
+              </a>
             }
             @if (profileEnable) {
               <div nz-menu-item (click)="profile()">
@@ -90,6 +101,15 @@ export class HeaderUserComponent {
 
     userTools: UserTool[] = WindowModel.userTools;
 
+    // site settings links placed in this menu: plain links, never HTML
+    siteLinks = WindowModel.linksAt("user");
+
+    siteLinkTarget = siteLinkTarget;
+
+    openSiteLink(link: SiteLink, event: MouseEvent): void {
+        openSiteLink(link, event, this.router);
+    }
+
     //unlocking re-checks the password against the platform user, which a tenant session has none of
     lockEnable = false;
 
@@ -101,6 +121,7 @@ export class HeaderUserComponent {
         private modal: NzModalService,
         private utilsService: UtilsService,
         public session: SessionService,
+        private router: Router,
     ) {
         this.profileEnable = !this.utilsService.isTenantToken();
         this.lockEnable = !this.utilsService.isTenantToken();
