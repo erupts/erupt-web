@@ -17,6 +17,8 @@ export interface Dashboard {
     name: string;
     description?: string;
 
+    type?: DashboardType;  // chosen when the dashboard is created; absent = a dashboard
+
     source?: string;  // cube source: null/"local" = this application, otherwise an erupt-cloud node name
     cuber: string;
     explore: string;
@@ -64,7 +66,42 @@ export interface FieldMapping {
     subField: string;
 }
 
+export enum DashboardType {
+    DASHBOARD = 'DASHBOARD',
+    // A data screen: a canvas at a fixed design resolution, scaled to whatever display shows it,
+    // on which reports and decorations are placed freely
+    SCREEN = 'SCREEN',
+}
+
+/** How the design resolution of a data screen meets the display */
+export enum ScreenFit {
+    CONTAIN = 'contain',  // keep the design ratio, whole screen visible
+    WIDTH = 'width',      // keep the design ratio, fill the width and scroll vertically
+    STRETCH = 'stretch',  // fill both ways by distorting
+}
+
+export enum ScreenPanel {
+    NONE = 'none',
+    BORDER = 'border',      // a hairline frame
+    CORNER = 'corner',      // the frame with a bracket top left and bottom right
+    BRACKET = 'bracket',    // a bracket in each of the four corners
+    GLOW = 'glow',          // a lit frame
+    CHAMFER = 'chamfer',    // two corners cut off
+    HEADLINE = 'headline',  // no frame, the title on a band
+    GLASS = 'glass',        // a rounded, translucent card
+}
+
+export interface ScreenSettings {
+    width?: number;      // design resolution
+    height?: number;
+    fit?: ScreenFit;
+    header?: boolean;    // title bar with a clock
+    title?: string;      // blank = the dashboard name
+    panel?: ScreenPanel;
+}
+
 export interface DashboardSettings {
+    screen?: ScreenSettings;  // read only when the dashboard is a DashboardType.SCREEN
     backgroundColor?: string;
     backgroundImage?: string;
     theme?: DashboardTheme;
@@ -102,7 +139,19 @@ export interface CompareConfig {
 /**
  * Report DSL definition
  */
+/** Where a report sits on a data screen, in pixels of the design resolution */
+export interface ReportFrame {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    rotate?: number;  // degrees
+}
+
 export interface ReportDSL extends GridsterItemConfig {
+    // Position on a data screen. The grid position (x, y, cols, rows) stays the dashboard's own,
+    // so switching the mode back and forth loses neither layout
+    frame?: ReportFrame;
     type?: ReportType;
     title?: string;
     description?: string;
@@ -165,4 +214,32 @@ export enum ReportType {
     PIVOT_TABLE = 'PIVOT_TABLE',
     KPI = 'KPI',
     TEXT = 'TEXT',
+
+    // Widgets of a data screen: they show no data and are drawn by cube-screen-widget
+    LABEL = 'LABEL',
+    IMAGE = 'IMAGE',
+    BORDER = 'BORDER',
+    DIVIDER = 'DIVIDER',
+    CLOCK = 'CLOCK',
+    IFRAME = 'IFRAME',
+    VIDEO = 'VIDEO',
+}
+
+const WIDGET_TYPES = new Set([
+    ReportType.LABEL, ReportType.IMAGE, ReportType.BORDER, ReportType.DIVIDER,
+    ReportType.CLOCK, ReportType.IFRAME, ReportType.VIDEO,
+]);
+
+/** Whether a report is a widget of a data screen (decoration or static content) rather than a chart over a cube */
+export function isWidget(report: Pick<ReportDSL, 'type'> | null | undefined): boolean {
+    return WIDGET_TYPES.has(report?.type);
+}
+
+/** What a report keeps under `ui.screen`: how it looks as an object on a data screen */
+export interface ReportScreenStyle {
+    opacity?: number;     // 0–100, absent = opaque
+    panel?: ScreenPanel;  // absent = the panel style of the screen
+    locked?: boolean;     // cannot be picked or moved on the canvas; a press goes to what lies below
+    hidden?: boolean;     // not shown, in the editor and published alike; still listed among the layers
+    group?: string;       // reports with the same value are selected, and so moved, together
 }

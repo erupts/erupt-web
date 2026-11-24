@@ -20,6 +20,8 @@ import {
     ReportType,
     SubModelDSL
 } from "../../model/dashboard.model";
+import {isScreen} from "../../model/screen.util";
+import {formatNumber} from "../../model/number-format";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
 import {CubeFilter, CubeOperator, DimensionFormat} from "../../model/cube-query.model";
@@ -30,6 +32,7 @@ import {
     Chord,
     Column,
     Funnel,
+    G2,
     Gauge,
     Heatmap,
     Line,
@@ -62,6 +65,17 @@ import {forkJoin} from "rxjs";
 import {finalize} from "rxjs/operators";
 
 echarts.use([MapChart, TooltipComponent, VisualMapComponent, CanvasRenderer]);
+
+/** The dark G2 theme without its opaque canvas, so a chart sits on the panel of a data screen */
+const SCREEN_THEME = 'erupt-screen';
+
+G2.registerTheme(SCREEN_THEME, {...G2.getTheme(DashboardTheme.DARK), background: 'transparent'});
+
+/** Series colors of a data screen, used when a report sets none of its own */
+const SCREEN_PALETTE = ['#22d3ee', '#39d6ad', '#f2cd68', '#f49855', '#fb6578', '#6aa8ff', '#a78bfa', '#67829a'];
+
+/** Progress colors of a data screen: the bar and the track it runs on */
+const SCREEN_TRACK = ['#22d3ee', '#1b2d3b'];
 
 @Component({
     selector: 'cube-puzzle-report',
@@ -126,8 +140,16 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     // Dashboard-level theme wins; otherwise follow the global dark theme (html.dark).
     private get effectiveTheme(): DashboardTheme {
-        return this.dsl?.settings?.theme
+        return (this.isScreen ? DashboardTheme.DARK : this.dsl?.settings?.theme)
             || (document.documentElement.classList.contains("dark") ? DashboardTheme.DARK : DashboardTheme.LIGHT);
+    }
+
+    get dark(): boolean {
+        return this.isScreen || this.dsl?.settings?.theme === DashboardTheme.DARK;
+    }
+
+    private get isScreen(): boolean {
+        return isScreen(this.dashboard);
     }
 
     private getSubModelDSL(): SubModelDSL | null {
@@ -585,7 +607,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             const ele = this.pivotContainer.nativeElement;
             this.s2 = new PivotSheet(ele, dataConfig, {
                 width: this.pivotContainer.nativeElement.clientWidth,
-                height: this.pivotContainer.nativeElement.clientHeight
+                height: this.pivotContainer.nativeElement.clientHeight,
+                transformCanvasConfig: () => ({supportsCSSTransform: true})
             });
             this.s2.setThemeCfg({name: this.effectiveTheme === DashboardTheme.DARK ? 'dark' : (this.report.ui['pivotTheme'] || 'gray')});
             this.s2.render();
@@ -695,8 +718,11 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             ...this.report.cube,
             ...this.report.ui,
             autoFit: true,
+            // a data screen scales its stage with a CSS transform; pointer positions must follow it
+            supportCSSTransform: true,
             margin: 12,
-            theme: this.effectiveTheme,
+            theme: this.isScreen ? SCREEN_THEME : this.effectiveTheme,
+            ...(this.isScreen ? {color: SCREEN_PALETTE} : {}),
             meta: {
                 ...this.getFieldMeta(this.report.cube[CubeKey.xField]),
                 ...this.getFieldMeta(this.report.cube[CubeKey.yField]),
@@ -783,7 +809,14 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     colorField: reportDSL.cube[CubeKey.xField] as string,
                     radius: reportDSL.ui["innerRadius"] ? 1 : 0.8,
                     innerRadius: reportDSL.ui["innerRadius"] || 0,
-                    label: reportDSL.ui["showLabel"] ? {type: 'outer'} : false
+                    label: reportDSL.ui["showLabel"] ? {type: 'outer'} : false,
+                    // the figure in the middle of a donut is html, which the G2 theme does not color
+                    ...(this.effectiveTheme === DashboardTheme.DARK ? {
+                        statistic: {
+                            title: {style: {color: 'rgba(255,255,255,0.55)', fontSize: '14px'}},
+                            content: {style: {color: 'rgba(255,255,255,0.9)'}}
+                        }
+                    } : {})
                 });
                 break;
             case ReportType.SCATTER:
@@ -858,7 +891,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                         content: {
                             formatter: ({percent}) => `Rate: ${(percent * 100).toFixed(0)}%`,
                             style: {
-                                color: 'rgba(0,0,0,0.65)',
+                                color: this.effectiveTheme === DashboardTheme.DARK ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.65)',
                                 fontSize: '24px',
                             },
                         },
@@ -967,14 +1000,14 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 chart = new Progress(chartContainer.nativeElement, {
                     ...commonConfig,
                     percent: (data && data.length > 0) ? (data[0][reportDSL.cube[CubeKey.yField] as string] || data[0][CubeKey.yField] || 0) / 100 : 0,
-                    color: reportDSL.ui["color"] || ['#5B8FF9', '#E8EDF3'],
+                    color: reportDSL.ui["color"] || (this.isScreen ? SCREEN_TRACK : ['#5B8FF9', '#E8EDF3']),
                 });
                 break;
             case ReportType.RING_PROGRESS:
                 chart = new RingProgress(chartContainer.nativeElement, {
                     ...commonConfig,
                     percent: (data && data.length > 0) ? (data[0][reportDSL.cube[CubeKey.yField] as string] || data[0][CubeKey.yField] || 0) / 100 : 0,
-                    color: reportDSL.ui["color"] || ['#5B8FF9', '#E8EDF3'],
+                    color: reportDSL.ui["color"] || (this.isScreen ? SCREEN_TRACK : ['#5B8FF9', '#E8EDF3']),
                     innerRadius: reportDSL.ui["innerRadius"] || 0.8,
                     radius: 0.98,
                 });
@@ -1254,6 +1287,11 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             this.s2.destroy();
             this.s2 = null;
         }
+    }
+
+    /** The figure of a KPI, written by the report's number format when it has one */
+    get kpiText(): string {
+        return formatNumber(this.chartData[0][this.report.cube[CubeKey.yField] + ''], this.report.ui?.['format']);
     }
 
     getKpiDelta(): number {

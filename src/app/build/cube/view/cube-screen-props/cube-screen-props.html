@@ -1,0 +1,199 @@
+<div class="props-header">
+    <span>{{ 'cube.screen.props' | translate }}</span>
+    @if (report) {
+        <span class="props-kind"><span nz-icon [nzType]="icon"></span>{{ kind }}</span>
+    } @else if (selection.length) {
+        <span class="props-kind">{{ selection.length }}</span>
+    }
+</div>
+@if (!selection.length) {
+    <div class="props-empty">
+        <span nz-icon nzType="select"></span>
+        {{ 'cube.screen.props.empty' | translate }}
+    </div>
+} @else if (!report) {
+    <div class="props-body">
+      <div class="props-group">
+        <div class="props-section">{{ 'cube.widget.align' | translate }}</div>
+        <div class="props-align">
+            @for (it of aligns; track it.kind) {
+                <button nz-button nzSize="small" (click)="align.emit(it.kind)" [title]="it.title | translate">
+                    <svg viewBox="0 0 16 16" width="16" height="16">
+                        <path [attr.d]="it.line" stroke="currentColor" fill="none"/>
+                        @for (bar of it.bars; track bar) {
+                            <path [attr.d]="bar" fill="currentColor"/>
+                        }
+                    </svg>
+                </button>
+            }
+            @for (it of distributes; track it.axis) {
+                <button nz-button nzSize="small" (click)="distribute.emit(it.axis)" [disabled]="selection.length < 3"
+                        [title]="it.title | translate">
+                    <svg viewBox="0 0 16 16" width="16" height="16">
+                        @for (bar of it.bars; track bar) {
+                            <path [attr.d]="bar" fill="currentColor"/>
+                        }
+                    </svg>
+                </button>
+            }
+        </div>
+      </div>
+      <div class="props-group">
+        <div class="props-buttons">
+            <button nz-button nzSize="small" (click)="group.emit()">
+                <span nz-icon nzType="link"></span> {{ 'cube.screen.group' | translate }}
+            </button>
+            <button nz-button nzSize="small" (click)="ungroup.emit()" [disabled]="!canUngroup">
+                <span nz-icon nzType="disconnect"></span> {{ 'cube.screen.ungroup' | translate }}
+            </button>
+        </div>
+      </div>
+    </div>
+} @else {
+    <div class="props-body">
+      <div class="props-group">
+        <div class="props-section">{{ 'cube.widget.align' | translate }}</div>
+        <div class="props-align">
+            @for (it of aligns; track it.kind) {
+                <button nz-button nzSize="small" (click)="align.emit(it.kind)" [title]="it.title | translate">
+                    <svg viewBox="0 0 16 16" width="16" height="16">
+                        <path [attr.d]="it.line" stroke="currentColor" fill="none"/>
+                        @for (bar of it.bars; track bar) {
+                            <path [attr.d]="bar" fill="currentColor"/>
+                        }
+                    </svg>
+                </button>
+            }
+            @for (it of distributes; track it.axis) {
+                <button nz-button nzSize="small" (click)="distribute.emit(it.axis)" [disabled]="selection.length < 3"
+                        [title]="it.title | translate">
+                    <svg viewBox="0 0 16 16" width="16" height="16">
+                        @for (bar of it.bars; track bar) {
+                            <path [attr.d]="bar" fill="currentColor"/>
+                        }
+                    </svg>
+                </button>
+            }
+        </div>
+      </div>
+      <div class="props-group">
+        <div class="props-section">{{ 'cube.screen.props.position' | translate }}</div>
+        <div class="props-grid">
+            <nz-input-number nzSize="small" [(ngModel)]="report.frame.x" (ngModelChange)="frameChange.emit()" [nzPrecision]="0">
+                <span nzInputPrefix>X</span>
+            </nz-input-number>
+            <nz-input-number nzSize="small" [(ngModel)]="report.frame.y" (ngModelChange)="frameChange.emit()" [nzPrecision]="0">
+                <span nzInputPrefix>Y</span>
+            </nz-input-number>
+            <nz-input-number nzSize="small" [(ngModel)]="report.frame.width" (ngModelChange)="frameChange.emit()" [nzMin]="20" [nzPrecision]="0">
+                <span nzInputPrefix>W</span>
+            </nz-input-number>
+            <nz-input-number nzSize="small" [(ngModel)]="report.frame.height" (ngModelChange)="frameChange.emit()" [nzMin]="20" [nzPrecision]="0">
+                <span nzInputPrefix>H</span>
+            </nz-input-number>
+        </div>
+        <div class="props-row">
+            <label>{{ 'cube.screen.props.rotate' | translate }}</label>
+            <nz-input-number nzSize="small" [ngModel]="report.frame.rotate || 0"
+                             (ngModelChange)="report.frame.rotate = $event || 0; frameChange.emit()"
+                             [nzMin]="-360" [nzMax]="360" [nzPrecision]="0">
+                <span nzInputSuffix>°</span>
+            </nz-input-number>
+        </div>
+      </div>
+      <div class="props-group">
+        <div class="props-section">{{ 'cube.screen.props.appearance' | translate }}</div>
+        <div class="props-row">
+            <label>{{ 'cube.screen.props.opacity' | translate }}</label>
+            <nz-slider [(ngModel)]="opacity" [nzMin]="0" [nzMax]="100"></nz-slider>
+        </div>
+        @if (!widget) {
+            <div class="props-row">
+                <label>{{ 'cube.screen.panel' | translate }}</label>
+                <nz-select nzSize="small" [(ngModel)]="style.panel" nzAllowClear
+                           [nzPlaceHolder]="'cube.screen.panel.inherit' | translate">
+                    @for (panel of panels; track panel) {
+                        <nz-option [nzValue]="panel" [nzLabel]="'cube.screen.panel.' + panel | translate"></nz-option>
+                    }
+                </nz-select>
+            </div>
+        }
+      </div>
+      <div class="props-group">
+        <div class="props-section">{{ 'cube.screen.props.content' | translate }}</div>
+        @if (!widget) {
+            <div class="props-row">
+                <label>{{ 'cube.report.config.title' | translate }}</label>
+                <input nz-input nzSize="small" [(ngModel)]="report.title"/>
+            </div>
+            <button class="props-action" nz-button nzBlock (click)="editData.emit(report)">
+                <span nz-icon nzType="pie-chart"></span> {{ 'cube.screen.props.edit_data' | translate }}
+            </button>
+            @if (kpi) {
+                <div class="props-subsection">{{ 'cube.format.title' | translate }}</div>
+                <div class="props-row">
+                    <label>{{ 'cube.format.thousands' | translate }}</label>
+                    <nz-switch nzSize="small" [(ngModel)]="format.thousands"></nz-switch>
+                </div>
+                <div class="props-row">
+                    <label>{{ 'cube.format.unit' | translate }}</label>
+                    <nz-select nzSize="small" [(ngModel)]="format.unit" nzAllowClear
+                               [nzPlaceHolder]="'cube.screen.panel.none' | translate">
+                        @for (unit of units; track unit.value) {
+                            <nz-option [nzValue]="unit.value" [nzLabel]="unit.label"></nz-option>
+                        }
+                    </nz-select>
+                </div>
+                <div class="props-row">
+                    <label>{{ 'cube.format.decimals' | translate }}</label>
+                    <nz-input-number nzSize="small" [(ngModel)]="format.decimals" [nzMin]="0" [nzMax]="10" [nzPrecision]="0"></nz-input-number>
+                </div>
+                <div class="props-row">
+                    <label>{{ 'cube.format.prefix' | translate }}</label>
+                    <input nz-input nzSize="small" [(ngModel)]="format.prefix"/>
+                </div>
+                <div class="props-row">
+                    <label>{{ 'cube.format.suffix' | translate }}</label>
+                    <input nz-input nzSize="small" [(ngModel)]="format.suffix"/>
+                </div>
+            }
+        }
+        @for (field of fields; track field.key) {
+            <div class="props-row" [class.props-row-stack]="field.kind === PropKind.TEXTAREA">
+                <label>{{ field.label | translate }}</label>
+                @switch (field.kind) {
+                    @case (PropKind.TEXT) {
+                        <input nz-input nzSize="small" [(ngModel)]="report.ui[field.key]"/>
+                    }
+                    @case (PropKind.TEXTAREA) {
+                        <textarea nz-input rows="3" [(ngModel)]="report.ui[field.key]"></textarea>
+                    }
+                    @case (PropKind.NUMBER) {
+                        <nz-input-number nzSize="small" [(ngModel)]="report.ui[field.key]" [nzMin]="field.min" [nzMax]="field.max"></nz-input-number>
+                    }
+                    @case (PropKind.COLOR) {
+                        <input class="props-color" type="color" [(ngModel)]="report.ui[field.key]"/>
+                    }
+                    @case (PropKind.SWITCH) {
+                        <nz-switch nzSize="small" [(ngModel)]="report.ui[field.key]"></nz-switch>
+                    }
+                    @case (PropKind.SELECT) {
+                        <nz-select nzSize="small" [(ngModel)]="report.ui[field.key]">
+                            @for (option of field.options; track option.value) {
+                                <nz-option [nzValue]="option.value" [nzLabel]="option.label | translate"></nz-option>
+                            }
+                        </nz-select>
+                    }
+                    @case (PropKind.ALIGN) {
+                        <nz-radio-group nzSize="small" [(ngModel)]="report.ui[field.key]">
+                            @for (align of ['left', 'center', 'right']; track align) {
+                                <label nz-radio-button [nzValue]="align"><span nz-icon [nzType]="'align-' + align"></span></label>
+                            }
+                        </nz-radio-group>
+                    }
+                }
+            </div>
+        }
+      </div>
+    </div>
+}

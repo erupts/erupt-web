@@ -89,6 +89,7 @@
         "mermaid": "^11.5.0",
         "moment": "^2.29.4",
         "monaco-editor": "^0.34.1",
+        "moveable": "0.53.0",
         "ng-zorro-antd": "^21.0.0",
         "print-js": "^1.6.0",
         "rxjs": "~7.8.0",

@@ -8,3 +8,4 @@ Core capabilities covered:
 - Draft / published version management + rollback
 - Light / dark theme, background config
 - Auto refresh, fullscreen, export
+- Data screen mode: design resolution scaled to any display, free layout (drag / resize / rotate / snap, layers), widgets (text, image, border, divider, clock, web page, video), property panel

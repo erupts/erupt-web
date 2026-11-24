@@ -1,0 +1,42 @@
+@switch (report.type) {
+    @case (ReportType.LABEL) {
+        <div class="widget-label" [style.font-size.px]="ui['fontSize']" [style.color]="ui['color']"
+             [style.justify-content]="ui['align'] === 'left' ? 'flex-start' : ui['align'] === 'right' ? 'flex-end' : 'center'"
+             [style.text-align]="ui['align']" [style.font-weight]="ui['bold'] ? 700 : 400"
+             [style.letter-spacing.px]="ui['letterSpacing']">{{ ui['text'] }}</div>
+    }
+    @case (ReportType.CLOCK) {
+        <div class="widget-label widget-clock" [style.font-size.px]="ui['fontSize']" [style.color]="ui['color']">
+            {{ now | date: (ui['format'] || 'yyyy-MM-dd HH:mm:ss') }}
+        </div>
+    }
+    @case (ReportType.BORDER) {
+        <div class="widget-border" [class]="'border-' + (ui['style'] || 'corner')" [style.--c]="ui['color']"></div>
+    }
+    @case (ReportType.DIVIDER) {
+        <div class="widget-divider" [class.vertical]="ui['vertical']" [style.--c]="ui['color']"></div>
+    }
+    @case (ReportType.IMAGE) {
+        @if (src) {
+            <img class="widget-media" [src]="src" [style.object-fit]="ui['fit'] || 'contain'" alt="" draggable="false"/>
+        } @else {
+            <div class="widget-empty"><span nz-icon nzType="picture"></span></div>
+        }
+    }
+    @case (ReportType.VIDEO) {
+        @if (src) {
+            <video class="widget-media" [src]="src" autoplay playsinline [loop]="ui['loop']" [muted]="ui['muted']"></video>
+        } @else {
+            <div class="widget-empty"><span nz-icon nzType="video-camera"></span></div>
+        }
+    }
+    @case (ReportType.IFRAME) {
+        @if (pageUrl) {
+            <!-- sandboxed: the page runs its own scripts but cannot navigate or script this application -->
+            <iframe class="widget-media" [src]="pageUrl" referrerpolicy="no-referrer"
+                    sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+        } @else {
+            <div class="widget-empty"><span nz-icon nzType="global"></span></div>
+        }
+    }
+}

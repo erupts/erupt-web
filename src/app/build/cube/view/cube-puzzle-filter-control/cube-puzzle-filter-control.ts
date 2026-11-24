@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, HostBinding, Input, OnInit} from '@angular/core';
 import {Dashboard, DashboardDSL, FilterDSL, parseRelativeDefault} from "../../model/dashboard.model";
 import {CubeMeta, FieldType} from "../../model/cube.model";
 import {CubeOperator} from "../../model/cube-query.model";
@@ -28,6 +28,13 @@ export class CubePuzzleFilterControl implements OnInit {
     @Input() size: "large" | "small" | "default" = "default";
 
     @Input() configMode = false;
+
+    /** Drawn on the dark frame of a data screen: the control and what it drops down are dark too */
+    @HostBinding('class.filter-dark') @Input() dark = false;
+
+    get dropdownClass(): string | null {
+        return this.dark ? 'cube-dark-dropdown' : null;
+    }
 
     readonly NULL_SENTINEL = '__null__';
 
@@ -83,6 +90,18 @@ export class CubePuzzleFilterControl implements OnInit {
             }
         }
     }
+
+    /**
+     * What the range picker shows. An unset range is kept as [null, null], which the picker would read as
+     * two dates and show as "now" twice: an empty range is handed over as no dates at all.
+     */
+    get rangeValue(): any[] {
+        const value = this.currentValue;
+        // always the same empty array: a new one on every check would look like a new value every time
+        return Array.isArray(value) && value.some(it => it !== null && it !== undefined) ? value : this.noRange;
+    }
+
+    private readonly noRange: any[] = [];
 
     get currentValue(): any {
         const raw = this.configMode ? this.filter.defaultValue : this.filter.value;

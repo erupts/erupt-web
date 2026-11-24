@@ -1,7 +1,27 @@
 import {NgModule} from '@angular/core';
 
 // ng-zorro modules
-import {NzIconModule} from 'ng-zorro-antd/icon';
+import {NzIconModule, NzIconService} from 'ng-zorro-antd/icon';
+import {
+    AlignCenterOutline,
+    AlignLeftOutline,
+    AlignRightOutline,
+    AppstoreAddOutline,
+    BorderOutline,
+    ClockCircleOutline,
+    DisconnectOutline,
+    ExpandOutline,
+    FontSizeOutline,
+    GlobalOutline,
+    LineOutline,
+    PictureOutline,
+    SelectOutline,
+    UndoOutline,
+    UnlockOutline,
+    VerticalAlignBottomOutline,
+    VerticalAlignTopOutline,
+    VideoCameraOutline
+} from "@ant-design/icons-angular/icons";
 import {NzCardModule} from 'ng-zorro-antd/card';
 import {SharedModule} from "@shared/shared.module";
 import {CommonModule} from "@angular/common";
@@ -19,6 +39,8 @@ import {NzEmptyComponent} from "ng-zorro-antd/empty";
 import {NzColorPickerComponent} from "ng-zorro-antd/color-picker";
 import {CubePuzzleDashboardView} from "./view/cube-puzzle-dashboard-view/cube-puzzle-dashboard-view";
 import {CubePuzzleSubModelConfig} from "./view/cube-puzzle-sub-model-config/cube-puzzle-sub-model-config";
+import {CubeScreenWidget} from "./view/cube-screen-widget/cube-screen-widget";
+import {CubeScreenProps} from "./view/cube-screen-props/cube-screen-props";
 
 
 @NgModule({
@@ -30,6 +52,8 @@ import {CubePuzzleSubModelConfig} from "./view/cube-puzzle-sub-model-config/cube
         CubePuzzleReportConfig,
         CubePuzzleDashboardConfig,
         CubePuzzleSubModelConfig,
+        CubeScreenWidget,
+        CubeScreenProps,
     ],
     exports: [
         CubePuzzleDashboardComponent
@@ -50,4 +74,11 @@ import {CubePuzzleSubModelConfig} from "./view/cube-puzzle-sub-model-config/cube
     ]
 })
 export class CubeModule {
+
+    // The icons of the data screen editor, registered with the lazy module rather than the initial bundle
+    constructor(iconService: NzIconService) {
+        iconService.addIcon(AlignCenterOutline, AlignLeftOutline, AlignRightOutline, AppstoreAddOutline, BorderOutline,
+            ClockCircleOutline, DisconnectOutline, ExpandOutline, FontSizeOutline, GlobalOutline, LineOutline, PictureOutline, SelectOutline, UndoOutline, UnlockOutline, VerticalAlignBottomOutline,
+            VerticalAlignTopOutline, VideoCameraOutline);
+    }
 }

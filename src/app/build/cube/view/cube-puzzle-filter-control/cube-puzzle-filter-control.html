@@ -8,7 +8,7 @@
             @if (isMeasure()) {
                 <input nz-input [(ngModel)]="currentValue" [nzSize]="size" style="width: 100%;"/>
             } @else {
-                <nz-select [(ngModel)]="currentValue" style="width: 100%;" nzAllowClear [nzSize]="size"
+                <nz-select [(ngModel)]="currentValue" style="width: 100%;" nzAllowClear [nzSize]="size" [nzDropdownClassName]="dropdownClass"
                            [nzMode]="(filter.operator == CubeOperator.IN || filter.operator == CubeOperator.NOT_IN) ? 'tags' : 'default'"
                            (nzOpenChange)="openSelect($event)" (ngModelChange)="onValueChange($event)">
                     @if (isLoading) {
@@ -47,12 +47,12 @@
     }
     @case (FieldType.DATE) {
         @if (filter.operator == CubeOperator.BETWEEN) {
-            <nz-range-picker [ngModel]="currentValue" (ngModelChange)="currentValue = $event; onValueChange($event)" [nzSize]="size" [nzShowTime]="true"
+            <nz-range-picker [nzDropdownClassName]="dropdownClass" [ngModel]="rangeValue" (ngModelChange)="currentValue = $event; onValueChange($event)" [nzSize]="size" [nzShowTime]="true"
                              [nzShowNow]="true" [nzRanges]="dateRanges" style="width: 100%;"/>
         } @else if (filter.operator == CubeOperator.FEW_DAYS || filter.operator == CubeOperator.FUTURE_DAYS) {
             <nz-input-number [(ngModel)]="currentValue" (ngModelChange)="onValueChange($event)" [nzSize]="size" style="width: 100%;"></nz-input-number>
         } @else {
-            <nz-date-picker [ngModel]="currentValue" (ngModelChange)="currentValue = $event; onValueChange($event)" [nzSize]="size" [nzShowTime]="true"
+            <nz-date-picker [nzDropdownClassName]="dropdownClass" [ngModel]="currentValue" (ngModelChange)="currentValue = $event; onValueChange($event)" [nzSize]="size" [nzShowTime]="true"
                             [nzShowNow]="true" style="width: 100%;"/>
         }
     }

@@ -1,0 +1,274 @@
+// Part of the editor frame of a data screen: dark whatever theme the application is in, literal colors on
+// purpose, the ng-zorro controls inside dressed to match. The same values as the layer panel in the dashboard less.
+@chrome: #11161d;
+@chrome-edge: #222b36;
+@chrome-hover: #1a222c;
+@chrome-ink: #c9d6e2;
+@chrome-muted: #7f90a3;
+@chrome-accent: #22d3ee;
+@field: #0b0f14;
+@field-edge: #2c3744;
+
+:host {
+    flex-shrink: 0;
+    width: 280px;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid @chrome-edge;
+    background: @chrome;
+    color: @chrome-ink;
+}
+
+.props-header {
+    flex-shrink: 0;
+    // one line with the layer header and the filter row: see the dashboard less
+    box-sizing: border-box;
+    height: 45px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: @chrome-muted;
+    border-bottom: 1px solid @chrome-edge;
+
+    .props-kind {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 400;
+        letter-spacing: 0;
+        color: @chrome-ink;
+    }
+}
+
+.props-empty {
+    padding: 56px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+    font-size: 12px;
+    color: @chrome-muted;
+
+    [nz-icon] {
+        font-size: 28px;
+        opacity: 0.5;
+    }
+}
+
+.props-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.props-group {
+    padding: 14px 14px 6px;
+    border-bottom: 1px solid @chrome-edge;
+
+    &:last-child {
+        border-bottom: 0;
+    }
+}
+
+.props-section {
+    margin-bottom: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: @chrome-ink;
+}
+
+.props-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+
+    nz-input-number {
+        width: 100%;
+    }
+}
+
+.props-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 28px;
+    margin-bottom: 8px;
+
+    > label {
+        flex: 0 0 72px;
+        font-size: 12px;
+        color: @chrome-muted;
+    }
+
+    > :not(label) {
+        flex: 1;
+        min-width: 0;
+    }
+
+    > nz-switch, > nz-radio-group, > .props-color {
+        flex: none;
+    }
+
+    &.props-row-stack {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+
+        > label {
+            flex: none;
+        }
+    }
+}
+
+.props-color {
+    width: 44px;
+    height: 24px;
+    padding: 0;
+    border: 1px solid @field-edge;
+    border-radius: 4px;
+    background: none;
+    cursor: pointer;
+}
+
+.props-align {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+
+    button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+}
+
+.props-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.props-subsection {
+    margin: 14px 0 10px;
+    padding-top: 12px;
+    border-top: 1px dashed @chrome-edge;
+    font-size: 12px;
+    color: @chrome-muted;
+}
+
+.props-action {
+    margin-bottom: 8px;
+}
+
+// ng-zorro controls, dressed for the dark frame
+:host ::ng-deep {
+    .ant-input, .ant-input-number, .ant-input-number-affix-wrapper, .ant-input-affix-wrapper,
+    .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+        background: @field;
+        border-color: @field-edge;
+        color: @chrome-ink;
+        box-shadow: none;
+
+        &:hover, &:focus, &:focus-within {
+            border-color: @chrome-accent;
+        }
+    }
+
+    .ant-input-number-affix-wrapper .ant-input-number {
+        background: transparent;
+        border: 0;
+    }
+
+    .ant-input-number-input, .ant-select-selection-item {
+        color: @chrome-ink;
+    }
+
+    .ant-input-number-prefix, .ant-input-number-suffix, .ant-input-prefix, .ant-input-suffix,
+    .ant-select-arrow, .ant-select-clear, .ant-select-selection-placeholder {
+        color: @chrome-muted;
+    }
+
+    .ant-select-clear {
+        background: @field;
+    }
+
+    .ant-input-number-handler-wrap {
+        background: @chrome-hover;
+
+        .ant-input-number-handler {
+            border-color: @field-edge;
+        }
+
+        .anticon {
+            color: @chrome-muted;
+        }
+    }
+
+    .ant-slider-rail {
+        background: @field-edge;
+    }
+
+    .ant-slider-track, .ant-slider:hover .ant-slider-track {
+        background: @chrome-accent;
+    }
+
+    .ant-slider-handle, .ant-slider:hover .ant-slider-handle {
+        background: @chrome;
+        border-color: @chrome-accent;
+    }
+
+    .ant-switch:not(.ant-switch-checked) {
+        background: @field-edge;
+    }
+
+    .ant-switch-checked {
+        background: @chrome-accent;
+    }
+
+    .ant-radio-button-wrapper {
+        background: @field;
+        border-color: @field-edge;
+        color: @chrome-muted;
+
+        &::before {
+            background: @field-edge;
+        }
+
+        &.ant-radio-button-wrapper-checked {
+            background: fade(@chrome-accent, 14%);
+            border-color: @chrome-accent;
+            color: @chrome-accent;
+        }
+    }
+
+    .ant-btn:not(.ant-btn-primary) {
+        background: @chrome-hover;
+        border-color: @field-edge;
+        color: @chrome-ink;
+
+        &:hover {
+            border-color: @chrome-accent;
+            color: #fff;
+        }
+
+        &[disabled] {
+            opacity: 0.4;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    :host {
+        display: none;
+    }
+}

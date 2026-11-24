@@ -1,5 +1,5 @@
 <div class="cube-puzzle-container"
-     [style.height]="'100%'" [class.dark-theme]="dsl?.settings?.theme === DashboardTheme.DARK">
+     [style.height]="'100%'" [class.dark-theme]="dark" [class.screen-mode]="screen">
     @if (editModel) {
         <div class="puzzle-header">
             <div class="header-left">
@@ -17,9 +17,36 @@
             <div class="header-center">
                 <div class="action-buttons">
                     @if (edit) {
+                        @if (screen) {
+                            <div class="history-buttons">
+                                <button nz-button nzType="default" (click)="undo()" [disabled]="!history?.canUndo"
+                                        [title]="'ai_assist.undo' | translate">
+                                    <span nz-icon nzType="undo"></span>
+                                </button>
+                                <button nz-button nzType="default" (click)="redo()" [disabled]="!history?.canRedo"
+                                        [title]="'cube.screen.redo' | translate">
+                                    <span nz-icon nzType="redo"></span>
+                                </button>
+                            </div>
+                        }
                         <button nz-button nzType="default" (click)="addItem()">
                             <span nz-icon nzType="pie-chart"></span> {{ 'cube.dashboard.add_report' | translate }}
                         </button>
+                        @if (screen) {
+                            <button nz-button nzType="default" nz-dropdown [nzDropdownMenu]="widgetMenu">
+                                <span nz-icon nzType="appstore-add"></span> {{ 'cube.screen.add_widget' | translate }}
+                            </button>
+                            <nz-dropdown-menu #widgetMenu="nzDropdownMenu">
+                                <ul nz-menu>
+                                    @for (def of widgets; track def.type) {
+                                        <li nz-menu-item (click)="addWidget(def)">
+                                            <span nz-icon [nzType]="def.icon" style="margin-right: 8px"></span>
+                                            {{ 'cube.widget.' + def.type | translate }}
+                                        </li>
+                                    }
+                                </ul>
+                            </nz-dropdown-menu>
+                        }
                         <button nz-button nzType="default" (click)="manageSubModels()">
                             <span nz-icon nzType="apartment"></span> {{ 'cube.sub_model.manage' | translate }}
                         </button>
@@ -50,6 +77,35 @@
         </div>
     }
     <div class="cube-main-row">
+        @if (screen && edit) {
+            <div class="layer-panel">
+                <div class="layer-panel-header">
+                    <span>{{ 'cube.screen.layers' | translate }}</span>
+                    <span class="layer-count">{{ dsl.reports.length }}</span>
+                </div>
+                <div class="layer-list" cdkDropList (cdkDropListDropped)="dropLayer($event)">
+                    @for (report of layers; track report) {
+                        <div class="layer-row" cdkDrag [class.active]="isSelected(report)" [class.layer-hidden]="isHidden(report)"
+                             (click)="selectLayer(report, $event)"
+                             (mouseenter)="hoverLayer = report" (mouseleave)="hoverLayer = null">
+                            <span nz-icon [nzType]="layerIcon(report)" class="layer-icon"></span>
+                            <span class="layer-name">{{ layerName(report) }}</span>
+                            @if (isGrouped(report)) {
+                                <span nz-icon nzType="link" class="layer-mark"></span>
+                            }
+                            <button nz-button nzType="text" nzSize="small" [class.on]="isHidden(report)"
+                                    (click)="toggleHidden(report, $event)" [title]="'cube.screen.layer.hide' | translate">
+                                <span nz-icon [nzType]="isHidden(report) ? 'eye-invisible' : 'eye'"></span>
+                            </button>
+                            <button nz-button nzType="text" nzSize="small" [class.on]="isLocked(report)"
+                                    (click)="toggleLock(report, $event)" [title]="'cube.screen.layer.lock' | translate">
+                                <span nz-icon [nzType]="isLocked(report) ? 'lock' : 'unlock'"></span>
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
         <div class="cube-content">
             @if (!cubeMeta) {
                 <div class="cube-skeleton">
@@ -154,7 +210,34 @@
                     </div>
                 </div>
             }
-            @if (cubeMeta) {
+            @if (cubeMeta && screen && !editModel && !hasVisibleFilter) {
+                <!-- A published screen without filters has no bar at all, just these two on hover -->
+                <div class="screen-tools">
+                    <button nz-button nzType="text" nzSize="small" (click)="query()" [title]="'global.refresh' | translate">
+                        <span nz-icon nzType="redo"></span>
+                    </button>
+                    <button nz-button nzType="text" nzSize="small" (click)="toggleFullscreen()" [title]="'global.fullscreen' | translate">
+                        <span nz-icon [nzType]="isFullscreen ? 'fullscreen-exit' : 'fullscreen'"></span>
+                    </button>
+                </div>
+            }
+            @if (cubeMeta && screen && editModel) {
+                <!-- The designer's view of the stage: wheel pans, ctrl + wheel zooms, space + drag moves -->
+                <div class="screen-zoom">
+                    <button nz-button nzType="text" nzSize="small" (click)="zoomStage(1 / 1.25)">
+                        <span nz-icon nzType="minus"></span>
+                    </button>
+                    <span class="screen-zoom-value">{{ zoomPercent }}%</span>
+                    <button nz-button nzType="text" nzSize="small" (click)="zoomStage(1.25)">
+                        <span nz-icon nzType="plus"></span>
+                    </button>
+                    <button nz-button nzType="text" nzSize="small" (click)="resetStage()"
+                            [title]="'cube.screen.zoom.fit' | translate">
+                        <span nz-icon nzType="expand"></span>
+                    </button>
+                </div>
+            }
+            @if (cubeMeta && (!screen || editModel || hasVisibleFilter)) {
                 <div class="puzzle-filter-row">
                     <div class="filter-items" cdkDropList cdkDropListOrientation="horizontal"
                          (cdkDropListDropped)="dropFilter($event)">
@@ -171,7 +254,7 @@
                                         @if (filter.notNull) {<span style="color: #ff4d4f; margin-right: 4px;">*</span>}{{ filter.title || cubeMeta.fieldTitleMap.get(filter.field) }}:
                                     </span>
                                     <cube-puzzle-filter-control [style.width]="getFilterWidth(filter)" size="small"
-                                                                [filter]="filter" [cubeMeta]="cubeMeta" [dsl]="dsl"
+                                                                [filter]="filter" [cubeMeta]="cubeMeta" [dsl]="dsl" [dark]="!!screen"
                                                                 [dashboard]="dashboard"></cube-puzzle-filter-control>
                                     @if (edit) {
                                         <button nz-button nzType="text" nzSize="small" (click)="editFilter($index)">
@@ -190,7 +273,7 @@
                                 <span nz-icon nzType="plus"></span> {{ 'cube.dashboard.add_filter' | translate }}
                             </button>
                         }
-                        <div style="margin-left: auto; display: flex;">
+                        <div class="filter-actions" style="margin-left: auto; display: flex;">
                             @if (isAiEnabled) {
                                 <button nz-button nzSize="small"
                                         nz-tooltip [nzTooltipTitle]="'AI'|translate"
@@ -215,86 +298,65 @@
                 </div>
             }
             @if (cubeMeta) {
-            <div class="gridster-wrapper" [style.background-image]="dsl?.settings?.backgroundImage ? 'url(' + dsl.settings.backgroundImage + ')' : 'none'"
-                 [style.background-color]="dsl?.settings?.backgroundColor || (dsl?.settings?.theme === DashboardTheme.DARK ? '#1f1f1f' : 'transparent')"
+            <div class="gridster-wrapper" #viewport
+                 [class.screen-viewport]="screen" [class.screen-view]="screen && !editModel" [class.screen-design]="screen && editModel" [class.screen-pan]="panReady || panning"
+                 [class.screen-backdrop]="screen && !dsl?.settings?.backgroundColor && !dsl?.settings?.backgroundImage"
+                 [class.screen-scroll]="screen && !editModel && screen.fit === ScreenFit.WIDTH"
+                 [style.background-image]="backgroundImage"
+                 [style.background-color]="dsl?.settings?.backgroundColor || (screen ? null : dark ? '#1f1f1f' : 'transparent')"
                  [style.background-size]="'cover'"
                  [style.background-position]="'center'"
             >
-                @if (!dsl?.reports || dsl.reports.length == 0) {
+              <div class="puzzle-stage"
+                   [style.width.px]="screen?.width" [style.height.px]="screen?.height" [style.transform]="stageTransform">
+                @if (screen?.header) {
+                    <div class="screen-header">
+                        <span class="screen-title">{{ screen.title || dashboard?.name }}</span>
+                        <span class="screen-clock">{{ now | date:'yyyy-MM-dd HH:mm:ss' }}</span>
+                    </div>
+                }
+                <div class="puzzle-stage-body">
+                @if (screen) {
+                    <!-- Free layout: every report has a frame in pixels of the design resolution; the order is the layer order -->
+                    <div class="screen-canvas" #canvas (mousedown)="startMarquee($event)">
+                        @for (report of dsl.reports; track report) {
+                            <div class="screen-item" [class.screen-item-edit]="edit" [class.screen-item-locked]="edit && isLocked(report)"
+                                 [style.display]="isHidden(report) ? 'none' : null"
+                                 [style.left.px]="report.frame.x" [style.top.px]="report.frame.y"
+                                 [style.width.px]="report.frame.width" [style.height.px]="report.frame.height"
+                                 [style.transform]="'rotate(' + (report.frame.rotate || 0) + 'deg)'"
+                                 [style.opacity]="(report.ui?.['screen']?.opacity ?? 100) / 100"
+                                 [style.z-index]="$index + 1"
+                                 (mousedown)="pick(report, $event)">
+                                <ng-container *ngTemplateOutlet="panel; context: {$implicit: report, index: $index}"/>
+                            </div>
+                        }
+                        @if (marquee) {
+                            <div class="screen-marquee" [style.left.px]="marquee.x" [style.top.px]="marquee.y"
+                                 [style.width.px]="marquee.width" [style.height.px]="marquee.height"></div>
+                        }
+                    </div>
+                } @else if (!dsl?.reports || dsl.reports.length == 0) {
                     <nz-empty nzNotFoundImage="simple" [nzNotFoundContent]="null" style="margin-top: 20%"></nz-empty>
                 } @else {
                     <gridster [options]="options">
-                        @if (dsl?.reports) {
-                            @for (report of dsl.reports; track $index) {
-                                <gridster-item [item]="report">
-                                    <div class="puzzle-item">
-                                        @if (edit) {
-                                            <div class="drag-handler item-actions" [title]="'global.drag' | translate"
-                                                 style="left: 49%;right: auto;transform: rotateZ(90deg)">
-                                                <button nz-button nzType="text" nzSize="small">
-                                                    <span nz-icon nzType="holder" nzTheme="outline"></span>
-                                                </button>
-                                            </div>
-                                            <div class="item-actions">
-                                                <button nz-button nzType="text" nzSize="small" (click)="editItem($index,report)"
-                                                        [title]="'global.editor' | translate">
-                                                    <span nz-icon nzType="edit"></span>
-                                                </button>
-                                                <button nz-button nzType="text" nzSize="small" (click)="copyItem($index,report)"
-                                                        [title]="'global.copy' | translate">
-                                                    <span nz-icon nzType="copy"></span>
-                                                </button>
-                                                <button nz-button nzType="text" nzSize="small" (click)="fullScreenItem($index)"
-                                                        [title]="'global.fullscreen' | translate">
-                                                    <span nz-icon [nzType]="isItemFullscreen($index) ? 'fullscreen-exit' : 'fullscreen'"></span>
-                                                </button>
-                                                <button nz-button nzType="text" nzSize="small" nzDanger
-                                                        (click)="removeItem($index)"
-                                                        [title]="'global.delete' | translate">
-                                                    <span nz-icon nzType="delete"></span>
-                                                </button>
-                                            </div>
-                                        } @else {
-                                            <div class="item-actions">
-                                                @if (report.description) {
-                                                    <button nz-button nzType="text" nzSize="small">
-                                                    <span nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
-                                                          [nzTooltipTitle]="report.description"></span>
-                                                    </button>
-                                                }
-                                                @if (report.type != ReportType.KPI && report.type != ReportType.PIVOT_TABLE && report.type != ReportType.TEXT) {
-                                                    <button nz-button nzType="text" nzSize="small" (click)="download($index)"
-                                                            [title]="'global.download' | translate">
-                                                        <span nz-icon nzType="download"></span>
-                                                    </button>
-                                                }
-                                                <button nz-button nzType="text" nzSize="small" (click)="fullScreenItem($index)"
-                                                        [title]="'global.fullscreen' | translate">
-                                                    <span nz-icon [nzType]="isItemFullscreen($index) ? 'fullscreen-exit' : 'fullscreen'"></span>
-                                                </button>
-                                                <button nz-button nzType="text" nzSize="small" (click)="refreshItem($index)"
-                                                        [title]="'global.refresh' | translate">
-                                                    <span nz-icon nzType="redo"></span>
-                                                </button>
-                                            </div>
-                                        }
-                                        <div class="puzzle-content"
-                                             [style.background-color]="dsl?.settings?.theme === DashboardTheme.DARK ? '#141414' : 'var(--ant-primary-1)'">
-                                            @if (cubeMeta) {
-                                                <cube-puzzle-report [cubeMeta]="cubeMeta" [filters]="dsl.filters" [report]="report"
-                                                                    [dashboard]="dashboard" [dsl]="dsl"
-                                                                    (filterLink)="onFilterLink($event)"/>
-                                            }
-                                        </div>
-                                    </div>
-                                </gridster-item>
-                            }
+                        @for (report of dsl.reports; track report) {
+                            <gridster-item [item]="report">
+                                <ng-container *ngTemplateOutlet="panel; context: {$implicit: report, index: $index}"/>
+                            </gridster-item>
                         }
                     </gridster>
                 }
+                </div>
+              </div>
             </div>
             }
         </div>
+        @if (screen && edit) {
+            <cube-screen-props [selection]="selection" (frameChange)="onFrameInput()" (editData)="editItem($event)"
+                               (align)="align($event)" (distribute)="distribute($event)"
+                               [canUngroup]="canUngroup" (group)="group()" (ungroup)="ungroup()"/>
+        }
         @if (showAiPanel) {
             <div class="ai-resize-handle" (mousedown)="onAiResizeDragStart($event)"></div>
             <div class="ai-panel" [style.width.px]="aiPanelWidth">
@@ -314,6 +376,88 @@
         <div class="cube-resize-overlay"></div>
     }
 </div>
+
+<!-- One report with its actions, placed by gridster on a dashboard and by its frame on a data screen -->
+<ng-template #panel let-report let-index="index">
+    <div class="puzzle-item" #panelEl [ngClass]="screen ? 'panel-' + panelStyle(report) : ''"
+         [class.layer-hover]="hoverLayer === report" [class.selected]="isSelected(report)">
+        @if (edit) {
+            @if (!screen) {
+                <div class="drag-handler item-actions" [title]="'global.drag' | translate"
+                     style="left: 49%;right: auto;transform: rotateZ(90deg)">
+                    <button nz-button nzType="text" nzSize="small">
+                        <span nz-icon nzType="holder" nzTheme="outline"></span>
+                    </button>
+                </div>
+            }
+            <!-- on a screen the whole panel is the drag surface: a press on the actions must not start one -->
+            <div class="item-actions" (mousedown)="$event.stopPropagation()">
+                @if (!isWidget(report)) {
+                    <button nz-button nzType="text" nzSize="small" (click)="editItem(report)"
+                            [title]="'global.editor' | translate">
+                        <span nz-icon nzType="edit"></span>
+                    </button>
+                }
+                <button nz-button nzType="text" nzSize="small" (click)="copyItem(report)"
+                        [title]="'global.copy' | translate">
+                    <span nz-icon nzType="copy"></span>
+                </button>
+                <button nz-button nzType="text" nzSize="small" (click)="fullScreenItem(panelEl)"
+                        [title]="'global.fullscreen' | translate">
+                    <span nz-icon [nzType]="isItemFullscreen(panelEl) ? 'fullscreen-exit' : 'fullscreen'"></span>
+                </button>
+                @if (screen) {
+                    <button nz-button nzType="text" nzSize="small" (click)="moveLayer(report, true)"
+                            [title]="'cube.screen.layer.front' | translate">
+                        <span nz-icon nzType="vertical-align-top"></span>
+                    </button>
+                    <button nz-button nzType="text" nzSize="small" (click)="moveLayer(report, false)"
+                            [title]="'cube.screen.layer.back' | translate">
+                        <span nz-icon nzType="vertical-align-bottom"></span>
+                    </button>
+                }
+                <button nz-button nzType="text" nzSize="small" nzDanger
+                        (click)="removeItem(index)"
+                        [title]="'global.delete' | translate">
+                    <span nz-icon nzType="delete"></span>
+                </button>
+            </div>
+        } @else {
+            <div class="item-actions">
+                @if (report.description) {
+                    <button nz-button nzType="text" nzSize="small">
+                    <span nz-icon nzType="info-circle" nzTheme="outline" nz-tooltip
+                          [nzTooltipTitle]="report.description"></span>
+                    </button>
+                }
+                @if (report.type != ReportType.KPI && report.type != ReportType.PIVOT_TABLE && report.type != ReportType.TEXT) {
+                    <button nz-button nzType="text" nzSize="small" (click)="download(report)"
+                            [title]="'global.download' | translate">
+                        <span nz-icon nzType="download"></span>
+                    </button>
+                }
+                <button nz-button nzType="text" nzSize="small" (click)="fullScreenItem(panelEl)"
+                        [title]="'global.fullscreen' | translate">
+                    <span nz-icon [nzType]="isItemFullscreen(panelEl) ? 'fullscreen-exit' : 'fullscreen'"></span>
+                </button>
+                <button nz-button nzType="text" nzSize="small" (click)="refreshItem(report)"
+                        [title]="'global.refresh' | translate">
+                    <span nz-icon nzType="redo"></span>
+                </button>
+            </div>
+        }
+        <div class="puzzle-content"
+             [style.background-color]="dark ? '#141414' : 'var(--ant-primary-1)'">
+            @if (isWidget(report)) {
+                <cube-screen-widget [report]="report"/>
+            } @else {
+                <cube-puzzle-report [cubeMeta]="cubeMeta" [filters]="dsl.filters" [report]="report"
+                                    [dashboard]="dashboard" [dsl]="dsl"
+                                    (filterLink)="onFilterLink($event)"/>
+            }
+        </div>
+    </div>
+</ng-template>
 
 <ng-template #publishContent>
     <div style="margin-bottom: 12px">{{ 'cube.dashboard.publish_hint' | translate }}</div>

@@ -263,9 +263,35 @@
             display: flex;
             justify-content: center;
 
+            // undo and redo of the screen editor, joined into one control
+            .history-buttons {
+                display: flex;
+
+                button:first-child {
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                }
+
+                button:last-child {
+                    margin-left: -1px;
+                    border-top-left-radius: 0;
+                    border-bottom-left-radius: 0;
+                }
+            }
+
             .action-buttons {
                 display: flex;
                 gap: 8px;
+
+                // the gap alone spaces these: neither the margin adjacent buttons get from the theme, nor
+                // the (empty) host of a dropdown menu taking a place in the row
+                > * {
+                    margin: 0 !important;
+                }
+
+                > nz-dropdown-menu {
+                    display: none;
+                }
             }
         }
 
@@ -299,6 +325,8 @@
     .cube-content {
         flex: 1;
         min-height: 0;
+        // may be narrower than what is in it: a one-line filter row scrolls instead of pushing the panels out
+        min-width: 0;
         display: flex;
         flex-direction: column;
     }
@@ -307,6 +335,672 @@
         flex: 1;
         overflow: auto;
         padding-bottom: 8px;
+    }
+
+    .puzzle-stage {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .puzzle-stage-body {
+        flex: 1;
+        min-height: 0;
+    }
+
+    // ── data screen ───────────────────────────────────────────────
+    // The stage has the design resolution and is scaled as a whole into the viewport, so its
+    // colors are the screen's own (a dark stage) and stay literal in either application theme.
+    .cube-content {
+        position: relative;
+    }
+
+    // bottom right: the top right corner of a screen is where its clock is
+    .screen-tools {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        z-index: 20;
+        display: flex;
+        gap: 2px;
+        padding: 2px;
+        border-radius: 6px;
+        background: rgba(8, 20, 48, 0.7);
+        opacity: 0;
+        transition: opacity 0.2s;
+
+        button {
+            color: rgba(255, 255, 255, 0.75);
+        }
+    }
+
+    .cube-content:hover .screen-tools {
+        opacity: 1;
+    }
+
+    // zoom of the designer's stage, bottom right of the desk
+    .screen-zoom {
+        position: absolute;
+        right: 16px;
+        bottom: 16px;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        padding: 3px;
+        border-radius: 6px;
+        border: 1px solid #222b36;
+        background: #11161d;
+        color: #c9d6e2;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+
+        button {
+            width: 26px;
+            padding: 0;
+            color: #c9d6e2;
+
+            &:hover {
+                color: #fff;
+                background: rgba(255, 255, 255, 0.08);
+            }
+        }
+
+        .screen-zoom-value {
+            min-width: 44px;
+            text-align: center;
+            font-size: 12px;
+            font-variant-numeric: tabular-nums;
+        }
+    }
+
+    // .gridster-wrapper is repeated for weight: these must win over the dark-theme rules below.
+    // The look follows the erupt-iot hall: near-black navy, hairline borders, one cyan accent,
+    // monospace figures; nothing glows or carries a gradient text.
+    .gridster-wrapper.screen-viewport {
+        @base: #04080f;
+        @line: #1d3347;      // panel borders
+        @subline: #15283b;   // rules inside a panel
+        @accent: #22d3ee;
+        @ink: #d9e9f4;
+        @muted: #91a8bd;
+        @mono: "Cascadia Mono", "SF Mono", Consolas, "Microsoft YaHei", monospace;
+
+        position: relative;
+        overflow: hidden;
+        padding-bottom: 0;
+
+        &.screen-scroll {
+            overflow: hidden auto;
+        }
+
+        // The published view paints the backdrop on the viewport, not on the stage: a contained stage
+        // leaves bands around it, and they must read as the same backdrop rather than as black bars
+        &.screen-backdrop.screen-view {
+            background: radial-gradient(ellipse at 51% 29%, #091423 0%, @base 72%);
+        }
+
+        // The designer is a desk with the screen lying on it as a sheet: the desk is neutral and dotted,
+        // the sheet carries the backdrop and an edge, so the room around it reads as room to work in
+        // the stage is being moved, or will be with the next drag
+        &.screen-pan {
+            cursor: grab;
+
+            .puzzle-stage {
+                pointer-events: none;
+            }
+        }
+
+        &.screen-design {
+            background-color: #0a0d11;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+            background-size: 16px 16px !important;
+
+            .puzzle-stage {
+                box-shadow: 0 0 0 1px #2c3640, 0 12px 40px rgba(0, 0, 0, 0.5);
+            }
+
+            &.screen-backdrop .puzzle-stage {
+                background: radial-gradient(ellipse at 51% 29%, #091423 0%, @base 72%);
+            }
+        }
+
+        .puzzle-stage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: 0 0;
+            color: @ink;
+        }
+
+        .screen-header {
+            flex-shrink: 0;
+            height: 68px;
+            margin: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #223647;
+
+            .screen-title {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                font-size: 26px;
+                font-weight: 700;
+                letter-spacing: 0.07em;
+                white-space: nowrap;
+
+                // the mark: a clipped plate holding one cyan cell
+                &::before {
+                    content: '';
+                    width: 36px;
+                    height: 36px;
+                    box-sizing: border-box;
+                    border: 1px solid #24586d;
+                    background: linear-gradient(@accent, @accent) center / 14px 14px no-repeat #0a2230;
+                    clip-path: polygon(0 0, 76% 0, 100% 24%, 100% 100%, 0 100%);
+                }
+            }
+
+            .screen-clock {
+                font: 13px @mono;
+                letter-spacing: 0.03em;
+                font-variant-numeric: tabular-nums;
+                color: @muted;
+            }
+        }
+
+        .screen-canvas {
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .screen-item {
+            position: absolute;
+
+            // locked: a press goes through to whatever lies below
+            &.screen-item-locked {
+                pointer-events: none;
+            }
+
+            // While a screen is arranged a report is an object to move, not a chart to use:
+            // a cover takes the pointer, and the whole panel is the drag surface
+            &.screen-item-edit {
+                cursor: move;
+
+                .puzzle-content::after {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    z-index: 10;
+                }
+            }
+        }
+
+        // the rectangle of a drag-select
+        .screen-marquee {
+            position: absolute;
+            z-index: 100001;
+            border: 1px solid @accent;
+            background: fade(@accent, 12%);
+            pointer-events: none;
+        }
+
+        // moveable draws its box and handles into the canvas; above every layer
+        ::ng-deep .moveable-control-box {
+            z-index: 100000 !important;
+            --moveable-color: @accent;
+
+            // smaller, square handles: the stock 14px discs crowd a small widget
+            .moveable-control {
+                width: 9px;
+                height: 9px;
+                margin-top: -4.5px;
+                margin-left: -4.5px;
+                border: 1px solid @accent;
+                border-radius: 1px;
+                background: #06101c;
+            }
+
+            .moveable-control.moveable-rotation-control {
+                border-radius: 50%;
+                background: @accent;
+            }
+        }
+
+        .puzzle-item {
+            border-color: @line;
+            box-shadow: none;
+            overflow: visible;
+
+            .puzzle-content {
+                overflow: hidden;
+                background: linear-gradient(150deg, #0b1624, #08111c 66%) !important;
+            }
+
+            ::ng-deep {
+                .ant-card, .ant-card.dark-theme {
+                    background: transparent;
+                    color: @ink;
+                }
+
+                .ant-card-head {
+                    padding: 0 14px;
+                    border-bottom: 1px solid @subline;
+                    background: none;
+                }
+
+                .ant-card-head-title {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-size: 15px;
+                    font-weight: 600;
+                    letter-spacing: 0.06em;
+                    color: @ink;
+
+                    &::before {
+                        content: '';
+                        flex-shrink: 0;
+                        width: 3px;
+                        height: 13px;
+                        background: @accent;
+                        box-shadow: 0 0 10px fade(@accent, 31%);
+                    }
+                }
+
+                .kpi-value:not([style*="color"]) {
+                    color: #e4f4ff;
+                }
+
+                .kpi-value {
+                    font-family: @mono;
+                    font-weight: 600;
+                    line-height: 1;
+                    letter-spacing: -0.04em;
+                    font-variant-numeric: tabular-nums;
+                }
+
+                .kpi-compare {
+                    font-family: @mono;
+                }
+
+                .ant-table {
+                    color: @ink;
+
+                    .ant-table-thead > tr > th {
+                        background: #0a1724;
+                        color: @muted;
+                        font-weight: 500;
+                        border-bottom-color: @subline;
+
+                        &::before {
+                            display: none;
+                        }
+                    }
+
+                    .ant-table-tbody > tr > td {
+                        border-bottom-color: @subline;
+                    }
+
+                    .ant-table-tbody > tr.ant-table-row:hover > td {
+                        background: #112c3c;
+                    }
+                }
+
+                .dimension-column, .drillable-column {
+                    a {
+                        color: @ink !important;
+                    }
+                }
+
+                .filter-tags-container {
+                    background: transparent;
+                    border-bottom-color: @subline;
+                }
+            }
+        }
+
+        // No panel at all: a widget, a report laid over another one, or one straight on the backdrop
+        .puzzle-item.panel-none {
+            border-color: transparent;
+
+            .puzzle-content {
+                background: none !important;
+            }
+        }
+
+        // Two brackets, top left and bottom right, on a layer above the report
+        .puzzle-item.panel-corner::after {
+            @c: #5ad7ea;
+            content: '';
+            position: absolute;
+            inset: -1px;
+            pointer-events: none;
+            background:
+                linear-gradient(@c, @c) left top / 15px 1px,
+                linear-gradient(@c, @c) left top / 1px 15px,
+                linear-gradient(@c, @c) right bottom / 15px 1px,
+                linear-gradient(@c, @c) right bottom / 1px 15px;
+            background-repeat: no-repeat;
+        }
+
+        // A bracket in each corner
+        .puzzle-item.panel-bracket {
+            border-color: fade(@line, 55%);
+
+            &::after {
+                @c: #5ad7ea;
+                @l: 14px;
+                @w: 2px;
+                content: '';
+                position: absolute;
+                inset: -1px;
+                pointer-events: none;
+                background:
+                    linear-gradient(@c, @c) left top / @l @w,
+                    linear-gradient(@c, @c) left top / @w @l,
+                    linear-gradient(@c, @c) right top / @l @w,
+                    linear-gradient(@c, @c) right top / @w @l,
+                    linear-gradient(@c, @c) left bottom / @l @w,
+                    linear-gradient(@c, @c) left bottom / @w @l,
+                    linear-gradient(@c, @c) right bottom / @l @w,
+                    linear-gradient(@c, @c) right bottom / @w @l;
+                background-repeat: no-repeat;
+            }
+        }
+
+        // A lit frame
+        .puzzle-item.panel-glow {
+            border-color: fade(@accent, 55%);
+            box-shadow: inset 0 0 26px fade(@accent, 14%), 0 0 14px fade(@accent, 12%);
+        }
+
+        // Top left and bottom right cut off. The frame cannot follow a clip, so it is drawn inside: a
+        // hairline all round, and the two cut edges as diagonals on a layer above the report.
+        .puzzle-item.panel-chamfer {
+            @cut: 16px;
+            border-color: transparent;
+
+            .puzzle-content {
+                clip-path: polygon(@cut 0, 100% 0, 100% calc(100% - @cut), calc(100% - @cut) 100%, 0 100%, 0 @cut);
+                box-shadow: inset 0 0 0 1px @line;
+            }
+
+            &::after {
+                @c: #5ad7ea;
+                @edge: transparent calc(50% - 1px), @c calc(50% - 1px), @c calc(50% + 1px), transparent calc(50% + 1px);
+                content: '';
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                background:
+                    linear-gradient(to bottom right, @edge) left top / @cut @cut,
+                    linear-gradient(to bottom right, @edge) right bottom / @cut @cut;
+                background-repeat: no-repeat;
+            }
+        }
+
+        // No frame: the title sits on a band that fades out, a rule under it
+        .puzzle-item.panel-headline {
+            border-color: transparent;
+
+            .puzzle-content {
+                background: linear-gradient(180deg, fade(#0b1624, 70%), transparent) !important;
+            }
+
+            ::ng-deep {
+                .ant-card-head {
+                    border-bottom: 1px solid transparent;
+                    border-image: linear-gradient(90deg, @accent, fade(@accent, 0%) 75%) 1;
+                    background: linear-gradient(90deg, fade(@accent, 22%), transparent 70%);
+                }
+
+                .ant-card-head-title::before {
+                    width: 6px;
+                    height: 14px;
+                    transform: skewX(-18deg);
+                }
+            }
+        }
+
+        // A rounded card of frosted glass
+        .puzzle-item.panel-glass {
+            border-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+
+            .puzzle-content {
+                border-radius: 11px;
+                background: rgba(255, 255, 255, 0.045) !important;
+                backdrop-filter: blur(10px);
+            }
+
+            ::ng-deep {
+                .ant-card-head {
+                    border-bottom-color: rgba(255, 255, 255, 0.08);
+                }
+
+                .ant-card-head-title::before {
+                    border-radius: 2px;
+                }
+            }
+        }
+
+        &.screen-view .item-actions {
+            display: none;
+        }
+
+        // the report whose row in the layer panel is under the pointer
+        .puzzle-item.layer-hover:not(.selected) {
+            outline: 1px dashed @accent;
+            outline-offset: 2px;
+        }
+    }
+
+    // ── the editor of a data screen ───────────────────────────────
+    // Its chrome (layer list, property panel, filter row, zoom control) is one dark frame around the dark
+    // stage, whatever theme the application is in: the application's own theme is left alone, and these few
+    // components carry literal colors instead. cube-screen-props and the filter control repeat them.
+    @chrome: #11161d;        // panels
+    @chrome-edge: #222b36;   // their borders
+    @chrome-hover: #1a222c;
+    @chrome-ink: #c9d6e2;
+    @chrome-muted: #7f90a3;
+    @chrome-accent: #22d3ee;
+
+    .layer-panel {
+        flex-shrink: 0;
+        width: 220px;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid @chrome-edge;
+        background: @chrome;
+        color: @chrome-ink;
+    }
+
+    .layer-panel-header {
+        flex-shrink: 0;
+        // the layer header, the filter row and the property header are one line across the editor:
+        // 45px with their bottom border, here and in cube-screen-props.less
+        box-sizing: border-box;
+        height: 45px;
+        padding: 0 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        color: @chrome-muted;
+        border-bottom: 1px solid @chrome-edge;
+
+        .layer-count {
+            font-weight: 400;
+            font-variant-numeric: tabular-nums;
+        }
+    }
+
+    .layer-list {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 6px;
+    }
+
+    .layer-row {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 34px;
+        padding: 0 6px 0 10px;
+        border-radius: 4px;
+        background: @chrome;
+        cursor: pointer;
+
+        &:hover {
+            background: @chrome-hover;
+
+            button {
+                visibility: visible;
+            }
+        }
+
+        &.active {
+            background: fade(@chrome-accent, 12%);
+            color: #e9fbff;
+
+            &::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 8px;
+                bottom: 8px;
+                width: 2px;
+                border-radius: 1px;
+                background: @chrome-accent;
+            }
+
+            .layer-icon {
+                color: @chrome-accent;
+            }
+        }
+
+        &.cdk-drag-preview {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        &.cdk-drag-placeholder {
+            opacity: 0.3;
+        }
+
+        .layer-icon {
+            flex-shrink: 0;
+            font-size: 14px;
+            color: @chrome-muted;
+        }
+
+        .layer-name {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        // member of a group
+        .layer-mark {
+            flex-shrink: 0;
+            font-size: 12px;
+            color: @chrome-muted;
+        }
+
+        &.layer-hidden .layer-name, &.layer-hidden .layer-icon {
+            opacity: 0.4;
+        }
+
+        // a switch that is on (hidden, locked) shows without hovering
+        button.on {
+            visibility: visible;
+            color: @chrome-accent;
+        }
+
+        button {
+            visibility: hidden;
+            flex-shrink: 0;
+            width: 22px;
+            height: 22px;
+            padding: 0;
+            color: @chrome-muted;
+
+            &:hover {
+                color: #fff;
+                background: rgba(255, 255, 255, 0.08);
+            }
+        }
+    }
+
+    .layer-list.cdk-drop-list-dragging .layer-row:not(.cdk-drag-placeholder) {
+        transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    @media (max-width: 768px) {
+        .layer-panel {
+            display: none;
+        }
+    }
+
+    // The filter row of a screen, in the designer and in the published view: one more bar of the same frame
+    &.screen-mode.dark-theme .puzzle-filter-row {
+        flex-shrink: 0;
+        box-sizing: border-box;
+        height: 45px;
+        padding: 0 12px;
+        display: flex;
+        align-items: center;
+        overflow-y: hidden;
+        background: @chrome;
+        border-bottom-color: @chrome-edge;
+
+        // One line, always: a row that wraps would push the stage down and rescale it. Filters that do not
+        // fit scroll sideways, and the buttons stay put at the right end.
+        scrollbar-width: thin;
+        scrollbar-color: #2c3744 transparent;
+
+        .filter-items {
+            flex: 1;
+            flex-wrap: nowrap;
+
+            > * {
+                flex-shrink: 0;
+            }
+        }
+
+        .filter-actions {
+            position: sticky;
+            right: -12px;
+            margin-right: -12px;
+            padding: 0 12px 0 16px;
+            // fades the filters out under the buttons
+            background: linear-gradient(90deg, transparent, @chrome 16px);
+        }
+
+        .filter-items .filter-item {
+            background: @chrome-hover;
+        }
+
+        .ant-btn:not(.ant-btn-primary):not(.ant-btn-text) {
+            background: @chrome-hover;
+            border-color: #2c3744;
+            color: @chrome-ink;
+
+            &:hover {
+                border-color: @chrome-accent;
+                color: #fff;
+            }
+        }
     }
 
     .ai-resize-handle {
@@ -433,11 +1127,25 @@
             background: #1f1f1f;
             border-bottom-color: #303030;
 
-            .filter-item {
+            // .filter-items is spelled out so these outweigh the light rules, which name it too
+            .filter-items .filter-item {
                 background: #303030;
                 color: rgba(255, 255, 255, 0.85);
 
                 .filter-label {
+                    color: rgba(255, 255, 255, 0.65);
+                }
+
+                .drag-handle {
+                    color: rgba(255, 255, 255, 0.45);
+
+                    &:hover {
+                        color: rgba(255, 255, 255, 0.85);
+                    }
+                }
+
+                // the edit button of a filter; the delete one keeps its danger color
+                button.ant-btn-text:not(.ant-btn-dangerous) {
                     color: rgba(255, 255, 255, 0.65);
                 }
             }
@@ -503,7 +1211,7 @@
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
         overflow: hidden;
 
-        &:hover {
+        &:hover, &.selected {
             .drag-handler, .item-actions {
                 opacity: 1;
                 visibility: visible;
