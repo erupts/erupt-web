@@ -302,17 +302,30 @@
                  [class.screen-viewport]="screen" [class.screen-view]="screen && !editModel" [class.screen-design]="screen && editModel" [class.screen-pan]="panReady || panning"
                  [class.screen-backdrop]="screen && !dsl?.settings?.backgroundColor && !dsl?.settings?.backgroundImage"
                  [class.screen-scroll]="screen && !editModel && screen.fit === ScreenFit.WIDTH"
-                 [style.background-image]="backgroundImage"
+                 [style.background-image]="screen && editModel ? null : backgroundImage"
                  [style.background-color]="dsl?.settings?.backgroundColor || (screen ? null : dark ? '#1f1f1f' : 'transparent')"
-                 [style.background-size]="'cover'"
+                 [style.background-size]="screen ? '100% 100%' : 'cover'"
                  [style.background-position]="'center'"
             >
-              <div class="puzzle-stage"
+              <!-- A screen's own background image is stretched over all of it: over the display when published,
+                   over the sheet in the designer, where the desk around it stays the desk -->
+              <div class="puzzle-stage" [ngClass]="screen ? 'number-' + screen.numberFont : ''"
+                   [style.--screen-accent]="screen?.accent" [style.--screen-panel-title]="screen ? screen.panelTitleSize + 'px' : null"
+                   [style.background-image]="screen && editModel ? backgroundImage : null"
                    [style.width.px]="screen?.width" [style.height.px]="screen?.height" [style.transform]="stageTransform">
                 @if (screen?.header) {
-                    <div class="screen-header">
-                        <span class="screen-title">{{ screen.title || dashboard?.name }}</span>
-                        <span class="screen-clock">{{ now | date:'yyyy-MM-dd HH:mm:ss' }}</span>
+                    <div class="screen-header" [ngClass]="'header-' + screen.headerStyle">
+                        <span class="screen-title" [style.font-size.px]="screen.titleSize">
+                            @if (logo) {
+                                <img class="screen-logo" [src]="logo" alt="" draggable="false"/>
+                            } @else {
+                                <span class="screen-mark"></span>
+                            }
+                            {{ screen.title || dashboard?.name }}
+                        </span>
+                        @if (screen.clock) {
+                            <span class="screen-clock">{{ now | date: screen.clockFormat }}</span>
+                        }
                     </div>
                 }
                 <div class="puzzle-stage-body">

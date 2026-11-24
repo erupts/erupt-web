@@ -1,4 +1,7 @@
-import {Dashboard, DashboardDSL, DashboardType, ReportDSL, ReportFrame, ScreenFit, ScreenPanel, ScreenSettings} from "./dashboard.model";
+import {
+    Dashboard, DashboardDSL, DashboardType, ReportDSL, ReportFrame, ScreenFit, ScreenHeader, ScreenNumberFont,
+    ScreenPalette, ScreenPanel, ScreenSettings
+} from "./dashboard.model";
 
 export const SCREEN_DEFAULT: Required<ScreenSettings> = {
     width: 1920,
@@ -7,6 +10,16 @@ export const SCREEN_DEFAULT: Required<ScreenSettings> = {
     header: true,
     title: '',
     panel: ScreenPanel.CORNER,
+    accent: '#22d3ee',
+    palette: ScreenPalette.TECH,
+    headerStyle: ScreenHeader.LEFT,
+    titleSize: 26,
+    logo: '',
+    clock: true,
+    clockFormat: 'yyyy-MM-dd HH:mm:ss',
+    panelTitleSize: 15,
+    numberFont: ScreenNumberFont.MONO,
+    chartFontSize: 12,
 };
 
 /** Height of the title bar, which the canvas of a screen starts below */

@@ -122,3 +122,14 @@ actions) and differ in what places it:
   `CubeDashboard` entity; the stored path is kept as `/erupt-attachment/...` in `settings.backgroundImage` and
   resolved by the `backgroundImage` getter, which only lets http(s) and site paths through (`safeImageSrc`);
 - the layer header, the filter row and the property header are one 45px line across the editor.
+- a screen's background image is stretched (`100% 100%`), not cropped: over the whole viewport in the published
+  view, so no band is left around a contained stage, and over the stage in the designer. A dashboard's still
+  covers.
+- the global look of a screen is `settings.screen` (`ScreenSettings`, defaults in `SCREEN_DEFAULT`), edited in the
+  three tabs of the settings dialog. `accent` is set as `--screen-accent` on `.puzzle-stage` and is the one color
+  of the stage chrome: in the screen block of the dashboard less `@accent` is that variable, so a tint of it is
+  written with `color-mix`, never `fade()`. `palette` (`model/screen-palette.ts`, with a spec) gives charts their
+  series colors, a single-series chart taking the first; `ACCENT` derives tints from the accent. `headerStyle`,
+  `titleSize`, `logo`, `clock`, `clockFormat` shape the title bar (its height stays `SCREEN_HEADER_HEIGHT`);
+  `panelTitleSize` is `--screen-panel-title`, `numberFont` a class on the stage, and `chartFontSize` selects a G2
+  theme registered per size (`screenTheme()`); the ECharts map and the S2 pivot do not follow it yet.

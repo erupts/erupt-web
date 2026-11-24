@@ -91,6 +91,30 @@ export enum ScreenPanel {
     GLASS = 'glass',        // a rounded, translucent card
 }
 
+/** How the title bar of a screen is laid out */
+export enum ScreenHeader {
+    LEFT = 'left',      // title at the left, clock at the right
+    CENTER = 'center',  // title in the middle over a rule
+    PLATE = 'plate',    // title in the middle on a plate hanging from the top edge
+    LINES = 'lines',    // title in the middle between two lines
+}
+
+/** The series colors charts take when a report sets none of its own */
+export enum ScreenPalette {
+    TECH = 'tech',
+    NEON = 'neon',
+    OCEAN = 'ocean',
+    WARM = 'warm',
+    ACCENT = 'accent',  // tints of the screen's accent color
+}
+
+/** The typeface of figures (a KPI's value) */
+export enum ScreenNumberFont {
+    MONO = 'mono',
+    CONDENSED = 'condensed',
+    SANS = 'sans',
+}
+
 export interface ScreenSettings {
     width?: number;      // design resolution
     height?: number;
@@ -98,6 +122,16 @@ export interface ScreenSettings {
     header?: boolean;    // title bar with a clock
     title?: string;      // blank = the dashboard name
     panel?: ScreenPanel;
+    accent?: string;                // the one color of the chrome: marks, brackets, rules
+    palette?: ScreenPalette;
+    headerStyle?: ScreenHeader;
+    titleSize?: number;             // px, of the screen title
+    logo?: string;                  // an image in place of the title's mark
+    clock?: boolean;
+    clockFormat?: string;           // an Angular date format
+    panelTitleSize?: number;        // px, of a report's title
+    numberFont?: ScreenNumberFont;
+    chartFontSize?: number;         // px, of axis labels and legends
 }
 
 export interface DashboardSettings {

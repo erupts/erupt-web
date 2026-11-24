@@ -339,7 +339,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         this.ensureFrames();
         this.fitStage();
         clearInterval(this.clockTimer);
-        this.clockTimer = this.screen?.header ? setInterval(() => this.now = new Date(), 1000) : null;
+        this.clockTimer = this.screen?.header && this.screen.clock ? setInterval(() => this.now = new Date(), 1000) : null;
         this.syncEditor();
     }
 
@@ -607,12 +607,23 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         changed.forEach(it => this.refreshItem(it));
     }
 
-    /** The background image of the settings as a CSS value; an uploaded one is a path under the attachment root */
-    get backgroundImage(): string | null {
-        const src = safeImageSrc(this.dsl?.settings?.backgroundImage);
+    /** An image address of the settings, ready to load: an uploaded one is a path under the attachment root */
+    private imageUrl(value: any): string | null {
+        const src = safeImageSrc(value);
         if (!src) return null;
         const attachment = '/erupt-attachment/';
-        const url = src.startsWith(attachment) ? RestPath.eruptAttachment + src.substring(attachment.length - 1) : src;
+        return src.startsWith(attachment) ? RestPath.eruptAttachment + src.substring(attachment.length - 1) : src;
+    }
+
+    /** The image shown in place of the title's mark */
+    get logo(): string | null {
+        return this.imageUrl(this.screen?.logo);
+    }
+
+    /** The background image of the settings as a CSS value */
+    get backgroundImage(): string | null {
+        const url = this.imageUrl(this.dsl?.settings?.backgroundImage);
+        if (!url) return null;
         // inside url("..."): nothing of the address may end the string or the function
         return `url("${url.replace(/["\\\n\r]/g, encodeURIComponent)}")`;
     }
@@ -1234,7 +1245,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             nzContent: CubePuzzleDashboardConfig,
             nzDraggable: true,
             nzMaskClosable: false,
-            nzWidth: 460,
+            nzWidth: 520,
             nzOnOk: (instance) => {
                 this.dsl.settings = instance.dsl.settings;
                 this.applyLayout();
