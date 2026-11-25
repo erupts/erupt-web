@@ -20,7 +20,8 @@ import {
     ReportType,
     SubModelDSL
 } from "../../model/dashboard.model";
-import {isScreen} from "../../model/screen.util";
+import {isScreen, screenOf} from "../../model/screen.util";
+import {paletteColors} from "../../model/screen-palette";
 import {formatNumber} from "../../model/number-format";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
@@ -66,16 +67,40 @@ import {finalize} from "rxjs/operators";
 
 echarts.use([MapChart, TooltipComponent, VisualMapComponent, CanvasRenderer]);
 
-/** The dark G2 theme without its opaque canvas, so a chart sits on the panel of a data screen */
-const SCREEN_THEME = 'erupt-screen';
+/**
+ * The dark G2 theme without its opaque canvas, so a chart sits on the panel of a data screen, with axis
+ * labels and legends at the size the screen asks for. One theme per size, registered when first needed.
+ */
+function screenTheme(fontSize: number): string {
+    const name = 'erupt-screen-' + fontSize;
+    if (!SCREEN_THEMES.has(name)) {
+        const theme = JSON.parse(JSON.stringify(G2.getTheme(DashboardTheme.DARK)));
+        theme.background = 'transparent';
+        const sized = (style: any) => style && (style.fontSize = fontSize);
+        for (const axis of Object.values<any>(theme.components?.axis || {})) {
+            sized(axis?.label?.style);
+            sized(axis?.title?.style);
+        }
+        for (const legend of Object.values<any>(theme.components?.legend || {})) {
+            sized(legend?.itemName?.style);
+            sized(legend?.itemValue?.style);
+        }
+        sized(theme.labels?.style);
+        sized(theme.innerLabels?.style);
+        sized(theme.pieLabels?.style);
+        G2.registerTheme(name, theme);
+        SCREEN_THEMES.add(name);
+    }
+    return name;
+}
 
-G2.registerTheme(SCREEN_THEME, {...G2.getTheme(DashboardTheme.DARK), background: 'transparent'});
+const SCREEN_THEMES = new Set<string>();
 
-/** Series colors of a data screen, used when a report sets none of its own */
-const SCREEN_PALETTE = ['#22d3ee', '#39d6ad', '#f2cd68', '#f49855', '#fb6578', '#6aa8ff', '#a78bfa', '#67829a'];
-
-/** Progress colors of a data screen: the bar and the track it runs on */
-const SCREEN_TRACK = ['#22d3ee', '#1b2d3b'];
+/** Chart types that draw a single series when no series field is set */
+const SINGLE_SERIES = [
+    ReportType.LINE, ReportType.AREA, ReportType.COLUMN, ReportType.BAR, ReportType.RADIAL_BAR, ReportType.RADAR,
+    ReportType.SCATTER, ReportType.TINY_LINE, ReportType.TINY_AREA, ReportType.TINY_COLUMN,
+];
 
 @Component({
     selector: 'cube-puzzle-report',
@@ -713,6 +738,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     renderChart(data: Record<string, any>[]): any {
         let reportDSL = this.report;
         let chartContainer = this.chartContainer;
+        const screen = screenOf(this.dashboard, this.dsl);
         const commonConfig: any = {
             data: data,
             ...this.report.cube,
@@ -721,8 +747,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             // a data screen scales its stage with a CSS transform; pointer positions must follow it
             supportCSSTransform: true,
             margin: 12,
-            theme: this.isScreen ? SCREEN_THEME : this.effectiveTheme,
-            ...(this.isScreen ? {color: SCREEN_PALETTE} : {}),
+            theme: screen ? screenTheme(screen.chartFontSize) : this.effectiveTheme,
+            ...(screen ? {color: paletteColors(screen.palette, screen.accent)} : {}),
             meta: {
                 ...this.getFieldMeta(this.report.cube[CubeKey.xField]),
                 ...this.getFieldMeta(this.report.cube[CubeKey.yField]),
@@ -764,6 +790,9 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
         if (reportDSL.ui["color"] && reportDSL.ui["color"].length > 0) {
             commonConfig["color"] = reportDSL.ui["color"];
+        } else if (screen && !commonConfig.seriesField && SINGLE_SERIES.includes(reportDSL.type)) {
+            // one series takes one color, not a list: the first of the palette, so it follows the screen too
+            commonConfig["color"] = commonConfig["color"][0];
         }
         let chart: any = null;
         switch (reportDSL.type) {
@@ -1000,14 +1029,14 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                 chart = new Progress(chartContainer.nativeElement, {
                     ...commonConfig,
                     percent: (data && data.length > 0) ? (data[0][reportDSL.cube[CubeKey.yField] as string] || data[0][CubeKey.yField] || 0) / 100 : 0,
-                    color: reportDSL.ui["color"] || (this.isScreen ? SCREEN_TRACK : ['#5B8FF9', '#E8EDF3']),
+                    color: reportDSL.ui["color"] || (screen ? [screen.accent, '#1b2d3b'] : ['#5B8FF9', '#E8EDF3']),
                 });
                 break;
             case ReportType.RING_PROGRESS:
                 chart = new RingProgress(chartContainer.nativeElement, {
                     ...commonConfig,
                     percent: (data && data.length > 0) ? (data[0][reportDSL.cube[CubeKey.yField] as string] || data[0][CubeKey.yField] || 0) / 100 : 0,
-                    color: reportDSL.ui["color"] || (this.isScreen ? SCREEN_TRACK : ['#5B8FF9', '#E8EDF3']),
+                    color: reportDSL.ui["color"] || (screen ? [screen.accent, '#1b2d3b'] : ['#5B8FF9', '#E8EDF3']),
                     innerRadius: reportDSL.ui["innerRadius"] || 0.8,
                     radius: 0.98,
                 });

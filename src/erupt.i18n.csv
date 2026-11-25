@@ -1811,3 +1811,24 @@ cube.screen.panel.glow,发光,發光,Glow,Lueur,グロー,글로우,Свечен
 cube.screen.panel.chamfer,切角,切角,Chamfer,Chanfrein,面取り,모따기,Срезанные углы,Chaflán,Fase,Chanfro,Sudut potong,شطب
 cube.screen.panel.headline,标题带,標題帶,Headline,Bandeau,見出し帯,헤드라인,Заголовок,Titular,Titelband,Faixa de título,Pita judul,شريط العنوان
 cube.screen.panel.glass,毛玻璃,毛玻璃,Glass,Verre,ガラス,글래스,Стекло,Cristal,Glas,Vidro,Kaca,زجاج
+cube.screen.tab.basic,基础,基礎,Basics,Général,基本,기본,Основное,Básico,Allgemein,Básico,Dasar,أساسي
+cube.screen.header_style,版式,版式,Layout,Disposition,レイアウト,레이아웃,Макет,Disposición,Layout,Disposição,Tata letak,التخطيط
+cube.screen.header_style.left,靠左,靠左,Left,À gauche,左寄せ,왼쪽,Слева,Izquierda,Links,Esquerda,Kiri,يسار
+cube.screen.header_style.center,居中,置中,Centered,Centré,中央,가운데,По центру,Centrado,Zentriert,Centrado,Tengah,وسط
+cube.screen.header_style.plate,标题牌,標題牌,Plate,Plaque,プレート,플레이트,Плашка,Placa,Schild,Placa,Pelat,لوحة
+cube.screen.header_style.lines,两侧线条,兩側線條,Side lines,Lignes latérales,サイドライン,양쪽 선,Боковые линии,Líneas laterales,Seitenlinien,Linhas laterais,Garis samping,خطوط جانبية
+cube.screen.title_size,标题字号,標題字號,Title size,Taille du titre,タイトルサイズ,제목 크기,Размер заголовка,Tamaño del título,Titelgröße,Tamanho do título,Ukuran judul,حجم العنوان
+cube.screen.logo,Logo 图片,Logo 圖片,Logo image,Image du logo,ロゴ画像,로고 이미지,Логотип,Imagen del logo,Logo-Bild,Imagem do logótipo,Gambar logo,صورة الشعار
+cube.screen.accent,主题色,主題色,Accent color,Couleur d'accent,アクセントカラー,강조 색,Акцентный цвет,Color de acento,Akzentfarbe,Cor de destaque,Warna aksen,لون التمييز
+cube.screen.palette,图表色板,圖表色板,Chart palette,Palette des graphiques,グラフのパレット,차트 팔레트,Палитра диаграмм,Paleta de gráficos,Diagrammpalette,Paleta dos gráficos,Palet grafik,لوحة ألوان المخططات
+cube.screen.palette.tech,科技,科技,Tech,Tech,テック,테크,Техно,Tecnología,Tech,Tecnologia,Teknologi,تقني
+cube.screen.palette.neon,霓虹,霓虹,Neon,Néon,ネオン,네온,Неон,Neón,Neon,Néon,Neon,نيون
+cube.screen.palette.ocean,海洋,海洋,Ocean,Océan,オーシャン,오션,Океан,Océano,Ozean,Oceano,Samudra,محيط
+cube.screen.palette.warm,暖色,暖色,Warm,Chaud,ウォーム,웜,Тёплая,Cálida,Warm,Quente,Hangat,دافئ
+cube.screen.palette.accent,主题色渐变,主題色漸變,Accent tints,Nuances de l'accent,アクセントの濃淡,강조 색 농담,Оттенки акцента,Tonos del acento,Akzenttöne,Tons do destaque,Gradasi aksen,تدرجات التمييز
+cube.screen.panel_title_size,面板标题字号,面板標題字號,Panel title size,Taille des titres de panneau,パネルタイトルサイズ,패널 제목 크기,Размер заголовков панелей,Tamaño de título de panel,Paneltitelgröße,Tamanho do título do painel,Ukuran judul panel,حجم عنوان اللوحة
+cube.screen.number_font,数字字体,數字字體,Number font,Police des chiffres,数字フォント,숫자 글꼴,Шрифт чисел,Fuente de números,Zahlenschrift,Fonte dos números,Font angka,خط الأرقام
+cube.screen.number_font.mono,等宽,等寬,Monospace,Chasse fixe,等幅,고정폭,Моноширинный,Monoespaciada,Festbreite,Monoespaçada,Monospasi,ثابت العرض
+cube.screen.number_font.condensed,窄体,窄體,Condensed,Condensée,コンデンス,좁은 글꼴,Узкий,Condensada,Schmal,Condensada,Rapat,مضغوط
+cube.screen.number_font.sans,默认,預設,Default,Par défaut,デフォルト,기본,По умолчанию,Predeterminada,Standard,Predefinida,Bawaan,افتراضي
+cube.screen.chart_font_size,图表字号,圖表字號,Chart font size,Taille de police des graphiques,グラフの文字サイズ,차트 글꼴 크기,Размер шрифта диаграмм,Tamaño de fuente de gráficos,Diagrammschriftgröße,Tamanho da fonte dos gráficos,Ukuran font grafik,حجم خط المخططات
