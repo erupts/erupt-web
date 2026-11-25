@@ -1,4 +1,48 @@
 <form nz-form nzLayout="vertical">
+    @if (screen) {
+        <nz-form-item>
+            <nz-form-label>{{ 'cube.screen.size' | translate }}</nz-form-label>
+            <nz-form-control>
+                <div style="display: flex;align-items: center;gap: 8px">
+                    <nz-input-number [(ngModel)]="dsl.settings.screen.width" name="screenWidth" [nzMin]="320" [nzStep]="10" style="flex: 1"></nz-input-number>
+                    ×
+                    <nz-input-number [(ngModel)]="dsl.settings.screen.height" name="screenHeight" [nzMin]="240" [nzStep]="10" style="flex: 1"></nz-input-number>
+                </div>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label>{{ 'cube.screen.fit' | translate }}</nz-form-label>
+            <nz-form-control>
+                <nz-radio-group [(ngModel)]="dsl.settings.screen.fit" name="screenFit">
+                    @for (fit of fits; track fit) {
+                        <label nz-radio [nzValue]="fit">{{ 'cube.screen.fit.' + fit | translate }}</label>
+                    }
+                </nz-radio-group>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label>{{ 'cube.screen.panel' | translate }}</nz-form-label>
+            <nz-form-control>
+                <nz-select [(ngModel)]="dsl.settings.screen.panel" name="screenPanel" style="width: 100%">
+                    @for (panel of panels; track panel) {
+                        <nz-option [nzValue]="panel" [nzLabel]="'cube.screen.panel.' + panel | translate"></nz-option>
+                    }
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label>{{ 'cube.screen.header' | translate }}</nz-form-label>
+            <nz-form-control>
+                <div style="display: flex;align-items: center;gap: 8px">
+                    <nz-switch [(ngModel)]="dsl.settings.screen.header" name="screenHeader"></nz-switch>
+                    @if (dsl.settings.screen.header) {
+                        <input nz-input [(ngModel)]="dsl.settings.screen.title" name="screenTitle" style="flex: 1"
+                               [placeholder]="'cube.screen.title' | translate"/>
+                    }
+                </div>
+            </nz-form-control>
+        </nz-form-item>
+    }
     <nz-form-item>
         <nz-form-label>{{ 'cube.dashboard.config.bg_color' | translate }}</nz-form-label>
         <nz-form-control>
@@ -13,28 +57,39 @@
     <nz-form-item>
         <nz-form-label>{{ 'cube.dashboard.config.bg_image' | translate }}</nz-form-label>
         <nz-form-control>
-            <input nz-input [(ngModel)]="dsl.settings.backgroundImage" name="backgroundImage" placeholder="https://example.com/bg.png"/>
+            <div style="display: flex;gap: 8px">
+                <input nz-input [(ngModel)]="dsl.settings.backgroundImage" name="backgroundImage"
+                       placeholder="https://example.com/bg.png" style="flex: 1"/>
+                <input #file type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden (change)="upload(file)"/>
+                <button nz-button type="button" (click)="file.click()" [nzLoading]="uploading">
+                    <span nz-icon nzType="upload"></span> {{ 'file.upload' | translate }}
+                </button>
+            </div>
         </nz-form-control>
     </nz-form-item>
-    <nz-form-item>
-        <nz-form-label>{{ 'cube.dashboard.config.theme' | translate }}</nz-form-label>
-        <nz-form-control>
-            <nz-radio-group [(ngModel)]="dsl.settings.theme" name="theme">
-                <label nz-radio [nzValue]="DashboardTheme.LIGHT">{{ 'cube.dashboard.config.theme_light' | translate }}</label>
-                <label nz-radio [nzValue]="DashboardTheme.DARK">{{ 'cube.dashboard.config.theme_dark' | translate }}</label>
-            </nz-radio-group>
-        </nz-form-control>
-    </nz-form-item>
+    @if (!screen) {
+        <nz-form-item>
+            <nz-form-label>{{ 'cube.dashboard.config.theme' | translate }}</nz-form-label>
+            <nz-form-control>
+                <nz-radio-group [(ngModel)]="dsl.settings.theme" name="theme">
+                    <label nz-radio [nzValue]="DashboardTheme.LIGHT">{{ 'cube.dashboard.config.theme_light' | translate }}</label>
+                    <label nz-radio [nzValue]="DashboardTheme.DARK">{{ 'cube.dashboard.config.theme_dark' | translate }}</label>
+                </nz-radio-group>
+            </nz-form-control>
+        </nz-form-item>
+    }
     <nz-form-item>
         <nz-form-label>{{ 'cube.dashboard.config.auto_refresh' | translate }}</nz-form-label>
         <nz-form-control>
             <nz-input-number [(ngModel)]="dsl.settings.autoRefreshInterval" name="autoRefreshInterval" [nzMin]="0" [nzStep]="10" style="width: 100%"></nz-input-number>
         </nz-form-control>
     </nz-form-item>
-    <nz-form-item>
-        <nz-form-label>{{ 'cube.dashboard.config.gap' | translate }}</nz-form-label>
-        <nz-form-control>
-            <nz-input-number [(ngModel)]="dsl.settings.gap" name="gap" [nzMin]="0" [nzMax]="50" style="width: 100%"></nz-input-number>
-        </nz-form-control>
-    </nz-form-item>
+    @if (!screen) {
+        <nz-form-item>
+            <nz-form-label>{{ 'cube.dashboard.config.gap' | translate }}</nz-form-label>
+            <nz-form-control>
+                <nz-input-number [(ngModel)]="dsl.settings.gap" name="gap" [nzMin]="0" [nzMax]="50" style="width: 100%"></nz-input-number>
+            </nz-form-control>
+        </nz-form-item>
+    }
 </form>

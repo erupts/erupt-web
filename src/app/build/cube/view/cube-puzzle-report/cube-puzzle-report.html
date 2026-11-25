@@ -1,5 +1,5 @@
 <nz-card [nzBordered]="false" [nzTitle]="report.title" nzSize="small"
-         [class.dark-theme]="dsl?.settings?.theme === DashboardTheme.DARK"
+         [class.dark-theme]="dark"
          style="height: 100%;width: 100%;margin-bottom: 0"
          [nzBodyStyle]="{height: 'calc(100% - ' + (report.title ? 38 : 0) + 'px)',padding: 0, background: report.ui['background'] || 'transparent'}">
     @if (requiredUnfilled) {
@@ -28,7 +28,7 @@
                     <span [style.font-size]="(report.ui['fontSize'] || 22) + 'px'"
                           class="kpi-value"
                           [style.color]="report.ui['color']">
-                        {{ chartData[0][report.cube[CubeKey.yField] + ''] }}
+                        {{ kpiText }}
                     </span>
                     @if (kpiCompareValue !== null) {
                         <div class="kpi-compare" [class.kpi-trend-up]="getKpiDelta() >= 0" [class.kpi-trend-down]="getKpiDelta() < 0">
