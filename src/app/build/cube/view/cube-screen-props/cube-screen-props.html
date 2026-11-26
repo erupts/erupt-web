@@ -112,6 +112,8 @@
                 <label>{{ 'cube.screen.panel' | translate }}</label>
                 <nz-select nzSize="small" [(ngModel)]="style.panel" nzAllowClear
                            [nzPlaceHolder]="'cube.screen.panel.inherit' | translate">
+                    <!-- no value of its own: panelStyle() falls back to the screen's -->
+                    <nz-option [nzValue]="null" [nzLabel]="'cube.screen.panel.inherit' | translate"></nz-option>
                     @for (panel of panels; track panel) {
                         <nz-option [nzValue]="panel" [nzLabel]="'cube.screen.panel.' + panel | translate"></nz-option>
                     }

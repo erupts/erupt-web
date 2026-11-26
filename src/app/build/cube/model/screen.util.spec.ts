@@ -1,7 +1,7 @@
 import {DashboardType, ScreenFit, ScreenPanel} from "./dashboard.model";
 import {
     AlignKind, alignFrames, Axis, boundsOf, distributeFrames,
-    canvasHeight, gridFrame, isScreen, safeImageSrc, SCREEN_DEFAULT, screenOf, screenTransform, STAGE_VIEW_FIT, zoomAt
+    canvasHeight, gridFrame, isScreen, parseGuides, rulerStep, safeImageSrc, SCREEN_DEFAULT, screenOf, screenTransform, STAGE_VIEW_FIT, zoomAt
 } from "./screen.util";
 
 describe('screen.util', () => {
@@ -96,6 +96,19 @@ describe('screen.util', () => {
         const screen = {...SCREEN_DEFAULT, header: false};
         expect(gridFrame({x: 0, y: 0, cols: 24, rows: 12}, screen, 0)).toEqual({x: 0, y: 0, width: 1920, height: 1080});
         expect(gridFrame({x: 12, y: 6, cols: 6, rows: 3}, screen, 12)).toEqual({x: 966, y: 546, width: 468, height: 258});
+    });
+
+    it('picks a ruler step that leaves room for its labels', () => {
+        expect(rulerStep(1)).toBe(100);
+        expect(rulerStep(0.5)).toBe(200);
+        expect(rulerStep(4)).toBe(20);
+        expect(rulerStep(0.001)).toBe(10000);
+    });
+
+    it('reads guides back defensively', () => {
+        expect(parseGuides(null)).toEqual({v: [], h: []});
+        expect(parseGuides('not json')).toEqual({v: [], h: []});
+        expect(parseGuides('{"v":[10,"x",null,20],"h":"nope"}')).toEqual({v: [10, 20], h: []});
     });
 
 });

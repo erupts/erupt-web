@@ -5,6 +5,7 @@ import {
     EventEmitter,
     HostListener,
     Input,
+    NgZone,
     OnDestroy,
     OnInit,
     Output,
@@ -22,7 +23,7 @@ import {
 } from "../../model/dashboard.model";
 import {isScreen, screenOf} from "../../model/screen.util";
 import {paletteColors} from "../../model/screen-palette";
-import {formatNumber} from "../../model/number-format";
+import {formatNumber, rollFrame} from "../../model/number-format";
 import {CubeApiService} from "../../service/cube-api.service";
 import {PivotSheet} from '@antv/s2';
 import {CubeFilter, CubeOperator, DimensionFormat} from "../../model/cube-query.model";
@@ -66,6 +67,13 @@ import {forkJoin} from "rxjs";
 import {finalize} from "rxjs/operators";
 
 echarts.use([MapChart, TooltipComponent, VisualMapComponent, CanvasRenderer]);
+
+/** How long a KPI on a data screen takes to roll to a new figure */
+const KPI_ROLL_MS = 1200;
+
+/** The speed a table scrolls its rows at, in pixels a second, and how long it rests at either end */
+const TABLE_SCROLL_SPEED = 30;
+const TABLE_SCROLL_REST_MS = 2000;
 
 /**
  * The dark G2 theme without its opaque canvas, so a chart sits on the panel of a data screen, with axis
@@ -128,6 +136,18 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
     @ViewChild('tableContainer', {static: false}) tableContainer: ElementRef;
 
     @ViewChild('pivotContainer', {static: false}) pivotContainer: ElementRef;
+
+    @ViewChild('kpiValue', {static: false}) kpiValue: ElementRef<HTMLElement>;
+
+    // A KPI on a data screen rolls to each new figure. The frames run outside Angular and write the text node
+    // the template owns, so a screen full of KPIs does not run change detection sixty times a second.
+    private kpiRoll: number | null = null;     // the figure shown while rolling, null when at rest
+    private kpiLast: number | null = null;     // the figure last landed on, rolled from at the next refresh
+    private kpiFrame = 0;
+
+    // A table may scroll its rows by itself (report.ui.autoScroll), pausing under the mouse
+    tableHovered = false;
+    private scrollFrame = 0;
 
     querying: boolean = false;
 
@@ -233,7 +253,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     constructor(private cubeApiService: CubeApiService,
                 public el: ElementRef,
-                private drawerService: NzDrawerService) {
+                private drawerService: NzDrawerService,
+                private zone: NgZone) {
 
     }
 
@@ -582,6 +603,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
                     // delay table height update to ensure the DOM has rendered
                     setTimeout(() => {
                         this.updateTableHeight();
+                        this.startAutoScroll();
                     }, 100);
                 }
                 this.render();
@@ -605,6 +627,7 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
             this.s2 = null;
         }
         if (this.report.type == ReportType.TABLE || this.report.type == ReportType.KPI || this.report.type == ReportType.TEXT) {
+            if (this.report.type == ReportType.KPI) this.rollKpi();
             return;
         } else if (this.report.type == ReportType.PIVOT_TABLE) {
             const dataConfig = {
@@ -1302,6 +1325,8 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
 
     ngOnDestroy(): void {
         this.mapRenderSeq++;
+        cancelAnimationFrame(this.kpiFrame);
+        cancelAnimationFrame(this.scrollFrame);
         if (this.observer) {
             this.observer.disconnect();
         }
@@ -1318,9 +1343,94 @@ export class CubePuzzleReport implements OnInit, OnDestroy {
         }
     }
 
-    /** The figure of a KPI, written by the report's number format when it has one */
+    /** The figure of a KPI, written by the report's number format when it has one; mid-roll, the rolling frame */
     get kpiText(): string {
-        return formatNumber(this.chartData[0][this.report.cube[CubeKey.yField] + ''], this.report.ui?.['format']);
+        return formatNumber(this.kpiRoll ?? this.chartData[0][this.report.cube[CubeKey.yField] + ''], this.report.ui?.['format']);
+    }
+
+    /**
+     * On a data screen, rolls the KPI from the figure it showed (from zero the first time) to the new one.
+     * Elsewhere, and when the viewer asks for reduced motion, it just shows.
+     */
+    private rollKpi(): void {
+        cancelAnimationFrame(this.kpiFrame);
+        this.kpiRoll = null;
+        const raw = this.chartData?.[0]?.[this.report.cube[CubeKey.yField] + ''];
+        const to = Number(raw);
+        if (!this.isScreen || raw === null || raw === undefined || raw === '' || !isFinite(to)) {
+            this.kpiLast = null;
+            return;
+        }
+        const from = this.kpiLast ?? 0;
+        this.kpiLast = to;
+        if (from === to || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        this.kpiRoll = from;
+        const start = performance.now();
+        this.zone.runOutsideAngular(() => {
+            const step = (now: number) => {
+                const progress = (now - start) / KPI_ROLL_MS;
+                this.kpiRoll = progress >= 1 ? null : rollFrame(from, to, progress);
+                this.writeKpiText();
+                if (progress < 1) this.kpiFrame = requestAnimationFrame(step);
+            };
+            this.kpiFrame = requestAnimationFrame(step);
+        });
+    }
+
+    // Writes the text node the template renders {{ kpiText }} into: Angular keeps writing the same node later
+    private writeKpiText(): void {
+        const el = this.kpiValue?.nativeElement;
+        const node = el && Array.from(el.childNodes).find(it => it.nodeType === Node.TEXT_NODE);
+        if (node) node.nodeValue = ' ' + this.kpiText + ' ';
+    }
+
+    /**
+     * Scrolls the rows of a table that has report.ui.autoScroll on, at a steady TABLE_SCROLL_SPEED.
+     * It rests a moment at the bottom, jumps back to the top and rests again; it waits while the mouse is over
+     * the table, and a scroll by hand moves where it carries on from.
+     */
+    private startAutoScroll(): void {
+        cancelAnimationFrame(this.scrollFrame);
+        if (this.report.type !== ReportType.TABLE || !this.report.ui?.['autoScroll']
+            || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return;
+        }
+        let last = 0;
+        let pos = -1;
+        let restUntil = performance.now() + TABLE_SCROLL_REST_MS;
+        let atBottom = false;
+        this.zone.runOutsideAngular(() => {
+            const step = (now: number) => {
+                this.scrollFrame = requestAnimationFrame(step);
+                const elapsed = last ? Math.min(now - last, 100) : 0;
+                last = now;
+                const body = this.tableScrollBody();
+                if (!body || this.tableHovered || now < restUntil) return;
+                const max = body.scrollHeight - body.clientHeight;
+                if (max <= 1) return;
+                if (atBottom) {
+                    atBottom = false;
+                    pos = body.scrollTop = 0;
+                    restUntil = now + TABLE_SCROLL_REST_MS;
+                    return;
+                }
+                // the browser rounds scrollTop, so the position is kept here; a larger gap is a scroll by hand
+                if (pos < 0 || Math.abs(body.scrollTop - pos) > 2) pos = body.scrollTop;
+                pos = Math.min(max, pos + TABLE_SCROLL_SPEED * elapsed / 1000);
+                body.scrollTop = pos;
+                if (pos >= max) {
+                    atBottom = true;
+                    restUntil = now + TABLE_SCROLL_REST_MS;
+                }
+            };
+            this.scrollFrame = requestAnimationFrame(step);
+        });
+    }
+
+    // The element that scrolls the rows: the virtual viewport over 200 rows, the table body below that
+    private tableScrollBody(): HTMLElement | null {
+        const container: HTMLElement = this.tableContainer?.nativeElement;
+        return container?.querySelector('cdk-virtual-scroll-viewport') || container?.querySelector('.ant-table-body');
     }
 
     getKpiDelta(): number {

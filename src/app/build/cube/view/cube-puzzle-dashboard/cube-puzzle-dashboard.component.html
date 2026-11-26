@@ -86,7 +86,7 @@
                 <div class="layer-list" cdkDropList (cdkDropListDropped)="dropLayer($event)">
                     @for (report of layers; track report) {
                         <div class="layer-row" cdkDrag [class.active]="isSelected(report)" [class.layer-hidden]="isHidden(report)"
-                             (click)="selectLayer(report, $event)"
+                             (click)="selectLayer(report, $event)" (contextmenu)="openStageMenu($event, report)"
                              (mouseenter)="hoverLayer = report" (mouseleave)="hoverLayer = null">
                             <span nz-icon [nzType]="layerIcon(report)" class="layer-icon"></span>
                             <span class="layer-name">{{ layerName(report) }}</span>
@@ -240,6 +240,16 @@
                             [title]="'cube.screen.zoom.fit' | translate">
                         <span nz-icon nzType="expand"></span>
                     </button>
+                    @if (edit) {
+                        <button nz-button nzType="text" nzSize="small" (click)="toggleRulers()" [class.on]="showRulers"
+                                [title]="('cube.screen.shortcut.rulers' | translate) + ' (⇧R)'">
+                            <span nz-icon nzType="column-width"></span>
+                        </button>
+                        <button nz-button nzType="text" nzSize="small" (click)="showShortcuts()"
+                                [title]="('cube.screen.shortcut.title' | translate) + ' (?)'">
+                            <span nz-icon nzType="question-circle"></span>
+                        </button>
+                    }
                     @if (filterBarHidden) {
                         <button nz-button nzType="text" nzSize="small" (click)="toggleFilterBar()"
                                 [title]="'cube.screen.filter.show' | translate">
@@ -327,11 +337,12 @@
                    over the sheet in the designer, where the desk around it stays the desk -->
               <div class="puzzle-stage" [ngClass]="screen ? 'number-' + screen.numberFont : ''"
                    [style.--screen-accent]="screen?.accent" [style.--screen-panel-title]="screen ? screen.panelTitleSize + 'px' : null"
+                   [style.--screen-panel-title-color]="screen?.panelTitleColor || null"
                    [style.background-image]="screen && editModel ? backgroundImage : null"
                    [style.width.px]="screen?.width" [style.height.px]="screen?.height" [style.transform]="stageTransform">
                 @if (screen?.header) {
                     <div class="screen-header" [ngClass]="'header-' + screen.headerStyle">
-                        <span class="screen-title" [style.font-size.px]="screen.titleSize">
+                        <span class="screen-title" [style.font-size.px]="screen.titleSize" [style.color]="screen.titleColor || null">
                             @if (logo) {
                                 <img class="screen-logo" [src]="logo" alt="" draggable="false"/>
                             } @else {
@@ -347,7 +358,7 @@
                 <div class="puzzle-stage-body">
                 @if (screen) {
                     <!-- Free layout: every report has a frame in pixels of the design resolution; the order is the layer order -->
-                    <div class="screen-canvas" #canvas (mousedown)="startMarquee($event)">
+                    <div class="screen-canvas" #canvas (mousedown)="startMarquee($event)" (contextmenu)="openStageMenu($event)">
                         @for (report of dsl.reports; track report) {
                             <div class="screen-item" [class.screen-item-edit]="edit" [class.screen-item-locked]="edit && isLocked(report)"
                                  [style.display]="isHidden(report) ? 'none' : null"
@@ -356,7 +367,7 @@
                                  [style.transform]="'rotate(' + (report.frame.rotate || 0) + 'deg)'"
                                  [style.opacity]="(report.ui?.['screen']?.opacity ?? 100) / 100"
                                  [style.z-index]="$index + 1"
-                                 (mousedown)="pick(report, $event)">
+                                 (mousedown)="pick(report, $event)" (contextmenu)="openStageMenu($event, report)">
                                 <ng-container *ngTemplateOutlet="panel; context: {$implicit: report, index: $index}"/>
                             </div>
                         }
@@ -378,6 +389,33 @@
                 }
                 </div>
               </div>
+              @if (screen && edit && showRulers) {
+                <!-- Rulers and guides of the designer, over the viewport and not on the scaled stage: they keep their
+                     size at any zoom. The top ruler gives horizontal guides, the left one vertical guides -->
+                <div class="screen-guides">
+                    @for (y of guides.h; track $index) {
+                        <div class="screen-guide guide-h" [style.top.px]="guideOffset('h', y)"
+                             (mousedown)="dragGuide($event, 'h', $index)"><span>{{ y }}</span></div>
+                    }
+                    @for (x of guides.v; track $index) {
+                        <div class="screen-guide guide-v" [style.left.px]="guideOffset('v', x)"
+                             (mousedown)="dragGuide($event, 'v', $index)"><span>{{ x }}</span></div>
+                    }
+                    @if (draggingGuide) {
+                        <div class="screen-guide guide-dragging" [class.guide-h]="draggingGuide.axis === 'h'"
+                             [class.guide-v]="draggingGuide.axis === 'v'"
+                             [style.top.px]="draggingGuide.axis === 'h' ? guideOffset('h', draggingGuide.at) : null"
+                             [style.left.px]="draggingGuide.axis === 'v' ? guideOffset('v', draggingGuide.at) : null">
+                            <span>{{ draggingGuide.at }}</span>
+                        </div>
+                    }
+                </div>
+                <canvas #rulerTop class="screen-ruler ruler-top" [style.height.px]="RULER"
+                        (mousedown)="dragGuide($event, 'h')"></canvas>
+                <canvas #rulerLeft class="screen-ruler ruler-left" [style.width.px]="RULER"
+                        (mousedown)="dragGuide($event, 'v')"></canvas>
+                <div class="screen-ruler-corner" [style.width.px]="RULER" [style.height.px]="RULER"></div>
+              }
             </div>
             }
         </div>
@@ -521,4 +559,96 @@
         }
         </tbody>
     </nz-table>
+</ng-template>
+
+<!-- The editor's context menu: on a report it acts on the selection, on the empty canvas it pastes and selects -->
+<nz-dropdown-menu #stageMenu="nzDropdownMenu">
+    <ul nz-menu class="cube-stage-menu">
+        @if (menuReport) {
+            @if (selection.length === 1 && !isWidget(menuReport)) {
+                <li nz-menu-item (click)="editItem(menuReport)">
+                    <span nz-icon nzType="edit"></span>{{ 'global.editor' | translate }}
+                </li>
+                <li nz-menu-divider></li>
+            }
+            <li nz-menu-item (click)="copySelection()">
+                <span nz-icon nzType="copy"></span>{{ 'global.copy' | translate }}<kbd>{{ mod }} C</kbd>
+            </li>
+            <li nz-menu-item (click)="paste(selection)">
+                <span nz-icon nzType="block"></span>{{ 'cube.screen.shortcut.duplicate' | translate }}<kbd>{{ mod }} D</kbd>
+            </li>
+            <li nz-menu-item [nzDisabled]="clipboardEmpty" (click)="paste()">
+                <span nz-icon nzType="snippets"></span>{{ 'cube.screen.shortcut.paste' | translate }}<kbd>{{ mod }} V</kbd>
+            </li>
+            <li nz-menu-divider></li>
+            @if (selection.length === 1) {
+                <li nz-menu-item (click)="moveLayer(menuReport, true)">
+                    <span nz-icon nzType="vertical-align-top"></span>{{ 'cube.screen.layer.front' | translate }}
+                </li>
+                <li nz-menu-item (click)="moveLayer(menuReport, false)">
+                    <span nz-icon nzType="vertical-align-bottom"></span>{{ 'cube.screen.layer.back' | translate }}
+                </li>
+            }
+            @if (selection.length > 1) {
+                <li nz-menu-item (click)="group()">
+                    <span nz-icon nzType="link"></span>{{ 'cube.screen.group' | translate }}<kbd>{{ mod }} G</kbd>
+                </li>
+            }
+            @if (canUngroup) {
+                <li nz-menu-item (click)="ungroup()">
+                    <span nz-icon nzType="disconnect"></span>{{ 'cube.screen.ungroup' | translate }}<kbd>{{ mod }} ⇧ G</kbd>
+                </li>
+            }
+            <li nz-menu-item (click)="setSelectionStyle({locked: !selectionLocked})">
+                <span nz-icon [nzType]="selectionLocked ? 'unlock' : 'lock'"></span>
+                {{ (selectionLocked ? 'cube.screen.layer.unlock' : 'cube.screen.layer.lock') | translate }}
+            </li>
+            <li nz-menu-item (click)="setSelectionStyle({hidden: true})">
+                <span nz-icon nzType="eye-invisible"></span>{{ 'cube.screen.layer.hide' | translate }}
+            </li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item nzDanger (click)="deleteSelection()">
+                <span nz-icon nzType="delete"></span>{{ 'global.delete' | translate }}<kbd>Delete</kbd>
+            </li>
+        } @else {
+            <li nz-menu-item [nzDisabled]="clipboardEmpty" (click)="paste()">
+                <span nz-icon nzType="snippets"></span>{{ 'cube.screen.shortcut.paste' | translate }}<kbd>{{ mod }} V</kbd>
+            </li>
+            <li nz-menu-item (click)="selectAll()">
+                <span nz-icon nzType="select"></span>{{ 'global.select_all' | translate }}<kbd>{{ mod }} A</kbd>
+            </li>
+            <li nz-menu-divider></li>
+            <li nz-menu-item (click)="toggleRulers()">
+                <span nz-icon nzType="column-width"></span>{{ 'cube.screen.shortcut.rulers' | translate }}<kbd>⇧ R</kbd>
+            </li>
+            <li nz-menu-item [nzDisabled]="!guides.v.length && !guides.h.length" (click)="clearGuides()">
+                <span nz-icon nzType="clear"></span>{{ 'cube.screen.guides.clear' | translate }}
+            </li>
+            <li nz-menu-item (click)="showShortcuts()">
+                <span nz-icon nzType="question-circle"></span>{{ 'cube.screen.shortcut.title' | translate }}<kbd>?</kbd>
+            </li>
+        }
+    </ul>
+</nz-dropdown-menu>
+
+<!-- The shortcut sheet (? or the button in the zoom control); its list is `shortcuts` in the component -->
+<ng-template #shortcutsContent>
+    <div class="cube-shortcuts">
+        @for (group of shortcuts; track group.group) {
+            <section>
+                <h4>{{ group.group | translate }}</h4>
+                @for (item of group.items; track item.label) {
+                    <div class="shortcut-row">
+                        <span>{{ item.label | translate }}</span>
+                        <span class="shortcut-keys">
+                            @for (key of item.keys; track $index) {
+                                <kbd>{{ key }}</kbd>
+                            }
+                        </span>
+                    </div>
+                }
+            </section>
+        }
+        <p class="shortcut-tip">{{ 'cube.screen.shortcut.tip' | translate }}</p>
+    </div>
 </ng-template>

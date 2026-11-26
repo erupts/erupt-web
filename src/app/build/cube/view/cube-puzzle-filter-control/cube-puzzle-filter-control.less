@@ -1,3 +1,5 @@
+@import (reference) '../../style/editor-chrome.less';
+
 .number-range-inputs {
     display: flex;
     align-items: center;
@@ -11,14 +13,14 @@
 }
 
 // ── on the dark frame of a data screen ────────────────────────────
-// literal colors on purpose: the frame is dark in either application theme, which is left alone
-@field: #0b0f14;
-@field-edge: #2c3744;
-@ink: #c9d6e2;
-@muted: #7f90a3;
-@accent: #22d3ee;
-@panel: #11161d;
-@hover: #1a222c;
+// the frame is dark in either application theme, which is left alone; its colors are style/editor-chrome.less
+@field: @chrome-field;
+@field-edge: @chrome-field-edge;
+@ink: @chrome-ink;
+@muted: @chrome-muted;
+@accent: @chrome-accent;
+@panel: @chrome;
+@hover: @chrome-hover;
 
 :host.filter-dark ::ng-deep {
     .ant-input, .ant-input-number, .ant-picker,
@@ -85,7 +87,7 @@
     // the class lands on the overlay pane around a select's list, and on the dropdown itself for a picker
     &.ant-select-dropdown, .ant-select-dropdown, .ant-picker-panel-container {
         background: @panel;
-        border: 1px solid #222b36;
+        border: 1px solid @chrome-edge;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
         color: @ink;
     }
@@ -99,7 +101,7 @@
     }
 
     .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
-        background: fade(@accent, 14%);
+        background: ~"color-mix(in srgb, @{accent} 14%, transparent)";
         color: #e9fbff;
     }
 
@@ -110,7 +112,7 @@
     .ant-picker-panel, .ant-picker-header, .ant-picker-footer, .ant-picker-time-panel,
     .ant-picker-datetime-panel .ant-picker-time-panel, .ant-picker-time-panel-column:not(:first-child),
     .ant-picker-ranges, .ant-picker-footer-extra:not(:last-child) {
-        border-color: #222b36;
+        border-color: @chrome-edge;
     }
 
     .ant-picker-panel {
@@ -145,7 +147,7 @@
     .ant-picker-cell-in-view.ant-picker-cell-in-range::before,
     .ant-picker-cell-in-view.ant-picker-cell-range-start:not(.ant-picker-cell-range-start-single)::before,
     .ant-picker-cell-in-view.ant-picker-cell-range-end:not(.ant-picker-cell-range-end-single)::before {
-        background: fade(@accent, 14%);
+        background: ~"color-mix(in srgb, @{accent} 14%, transparent)";
     }
 
     .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner,
@@ -164,12 +166,12 @@
     }
 
     .ant-picker-time-panel-column > li.ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
-        background: fade(@accent, 18%);
+        background: ~"color-mix(in srgb, @{accent} 18%, transparent)";
     }
 
     .ant-picker-range-arrow::before, .ant-picker-range-arrow::after {
         background: @panel;
-        border-color: #222b36;
+        border-color: @chrome-edge;
     }
 
     // the preset ranges (today, last 7 days, ...) are blue tags

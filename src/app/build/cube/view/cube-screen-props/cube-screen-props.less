@@ -1,13 +1,9 @@
-// Part of the editor frame of a data screen: dark whatever theme the application is in, literal colors on
-// purpose, the ng-zorro controls inside dressed to match. The same values as the layer panel in the dashboard less.
-@chrome: #11161d;
-@chrome-edge: #222b36;
-@chrome-hover: #1a222c;
-@chrome-ink: #c9d6e2;
-@chrome-muted: #7f90a3;
-@chrome-accent: #22d3ee;
-@field: #0b0f14;
-@field-edge: #2c3744;
+// Part of the editor frame of a data screen: dark whatever theme the application is in, the ng-zorro controls
+// inside dressed to match. The colors are style/editor-chrome.less.
+@import (reference) '../../style/editor-chrome.less';
+
+@field: @chrome-field;
+@field-edge: @chrome-field-edge;
 
 :host {
     flex-shrink: 0;
@@ -245,7 +241,7 @@
         }
 
         &.ant-radio-button-wrapper-checked {
-            background: fade(@chrome-accent, 14%);
+            background: ~"color-mix(in srgb, @{chrome-accent} 14%, transparent)";
             border-color: @chrome-accent;
             color: @chrome-accent;
         }

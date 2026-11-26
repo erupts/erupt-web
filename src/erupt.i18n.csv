@@ -356,6 +356,8 @@ cube.report.config.data_source,数据源,數據源,Data source,Source de donnée
 cube.report.config.main_model,主模型（默认）,主模型（預設）,Main model (default),Modèle principal (défaut),メインモデル（デフォルト）,주 모델(기본),Основная модель (по умолчанию),Modelo principal (predeterminado),Hauptmodell (Standard),Modelo principal (padrão),Model utama (default),النموذج الرئيسي (الافتراضي)
 cube.report.config.custom,自定义配置,自定義配置,Custom config,Configuration personnalisée,カスタム設定,사용자 정의 설정,Пользовательские настройки,Configuración personalizada,Benutzerdefinierte Konfiguration,Configuração personalizada,Konfigurasi kustom,الإعداد المخصص
 cube.report.config.font_size,字体大小,字體大小,Font size,Taille de police,フォントサイズ,글꼴 크기,Размер шрифта,Tamaño de fuente,Schriftgröße,Tamanho da fonte,Ukuran font,حجم الخط
+cube.report.config.auto_scroll,自动滚动,自動滾動,Auto scroll,Défilement automatique,自動スクロール,자동 스크롤,Автопрокрутка,Desplazamiento automático,Automatisch scrollen,Deslocamento automático,Gulir otomatis,تمرير تلقائي
+cube.report.config.auto_scroll_hint,行数超出时自动向下滚动，到底后回到顶部；鼠标悬停时暂停,行數超出時自動向下滾動，到底後回到頂部；滑鼠懸停時暫停,Scrolls the rows when they overflow and starts over at the end; pauses under the mouse,Fait défiler les lignes qui débordent et recommence à la fin ; s'arrête sous la souris,行があふれると自動でスクロールし、最後まで行くと先頭に戻ります。マウスを乗せると一時停止します,행이 넘치면 자동으로 스크롤하고 끝에서 처음으로 돌아갑니다. 마우스를 올리면 멈춥니다,Прокручивает не помещающиеся строки и начинает сначала в конце; останавливается под курсором,Desplaza las filas que no caben y vuelve al inicio al final; se detiene bajo el ratón,Scrollt überlaufende Zeilen und beginnt am Ende von vorn; hält unter der Maus an,Desloca as linhas que não cabem e recomeça no fim; pára sob o rato,Menggulir baris yang meluap dan mulai lagi di akhir; berhenti saat kursor di atasnya,يمرر الصفوف الزائدة ويبدأ من جديد عند النهاية؛ يتوقف تحت مؤشر الفأرة
 cube.report.config.text_color,文本颜色,文本顏色,Text color,Couleur du texte,テキスト色,글자 색,Цвет текста,Color de texto,Textfarbe,Cor do texto,Warna teks,لون النص
 cube.report.config.smooth_curve,平滑曲线,平滑曲線,Smooth curve,Courbe lissée,スムーズ曲線,부드러운 곡선,Сглаженная кривая,Curva suavizada,Glatte Kurve,Curva suavizada,Kurva halus,منحنى ناعم
 cube.report.config.step_line,阶梯折线图,階梯折線圖,Step line,Ligne en escalier,ステップ折れ線グラフ,계단형 꺾은선,Ступенчатая линия,Línea escalonada,Treppenliniendiagramm,Linha escalonada,Garis bertahap,خط متدرج
@@ -1788,6 +1790,36 @@ cube.widget.loop,循环播放,循環播放,Loop,Boucle,ループ,반복,Повт
 cube.widget.muted,静音,靜音,Muted,Muet,ミュート,음소거,Без звука,Silenciado,Stumm,Sem som,Bisu,كتم الصوت
 cube.screen.zoom.fit,适应画布,適應畫布,Fit to view,Ajuster à la vue,全体表示,화면에 맞추기,По размеру окна,Ajustar a la vista,An Ansicht anpassen,Ajustar à vista,Sesuaikan tampilan,ملاءمة العرض
 cube.screen.redo,重做,重做,Redo,Rétablir,やり直す,다시 실행,Повторить,Rehacer,Wiederholen,Refazer,Ulangi,إعادة
+cube.dashboard.saved,已保存,已儲存,Saved,Enregistré,保存しました,저장됨,Сохранено,Guardado,Gespeichert,Guardado,Tersimpan,تم الحفظ
+cube.dashboard.unsaved.title,离开设计器？,離開設計器？,Leave the designer?,Quitter l'éditeur ?,デザイナーを離れますか？,디자이너를 떠나시겠습니까?,Покинуть редактор?,¿Salir del diseñador?,Designer verlassen?,Sair do editor?,Tinggalkan desainer?,مغادرة المصمم؟
+cube.dashboard.unsaved.content,还有未保存的修改，离开后将会丢失。,還有未儲存的修改，離開後將會遺失。,There are unsaved changes; they will be lost.,Des modifications ne sont pas enregistrées ; elles seront perdues.,保存されていない変更があり、離れると失われます。,저장되지 않은 변경 사항이 있으며 떠나면 사라집니다.,Есть несохранённые изменения; они будут потеряны.,Hay cambios sin guardar; se perderán.,Es gibt ungespeicherte Änderungen; sie gehen verloren.,Há alterações não guardadas; serão perdidas.,Ada perubahan yang belum disimpan; perubahan akan hilang.,هناك تغييرات غير محفوظة وستُفقد.
+cube.dashboard.unsaved.leave,放弃修改并离开,放棄修改並離開,Discard and leave,Abandonner et quitter,破棄して離れる,버리고 떠나기,Отменить и выйти,Descartar y salir,Verwerfen und verlassen,Descartar e sair,Buang dan keluar,تجاهل والمغادرة
+cube.screen.layer.unlock,解锁,解鎖,Unlock,Déverrouiller,ロック解除,잠금 해제,Разблокировать,Desbloquear,Entsperren,Desbloquear,Buka kunci,إلغاء القفل
+cube.screen.guides.clear,清除参考线,清除參考線,Clear guides,Effacer les repères,ガイドを消去,안내선 지우기,Очистить направляющие,Borrar guías,Hilfslinien löschen,Limpar guias,Hapus garis bantu,مسح الأدلة
+cube.screen.shortcut.title,快捷键,快捷鍵,Keyboard shortcuts,Raccourcis clavier,キーボードショートカット,단축키,Сочетания клавиш,Atajos de teclado,Tastenkürzel,Atalhos de teclado,Pintasan keyboard,اختصارات لوحة المفاتيح
+cube.screen.shortcut.tip,右键报表或空白画布可打开菜单；从标尺拖出参考线，拖回标尺即可删除。,右鍵報表或空白畫布可開啟選單；從尺規拖出參考線，拖回尺規即可刪除。,Right-click a report or the empty canvas for a menu. Drag a guide out of a ruler; drag it back to remove it.,Clic droit sur un rapport ou le canevas vide pour un menu. Tirez un repère d'une règle ; ramenez-le pour le supprimer.,レポートか空のキャンバスを右クリックでメニュー。ルーラーからガイドを引き出し、戻すと削除します。,보고서나 빈 캔버스를 오른쪽 클릭하면 메뉴가 열립니다. 눈금자에서 안내선을 끌어내고 다시 끌어다 놓으면 삭제됩니다.,Правый щелчок по отчёту или пустому холсту открывает меню. Вытяните направляющую из линейки; верните её туда чтобы удалить.,Clic derecho en un informe o el lienzo vacío para un menú. Arrastre una guía desde una regla; devuélvala para quitarla.,Rechtsklick auf einen Bericht oder die leere Fläche öffnet ein Menü. Ziehen Sie eine Hilfslinie aus einem Lineal; zurückziehen entfernt sie.,Clique direito num relatório ou na tela vazia para um menu. Arraste uma guia de uma régua; devolva-a para a remover.,Klik kanan laporan atau kanvas kosong untuk menu. Tarik garis bantu dari penggaris; kembalikan untuk menghapusnya.,انقر بزر الفأرة الأيمن على تقرير أو على اللوحة الفارغة لفتح قائمة. اسحب دليلاً من المسطرة وأعده إليها لحذفه.
+cube.screen.shortcut.group.edit,编辑,編輯,Edit,Édition,編集,편집,Правка,Edición,Bearbeiten,Edição,Edit,تحرير
+cube.screen.shortcut.group.select,选择与排列,選擇與排列,Select & arrange,Sélection et disposition,選択と配置,선택 및 배치,Выбор и расстановка,Selección y disposición,Auswählen & anordnen,Seleção e disposição,Pilih & atur,التحديد والترتيب
+cube.screen.shortcut.group.view,视图,視圖,View,Affichage,表示,보기,Вид,Vista,Ansicht,Vista,Tampilan,العرض
+cube.screen.shortcut.save,保存（不退出编辑）,儲存（不退出編輯）,Save (keep editing),Enregistrer (sans quitter),保存（編集を続ける）,저장 (편집 계속),Сохранить (не выходя),Guardar (seguir editando),Speichern (weiter bearbeiten),Guardar (continuar),Simpan (tetap mengedit),حفظ (متابعة التحرير)
+cube.screen.shortcut.undo,撤销,復原,Undo,Annuler,元に戻す,실행 취소,Отменить,Deshacer,Rückgängig,Desfazer,Urungkan,تراجع
+cube.screen.shortcut.redo,重做,重做,Redo,Rétablir,やり直す,다시 실행,Повторить,Rehacer,Wiederholen,Refazer,Ulangi,إعادة
+cube.screen.shortcut.copy,复制,複製,Copy,Copier,コピー,복사,Копировать,Copiar,Kopieren,Copiar,Salin,نسخ
+cube.screen.shortcut.paste,粘贴,貼上,Paste,Coller,貼り付け,붙여넣기,Вставить,Pegar,Einfügen,Colar,Tempel,لصق
+cube.screen.shortcut.duplicate,创建副本,建立副本,Duplicate,Dupliquer,複製を作成,복제,Дублировать,Duplicar,Duplizieren,Duplicar,Duplikat,تكرار
+cube.screen.shortcut.delete,删除,刪除,Delete,Supprimer,削除,삭제,Удалить,Eliminar,Löschen,Eliminar,Hapus,حذف
+cube.screen.shortcut.select_all,全选,全選,Select all,Tout sélectionner,すべて選択,모두 선택,Выбрать всё,Seleccionar todo,Alles auswählen,Selecionar tudo,Pilih semua,تحديد الكل
+cube.screen.shortcut.toggle_select,加选 / 减选,加選 / 減選,Add to / remove from selection,Ajouter / retirer de la sélection,選択に追加 / 解除,선택 추가 / 해제,Добавить / убрать из выделения,Añadir / quitar de la selección,Zur Auswahl hinzufügen / entfernen,Adicionar / remover da seleção,Tambah / kurangi pilihan,إضافة إلى التحديد / إزالة منه
+cube.screen.shortcut.pick_member,单独选中组内成员,單獨選中組內成員,Pick one member of a group,Choisir un membre d'un groupe,グループ内の1つを選択,그룹 구성원 하나 선택,Выбрать один элемент группы,Elegir un miembro del grupo,Ein Gruppenmitglied wählen,Escolher um membro do grupo,Pilih satu anggota grup,اختيار عنصر واحد من المجموعة
+cube.screen.shortcut.group,组合,組合,Group,Grouper,グループ化,그룹화,Сгруппировать,Agrupar,Gruppieren,Agrupar,Kelompokkan,تجميع
+cube.screen.shortcut.ungroup,取消组合,取消組合,Ungroup,Dissocier,グループ解除,그룹 해제,Разгруппировать,Desagrupar,Gruppierung aufheben,Desagrupar,Pisahkan grup,فك التجميع
+cube.screen.shortcut.nudge,微移 1 像素,微移 1 像素,Nudge 1 px,Décaler de 1 px,1 px 移動,1px 이동,Сдвинуть на 1 px,Mover 1 px,1 px verschieben,Mover 1 px,Geser 1 px,تحريك 1 بكسل
+cube.screen.shortcut.nudge_far,移动 10 像素,移動 10 像素,Nudge 10 px,Décaler de 10 px,10 px 移動,10px 이동,Сдвинуть на 10 px,Mover 10 px,10 px verschieben,Mover 10 px,Geser 10 px,تحريك 10 بكسل
+cube.screen.shortcut.zoom,缩放画布,縮放畫布,Zoom the canvas,Zoomer le canevas,キャンバスを拡大縮小,캔버스 확대/축소,Масштабировать холст,Zoom del lienzo,Fläche zoomen,Ampliar a tela,Perbesar kanvas,تكبير اللوحة
+cube.screen.shortcut.pan,平移画布,平移畫布,Pan the canvas,Déplacer le canevas,キャンバスを移動,캔버스 이동,Прокрутить холст,Desplazar el lienzo,Fläche verschieben,Deslocar a tela,Geser kanvas,تحريك اللوحة
+cube.screen.shortcut.pan_drag,拖动画布,拖動畫布,Drag the canvas,Faire glisser le canevas,キャンバスをドラッグ,캔버스 끌기,Перетащить холст,Arrastrar el lienzo,Fläche ziehen,Arrastar a tela,Seret kanvas,سحب اللوحة
+cube.screen.shortcut.rulers,显示 / 隐藏标尺,顯示 / 隱藏尺規,Show / hide rulers,Afficher / masquer les règles,ルーラーの表示 / 非表示,눈금자 표시 / 숨기기,Показать / скрыть линейки,Mostrar / ocultar reglas,Lineale ein- / ausblenden,Mostrar / ocultar réguas,Tampilkan / sembunyikan penggaris,إظهار / إخفاء المساطر
+cube.screen.shortcut.help,查看快捷键,檢視快捷鍵,Show shortcuts,Afficher les raccourcis,ショートカットを表示,단축키 보기,Показать сочетания,Ver atajos,Tastenkürzel anzeigen,Ver atalhos,Lihat pintasan,عرض الاختصارات
 cube.screen.filter.hide,隐藏筛选器,隱藏篩選器,Hide filters,Masquer les filtres,フィルターを隠す,필터 숨기기,Скрыть фильтры,Ocultar filtros,Filter ausblenden,Ocultar filtros,Sembunyikan filter,إخفاء عوامل التصفية
 cube.screen.filter.show,显示筛选器,顯示篩選器,Show filters,Afficher les filtres,フィルターを表示,필터 표시,Показать фильтры,Mostrar filtros,Filter einblenden,Mostrar filtros,Tampilkan filter,إظهار عوامل التصفية
 cube.screen.align.left,左对齐,左對齊,Align left,Aligner à gauche,左揃え,왼쪽 정렬,По левому краю,Alinear a la izquierda,Links ausrichten,Alinhar à esquerda,Rata kiri,محاذاة لليسار
@@ -1812,6 +1844,11 @@ cube.screen.panel.bracket,四角,四角,Brackets,Crochets,四隅ブラケット,
 cube.screen.panel.glow,发光,發光,Glow,Lueur,グロー,글로우,Свечение,Resplandor,Leuchten,Brilho,Bercahaya,توهج
 cube.screen.panel.chamfer,切角,切角,Chamfer,Chanfrein,面取り,모따기,Срезанные углы,Chaflán,Fase,Chanfro,Sudut potong,شطب
 cube.screen.panel.headline,标题带,標題帶,Headline,Bandeau,見出し帯,헤드라인,Заголовок,Titular,Titelband,Faixa de título,Pita judul,شريط العنوان
+cube.screen.panel.grid,网格,網格,Grid,Grille,グリッド,격자,Сетка,Cuadrícula,Raster,Grelha,Kisi,شبكة
+cube.screen.panel.aurora,极光,極光,Aurora,Aurore,オーロラ,오로라,Северное сияние,Aurora,Polarlicht,Aurora,Aurora,الشفق
+cube.screen.panel.scan,全息扫描,全息掃描,Hologram,Hologramme,ホログラム,홀로그램,Голограмма,Holograma,Hologramm,Holograma,Hologram,صورة مجسمة
+cube.screen.panel.flow,流光,流光,Flowing light,Lumière filante,流れる光,흐르는 빛,Бегущий свет,Luz fluida,Lauflicht,Luz corrida,Cahaya mengalir,ضوء متدفق
+cube.screen.panel.raised,悬浮卡片,懸浮卡片,Raised card,Carte surélevée,浮き上がりカード,떠 있는 카드,Приподнятая карточка,Tarjeta elevada,Erhabene Karte,Cartão elevado,Kartu terangkat,بطاقة مرتفعة
 cube.screen.panel.glass,毛玻璃,毛玻璃,Glass,Verre,ガラス,글래스,Стекло,Cristal,Glas,Vidro,Kaca,زجاج
 cube.screen.tab.basic,基础,基礎,Basics,Général,基本,기본,Основное,Básico,Allgemein,Básico,Dasar,أساسي
 cube.screen.header_style,版式,版式,Layout,Disposition,レイアウト,레이아웃,Макет,Disposición,Layout,Disposição,Tata letak,التخطيط
@@ -1820,6 +1857,7 @@ cube.screen.header_style.center,居中,置中,Centered,Centré,中央,가운데,
 cube.screen.header_style.plate,标题牌,標題牌,Plate,Plaque,プレート,플레이트,Плашка,Placa,Schild,Placa,Pelat,لوحة
 cube.screen.header_style.lines,两侧线条,兩側線條,Side lines,Lignes latérales,サイドライン,양쪽 선,Боковые линии,Líneas laterales,Seitenlinien,Linhas laterais,Garis samping,خطوط جانبية
 cube.screen.title_size,标题字号,標題字號,Title size,Taille du titre,タイトルサイズ,제목 크기,Размер заголовка,Tamaño del título,Titelgröße,Tamanho do título,Ukuran judul,حجم العنوان
+cube.screen.title_color,标题颜色,標題顏色,Title color,Couleur du titre,タイトルの色,제목 색,Цвет заголовка,Color del título,Titelfarbe,Cor do título,Warna judul,لون العنوان
 cube.screen.logo,Logo 图片,Logo 圖片,Logo image,Image du logo,ロゴ画像,로고 이미지,Логотип,Imagen del logo,Logo-Bild,Imagem do logótipo,Gambar logo,صورة الشعار
 cube.screen.accent,主题色,主題色,Accent color,Couleur d'accent,アクセントカラー,강조 색,Акцентный цвет,Color de acento,Akzentfarbe,Cor de destaque,Warna aksen,لون التمييز
 cube.screen.palette,图表色板,圖表色板,Chart palette,Palette des graphiques,グラフのパレット,차트 팔레트,Палитра диаграмм,Paleta de gráficos,Diagrammpalette,Paleta dos gráficos,Palet grafik,لوحة ألوان المخططات
@@ -1829,6 +1867,7 @@ cube.screen.palette.ocean,海洋,海洋,Ocean,Océan,オーシャン,오션,Ок
 cube.screen.palette.warm,暖色,暖色,Warm,Chaud,ウォーム,웜,Тёплая,Cálida,Warm,Quente,Hangat,دافئ
 cube.screen.palette.accent,主题色渐变,主題色漸變,Accent tints,Nuances de l'accent,アクセントの濃淡,강조 색 농담,Оттенки акцента,Tonos del acento,Akzenttöne,Tons do destaque,Gradasi aksen,تدرجات التمييز
 cube.screen.panel_title_size,面板标题字号,面板標題字號,Panel title size,Taille des titres de panneau,パネルタイトルサイズ,패널 제목 크기,Размер заголовков панелей,Tamaño de título de panel,Paneltitelgröße,Tamanho do título do painel,Ukuran judul panel,حجم عنوان اللوحة
+cube.screen.panel_title_color,面板标题颜色,面板標題顏色,Panel title color,Couleur des titres de panneau,パネルタイトルの色,패널 제목 색,Цвет заголовков панелей,Color de título de panel,Paneltitelfarbe,Cor do título do painel,Warna judul panel,لون عنوان اللوحة
 cube.screen.number_font,数字字体,數字字體,Number font,Police des chiffres,数字フォント,숫자 글꼴,Шрифт чисел,Fuente de números,Zahlenschrift,Fonte dos números,Font angka,خط الأرقام
 cube.screen.number_font.mono,等宽,等寬,Monospace,Chasse fixe,等幅,고정폭,Моноширинный,Monoespaciada,Festbreite,Monoespaçada,Monospasi,ثابت العرض
 cube.screen.number_font.condensed,窄体,窄體,Condensed,Condensée,コンデンス,좁은 글꼴,Узкий,Condensada,Schmal,Condensada,Rapat,مضغوط

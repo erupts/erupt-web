@@ -84,6 +84,15 @@
         </nz-form-control>
     </nz-form-item>
     <nz-form-item>
+        <nz-form-label>{{ 'cube.screen.title_color' | translate }}</nz-form-label>
+        <nz-form-control>
+            <input nz-input [(ngModel)]="dsl.settings.screen.titleColor" type="color" name="screenTitleColor" style="width: 100px;margin-right: 8px"/>
+            @if (dsl.settings.screen.titleColor) {
+                &nbsp;<i nz-icon nzType="close" nzTheme="outline" style="color: #f00;cursor: pointer" (click)="dsl.settings.screen.titleColor = null"></i>
+            }
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
         <nz-form-label>{{ 'cube.screen.logo' | translate }}</nz-form-label>
         <nz-form-control>
             <div style="display: flex;gap: 8px">
@@ -153,6 +162,15 @@
         <nz-form-label>{{ 'cube.screen.panel_title_size' | translate }}</nz-form-label>
         <nz-form-control>
             <nz-input-number [(ngModel)]="dsl.settings.screen.panelTitleSize" name="screenPanelTitleSize" [nzMin]="10" [nzMax]="40" style="width: 100%"></nz-input-number>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <nz-form-label>{{ 'cube.screen.panel_title_color' | translate }}</nz-form-label>
+        <nz-form-control>
+            <input nz-input [(ngModel)]="dsl.settings.screen.panelTitleColor" type="color" name="screenPanelTitleColor" style="width: 100px;margin-right: 8px"/>
+            @if (dsl.settings.screen.panelTitleColor) {
+                &nbsp;<i nz-icon nzType="close" nzTheme="outline" style="color: #f00;cursor: pointer" (click)="dsl.settings.screen.panelTitleColor = null"></i>
+            }
         </nz-form-control>
     </nz-form-item>
     <nz-form-item>

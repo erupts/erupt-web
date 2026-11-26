@@ -7,6 +7,8 @@ const routes: Routes = [
     {
         path: "puzzle/:code",
         component: CubePuzzleDashboardComponent,
+        // unsaved edits ask before the designer is left
+        canDeactivate: [(component: CubePuzzleDashboardComponent) => component.canLeave()],
     },
     {
         path: ":code",

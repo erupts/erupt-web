@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, HostListener, Inject, Input, NgZone, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren, inject} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, HostListener, Inject, Injector, Input, NgZone, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren, inject} from '@angular/core';
 import {ClipboardService} from '@shared/service/clipboard.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GridsterConfig} from "angular-gridster2";
@@ -6,7 +6,11 @@ import {CubeApiService} from "../../service/cube-api.service";
 import {NzModalService} from "ng-zorro-antd/modal";
 import {NzMessageService} from "ng-zorro-antd/message";
 import {I18NService, setReuseTabTitle} from '@core';
-import {ReuseTabService} from '@delon/abc/reuse-tab';
+import {ReuseTabMatchMode, ReuseTabService} from '@delon/abc/reuse-tab';
+import {NzDropdownMenuComponent} from 'ng-zorro-antd/dropdown';
+import {ConnectionPositionPair, createFlexibleConnectedPositionStrategy, createNoopScrollStrategy, createOverlayRef, OverlayRef} from '@angular/cdk/overlay';
+import {TemplatePortal} from '@angular/cdk/portal';
+import {filter, first, fromEvent, merge} from 'rxjs';
 import {MenuService} from "@delon/theme";
 import {EruptAppData} from "@shared/model/erupt-app.model";
 import {CubePuzzleReportConfig} from "../cube-puzzle-report-config/cube-puzzle-report-config";
@@ -30,8 +34,8 @@ import {ScreenHistory} from "../../model/screen-history";
 import {RestPath} from "../../../erupt/model/erupt.enum";
 import {
     AlignKind, alignFrames, Axis, boundsOf, Box, distributeFrames,
-    canvasHeight, gridFrame, isScreen, safeImageSrc, SCREEN_DEFAULT, screenOf, ScreenTransform, screenTransform, STAGE_VIEW_FIT,
-    StageView, zoomAt
+    canvasHeight, gridFrame, isScreen, parseGuides, rulerStep, safeImageSrc, SCREEN_DEFAULT, ScreenGuides, screenOf,
+    ScreenTransform, screenTransform, STAGE_VIEW_FIT, StageView, zoomAt
 } from "../../model/screen.util";
 import {ScreenEditor} from "./screen-editor";
 import {BaseField, CubeMeta, FieldType} from "../../model/cube.model";
@@ -46,6 +50,14 @@ import {CubePuzzleSubModelConfig} from "../cube-puzzle-sub-model-config/cube-puz
 import {NzDrawerRef, NzDrawerService} from "ng-zorro-antd/drawer";
 import {AiChatComponent} from "../../../ai/view/ai-chat/ai-chat.component";
 import {AI_ICON} from "@shared/util/ai-icon";
+
+/** Where the editor's context menu opens from the pointer: below right, else flipped to fit the viewport */
+const STAGE_MENU_POSITIONS = [
+    new ConnectionPositionPair({originX: 'start', originY: 'top'}, {overlayX: 'start', overlayY: 'top'}),
+    new ConnectionPositionPair({originX: 'start', originY: 'top'}, {overlayX: 'start', overlayY: 'bottom'}),
+    new ConnectionPositionPair({originX: 'start', originY: 'top'}, {overlayX: 'end', overlayY: 'bottom'}),
+    new ConnectionPositionPair({originX: 'start', originY: 'top'}, {overlayX: 'end', overlayY: 'top'}),
+];
 
 @Component({
     standalone: false,
@@ -167,7 +179,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 private menuSrv: MenuService,
                 private reuseTab: ReuseTabService,
                 private zone: NgZone,
-                private cdr: ChangeDetectorRef
+                private cdr: ChangeDetectorRef,
+                private injector: Injector
     ) {
 
     }
@@ -335,6 +348,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
      */
     private applyLayout() {
         this.screen = screenOf(this.dashboard, this.dsl);
+        this.syncChromeAccent();
         const gap = this.dsl?.settings?.gap ?? 12;
         this.options = {...this.options, margin: gap};
         this.ensureFrames();
@@ -342,6 +356,26 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         clearInterval(this.clockTimer);
         this.clockTimer = this.screen?.header && this.screen.clock ? setInterval(() => this.now = new Date(), 1000) : null;
         this.syncEditor();
+    }
+
+    /**
+     * The editor frame takes the accent of the screen it edits (--cube-chrome-accent, read by style/editor-chrome.less).
+     * It is set on the document, not on the designer's root: the frame also opens things in the overlay container
+     * (the filter controls' dropdowns, the context menu), which is not inside that root.
+     */
+    private syncChromeAccent() {
+        const root = document.documentElement.style;
+        // the published view has part of the frame too: the filter row and its dropdowns
+        if (this.screen) {
+            root.setProperty('--cube-chrome-accent', this.screen.accent);
+        } else {
+            root.removeProperty('--cube-chrome-accent');
+        }
+    }
+
+    /** Coming back to a designer its reuse tab kept: another screen may have set its own accent meanwhile */
+    _onReuseInit() {
+        this.syncChromeAccent();
     }
 
     /** On a screen every report needs a frame, which the canvas binds without asking */
@@ -367,6 +401,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
                 this.editor = this.zone.runOutsideAngular(
                     () => new ScreenEditor(canvas, this.screen.width, canvasHeight(this.screen)));
                 this.editor.zoom(this.scale);
+                this.loadGuides();
             }
         }
     }
@@ -496,6 +531,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     pick(report: ReportDSL, event: MouseEvent) {
         if (!this.editor) return;
         event.stopPropagation();
+        // a right press opens the context menu (openStageMenu selects); it must not start a drag
+        if (event.button === 2) return;
         // the press is a drag, not the start of a text selection
         event.preventDefault();
         // alt reaches one member of a group on its own
@@ -571,10 +608,10 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
      */
     private watchHistory() {
         clearInterval(this.historyTimer);
-        this.history = this.screen && this.edit ? new ScreenHistory(this.dsl.reports) : null;
+        this.history = this.screen && this.edit ? new ScreenHistory(this.dsl.reports, 100, this.historyExtras()) : null;
         if (this.history) {
             this.zone.runOutsideAngular(() => this.historyTimer = setInterval(() => {
-                if (!this.pointerDown && this.history?.commit(this.dsl.reports)) {
+                if (!this.pointerDown && this.history?.commit(this.dsl.reports, this.historyExtras())) {
                     // the undo button just became usable
                     this.zone.run(() => this.cdr.markForCheck());
                 }
@@ -593,19 +630,38 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     }
 
     undo() {
-        this.restored(this.history?.undo(this.dsl.reports));
+        this.restored(this.history?.undo(this.dsl.reports, this.historyExtras()));
     }
 
     redo() {
-        this.restored(this.history?.redo(this.dsl.reports));
+        this.restored(this.history?.redo(this.dsl.reports, this.historyExtras()));
     }
 
-    /** A step was restored into the reports: redraw, and re-query the charts whose content came back different */
+    /**
+     * What a step keeps besides the reports: the settings and the filter definitions. A filter's value is what
+     * the viewer picked, not an edit, so it is left out, and a restore keeps the values in place.
+     */
+    private historyExtras(): { settings: any; filters: FilterDSL[] } {
+        return {settings: this.dsl.settings, filters: (this.dsl.filters || []).map(({value, ...rest}) => rest)};
+    }
+
+    /**
+     * A step was restored into the reports: redraw, and re-query the charts whose content came back different.
+     * When the settings or filters came back too, they are put in place and every chart is drawn again.
+     */
     private restored(changed: ReportDSL[] | null | undefined) {
         if (!changed) return;
+        const extras = this.history?.restoredExtras;
         this.unselect();
+        if (extras) {
+            const values = new Map((this.dsl.filters || []).map(it => [it.field, it.value]));
+            this.dsl.settings = extras.settings;
+            this.dsl.filters = (extras.filters || []).map((it: FilterDSL) => ({...it, value: values.get(it.field)}));
+            this.applyLayout();
+        }
         this.cdr.detectChanges();
-        changed.forEach(it => this.refreshItem(it));
+        // the filters and the settings reach every chart: query them all again
+        (extras ? this.dsl.reports : changed).forEach(it => this.refreshItem(it));
     }
 
     /** An image address of the settings, ready to load: an uploaded one is a path under the attachment root */
@@ -729,11 +785,18 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     /**
      * Keys of the screen editor: arrows move the selection (with shift: ten pixels), delete removes it,
      * ctrl / cmd + Z undoes, with shift (or ctrl + Y) redoes, ctrl / cmd + A selects everything, C copies,
-     * V pastes, D duplicates, G groups and with shift ungroups
+     * V pastes, D duplicates, G groups and with shift ungroups, S saves; shift + R shows or hides the rulers
+     * and ? lists them all (showShortcuts, which must be kept in step with this)
      */
     @HostListener('document:keydown', ['$event'])
     onKeydown(event: KeyboardEvent) {
         const target = event.target as HTMLElement;
+        // ctrl / cmd + S saves the edit, from anywhere in the designer (an input included), never the browser's page
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's' && this.editModel) {
+            event.preventDefault();
+            if (this.edit && !this.saving && !document.querySelector('.ant-modal-wrap')) this.saveInPlace();
+            return;
+        }
         if (!this.screen || !this.editModel || target.isContentEditable
             || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName) || document.querySelector('.ant-modal-wrap')) {
             return;
@@ -745,6 +808,16 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             return;
         }
         if (!this.editor) {
+            return;
+        }
+        if (event.key === '?') {
+            this.showShortcuts();
+            event.preventDefault();
+            return;
+        }
+        if (event.shiftKey && !event.ctrlKey && !event.metaKey && event.key.toLowerCase() === 'r') {
+            this.toggleRulers();
+            event.preventDefault();
             return;
         }
         if (event.ctrlKey || event.metaKey) {
@@ -777,13 +850,331 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         if (move) {
             this.editor.nudge(move[0], move[1]);
         } else if (event.key === 'Delete' || event.key === 'Backspace') {
-            const gone = this.selection;
-            this.unselect();
-            this.dsl.reports = this.dsl.reports.filter(it => !gone.includes(it));
+            this.deleteSelection();
         } else {
             return;
         }
         event.preventDefault();
+    }
+
+    deleteSelection() {
+        const gone = this.selection;
+        this.unselect();
+        this.dsl.reports = this.dsl.reports.filter(it => !gone.includes(it));
+    }
+
+    // ── context menu ──
+
+    @ViewChild('stageMenu') private stageMenu: NzDropdownMenuComponent;
+
+    /** The report the context menu was opened on; null when it was opened on the empty canvas */
+    menuReport: ReportDSL | null = null;
+
+    get clipboardEmpty(): boolean {
+        return !CubePuzzleDashboardComponent.clipboard.length;
+    }
+
+    /**
+     * Right click on a report (on the canvas or its layer row) or on the empty canvas. A report outside the
+     * selection becomes the selection first, as a left click would make it.
+     */
+    openStageMenu(event: MouseEvent, report: ReportDSL | null = null) {
+        if (!this.editor) return;
+        event.preventDefault();
+        event.stopPropagation();
+        this.menuReport = report;
+        if (report && !this.isSelected(report)) {
+            this.selection = this.withGroups([report]);
+            this.applySelection();
+        }
+        this.closeStageMenu();
+        // Opened on the CDK overlay rather than NzContextMenuService, whose close-on-scroll strategy is fixed: a
+        // table scrolling its rows by itself would close the menu before it was even placed. A wheel over the
+        // page (it pans the stage) closes it instead, as do Escape, a press outside it and a pick in it.
+        const ref = createOverlayRef(this.injector, {
+            positionStrategy: createFlexibleConnectedPositionStrategy(this.injector, {x: event.clientX, y: event.clientY})
+                .withPositions(STAGE_MENU_POSITIONS)
+                .withTransformOriginOn('.ant-dropdown'),
+            scrollStrategy: createNoopScrollStrategy(),
+            disposeOnNavigation: true,
+        });
+        ref.attach(new TemplatePortal(this.stageMenu.templateRef, this.stageMenu.viewContainerRef));
+        this.stageMenuRef = ref;
+        merge(
+            // the right button's own auxclick follows the contextmenu that opened the menu: not a press outside it
+            ref.outsidePointerEvents().pipe(filter(e => e.type !== 'auxclick')),
+            this.stageMenu.descendantMenuItemClick$,
+            fromEvent<KeyboardEvent>(document, 'keydown').pipe(filter(e => e.key === 'Escape')),
+            fromEvent(document, 'wheel'),
+        ).pipe(first()).subscribe(() => this.zone.run(() => this.closeStageMenu()));
+    }
+
+    private stageMenuRef: OverlayRef | null = null;
+
+    private closeStageMenu() {
+        this.stageMenuRef?.dispose();
+        this.stageMenuRef = null;
+    }
+
+    /** Lock and hide from the menu act on the whole selection, the way the menu was opened on it */
+    setSelectionStyle(part: ReportScreenStyle) {
+        this.selection.forEach(it => this.setStyle(it, part));
+        this.applySelection();
+    }
+
+    get selectionLocked(): boolean {
+        return this.selection.length > 0 && this.selection.every(it => this.isLocked(it));
+    }
+
+    // ── keyboard shortcuts ──
+
+    @ViewChild('shortcutsContent') private shortcutsContent: TemplateRef<any>;
+
+    /** The modifier key as this platform writes it */
+    readonly mod = /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘' : 'Ctrl';
+
+    /** What the shortcut sheet lists: the keys, and the i18n key of what they do */
+    get shortcuts(): { group: string; items: { keys: string[]; label: string }[] }[] {
+        const mod = this.mod;
+        return [
+            {group: 'cube.screen.shortcut.group.edit', items: [
+                {keys: [mod, 'S'], label: 'cube.screen.shortcut.save'},
+                {keys: [mod, 'Z'], label: 'cube.screen.shortcut.undo'},
+                {keys: [mod, '⇧', 'Z'], label: 'cube.screen.shortcut.redo'},
+                {keys: [mod, 'C'], label: 'cube.screen.shortcut.copy'},
+                {keys: [mod, 'V'], label: 'cube.screen.shortcut.paste'},
+                {keys: [mod, 'D'], label: 'cube.screen.shortcut.duplicate'},
+                {keys: ['Delete'], label: 'cube.screen.shortcut.delete'},
+            ]},
+            {group: 'cube.screen.shortcut.group.select', items: [
+                {keys: [mod, 'A'], label: 'cube.screen.shortcut.select_all'},
+                {keys: ['⇧', 'Click'], label: 'cube.screen.shortcut.toggle_select'},
+                {keys: ['Alt', 'Click'], label: 'cube.screen.shortcut.pick_member'},
+                {keys: [mod, 'G'], label: 'cube.screen.shortcut.group'},
+                {keys: [mod, '⇧', 'G'], label: 'cube.screen.shortcut.ungroup'},
+                {keys: ['↑', '↓', '←', '→'], label: 'cube.screen.shortcut.nudge'},
+                {keys: ['⇧', '↑'], label: 'cube.screen.shortcut.nudge_far'},
+            ]},
+            {group: 'cube.screen.shortcut.group.view', items: [
+                {keys: [mod, 'Wheel'], label: 'cube.screen.shortcut.zoom'},
+                {keys: ['Wheel'], label: 'cube.screen.shortcut.pan'},
+                {keys: ['Space', 'Drag'], label: 'cube.screen.shortcut.pan_drag'},
+                {keys: ['⇧', 'R'], label: 'cube.screen.shortcut.rulers'},
+                {keys: ['?'], label: 'cube.screen.shortcut.help'},
+            ]},
+        ];
+    }
+
+    showShortcuts() {
+        if (document.querySelector('.ant-modal-wrap')) return;
+        this.modal.create({
+            nzTitle: this.i18n.fanyi('cube.screen.shortcut.title'),
+            nzContent: this.shortcutsContent,
+            nzFooter: null,
+            nzWidth: 640,
+            nzWrapClassName: 'cube-shortcuts-modal',
+        });
+    }
+
+    // ── rulers and guides ──
+
+    /** Thickness of the rulers along the top and the left of the designer's viewport */
+    readonly RULER = 20;
+
+    /** Rulers are shown; the choice is kept in this browser */
+    showRulers = localStorage.getItem('cube-screen-rulers') !== 'false';
+
+    /** The guides of this screen, kept per dashboard in this browser: an aid of the designer, not part of the screen */
+    guides: ScreenGuides = {v: [], h: []};
+
+    /** The guide being pulled out of a ruler or moved, in design pixels; null when none is */
+    draggingGuide: { axis: 'v' | 'h'; at: number; index: number } | null = null;
+
+    private rulerTop: HTMLCanvasElement;
+
+    private rulerLeft: HTMLCanvasElement;
+
+    @ViewChild('rulerTop') set rulerTopRef(ref: ElementRef<HTMLCanvasElement>) {
+        this.rulerTop = ref?.nativeElement;
+        this.drawRulers();
+    }
+
+    @ViewChild('rulerLeft') set rulerLeftRef(ref: ElementRef<HTMLCanvasElement>) {
+        this.rulerLeft = ref?.nativeElement;
+        this.drawRulers();
+    }
+
+    toggleRulers() {
+        this.showRulers = !this.showRulers;
+        localStorage.setItem('cube-screen-rulers', String(this.showRulers));
+    }
+
+    /** Where a design coordinate lands on the viewport, along one axis */
+    guideOffset(axis: 'v' | 'h', at: number): number {
+        if (!this.fit) return 0;
+        const view = this.view;
+        return (axis === 'v' ? this.fit.left + view.x : this.fit.top + view.y) + at * this.scale;
+    }
+
+    private loadGuides() {
+        this.guides = parseGuides(localStorage.getItem(`cube-screen-guides-${this.code}`));
+        this.editor?.guides(this.guides.v, this.guides.h);
+    }
+
+    private saveGuides() {
+        localStorage.setItem(`cube-screen-guides-${this.code}`, JSON.stringify(this.guides));
+        this.editor?.guides(this.guides.v, this.guides.h);
+    }
+
+    clearGuides() {
+        this.guides = {v: [], h: []};
+        this.saveGuides();
+    }
+
+    /**
+     * Pulls a guide out of a ruler (index -1) or moves one already laid. The top ruler gives a horizontal guide,
+     * the left one a vertical guide, as in drawing tools; let go over its ruler, a guide is removed.
+     */
+    dragGuide(event: MouseEvent, axis: 'v' | 'h', index = -1) {
+        if (event.button !== 0 || !this.viewportEl) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const box = this.viewportEl.getBoundingClientRect();
+        const at = (e: MouseEvent) => {
+            const offset = axis === 'v' ? e.clientX - box.left - this.fit.left - this.view.x
+                : e.clientY - box.top - this.fit.top - this.view.y;
+            return Math.round(offset / this.scale);
+        };
+        const overRuler = (e: MouseEvent) => axis === 'v' ? e.clientX - box.left < this.RULER : e.clientY - box.top < this.RULER;
+        this.draggingGuide = {axis, at: index < 0 ? at(event) : this.guides[axis][index], index};
+        const move = (e: MouseEvent) => this.zone.run(() => this.draggingGuide = {axis, at: at(e), index});
+        const up = (e: MouseEvent) => {
+            document.removeEventListener('mousemove', move);
+            document.removeEventListener('mouseup', up);
+            this.zone.run(() => {
+                const list = [...this.guides[axis]];
+                if (index >= 0) list.splice(index, 1);
+                if (!overRuler(e)) list.push(at(e));
+                this.guides = {...this.guides, [axis]: list};
+                this.draggingGuide = null;
+                this.saveGuides();
+            });
+        };
+        document.addEventListener('mousemove', move);
+        document.addEventListener('mouseup', up);
+    }
+
+    /** Draws both rulers: ticks and labels in design pixels, following the zoom and the pan of the stage */
+    private drawRulers() {
+        if (!this.fit || !this.viewportEl) return;
+        const ratio = window.devicePixelRatio || 1;
+        const step = rulerStep(this.scale);
+        // the colors of the editor frame (style/editor-chrome.less), set as CSS properties on the design viewport
+        const css = getComputedStyle(this.viewportEl);
+        const chrome = (name: string) => css.getPropertyValue('--chrome' + name).trim();
+        const draw = (canvas: HTMLCanvasElement, length: number, origin: number, vertical: boolean) => {
+            if (!canvas) return;
+            canvas.width = (vertical ? this.RULER : length) * ratio;
+            canvas.height = (vertical ? length : this.RULER) * ratio;
+            const ctx = canvas.getContext('2d');
+            ctx.scale(ratio, ratio);
+            ctx.fillStyle = chrome('');
+            ctx.fillRect(0, 0, vertical ? this.RULER : length, vertical ? length : this.RULER);
+            ctx.strokeStyle = chrome('-tick');
+            ctx.fillStyle = chrome('-muted');
+            ctx.font = '10px ui-monospace, Menlo, monospace';
+            ctx.lineWidth = 1;
+            const first = Math.floor(-origin / this.scale / step) * step;
+            ctx.beginPath();
+            for (let value = first; origin + value * this.scale < length; value += step / 5) {
+                const pos = Math.round(origin + value * this.scale) + 0.5;
+                const major = Math.round(value / step * 5) % 5 === 0;
+                const size = major ? this.RULER : 5;
+                if (vertical) {
+                    ctx.moveTo(this.RULER - size, pos);
+                    ctx.lineTo(this.RULER, pos);
+                } else {
+                    ctx.moveTo(pos, this.RULER - size);
+                    ctx.lineTo(pos, this.RULER);
+                }
+                if (major) {
+                    const label = String(Math.round(value));
+                    if (vertical) {
+                        ctx.save();
+                        ctx.translate(11, pos + 3);
+                        ctx.rotate(-Math.PI / 2);
+                        ctx.fillText(label, 0, 0);
+                        ctx.restore();
+                    } else {
+                        ctx.fillText(label, pos + 3, 10);
+                    }
+                }
+            }
+            ctx.stroke();
+            ctx.strokeStyle = chrome('-edge');
+            ctx.beginPath();
+            if (vertical) {
+                ctx.moveTo(this.RULER - 0.5, 0);
+                ctx.lineTo(this.RULER - 0.5, length);
+            } else {
+                ctx.moveTo(0, this.RULER - 0.5);
+                ctx.lineTo(length, this.RULER - 0.5);
+            }
+            ctx.stroke();
+        };
+        draw(this.rulerTop, this.viewportEl.clientWidth, this.fit.left + this.view.x, false);
+        draw(this.rulerLeft, this.viewportEl.clientHeight, this.fit.top + this.view.y, true);
+    }
+
+    // ── unsaved changes ──
+
+    /** The DSL as it was when editing began, to tell whether there is anything unsaved */
+    private editBase: string | null = null;
+
+    /**
+     * The DSL as a comparable string. A filter's value is what the viewer picked, not an edit, and an empty object
+     * is left out: opening a panel may create one (report.ui.screen) without anything having been changed.
+     */
+    private signature(dsl: DashboardDSL): string {
+        return JSON.stringify({...dsl, filters: (dsl?.filters || []).map(({value, ...rest}) => rest)},
+            (key, value) => value && typeof value === 'object' && !Array.isArray(value) && !Object.keys(value).length
+                ? undefined : value);
+    }
+
+    private hasUnsaved(): boolean {
+        return this.edit && this.editBase !== null && this.signature(this.dsl) !== this.editBase;
+    }
+
+    /** Takes the DSL as it is now for saved: called when editing begins, after a save, and when it ends */
+    private markSaved() {
+        this.editBase = this.edit ? this.signature(this.dsl) : null;
+    }
+
+    /** Closing or reloading the browser tab with unsaved changes: the browser asks with its own dialog */
+    @HostListener('window:beforeunload', ['$event'])
+    onBeforeUnload(event: BeforeUnloadEvent) {
+        if (this.hasUnsaved()) {
+            event.preventDefault();
+            event.returnValue = '';
+        }
+    }
+
+    /**
+     * Leaving the designer for another page with unsaved changes asks first. Not when the reuse tabs keep every
+     * page (URL mode): the edit is still there on coming back.
+     */
+    canLeave(): boolean | Promise<boolean> {
+        if (!this.hasUnsaved() || this.reuseTab.mode === ReuseTabMatchMode.URL) return true;
+        return new Promise(resolve => {
+            const ref = this.modal.confirm({
+                nzTitle: this.i18n.fanyi('cube.dashboard.unsaved.title'),
+                nzContent: this.i18n.fanyi('cube.dashboard.unsaved.content'),
+                nzOkText: this.i18n.fanyi('cube.dashboard.unsaved.leave'),
+                nzOkDanger: true,
+                nzOnOk: () => resolve(true),
+            });
+            ref.afterClose.subscribe(() => resolve(false));
+        });
     }
 
     /** The layers as the panel lists them: front first. The order of dsl.reports is the layer order, last on top */
@@ -838,6 +1229,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             + ` scale(${t.x * view.zoom}, ${t.y * view.zoom})`;
         this.scale = t.x * view.zoom;
         this.editor?.zoom(this.scale);
+        this.drawRulers();
     }
 
     /** Zooms the stage of the designer by a factor, around a point of the viewport (its center by default) */
@@ -968,6 +1360,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         this.tempDsl = cloneDeep(this.dsl);
         this.applyLayout();
         this.watchHistory();
+        this.markSaved();
     }
 
     publishDescription: string = "";
@@ -1035,7 +1428,25 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         this.tempDsl = null;
         this.applyLayout();
         this.watchHistory();
+        this.markSaved();
         this.initAutoRefresh();
+    }
+
+    /**
+     * Saves the draft and stays in the edit state (ctrl / cmd + S); the save button saves and leaves it. What was
+     * saved becomes what cancel goes back to and what unsaved changes are measured from.
+     */
+    saveInPlace() {
+        this.saving = true;
+        this.cubeApiService.updateDsl(this.dashboard.id, this.dsl).subscribe({
+            next: () => {
+                this.tempDsl = cloneDeep(this.dsl);
+                this.markSaved();
+                this.message.success(this.i18n.fanyi('cube.dashboard.saved'));
+            },
+            complete: () => this.saving = false,
+            error: () => this.saving = false,
+        });
     }
 
     saveEdit() {
@@ -1050,6 +1461,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             this.edit = false;
             this.applyLayout();
             this.watchHistory();
+            this.markSaved();
         }, () => {
         }, () => {
             this.saving = false;
@@ -1387,6 +1799,8 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
         }
         clearInterval(this.clockTimer);
         clearInterval(this.historyTimer);
+        this.closeStageMenu();
+        document.documentElement.style.removeProperty('--cube-chrome-accent');
         this.viewportObserver?.disconnect();
         this.editor?.destroy();
         if (this._aiResizeCleanup) {
