@@ -7,6 +7,7 @@ import {
     DashboardDSL, DashboardTheme, ScreenFit, ScreenHeader, ScreenNumberFont, ScreenPalette, ScreenPanel
 } from "../../model/dashboard.model";
 import {paletteColors} from "../../model/screen-palette";
+import {SCREEN_DEFAULT} from "../../model/screen.util";
 
 /** The model, and its attachment field, an image of the settings is uploaded through (see CubeDashboard.background) */
 const UPLOAD_ERUPT = 'CubeDashboard', UPLOAD_FIELD = 'background';
@@ -41,9 +42,17 @@ export class CubePuzzleDashboardConfig {
     constructor(private http: _HttpClient) {
     }
 
+    readonly defaultAccent = SCREEN_DEFAULT.accent;
+
+    /** The screen has an accent of its own, which the clear button takes away again */
+    get accentSet(): boolean {
+        const accent = this.dsl.settings.screen?.accent;
+        return !!accent && accent.toLowerCase() !== this.defaultAccent;
+    }
+
     /** The colors a palette shows as swatches; the accent palette follows the accent being edited */
     colors(palette: ScreenPalette): string[] {
-        return paletteColors(palette, this.dsl.settings.screen?.accent);
+        return paletteColors(palette, this.dsl.settings.screen?.accent || this.defaultAccent);
     }
 
     /**

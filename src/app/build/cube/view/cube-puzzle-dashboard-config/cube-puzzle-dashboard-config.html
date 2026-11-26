@@ -122,7 +122,12 @@
     <nz-form-item>
         <nz-form-label>{{ 'cube.screen.accent' | translate }}</nz-form-label>
         <nz-form-control>
-            <input nz-input [(ngModel)]="dsl.settings.screen.accent" type="color" name="screenAccent" style="width: 100px"/>
+            <!-- cleared, the accent is the default again: the input shows it, and the screen reads it (screenOf) -->
+            <input nz-input [ngModel]="dsl.settings.screen.accent || defaultAccent" (ngModelChange)="dsl.settings.screen.accent = $event"
+                   type="color" name="screenAccent" style="width: 100px;margin-right: 8px"/>
+            @if (accentSet) {
+                &nbsp;<i nz-icon nzType="close" nzTheme="outline" style="color: #f00;cursor: pointer" (click)="dsl.settings.screen.accent = null"></i>
+            }
         </nz-form-control>
     </nz-form-item>
     <nz-form-item>
