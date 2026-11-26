@@ -1,28 +1,42 @@
-/* AI Chat - modern minimal style, loaded by this module only (syntax highlight theme is imported in global styles.less) */
+/* AI Chat: a quiet reading column, a floating composer and a soft sidebar.
+   Loaded by this module only (the syntax highlight theme is imported in global styles.less).
+   Every colour is a theme token or a tint of one, so light and dark themes need no overrides. */
 
-/* Local variables with no corresponding global/ant design tokens, used in multiple places */
-@radius: 8px;
-@radius-sm: 4px;
-@content-max: 720px;
+@radius: 12px;
+@radius-sm: 8px;
+@content-max: 760px;
+@ease: cubic-bezier(0.2, 0, 0, 1);
 
-/* Host fills its container; when no container height is set, falls back to viewport minus the top bar */
+@bg: var(--erupt-bg-container, #fff);
+@bg-soft: var(--erupt-bg-spotlight, #fafafa);
+@line: var(--erupt-border, #f0f0f0);
+@text: var(--erupt-text, rgba(0, 0, 0, 0.88));
+@text-2: var(--erupt-text-secondary, rgba(0, 0, 0, 0.65));
+@text-3: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
+@fill: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
+@fill-soft: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.04));
+@primary: var(--ant-primary-color, #1677ff);
+
+/* A translucent tint of any colour: stays readable on light and dark surfaces alike */
+.tint(@color, @amount) {
+    background: ~"color-mix(in srgb, @{color} @{amount}, transparent)";
+}
+
+/* Host fills its container and shrinks to the space the layout column leaves (reuse-tab bar, drawer header) */
 :host {
     height: 100%;
     overflow: auto;
-    // Same as ai-canvas: shrink to the space left by the reuse-tab bar in the layout column
     flex: 1 1 auto;
     min-height: 0;
-    // with a drawer header on top the layout takes the remaining height
     display: flex;
     flex-direction: column;
 }
 
-/* Root layout: fills the host and sets a min-height fallback (ensures full-screen height even when ancestors have no height) */
 .ai-chat-layout {
     height: 100%;
     box-sizing: border-box;
     display: flex;
-    background: var(--erupt-bg-spotlight, #f5f5f5);
+    background: @bg;
 
     &.has-header {
         flex: 1;
@@ -39,96 +53,67 @@
         .sidebar {
             display: none;
         }
-
-        .main {
-            flex: 1;
-        }
     }
 
-    /* Embedded mode (e.g. inside a drawer): the sidebar overlays the chat area instead of squeezing it */
+    /* Embedded (inside a drawer): the sidebar overlays the chat instead of squeezing it */
     &.is-embedded {
         position: relative;
 
         .sidebar {
             position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
+            inset: 0 auto 0 0;
             z-index: 20;
-            border-right: 1px solid var(--ant-border-color-split);
-            box-shadow: 6px 0 16px rgba(0, 0, 0, 0.08);
+            box-shadow: 8px 0 24px rgba(0, 0, 0, 0.1);
 
             &.is-collapsed {
-                border-right: none;
                 box-shadow: none;
             }
+        }
+
+        .bubbles {
+            padding: 16px 16px 8px;
+        }
+
+        .sender-wrap {
+            padding: 0 12px 12px;
         }
     }
 }
 
-/* ========== Sidebar: light theme ========== */
+/* ========== Sidebar ========== */
 .sidebar {
-    width: 220px; /* Default value; overridden at runtime via [style.width.px] */
+    width: 220px; /* overridden at runtime via [style.width.px] */
     flex-shrink: 0;
     min-height: 0;
-    background: var(--erupt-bg-spotlight, #fafafa);
+    background: @bg-soft;
     display: flex;
     flex-direction: column;
-    transition: width 0.22s ease, border-color 0.22s ease;
     overflow: hidden;
+    transition: width 0.24s @ease;
 
     &.is-collapsed {
         width: 0;
-        border-right-color: transparent;
     }
 }
 
-/* Collapsed-sidebar controls floating over the chat: outlined icon buttons matching the panel's new-chat button */
-.sidebar-unfold-btn,
-.sidebar-new-chat-btn {
-    position: absolute;
-    top: 12px;
-    z-index: 5;
-    width: 28px;
-    height: 28px;
-    padding: 0 !important;
-    border-radius: @radius-sm;
-    border: 1px solid var(--ant-border-color-base, #d9d9d9) !important;
-    background: var(--erupt-bg-container, #fff) !important;
-    color: var(--ant-text-color-secondary, #8c8c8c) !important;
-    font-size: 14px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
-
-    &:hover {
-        color: var(--ant-primary-color) !important;
-        border-color: var(--ant-primary-color) !important;
-        background: var(--ant-primary-1, #e6f4ff) !important;
-    }
-}
-
-.sidebar-unfold-btn {
-    left: 12px;
-}
-
-.sidebar-new-chat-btn {
-    left: 46px;
-}
-
-/* Sidebar drag handle */
 .sidebar-resizer {
     width: 1px;
     flex-shrink: 0;
     cursor: col-resize;
-    background: var(--ant-border-color-split);
-    transition: background 0.15s;
+    background: @line;
     position: relative;
     z-index: 1;
+    transition: background 0.15s;
+
+    /* a wider invisible grab area around the hairline */
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0 -3px;
+    }
 
     &:hover, &:active {
-        background: var(--ant-primary-color);
+        background: @primary;
     }
 }
 
@@ -139,174 +124,707 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    background: var(--erupt-bg-container, #ffffff);
+    background: @bg;
     position: relative;
+}
+
+/* Takes the sidebar's place while it is collapsed: its two actions and the open conversation's title,
+   in a row of their own so nothing floats over the messages */
+.main-bar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 48px;
+    padding: 0 12px;
+    border-bottom: 1px solid @line;
+    animation: bar-in 0.24s @ease;
+
+    .main-bar-title {
+        flex: 1;
+        min-width: 0;
+        margin-left: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        color: @text;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* the bar already separates the messages from what is above them */
+    + .bubbles {
+        padding-top: 12px;
+    }
+}
+
+@keyframes bar-in {
+    from {
+        opacity: 0;
+    }
 }
 
 .bubbles {
     flex: 1 1 0;
     overflow: auto;
-    padding: 12px 16px;
+    padding: 28px 24px 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    scrollbar-width: thin;
 
     &:not(.is-wide) .bubble-wrap {
         max-width: @content-max;
     }
 }
 
+/* Empty state: the assistant's mark, a greeting and a hint */
 .bubbles-empty {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    padding-bottom: 60px;
+    gap: 8px;
+    padding-bottom: 8vh;
     user-select: none;
+    animation: rise-in 0.4s @ease both;
 
-    .bubbles-empty-icon {
-        font-size: 48px;
-        color: var(--ant-border-color-base, #ddd);
-        line-height: 1;
+    .bubbles-empty-mark {
+        width: 56px;
+        height: 56px;
+        margin-bottom: 12px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: @primary;
+        .tint(@primary, 10%);
     }
 
     .bubbles-empty-title {
         margin: 0;
-        font-size: 16px;
+        font-size: 22px;
         font-weight: 600;
-        color: var(--ant-text-color, #1a1a1a);
+        letter-spacing: -0.2px;
+        color: @text;
     }
 
     .bubbles-empty-hint {
         margin: 0;
-        font-size: 13px;
-        color: var(--ant-text-color-secondary, #999);
+        font-size: 14px;
+        color: @text-3;
     }
 }
 
-/* Single message row */
+/* ---- one message: the user speaks from the right in a soft bubble, the model answers as plain text ---- */
 .bubble-wrap {
     width: 100%;
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
     padding: 10px 0;
     box-sizing: border-box;
 
-    &.is-model {
-        flex-direction: row;
-    }
-
     &:not(.is-model) {
-        flex-direction: row-reverse;
+        justify-content: flex-end;
+
+        .bubble-content {
+            width: auto;
+            max-width: 85%;
+            align-items: flex-end;
+        }
+
+        .bubble-images {
+            justify-content: flex-end;
+        }
+
+        .markdown-body {
+            padding: 10px 16px;
+            border-radius: 18px 18px 6px 18px;
+            background: @fill;
+            color: @text;
+        }
     }
-}
 
-.bubble-wrap ::ng-deep(.ant-avatar) {
-    flex-shrink: 0;
-    width: 36px;
-    height: 36px;
-    line-height: 36px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.bubble-wrap.is-model ::ng-deep(.ant-avatar) {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.35);
-    font-size: 18px;
-}
-
-.bubble-wrap:not(.is-model) ::ng-deep(.ant-avatar) {
-    background: linear-gradient(135deg, #5c6bc0 0%, #7986cb 100%) !important;
-    box-shadow: 0 2px 8px rgba(92, 107, 192, 0.25);
+    &:hover .bubble-actions,
+    &:focus-within .bubble-actions {
+        opacity: 1;
+    }
 }
 
 .bubble-content {
     min-width: 0;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    width: 100%;
+    align-items: flex-start;
 
+    /* inline-block lets the streaming cursor sit right after the last character */
+    .markdown-body {
+        display: inline-block;
+        max-width: 100%;
+        vertical-align: top;
+        font-size: 15px;
+        line-height: 1.7;
+    }
 }
 
-/* Image attachments of a user message */
 .bubble-images {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin: 8px 0 12px;
+    margin-bottom: 8px;
 
     img {
         max-width: 200px;
         max-height: 200px;
-        border-radius: @radius-sm;
-        border: 1px solid var(--ant-border-color-split);
+        border-radius: @radius;
+        border: 1px solid @line;
         cursor: zoom-in;
         object-fit: cover;
     }
 }
 
-.bubble-wrap:not(.is-model) .bubble-images {
-    justify-content: flex-end;
+/* Waiting for the first token */
+.typing-dots {
+    display: inline-flex;
+    gap: 5px;
+    padding: 12px 0;
+
+    i {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: @text-3;
+        animation: typing-dot 1.2s ease-in-out infinite;
+
+        &:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        &:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+    }
 }
 
-/* Tool Call block: injected via innerHTML, requires ::ng-deep */
+@keyframes typing-dot {
+    0%, 60%, 100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+    30% {
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+}
+
+/* "Thinking": a light sweeping across the words */
+.placeholder {
+    padding: 8px 0;
+    font-size: 14px;
+    color: transparent;
+    background: linear-gradient(90deg, @text-3 0%, @text-3 35%, @text 50%, @text-3 65%, @text-3 100%) 0 0 / 300% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+    from {
+        background-position: 100% 0;
+    }
+    to {
+        background-position: 0 0;
+    }
+}
+
+.streaming-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.1em;
+    margin-left: 2px;
+    border-radius: 1px;
+    vertical-align: text-bottom;
+    background: @primary;
+    animation: cursor-blink 0.9s step-end infinite;
+}
+
+@keyframes cursor-blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Marker on replies the user stopped before completion */
+.bubble-interrupted {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+    font-size: 12px;
+    color: @text-3;
+}
+
+/* Per-message actions: revealed on hover or keyboard focus */
+.bubble-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 4px;
+    opacity: 0;
+    transition: opacity 0.15s;
+
+    .bubble-time {
+        font-size: 12px;
+        color: @text-3;
+        margin-right: 6px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .action-btn {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        color: @text-3;
+        border-radius: @radius-sm;
+        line-height: 1;
+
+        &:hover {
+            color: @text;
+            background: @fill;
+        }
+
+        .anticon {
+            font-size: 14px;
+        }
+
+        &.action-btn-speaking {
+            color: @primary !important;
+        }
+    }
+}
+
+.bubbles-loading {
+    display: flex;
+    justify-content: center;
+    padding: 60px 0;
+}
+
+.bubbles-load-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 0;
+    color: @text-3;
+    font-size: 13px;
+}
+
+/* Sticky at the visible bottom of the message area */
+.scroll-to-bottom {
+    position: sticky;
+    bottom: 8px;
+    align-self: center;
+    z-index: 10;
+    animation: rise-in 0.2s @ease;
+
+    ::ng-deep(.ant-btn-circle) {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        border-color: @line;
+        background: var(--erupt-bg-elevated, #fff);
+        color: @text-2;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+
+        &:hover {
+            color: @primary;
+            border-color: @primary;
+        }
+    }
+}
+
+@keyframes rise-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+/* ========== Composer ========== */
+
+/* Drag to give the composer a fixed height */
+.sender-resizer {
+    height: 6px;
+    flex-shrink: 0;
+    cursor: row-resize;
+    position: relative;
+
+    &::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 2px;
+        width: 36px;
+        height: 3px;
+        margin-left: -18px;
+        border-radius: 2px;
+        background: transparent;
+        transition: background 0.15s;
+    }
+
+    &:hover::after, &:active::after {
+        background: @primary;
+    }
+}
+
+.sender-wrap {
+    flex-shrink: 0;
+    padding: 0 24px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    > * {
+        width: 100%;
+    }
+
+    &:not(.is-wide) > * {
+        max-width: @content-max;
+    }
+
+    &.has-height {
+        .input-card {
+            flex: 1 1 0;
+            min-height: 0;
+        }
+
+        .input-body {
+            flex: 1 1 0;
+            min-height: 0;
+            overflow: hidden;
+
+            textarea {
+                height: 100% !important;
+                max-height: none !important;
+            }
+        }
+    }
+}
+
+/* Prompt suggestions of the selected agent */
+.hints-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .hint-tag {
+        padding: 5px 12px;
+        border: 1px solid @line;
+        border-radius: 999px;
+        background: @bg;
+        font-size: 13px;
+        color: @text-2;
+        cursor: pointer;
+        transition: color 0.15s, border-color 0.15s, background 0.15s;
+
+        &:hover {
+            color: @primary;
+            border-color: @primary;
+            .tint(@primary, 6%);
+        }
+    }
+}
+
+.input-card {
+    display: flex;
+    flex-direction: column;
+    background: @bg;
+    border: 1px solid var(--ant-border-color-base, #d9d9d9);
+    border-radius: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus-within {
+        border-color: @primary;
+        box-shadow: ~"0 0 0 3px color-mix(in srgb, @{primary} 14%, transparent)", 0 2px 12px rgba(0, 0, 0, 0.05);
+    }
+}
+
+/* Tells the user the chat carries the context of the page it was opened from */
+.context-strip {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    font-size: 12px;
+    color: @text-3;
+    background: @fill-soft;
+
+    .context-name {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: @text;
+    }
+}
+
+/* Images attached to the next message */
+.pending-images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 16px 2px;
+
+    .pending-image {
+        position: relative;
+        width: 64px;
+        height: 64px;
+
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: 1px solid @line;
+            border-radius: @radius-sm;
+            cursor: zoom-in;
+        }
+
+        &.pending-image-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: @bg-soft;
+            border: 1px dashed @line;
+            border-radius: @radius-sm;
+        }
+
+        .pending-image-remove {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.65);
+            color: #fff;
+            font-size: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background 0.15s;
+
+            &:hover {
+                background: var(--ant-error-color, #ff4d4f);
+            }
+        }
+    }
+}
+
+.input-body {
+    padding: 12px 16px 4px;
+    display: flex;
+
+    textarea {
+        width: 100%;
+        resize: none;
+        border: none;
+        background: transparent;
+        font-size: 15px;
+        line-height: 1.6;
+        padding: 0;
+        min-height: 24px;
+        box-shadow: none !important;
+        outline: none;
+
+        &::placeholder {
+            color: @text-3;
+        }
+    }
+}
+
+.input-footer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 8px 8px;
+}
+
+.footer-left,
+.footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+}
+
+.footer-left {
+    flex: 1;
+    overflow: hidden;
+}
+
+.icon-btn {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: @text-2;
+
+    &:hover {
+        color: @text;
+        background: @fill;
+    }
+
+    .anticon {
+        font-size: 16px;
+    }
+}
+
+/* Model / agent pickers read as chips rather than form fields */
+.chip-select {
+    min-width: 0;
+    max-width: 180px;
+    border-radius: 999px;
+    transition: background 0.15s;
+
+    &:hover {
+        background: @fill;
+    }
+
+    ::ng-deep .ant-select-selector {
+        height: 32px !important;
+        padding: 0 10px !important;
+        align-items: center;
+    }
+
+    ::ng-deep .ant-select-selection-item,
+    ::ng-deep .ant-select-selection-placeholder {
+        font-size: 13px;
+        line-height: 32px !important;
+        color: @text-2;
+    }
+}
+
+.tool-switch {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 10px;
+    font-size: 13px;
+    color: @text-2;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* Send / stop share one round slot: the composer always ends in a single primary action */
+.btn-round {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    margin-left: 4px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #fff;
+    background: @primary;
+    cursor: pointer;
+    transition: transform 0.15s @ease, opacity 0.15s, background 0.15s;
+
+    &:hover:not([disabled]) {
+        opacity: 0.88;
+    }
+
+    &:active:not([disabled]) {
+        transform: scale(0.92);
+    }
+
+    &:focus-visible {
+        outline: 2px solid @primary;
+        outline-offset: 2px;
+    }
+
+    &[disabled] {
+        cursor: not-allowed;
+        color: @text-3;
+        background: @fill;
+    }
+
+    &.btn-stop i {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        background: currentColor;
+    }
+}
+
+.shortcut-hint {
+    text-align: center;
+    font-size: 12px;
+    line-height: 1;
+    color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* ========== Rendered markdown (injected via innerHTML, hence ::ng-deep) ========== */
+
+/* Tool call chip */
 ::ng-deep .call-block-inline {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 3px 10px 3px 8px;
-    background: var(--erupt-bg-container, #fff);
-    border: 1px solid var(--ant-border-color-split);
-    border-radius: 3px;
-    margin-bottom: 1em;
-    margin-right: 4px;
+    padding: 2px 10px;
+    margin: 0 6px 1em 0;
+    border-radius: 999px;
+    background: @fill-soft;
     font-size: 12px;
     font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
-    color: var(--erupt-text-tertiary, #8c8c8c);
-    line-height: 1.7;
+    color: @text-2;
+    line-height: 1.8;
     vertical-align: middle;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
     cursor: default;
-    transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
 
-    &:hover {
-        border-color: var(--ant-primary-3, #91caff);
-        color: var(--ant-primary-color, #1677ff);
-        box-shadow: 0 1px 6px rgba(22, 119, 255, 0.12);
-    }
-
-    /* Completed state: checkmark icon */
+    /* Done: a check mark */
     &::after {
         content: '';
-        display: inline-block;
         width: 12px;
         height: 12px;
         flex-shrink: 0;
-        background-color: #52c41a;
-        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
-        mask-size: contain;
-        mask-repeat: no-repeat;
+        background-color: var(--ant-success-color, #52c41a);
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E") center / contain no-repeat;
     }
 }
 
-/* In-progress: streaming with no following sibling (= the currently running call) */
+/* Running: streaming with no following sibling (= the call in progress) */
 ::ng-deep .markdown-body.is-streaming .call-block-inline:not(:has(~ *)) {
-    border-color: var(--ant-primary-3, #91caff);
-    color: var(--ant-primary-color, #1677ff);
-    box-shadow: 0 1px 6px rgba(22, 119, 255, 0.1);
-
-    /* Rotating spinner */
+    color: @primary;
+    .tint(@primary, 8%);
 
     &::after {
         background: none;
-        mask-image: none;
+        mask: none;
         border-radius: 50%;
-        border: 1.5px solid rgba(22, 119, 255, 0.2);
-        border-top-color: var(--ant-primary-color, #1677ff);
+        border: 1.5px solid ~"color-mix(in srgb, @{primary} 25%, transparent)";
+        border-top-color: @primary;
         animation: call-spin 0.65s linear infinite;
     }
 }
@@ -317,581 +835,27 @@
     }
 }
 
-.bubble-wrap.is-model .bubble-content {
-    align-items: flex-start;
-}
-
-.bubble-wrap:not(.is-model) .bubble-content {
-    align-items: flex-end;
-}
-
-.loading-wrap {
-    padding: 12px 0;
-}
-
-/* Streaming message container: model messages use inline-block so the cursor sits right after the last character */
-.bubble-wrap.is-model .bubble-content .markdown-body {
-    display: inline-block;
-    max-width: 100%;
-    vertical-align: top;
-}
-
-.bubble-wrap:not(.is-model) .bubble-content .markdown-body {
-    display: inline-block;
-    max-width: 100%;
-    vertical-align: top;
-}
-
-/* Streaming typing cursor */
-.streaming-cursor {
-    display: inline-block;
-    width: 2px;
-    height: 1.1em;
-    margin-left: 2px;
-    vertical-align: text-bottom;
-    background: var(--ant-primary-color);
-    animation: streaming-cursor-blink 0.9s step-end infinite;
-}
-
-@keyframes streaming-cursor-blink {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0;
-    }
-}
-
-.bubble-wrap:not(.is-model) .bubble-content .markdown-body {
-    background: var(--ant-primary-color-hover);
-    color: #fff;
-    padding: 8px 12px;
-    border-radius: @radius-sm;
-    box-shadow: 0 2px 8px rgba(0, 102, 255, 0.2);
-}
-
-.bubble-wrap:not(.is-model) .bubble-content .markdown-body ::ng-deep(a) {
-    color: rgba(255, 255, 255, 0.95);
-    text-decoration: underline;
-}
-
-.placeholder {
-    color: var(--ant-text-color-secondary, #555);
-    padding: 12px 0;
-    font-size: 14px;
-}
-
-/* Marker shown on replies the user stopped before completion */
-.bubble-interrupted {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-top: 6px;
-    font-size: 12px;
-    color: var(--ant-text-color-secondary, #999);
-
-    [nz-icon] {
-        font-size: 12px;
-    }
-}
-
-/* Per-message action bar: fades in on hover */
-.bubble-actions {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    margin-top: 6px;
-    opacity: 0;
-    transition: opacity 0.2s;
-
-    .bubble-time {
-        font-size: 11px;
-        color: var(--ant-text-color-secondary, #bbb);
-        margin-right: 4px;
-    }
-
-    .action-btn {
-        padding: 0 5px;
-        height: 26px;
-        color: var(--ant-text-color-secondary, #888);
-        border-radius: @radius-sm;
-        line-height: 1;
-
-        &:hover {
-            color: var(--ant-text-color, #1a1a1a);
-            background: var(--erupt-fill-secondary, rgba(0, 0, 0, 0.06));
-        }
-
-        .anticon {
-            font-size: 13px;
-        }
-
-        &.action-btn-speaking {
-            color: var(--ant-primary-color) !important;
-        }
-    }
-}
-
-.bubble-wrap:hover .bubble-actions {
-    opacity: 1;
-}
-
-/* Message area loading state */
-.bubbles-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 60px 0;
-    color: var(--ant-text-color-secondary, #666);
-    font-size: 14px;
-}
-
-.bubbles-load-more {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 12px 0;
-    color: var(--ant-text-color-secondary, #666);
-    font-size: 13px;
-}
-
-/* Empty state */
-.empty-tip {
-    margin-top: 120px;
-    text-align: center;
-
-    ::ng-deep(.ant-empty-description) {
-        color: var(--ant-text-color-secondary, #555);
-        font-size: 15px;
-    }
-}
-
-/* Scroll-to-bottom button: sticky at the visible bottom of the message area */
-.scroll-to-bottom {
-    position: sticky;
-    bottom: 16px;
-    align-self: center;
-    z-index: 10;
-    animation: fade-in 0.2s ease;
-
-    ::ng-deep(.ant-btn-circle) {
-        width: 36px;
-        height: 36px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        border-color: var(--ant-border-color-base, #e0e0e0);
-        background: var(--erupt-bg-elevated, #fff);
-        color: var(--ant-text-color-secondary, #666);
-
-        &:hover {
-            color: var(--ant-primary-color);
-            border-color: var(--ant-primary-color);
-        }
-    }
-}
-
-@keyframes fade-in {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Input area drag handle */
-.sender-resizer {
-    height: 2px;
-    flex-shrink: 0;
-    cursor: row-resize;
-    background: transparent;
-    transition: background 0.15s;
-
-    &:hover, &:active {
-        background: var(--ant-primary-color);
-    }
-}
-
-/* ========== Bottom input area ========== */
-.sender-wrap {
-    flex-shrink: 0;
-    overflow: auto;
-    box-shadow: 2px -4px 16px rgba(0, 0, 0, 0.06);
-
-
-    &.has-height {
-        display: flex;
-        flex-direction: column;
-
-        .input-card {
-            flex: 1 1 0;
-            min-height: 0;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            border-left: none;
-            border-right: none;
-        }
-
-        .input-body {
-            flex: 1 1 0;
-            min-height: 0;
-            overflow: hidden;
-
-            textarea {
-                height: 100% !important;
-                box-sizing: border-box;
-            }
-        }
-    }
-
-    background: var(--erupt-bg-container, #ffffff);
-    border-top: 1px solid var(--ant-border-color-split);
-
-    &:not(.is-wide) .input-card {
-        max-width: @content-max;
-        margin: 0 auto;
-    }
-
-    &:not(.is-wide) .hints-wrap {
-        max-width: @content-max;
-    }
-
-    /* Preview strip of images attached to the next message */
-    .pending-images {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        padding: 12px 14px 4px;
-
-        .pending-image {
-            position: relative;
-            width: 64px;
-            height: 64px;
-
-            img {
-                display: block;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                border: 1px solid var(--ant-border-color-split);
-                border-radius: 6px;
-                cursor: zoom-in;
-                transition: opacity 0.15s;
-
-                &:hover {
-                    opacity: 0.85;
-                }
-            }
-
-            &.pending-image-loading {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: var(--erupt-bg-spotlight, #fafafa);
-                border: 1px dashed var(--ant-border-color-split);
-                border-radius: 6px;
-            }
-
-            /* Round badge floating over the corner, like ant-design upload cards */
-            .pending-image-remove {
-                position: absolute;
-                top: -6px;
-                right: -6px;
-                width: 18px;
-                height: 18px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: rgba(0, 0, 0, 0.65);
-                color: #fff;
-                font-size: 10px;
-                cursor: pointer;
-                border-radius: 50%;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-                transition: background 0.15s;
-
-                &:hover {
-                    background: #e53935;
-                }
-            }
-        }
-    }
-
-    .hints-wrap {
-        padding: 5px;
-        border-bottom: 1px solid var(--ant-border-color-split);
-        margin: 0;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-
-        .hint-tag {
-            padding: 4px 12px;
-            background: var(--erupt-fill-secondary, #f0f0f0);
-            border: 1px solid var(--erupt-border, #e0e0e0);
-            border-radius: @radius-sm;
-            font-size: 13px;
-            color: var(--ant-text-color-secondary, #666);
-            cursor: pointer;
-            transition: all 0.2s;
-
-            &:hover {
-                background: var(--ant-primary-1, #e6f4ff);
-                border-color: var(--ant-primary-color);
-                color: var(--ant-primary-color);
-            }
-        }
-    }
-}
-
-/* Input card: appearance - light grey border, rounded corners, top arrow, toolbar, bottom shortcut hints and send group */
-.input-card {
-    background: var(--erupt-bg-container, #fff);
-    //border: 1px solid #eee;
-    //border-top: none;
-    //border-bottom: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-
-    //&:focus-within {
-    //    border-color: var(--ant-primary-color);
-    //    box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.12);
-    //}
-}
-
-/* Tells the user the chat carries the context of the page it was opened from */
-.context-strip {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-bottom: 1px solid var(--erupt-border, #f0f0f0);
-    font-size: 12px;
-    color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
-
-    .context-name {
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        color: var(--erupt-text, rgba(0, 0, 0, 0.88));
-    }
-}
-
-.input-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 14px 8px;
-    min-height: 40px;
-}
-
-.toolbar-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    .toolbar-label {
-        font-size: 13px;
-        color: var(--ant-text-color-secondary, #555);
-        flex-shrink: 0;
-    }
-
-    .agent-wrap, .tool-call-wrap {
-        display: flex;
-        align-items: center;
-    }
-
-    .agent-select {
-        width: 150px;
-    }
-}
-
-// Action button group next to the send button (stop / clear / wide / fullscreen + send)
-.footer-actions {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-
-    .btn-send {
-        margin-left: 8px;
-    }
-}
-
-.toolbar-icon {
-    padding: 0 6px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    color: var(--ant-text-color-secondary, #666);
-    border-radius: @radius-sm;
-
-    &:hover {
-        color: var(--ant-text-color, #1a1a1a);
-        background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.04));
-    }
-
-    .anticon {
-        font-size: 16px;
-    }
-
-    &.toolbar-icon-stop:hover {
-        color: #e53935;
-        background: rgba(229, 57, 53, 0.08);
-    }
-}
-
-/* Quick prompt dropdown list */
-.quick-prompts-menu {
-    list-style: none;
-    margin: 0;
-    padding: 4px 0;
-    min-width: 200px;
-    max-width: 320px;
-    max-height: 360px;
-    overflow-y: auto;
-}
-
-.quick-prompts-item {
-    padding: 8px 12px;
-    cursor: pointer;
-    font-size: 13px;
-    color: var(--ant-text-color, #1a1a1a);
-    transition: background 0.15s ease;
-    border: none;
-    display: block;
-    width: 100%;
-    text-align: left;
-    background: transparent;
-
-    &:hover {
-        background: var(--ant-primary-1, #e6f4ff);
-        color: var(--ant-primary-color, #1677ff);
-    }
-
-    .prompt-label {
-        display: block;
-        font-weight: 500;
-        margin-bottom: 2px;
-    }
-
-    .prompt-preview {
-        display: block;
-        font-size: 12px;
-        color: var(--ant-text-color-secondary, #666);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-}
-
-.input-body {
-    padding: 0 14px 8px;
-
-    /* When the toolbar is not rendered (e.g. embedded mode with no agent), restore the top padding */
-
-    &:first-child {
-        padding-top: 8px;
-    }
-
-    textarea {
-        width: 100%;
-        resize: none;
-        border: none;
-        background: transparent;
-        font-size: 15px;
-        line-height: 1.5;
-        padding: 6px 0;
-        min-height: 26px;
-        display: block;
-
-        &::placeholder {
-            color: var(--ant-text-color-secondary, #999);
-        }
-
-        &:focus {
-            box-shadow: none;
-            outline: none;
-        }
-    }
-}
-
-.input-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 14px;
-    border-top: 1px solid var(--ant-border-color-split);
-}
-
-.footer-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-
-    /* Attachment entry: bordered so it reads as a button, not a passive icon */
-    .attach-btn {
-        border: 1px solid var(--ant-border-color-split);
-
-        &:hover {
-            border-color: var(--ant-primary-color);
-            color: var(--ant-primary-color);
-            background: transparent;
-        }
-    }
-}
-
-/* Sits in the action group right before the buttons it describes */
-.shortcut-hint {
-    font-size: 12px;
-    color: var(--ant-text-color-secondary, #999);
-    margin-right: 6px;
-    white-space: nowrap;
-    user-select: none;
-}
-
-.btn-send {
-    color: #fff !important;
-    padding: 0 20px;
-    height: 32px;
-    font-weight: 500;
-    border-radius: @radius-sm;
-
-    &:hover:not([disabled]) {
-        color: #fff !important;
-    }
-}
-
-
-/* When the markdown-body contains charts or diagrams, expand it to full width (inline-block shrinks to content width by default) */
+/* Charts and diagrams take the full width (inline-block would shrink to content) */
 ::ng-deep .markdown-body:has(.echarts-block),
 ::ng-deep .markdown-body:has(.mermaid) {
     display: block;
     width: 100%;
 }
 
-/* ECharts container full width */
 ::ng-deep .echarts-block {
     display: block;
     width: 100%;
 }
 
-/* Chart placeholder */
 ::ng-deep .echarts-ph {
     width: 100%;
     height: 100%;
-    border-radius: @radius-sm;
-    background: var(--erupt-bg-spotlight, #f5f5f5);
+    border-radius: @radius;
+    background: @bg-soft;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--ant-text-color-secondary, #999);
+    color: @text-3;
     font-size: 13px;
 
     &::after {
@@ -899,54 +863,59 @@
     }
 }
 
-/* Code block: header bar (language label + copy button) + line number gutter + code area */
+/* Code block: header strip (language + copy), line-number gutter, code */
 ::ng-deep .code-block-wrap {
     position: relative;
-    margin: 8px 0;
+    margin: 12px 0;
     border-radius: @radius;
     overflow: hidden;
-    background: var(--erupt-bg-spotlight, #f6f8fa);
-    border: 1px solid var(--ant-border-color-split);
+    background: @bg-soft;
+    border: 1px solid @line;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0 0 auto;
+        height: 34px;
+        background: @fill-soft;
+        border-bottom: 1px solid @line;
+    }
 
     .code-lang {
         position: absolute;
-        top: 8px;
-        left: 12px;
-        font-size: 11px;
-        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.35));
-        font-family: monospace;
+        top: 9px;
+        left: 14px;
+        font-size: 12px;
+        line-height: 16px;
+        color: @text-3;
+        font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
         pointer-events: none;
         user-select: none;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
         z-index: 1;
     }
 
     .code-copy-btn {
         position: absolute;
-        top: 6px;
-        right: 8px;
-        padding: 2px 8px;
-        font-size: 11px;
-        background: var(--erupt-bg-container, #fff);
-        color: var(--erupt-text-tertiary, rgba(0, 0, 0, 0.45));
-        border: 1px solid var(--erupt-border, #d0d7de);
-        border-radius: @radius-sm;
+        top: 5px;
+        right: 6px;
+        padding: 0 8px;
+        font-size: 12px;
+        line-height: 24px;
+        background: transparent;
+        color: @text-3;
+        border: none;
+        border-radius: 6px;
         cursor: pointer;
-        transition: all 0.15s;
-        line-height: 18px;
+        transition: color 0.15s, background 0.15s;
         z-index: 1;
 
         &:hover {
-            background: var(--erupt-fill-tertiary, #f3f4f6);
-            color: var(--erupt-text, rgba(0, 0, 0, 0.75));
-            border-color: #adb5bd;
+            background: @fill;
+            color: @text;
         }
 
         &[data-copied] {
-            color: #2da44e;
-            border-color: #2da44e;
-            background: #dafbe1;
+            color: var(--ant-success-color, #52c41a);
 
             &::after {
                 content: ' ✓';
@@ -954,26 +923,23 @@
         }
     }
 
-    /* Line numbers and code side by side */
-
     .code-inner {
         display: flex;
         overflow-x: auto;
-        padding-top: 28px;
+        padding-top: 34px;
     }
 
     .code-gutter {
-        gap: 1px;
         display: flex;
         flex-direction: column;
-        padding: 12px 10px 12px 12px;
+        gap: 1px;
+        padding: 12px 10px 12px 14px;
         text-align: right;
         color: var(--erupt-text-quaternary, rgba(0, 0, 0, 0.25));
         font-size: 12px;
         line-height: 1.6;
-        font-family: monospace;
+        font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
         user-select: none;
-        border-right: 1px solid var(--ant-border-color-split);
         min-width: 36px;
         flex-shrink: 0;
 
@@ -985,7 +951,7 @@
     pre.hljs {
         margin: 0;
         border-radius: 0;
-        padding: 12px 16px;
+        padding: 12px 16px 12px 6px;
         background: transparent;
         flex: 1;
         overflow-x: visible;
@@ -993,23 +959,29 @@
     }
 }
 
-/* Callout block */
-::ng-deep .callout {
-    margin: 10px 0;
-    border-radius: @radius;
-    border-left: 4px solid;
-    padding: 0;
-    overflow: hidden;
+/* Callouts: one tinted panel per kind */
+.callout-kind(@color) {
+    border-color: ~"color-mix(in srgb, @{color} 30%, transparent)";
+    .tint(@color, 6%);
 
     .callout-title {
-        padding: 8px 14px;
+        color: @color;
+    }
+}
+
+::ng-deep .callout {
+    margin: 12px 0;
+    padding: 10px 14px;
+    border: 1px solid @line;
+    border-radius: @radius;
+
+    .callout-title {
+        margin-bottom: 4px;
         font-size: 13px;
         font-weight: 600;
-        background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.04));
     }
 
     .callout-body {
-        padding: 10px 14px;
         font-size: 14px;
 
         > p:last-child {
@@ -1018,52 +990,26 @@
     }
 
     &.callout-tip {
-        border-color: #52c41a;
-
-        .callout-title {
-            color: #389e0d;
-            background: #f6ffed;
-        }
+        .callout-kind(#52c41a);
     }
 
     &.callout-info {
-        border-color: #1677ff;
-
-        .callout-title {
-            color: #0958d9;
-            background: #e6f4ff;
-        }
+        .callout-kind(#1677ff);
     }
 
     &.callout-warning {
-        border-color: #faad14;
-
-        .callout-title {
-            color: #d46b08;
-            background: #fffbe6;
-        }
+        .callout-kind(#fa8c16);
     }
 
     &.callout-danger {
-        border-color: #ff4d4f;
-
-        .callout-title {
-            color: #cf1322;
-            background: #fff2f0;
-        }
+        .callout-kind(#ff4d4f);
     }
 
     &.callout-note {
-        border-color: #722ed1;
-
-        .callout-title {
-            color: #531dab;
-            background: #f9f0ff;
-        }
+        .callout-kind(#722ed1);
     }
 }
 
-/* Click image to zoom in */
 ::ng-deep .md-img {
     cursor: zoom-in;
     max-width: 100%;
@@ -1075,19 +1021,23 @@
     }
 }
 
-/* Conversation action menu */
-.chat-action-menu {
-    min-width: 140px;
+@media (prefers-reduced-motion: reduce) {
+    .bubbles-empty,
+    .main-bar,
+    .scroll-to-bottom,
+    .typing-dots i,
+    .placeholder,
+    .streaming-cursor {
+        animation: none;
+    }
 
-    li {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
-        font-size: 14px;
+    .placeholder {
+        color: @text-3;
+        background: none;
+    }
 
-        .anticon {
-            font-size: 14px;
-        }
+    .sidebar,
+    .btn-round {
+        transition: none;
     }
 }

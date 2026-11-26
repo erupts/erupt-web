@@ -1,3 +1,4 @@
+import {AI_ICON} from "@shared/util/ai-icon";
 import {
     AfterViewChecked,
     ChangeDetectorRef,
@@ -64,6 +65,8 @@ const BUBBLES_BOTTOM_BUFFER_PX = 300;
 export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     private clipboard = inject(ClipboardService);
+    readonly AI_ICON = AI_ICON;
+
     @Input() collapseSidebar = false;
 
     @Input() embedded = false;
@@ -153,6 +156,10 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     private pendingSse = new Map<number, ChatSseState>();
     private scrollSubject = new Subject<void>();
     private speakingMessage: ChatMessage | null = null;
+
+    get selectedChat(): Chat | undefined {
+        return this.chats.find(c => c.id === this.selectChat);
+    }
 
     get selectedAgent(): Agent | undefined {
         return this.agents.find(a => a.id === this.selectAgentId);
@@ -396,7 +403,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
             this.inputHistory.push(message.trim());
             this.historyIndex = -1;
         }
-        const doStart = (chatId: number) => {
+        const doStart = (chatId: number, awaitTitle = false) => {
             this.sending = true;
             this.content = '';
             this.pendingImages = [];
@@ -414,14 +421,14 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                 loading: true
             } as ChatMessage);
             setTimeout(() => this.scrollBubblesToBottom(), 10);
-            this.openSse(chatId, message, images);
+            this.openSse(chatId, message, images, awaitTitle);
         };
 
         if (this.selectChat == null) {
             const title = message.trim() || this.i18n.fanyi('ai.chat.image_message');
             this.chatApi.createChat(title).subscribe({
                 next: res => {
-                    this.fetchChats(true, () => doStart(res.data));
+                    this.fetchChats(true, () => doStart(res.data, !!message.trim()));
                 }
             });
         } else {
@@ -430,7 +437,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
     }
 
     /** Open an SSE connection and listen for streaming events; supports background operation, caching continues after switching chats */
-    private openSse(chatId: number, message: string, images?: string[]): void {
+    private openSse(chatId: number, message: string, images?: string[], awaitTitle = false): void {
         // if this chat already has an SSE connection (e.g. regenerating), close the old one first
         const existing = this.pendingSse.get(chatId);
         if (existing) {
@@ -458,6 +465,7 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.streaming = true;
 
         const isActive = () => this.selectChat === chatId;
+        let done = false;
 
         state.eventSource.onmessage = (event) => {
             const data: SseMessage = JSON.parse(event.data);
@@ -551,7 +559,14 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                     if (isActive()) this.ngZone.run(() => this.scrollSubject.next());
                 });
 
+            } else if (data.event === SseMessageEvent.TITLE) {
+                // generated in the background from the first message; may arrive during or right after the reply
+                const chat = this.chats.find(c => c.id === chatId);
+                if (chat && data.data) this.ngZone.run(() => chat.title = data.data);
+                awaitTitle = false;
+                if (done) state.eventSource.close();
             } else if (data.event === SseMessageEvent.DONE) {
+                done = true;
                 if (state.renderTimer !== null) { clearTimeout(state.renderTimer); state.renderTimer = null; }
                 const finalize = async () => {
                     const tokenHtml = await this.markdown.render(state.accumulatedMarkdown);
@@ -562,8 +577,9 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
                 };
                 finalize().then(() => {
                     this.ngZone.run(() => {
-                        state.eventSource.close();
-                        this.pendingSse.delete(chatId);
+                        // a new chat's title may still be on its way: the server closes the stream once it is sent
+                        if (!awaitTitle) state.eventSource.close();
+                        if (this.pendingSse.get(chatId) === state) this.pendingSse.delete(chatId);
                         if (isActive()) {
                             this.streaming = false;
                             this.sendDisabled = false;
@@ -582,6 +598,8 @@ export class AiChatComponent implements OnInit, OnDestroy, AfterViewChecked {
         };
 
         state.eventSource.onerror = () => {
+            // the reply is already finalized: this is only the server closing a stream kept open for the title
+            if (done) return state.eventSource.close();
             setTimeout(() => {
                 this.ngZone.run(() => {
                     if (state.renderTimer !== null) { clearTimeout(state.renderTimer); state.renderTimer = null; }

@@ -16,10 +16,6 @@
                 <span nz-icon nzType="search" nzTheme="outline"></span>
             </button>
         }
-        <button nz-button nzType="text" class="conv-icon-btn conv-new" (click)="create.emit()"
-                [title]="'ai.chat.new_session' | translate">
-            <span nz-icon nzType="form" nzTheme="outline"></span>
-        </button>
         @if (foldable) {
             <button nz-button nzType="text" class="conv-icon-btn" (click)="fold.emit()"
                     [title]="'ai.chat.collapse_sidebar' | translate">
@@ -27,6 +23,11 @@
             </button>
         }
     </div>
+
+    <button type="button" class="conv-new" (click)="create.emit()">
+        <span nz-icon nzType="plus" nzTheme="outline"></span>
+        <span>{{ 'ai.chat.new_session' | translate }}</span>
+    </button>
 
     <div #listRef class="conv-list" (scroll)="onScroll()">
         @if (loading) {

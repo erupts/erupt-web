@@ -1,7 +1,7 @@
 /* Conversation panel: title header with icon actions (search expands in place), quiet grouped list, rows reveal actions on hover */
 @radius: 8px;
-@row-radius: 6px;
-@ctrl-h: 32px;
+@row-radius: 8px;
+@ctrl-h: 34px;
 
 :host {
     display: flex;
@@ -17,7 +17,7 @@
     display: flex;
     flex-direction: column;
     padding: 0 10px 8px;
-    gap: 6px;
+    gap: 4px;
 }
 
 /* ---- header: title + icon actions; the search field takes the title's place while open ---- */
@@ -25,20 +25,16 @@
     display: flex;
     align-items: center;
     gap: 2px;
-    height: 44px;
-    margin: 0 -10px;
-    padding: 0 8px 0 14px;
-    border-bottom: 1px solid var(--ant-border-color-split, #f0f0f0);
+    height: 48px;
+    padding: 0 0 0 6px;
 }
 
 .conv-title {
     flex: 1;
     min-width: 0;
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    color: var(--ant-text-color-secondary, #8c8c8c);
+    color: var(--erupt-text, #1f1f1f);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -62,12 +58,38 @@
     }
 }
 
+/* The primary action of the panel: a full-width button rather than one icon among others */
 .conv-new {
-    margin: 0 2px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 36px;
+    margin-bottom: 6px;
+    padding: 0 12px;
+    border: 1px solid var(--erupt-border, #f0f0f0);
+    border-radius: @radius;
+    background: var(--erupt-bg-container, #fff);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--erupt-text, #1f1f1f);
+    white-space: nowrap;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: color 0.15s ease, border-color 0.15s ease;
+
+    .anticon {
+        font-size: 13px;
+    }
 
     &:hover {
         color: var(--ant-primary-color);
-        background: var(--ant-primary-1, #e6f4ff);
+        border-color: var(--ant-primary-color);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--ant-primary-color);
+        outline-offset: 1px;
     }
 }
 
@@ -78,7 +100,7 @@
     align-items: center;
     gap: 6px;
     height: 28px;
-    margin: 0 4px 0 -6px;
+    margin-right: 4px;
     padding: 0 8px;
     border-radius: @row-radius;
     border: 1px solid var(--ant-primary-color);
@@ -151,12 +173,9 @@
     position: sticky;
     top: 0;
     z-index: 1;
-    padding: 10px 8px 4px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.4px;
-    text-transform: uppercase;
-    color: var(--ant-text-color-secondary, #8c8c8c);
+    padding: 12px 8px 4px;
+    font-size: 12px;
+    color: var(--erupt-text-tertiary, #8c8c8c);
     background: var(--erupt-bg-spotlight, #fafafa);
 }
 
@@ -169,8 +188,8 @@
     align-items: center;
     gap: 4px;
     height: @ctrl-h;
-    padding: 0 3px 0 8px;
-    margin-bottom: 1px;
+    padding: 0 4px 0 10px;
+    margin-bottom: 2px;
     border-radius: @row-radius;
     cursor: pointer;
     transition: background 0.15s ease;
@@ -179,7 +198,7 @@
         flex: 1;
         min-width: 0;
         font-size: 13px;
-        color: var(--ant-text-color-secondary, #595959);
+        color: var(--erupt-text-secondary, #595959);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -205,21 +224,18 @@
         }
     }
 
+    /* Selected: the row lifts onto the chat surface instead of turning blue */
     &.active {
-        background: var(--ant-primary-1, #e6f4ff);
+        background: var(--erupt-bg-container, #fff);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 
         .conv-item-title {
-            color: var(--ant-primary-color);
+            color: var(--erupt-text, #1f1f1f);
             font-weight: 500;
         }
 
         .conv-item-more {
             opacity: 1;
-            color: var(--ant-primary-color);
-
-            &:hover {
-                background: var(--ant-primary-2, #bae0ff);
-            }
         }
     }
 }

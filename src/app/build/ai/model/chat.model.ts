@@ -58,5 +58,7 @@ export interface SseMessage {
 export enum SseMessageEvent {
     CALL = "CALL",
     TOKEN = "TOKEN",
-    DONE = "DONE"
+    DONE = "DONE",
+    /** The chat was renamed after its first message; data is the new title */
+    TITLE = "TITLE"
 }
