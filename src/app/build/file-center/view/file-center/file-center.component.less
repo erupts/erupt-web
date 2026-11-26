@@ -19,18 +19,43 @@
 .fc-toolbar {
     display: flex;
     align-items: center;
-    gap: 8px;
-    height: 46px;
-    min-height: 46px;
+    gap: 6px;
+    height: 44px;
+    min-height: 44px;
     padding: 0 12px;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--ant-border-color-split);
+    background: var(--erupt-bg-container, #fff);
 
     .fc-search {
         width: 200px;
+        border-radius: 6px;
+
+        .fa {
+            color: var(--erupt-text-quaternary, #bfbfbf);
+        }
     }
 
     button i.fa {
         margin-right: 4px;
+    }
+
+    // an action on the selection: just its icon, the name in a tooltip
+    .fc-icon-btn {
+        width: 26px;
+        padding: 0;
+        color: var(--erupt-text-secondary, #595959);
+
+        i.fa {
+            margin-right: 0;
+        }
+    }
+
+    .fc-divider {
+        flex-shrink: 0;
+        width: 1px;
+        height: 16px;
+        margin: 0 4px;
+        background: var(--ant-border-color-split);
     }
 }
 
@@ -39,26 +64,40 @@
     display: flex;
     align-items: center;
     gap: 2px;
+    min-width: 0;
     overflow: hidden;
     white-space: nowrap;
-    color: #8c8c8c;
+    color: var(--erupt-text-tertiary, #8c8c8c);
+
+    .fc-crumbs-icon {
+        margin-right: 4px;
+        font-size: 14px;
+        color: var(--erupt-text-tertiary, #8c8c8c);
+    }
 
     a {
-        color: #262626;
+        color: var(--erupt-text-secondary, #595959);
         padding: 2px 6px;
         border-radius: 4px;
+        overflow: hidden;
+        text-overflow: ellipsis;
 
         &:hover {
-            background: #f5f5f5;
+            color: var(--erupt-text, #262626);
+            background: var(--erupt-fill-tertiary, #f5f5f5);
         }
 
+        // the open folder is where you are, not somewhere to go
         &.last {
+            flex-shrink: 0;
             font-weight: 600;
+            color: var(--erupt-text, #262626);
         }
     }
 
     .sep {
-        color: #bfbfbf;
+        font-size: 12px;
+        color: var(--erupt-text-quaternary, #bfbfbf);
     }
 }
 
@@ -71,7 +110,7 @@
 .fc-stores {
     width: 180px;
     min-width: 180px;
-    border-right: 1px solid #f0f0f0;
+    border-right: 1px solid var(--ant-border-color-split);
     overflow: auto;
     padding: 8px 0;
 
@@ -127,7 +166,7 @@
 .fc-column {
     position: relative;
     flex: none;
-    border-right: 1px solid #f0f0f0;
+    border-right: 1px solid var(--ant-border-color-split);
     // Stay visible: the resize handle straddles the border and would be clipped otherwise
     overflow: visible;
     display: flex;
@@ -230,7 +269,7 @@
 .fc-preview {
     position: relative;
     flex: none;
-    border-left: 1px solid #f0f0f0;
+    border-left: 1px solid var(--ant-border-color-split);
     overflow: visible;
 
     .fc-preview-body {
@@ -245,7 +284,7 @@
         justify-content: center;
         min-height: 160px;
         background: #fafafa;
-        border: 1px solid #f0f0f0;
+        border: 1px solid var(--ant-border-color-split);
         border-radius: 8px;
         margin-bottom: 12px;
         overflow: hidden;
