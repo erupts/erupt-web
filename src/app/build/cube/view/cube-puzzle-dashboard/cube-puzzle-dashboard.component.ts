@@ -63,7 +63,7 @@ const STAGE_MENU_POSITIONS = [
     standalone: false,
     selector: 'cube-puzzle-dashboard',
     templateUrl: './cube-puzzle-dashboard.component.html',
-    styleUrls: ['./cube-puzzle-dashboard.component.less']
+    styleUrls: ['./cube-puzzle-dashboard.component.less', './cube-screen-stage.less']
 })
 export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
 

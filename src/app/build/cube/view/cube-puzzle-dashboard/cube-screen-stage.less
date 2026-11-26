@@ -1,0 +1,710 @@
+// The stage of a data screen: its viewport, the title bar, the panel looks, the designer's rulers and guides.
+// Split from cube-puzzle-dashboard.component.less, which with it went over the component style budget; both
+// are styles of the same component (styleUrls).
+@import (reference) '../../style/editor-chrome.less';
+
+// the scan panel's band: from above the panel to below it (its height is 30% of the panel)
+@keyframes screen-scan {
+    from { transform: translateY(-100%); }
+    to   { transform: translateY(334%); }
+}
+
+// the flow panel's spark: across the frame from left to right
+@keyframes screen-flow {
+    from { background-position: 100% 0; }
+    to   { background-position: 0 0; }
+}
+
+.cube-puzzle-container {
+    // .gridster-wrapper is repeated for weight: these must win over the dark-theme rules below.
+    // The look follows the erupt-iot hall: near-black navy, hairline borders, one cyan accent,
+    // monospace figures; nothing glows or carries a gradient text.
+    .gridster-wrapper.screen-viewport {
+        @base: #04080f;
+        @line: #1d3347;      // panel borders
+        @subline: #15283b;   // rules inside a panel
+        // the one color of the chrome, set per screen (settings.screen.accent) on the stage
+        @accent: ~"var(--screen-accent, #22d3ee)";
+        @ink: #d9e9f4;
+        @muted: #91a8bd;
+        @mono: "Cascadia Mono", "SF Mono", Consolas, "Microsoft YaHei", monospace;
+
+        position: relative;
+        overflow: hidden;
+        padding-bottom: 0;
+
+        &.screen-scroll {
+            overflow: hidden auto;
+        }
+
+        // The published view paints the backdrop on the viewport, not on the stage: a contained stage
+        // leaves bands around it, and they must read as the same backdrop rather than as black bars
+        &.screen-backdrop.screen-view {
+            background: radial-gradient(ellipse at 51% 29%, #091423 0%, @base 72%);
+        }
+
+        // The designer is a desk with the screen lying on it as a sheet: the desk is neutral and dotted,
+        // the sheet carries the backdrop and an edge, so the room around it reads as room to work in
+        // the stage is being moved, or will be with the next drag
+        &.screen-pan {
+            cursor: grab;
+
+            .puzzle-stage {
+                pointer-events: none;
+            }
+        }
+
+        &.screen-design {
+            .editor-chrome-vars();
+
+            // rulers along the top and the left edge, drawn on canvases, and the square where they meet
+            .screen-ruler {
+                position: absolute;
+                z-index: 15;
+                display: block;
+            }
+
+            .ruler-top {
+                top: 0;
+                left: 0;
+                width: 100%;
+                cursor: row-resize;
+            }
+
+            .ruler-left {
+                top: 0;
+                left: 0;
+                height: 100%;
+                cursor: col-resize;
+            }
+
+            .screen-ruler-corner {
+                position: absolute;
+                z-index: 16;
+                top: 0;
+                left: 0;
+                background: @chrome;
+                border-right: 1px solid @chrome-edge;
+                border-bottom: 1px solid @chrome-edge;
+            }
+
+            // the guides: a hairline with a wider band to grab, the coordinate shown while hovering or dragging
+            .screen-guides {
+                position: absolute;
+                inset: 0;
+                z-index: 14;
+                overflow: hidden;
+                pointer-events: none;
+            }
+
+            .screen-guide {
+                position: absolute;
+                pointer-events: auto;
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    background: #f43f5e;
+                }
+
+                span {
+                    position: absolute;
+                    display: none;
+                    padding: 0 4px;
+                    border-radius: 2px;
+                    font: 10px/16px ui-monospace, Menlo, monospace;
+                    color: #fff;
+                    background: #f43f5e;
+                    white-space: nowrap;
+                }
+
+                &:hover span, &.guide-dragging span {
+                    display: block;
+                }
+
+                &.guide-h {
+                    left: 0;
+                    right: 0;
+                    height: 7px;
+                    margin-top: -3px;
+                    cursor: row-resize;
+
+                    &::before {
+                        left: 0;
+                        right: 0;
+                        top: 3px;
+                        height: 1px;
+                    }
+
+                    span {
+                        left: 24px;
+                        top: -14px;
+                    }
+                }
+
+                &.guide-v {
+                    top: 0;
+                    bottom: 0;
+                    width: 7px;
+                    margin-left: -3px;
+                    cursor: col-resize;
+
+                    &::before {
+                        top: 0;
+                        bottom: 0;
+                        left: 3px;
+                        width: 1px;
+                    }
+
+                    span {
+                        top: 24px;
+                        left: 8px;
+                    }
+                }
+
+                &.guide-dragging {
+                    pointer-events: none;
+
+                    &::before {
+                        background: #fb7185;
+                    }
+                }
+            }
+
+            background-color: @chrome-desk;
+            background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+            background-size: 16px 16px !important;
+
+            .puzzle-stage {
+                box-shadow: 0 0 0 1px @chrome-sheet-edge, 0 12px 40px rgba(0, 0, 0, 0.5);
+            }
+
+            &.screen-backdrop .puzzle-stage {
+                background: radial-gradient(ellipse at 51% 29%, #091423 0%, @base 72%);
+            }
+        }
+
+        .puzzle-stage {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: 0 0;
+            color: @ink;
+            // a background image of the settings, stretched to the stage whatever its own ratio
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+
+        .screen-header {
+            flex-shrink: 0;
+            height: 68px;
+            margin: 0 24px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #223647;
+
+            .screen-title {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                font-size: 26px;
+                font-weight: 700;
+                letter-spacing: 0.07em;
+                white-space: nowrap;
+            }
+
+            // the mark before the title: a clipped plate holding one cell, unless the screen has a logo
+            .screen-mark {
+                flex-shrink: 0;
+                width: 36px;
+                height: 36px;
+                box-sizing: border-box;
+                border: 1px solid ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 40%, transparent)";
+                background: linear-gradient(@accent, @accent) center / 14px 14px no-repeat #0a2230;
+                clip-path: polygon(0 0, 76% 0, 100% 24%, 100% 100%, 0 100%);
+            }
+
+            .screen-logo {
+                flex-shrink: 0;
+                height: 40px;
+                max-width: 220px;
+                object-fit: contain;
+            }
+
+            .screen-clock {
+                font: 13px @mono;
+                letter-spacing: 0.03em;
+                font-variant-numeric: tabular-nums;
+                color: @muted;
+            }
+
+            // the three layouts with the title in the middle: the clock leaves the row for the right edge
+            &.header-center, &.header-plate, &.header-lines {
+                justify-content: center;
+
+                .screen-title {
+                    letter-spacing: 0.3em;
+                    text-indent: 0.3em;
+                }
+
+                .screen-clock {
+                    position: absolute;
+                    right: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+                }
+            }
+
+            // the rule under the bar, brightest under the title
+            &.header-center {
+                border-bottom-color: transparent;
+                border-image: linear-gradient(90deg, transparent, #223647 15%, @accent 50%, #223647 85%, transparent) 1;
+            }
+
+            // a plate hanging from the top edge behind the title
+            &.header-plate {
+                border-bottom-color: transparent;
+                border-image: linear-gradient(90deg, transparent, #223647 12%, #223647 88%, transparent) 1;
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 26%;
+                    right: 26%;
+                    bottom: -1px;
+                    clip-path: polygon(0 0, 100% 0, calc(100% - 48px) 100%, 48px 100%);
+                    background: linear-gradient(180deg,
+                        ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 30%, transparent)",
+                        ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 4%, transparent)");
+                    border-bottom: 2px solid @accent;
+                }
+
+                .screen-title {
+                    position: relative;
+                }
+            }
+
+            // a line running out from the title to each side
+            &.header-lines {
+                border-bottom: none;
+                gap: 28px;
+
+                &::before, &::after {
+                    content: '';
+                    flex: 1;
+                    max-width: 30%;
+                    height: 2px;
+                    background: linear-gradient(90deg, transparent, @accent);
+                }
+
+                &::after {
+                    transform: scaleX(-1);
+                }
+            }
+        }
+
+        // the typeface of figures, chosen per screen
+        .puzzle-stage.number-condensed ::ng-deep .kpi-value {
+            font-family: "DIN Alternate", "DIN Condensed", Bahnschrift, "Roboto Condensed", "Arial Narrow", sans-serif;
+            letter-spacing: 0;
+        }
+
+        .puzzle-stage.number-sans ::ng-deep .kpi-value {
+            font-family: inherit;
+            letter-spacing: 0;
+        }
+
+        .screen-canvas {
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .screen-item {
+            position: absolute;
+
+            // locked: a press goes through to whatever lies below
+            &.screen-item-locked {
+                pointer-events: none;
+            }
+
+            // While a screen is arranged a report is an object to move, not a chart to use:
+            // a cover takes the pointer, and the whole panel is the drag surface
+            &.screen-item-edit {
+                cursor: move;
+
+                .puzzle-content::after {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    z-index: 10;
+                }
+            }
+        }
+
+        // the rectangle of a drag-select
+        .screen-marquee {
+            position: absolute;
+            z-index: 100001;
+            border: 1px solid @accent;
+            background: ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 12%, transparent)";
+            pointer-events: none;
+        }
+
+        // moveable draws its box and handles into the canvas; above every layer
+        ::ng-deep .moveable-control-box {
+            z-index: 100000 !important;
+            --moveable-color: @accent;
+
+            // smaller, square handles: the stock 14px discs crowd a small widget
+            .moveable-control {
+                width: 9px;
+                height: 9px;
+                margin-top: -4.5px;
+                margin-left: -4.5px;
+                border: 1px solid @accent;
+                border-radius: 1px;
+                background: #06101c;
+            }
+
+            .moveable-control.moveable-rotation-control {
+                border-radius: 50%;
+                background: @accent;
+            }
+        }
+
+        .puzzle-item {
+            border-color: @line;
+            box-shadow: none;
+            overflow: visible;
+
+            .puzzle-content {
+                overflow: hidden;
+                background: linear-gradient(150deg, #0b1624, #08111c 66%) !important;
+            }
+
+            ::ng-deep {
+                .ant-card, .ant-card.dark-theme {
+                    background: transparent;
+                    color: @ink;
+                }
+
+                .ant-card-head {
+                    padding: 0 14px;
+                    border-bottom: 1px solid @subline;
+                    background: none;
+                }
+
+                .ant-card-head-title {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-size: var(--screen-panel-title, 15px);
+                    font-weight: 600;
+                    letter-spacing: 0.06em;
+                    color: var(--screen-panel-title-color, @ink);
+
+                    &::before {
+                        content: '';
+                        flex-shrink: 0;
+                        width: 3px;
+                        height: 13px;
+                        background: @accent;
+                        box-shadow: 0 0 10px ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 31%, transparent)";
+                    }
+                }
+
+                .kpi-value:not([style*="color"]) {
+                    color: #e4f4ff;
+                }
+
+                .kpi-value {
+                    font-family: @mono;
+                    font-weight: 600;
+                    line-height: 1;
+                    letter-spacing: -0.04em;
+                    font-variant-numeric: tabular-nums;
+                }
+
+                .kpi-compare {
+                    font-family: @mono;
+                }
+
+                .ant-table {
+                    color: @ink;
+
+                    .ant-table-thead > tr > th {
+                        background: #0a1724;
+                        color: @muted;
+                        font-weight: 500;
+                        border-bottom-color: @subline;
+
+                        &::before {
+                            display: none;
+                        }
+                    }
+
+                    .ant-table-tbody > tr > td {
+                        border-bottom-color: @subline;
+                    }
+
+                    .ant-table-tbody > tr.ant-table-row:hover > td {
+                        background: #112c3c;
+                    }
+                }
+
+                .dimension-column, .drillable-column {
+                    a {
+                        color: @ink !important;
+                    }
+                }
+
+                .filter-tags-container {
+                    background: transparent;
+                    border-bottom-color: @subline;
+                }
+            }
+        }
+
+        // No panel at all: a widget, a report laid over another one, or one straight on the backdrop
+        .puzzle-item.panel-none {
+            border-color: transparent;
+
+            .puzzle-content {
+                background: none !important;
+            }
+
+            // no chrome at all, the rule under the title included
+            ::ng-deep .ant-card-head {
+                border-bottom-color: transparent;
+            }
+        }
+
+        // Two brackets, top left and bottom right, on a layer above the report
+        .puzzle-item.panel-corner::after {
+            @c: @accent;
+            content: '';
+            position: absolute;
+            inset: -1px;
+            pointer-events: none;
+            background:
+                linear-gradient(@c, @c) left top / 15px 1px,
+                linear-gradient(@c, @c) left top / 1px 15px,
+                linear-gradient(@c, @c) right bottom / 15px 1px,
+                linear-gradient(@c, @c) right bottom / 1px 15px;
+            background-repeat: no-repeat;
+        }
+
+        // A bracket in each corner
+        .puzzle-item.panel-bracket {
+            border-color: fade(@line, 55%);
+
+            &::after {
+                @c: @accent;
+                @l: 14px;
+                @w: 2px;
+                content: '';
+                position: absolute;
+                inset: -1px;
+                pointer-events: none;
+                background:
+                    linear-gradient(@c, @c) left top / @l @w,
+                    linear-gradient(@c, @c) left top / @w @l,
+                    linear-gradient(@c, @c) right top / @l @w,
+                    linear-gradient(@c, @c) right top / @w @l,
+                    linear-gradient(@c, @c) left bottom / @l @w,
+                    linear-gradient(@c, @c) left bottom / @w @l,
+                    linear-gradient(@c, @c) right bottom / @l @w,
+                    linear-gradient(@c, @c) right bottom / @w @l;
+                background-repeat: no-repeat;
+            }
+        }
+
+        // A lit frame
+        .puzzle-item.panel-glow {
+            border-color: ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 55%, transparent)";
+            box-shadow: inset 0 0 26px ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 14%, transparent)", 0 0 14px ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 12%, transparent)";
+        }
+
+        // Top left and bottom right cut off. The frame cannot follow a clip, so it is drawn inside: a
+        // hairline all round, and the two cut edges as diagonals on a layer above the report.
+        .puzzle-item.panel-chamfer {
+            @cut: 16px;
+            border-color: transparent;
+
+            .puzzle-content {
+                clip-path: polygon(@cut 0, 100% 0, 100% calc(100% - @cut), calc(100% - @cut) 100%, 0 100%, 0 @cut);
+                box-shadow: inset 0 0 0 1px @line;
+            }
+
+            &::after {
+                @c: @accent;
+                @edge: transparent calc(50% - 1px), @c calc(50% - 1px), @c calc(50% + 1px), transparent calc(50% + 1px);
+                content: '';
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                background:
+                    linear-gradient(to bottom right, @edge) left top / @cut @cut,
+                    linear-gradient(to bottom right, @edge) right bottom / @cut @cut;
+                background-repeat: no-repeat;
+            }
+        }
+
+        // No frame: the title sits on a band that fades out, a rule under it
+        .puzzle-item.panel-headline {
+            border-color: transparent;
+
+            .puzzle-content {
+                background: linear-gradient(180deg, fade(#0b1624, 70%), transparent) !important;
+            }
+
+            ::ng-deep {
+                .ant-card-head {
+                    border-bottom: 1px solid transparent;
+                    border-image: linear-gradient(90deg, @accent, ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 0%, transparent)" 75%) 1;
+                    background: linear-gradient(90deg, ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 22%, transparent)", transparent 70%);
+                }
+
+                .ant-card-head-title::before {
+                    width: 6px;
+                    height: 14px;
+                    transform: skewX(-18deg);
+                }
+            }
+        }
+
+        // A rounded card of frosted glass
+        .puzzle-item.panel-glass {
+            border-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+
+            .puzzle-content {
+                border-radius: 11px;
+                background: rgba(255, 255, 255, 0.045) !important;
+                backdrop-filter: blur(10px);
+            }
+
+            ::ng-deep {
+                .ant-card-head {
+                    border-bottom-color: rgba(255, 255, 255, 0.08);
+                }
+
+                .ant-card-head-title::before {
+                    border-radius: 2px;
+                }
+            }
+        }
+
+        // The frame over a faint grid drawn in the accent
+        .puzzle-item.panel-grid {
+            @g: ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 8%, transparent)";
+
+            .puzzle-content {
+                background:
+                    linear-gradient(@g 1px, transparent 1px) 0 0 / 20px 20px,
+                    linear-gradient(90deg, @g 1px, transparent 1px) 0 0 / 20px 20px,
+                    linear-gradient(150deg, #0b1624, #08111c 66%) !important;
+            }
+        }
+
+        // A dark glass card lit from two corners: the accent at the top left, a violet turn of it at the bottom right
+        .puzzle-item.panel-aurora {
+            border-color: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+
+            .puzzle-content {
+                border-radius: 13px;
+                background:
+                    radial-gradient(120% 80% at 0% 0%, ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 26%, transparent)", transparent 62%),
+                    radial-gradient(90% 70% at 100% 100%, ~"color-mix(in srgb, color-mix(in srgb, var(--screen-accent, #22d3ee), #a855f7) 24%, transparent)", transparent 62%),
+                    linear-gradient(160deg, #0c1626, #070d18) !important;
+            }
+
+            ::ng-deep .ant-card-head {
+                border-bottom-color: rgba(255, 255, 255, 0.06);
+            }
+        }
+
+        // A hologram: fine scanlines, a tinted top, and a band of light sweeping down the panel
+        .puzzle-item.panel-scan {
+            border-color: ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 35%, transparent)";
+
+            .puzzle-content {
+                position: relative;
+                background:
+                    repeating-linear-gradient(0deg, ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 6%, transparent)" 0 1px, transparent 1px 3px),
+                    linear-gradient(180deg, ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 10%, transparent)", transparent 40%),
+                    #07121d !important;
+
+                // the sweep is clipped by the content, so it never leaves the panel
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 30%;
+                    pointer-events: none;
+                    background: linear-gradient(180deg, transparent, ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 12%, transparent)", transparent);
+                    animation: screen-scan 5s linear infinite;
+                }
+            }
+        }
+
+        // A spark of the accent running along the frame
+        .puzzle-item.panel-flow {
+            border-color: fade(@line, 55%);
+
+            &::after {
+                content: '';
+                position: absolute;
+                inset: -1px;
+                padding: 1px;
+                pointer-events: none;
+                background: linear-gradient(90deg, transparent 35%, @accent 50%, transparent 65%) 0 0 / 300% 100%;
+                // only the 1px ring between the padding box and the content box shows
+                -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+                -webkit-mask-composite: xor;
+                mask-composite: exclude;
+                animation: screen-flow 3.5s linear infinite;
+            }
+        }
+
+        // A raised card: rounded, a highlight on its top edge and a deep shadow under it
+        .puzzle-item.panel-raised {
+            border-color: transparent;
+            border-radius: 10px;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35);
+
+            .puzzle-content {
+                border-radius: 10px;
+                background: linear-gradient(180deg, #15253b, #0b1524) !important;
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), inset 0 -1px 0 rgba(0, 0, 0, 0.45);
+            }
+
+            ::ng-deep .ant-card-head {
+                border-bottom-color: rgba(255, 255, 255, 0.05);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .puzzle-item.panel-scan .puzzle-content::after, .puzzle-item.panel-flow::after {
+                animation: none;
+            }
+        }
+
+        &.screen-view .item-actions {
+            display: none;
+        }
+
+        // the report whose row in the layer panel is under the pointer
+        .puzzle-item.layer-hover:not(.selected) {
+            outline: 1px dashed @accent;
+            outline-offset: 2px;
+        }
+    }
+}
