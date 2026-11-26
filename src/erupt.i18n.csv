@@ -1788,6 +1788,8 @@ cube.widget.loop,循环播放,循環播放,Loop,Boucle,ループ,반복,Повт
 cube.widget.muted,静音,靜音,Muted,Muet,ミュート,음소거,Без звука,Silenciado,Stumm,Sem som,Bisu,كتم الصوت
 cube.screen.zoom.fit,适应画布,適應畫布,Fit to view,Ajuster à la vue,全体表示,화면에 맞추기,По размеру окна,Ajustar a la vista,An Ansicht anpassen,Ajustar à vista,Sesuaikan tampilan,ملاءمة العرض
 cube.screen.redo,重做,重做,Redo,Rétablir,やり直す,다시 실행,Повторить,Rehacer,Wiederholen,Refazer,Ulangi,إعادة
+cube.screen.filter.hide,隐藏筛选器,隱藏篩選器,Hide filters,Masquer les filtres,フィルターを隠す,필터 숨기기,Скрыть фильтры,Ocultar filtros,Filter ausblenden,Ocultar filtros,Sembunyikan filter,إخفاء عوامل التصفية
+cube.screen.filter.show,显示筛选器,顯示篩選器,Show filters,Afficher les filtres,フィルターを表示,필터 표시,Показать фильтры,Mostrar filtros,Filter einblenden,Mostrar filtros,Tampilkan filter,إظهار عوامل التصفية
 cube.screen.align.left,左对齐,左對齊,Align left,Aligner à gauche,左揃え,왼쪽 정렬,По левому краю,Alinear a la izquierda,Links ausrichten,Alinhar à esquerda,Rata kiri,محاذاة لليسار
 cube.screen.align.center,水平居中,水平置中,Align horizontal centers,Centrer horizontalement,左右中央揃え,가로 가운데 정렬,По центру по горизонтали,Centrar horizontalmente,Horizontal zentrieren,Centrar horizontalmente,Rata tengah horizontal,توسيط أفقي
 cube.screen.align.right,右对齐,右對齊,Align right,Aligner à droite,右揃え,오른쪽 정렬,По правому краю,Alinear a la derecha,Rechts ausrichten,Alinhar à direita,Rata kanan,محاذاة لليمين

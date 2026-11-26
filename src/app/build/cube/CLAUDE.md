@@ -90,7 +90,10 @@ actions) and differ in what places it:
   live in the overlay container and are styled by the global block at the end of the filter control's less. A
   new kind of control on the frame needs its dark dressing added there;
 - a published screen shows the filter row when it has a filter that is not hidden (`hasVisibleFilter`); without one
-  it shows no bar, just refresh / fullscreen on hover;
+  it shows no bar, just refresh / fullscreen on hover. The row can also be put away by hand on a screen
+  (`toggleFilterBar()`, kept per dashboard in `localStorage`, not in the DSL): the eye button at its right end
+  hides it, the filter button among the hover tools (published) or in the zoom control (designer) brings it back;
+  `showFilterBar` is the one condition the template reads;
 - the designer's stage can be zoomed and panned (`view: StageView`, applied on top of the fitted transform in
   `fitStage()`; the math is `zoomAt()` in `screen.util.ts`): ctrl / cmd + wheel or a pinch zooms at the pointer, a
   plain wheel pans, and a drag pans when it starts with the middle button, with space held, or on the desk around

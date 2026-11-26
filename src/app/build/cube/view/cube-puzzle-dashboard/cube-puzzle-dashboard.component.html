@@ -210,9 +210,14 @@
                     </div>
                 </div>
             }
-            @if (cubeMeta && screen && !editModel && !hasVisibleFilter) {
-                <!-- A published screen without filters has no bar at all, just these two on hover -->
+            @if (cubeMeta && screen && !editModel && !showFilterBar) {
+                <!-- A published screen without its filter bar has no bar at all, just these on hover -->
                 <div class="screen-tools">
+                    @if (hasVisibleFilter) {
+                        <button nz-button nzType="text" nzSize="small" (click)="toggleFilterBar()" [title]="'cube.screen.filter.show' | translate">
+                            <span nz-icon nzType="filter"></span>
+                        </button>
+                    }
                     <button nz-button nzType="text" nzSize="small" (click)="query()" [title]="'global.refresh' | translate">
                         <span nz-icon nzType="redo"></span>
                     </button>
@@ -235,9 +240,15 @@
                             [title]="'cube.screen.zoom.fit' | translate">
                         <span nz-icon nzType="expand"></span>
                     </button>
+                    @if (filterBarHidden) {
+                        <button nz-button nzType="text" nzSize="small" (click)="toggleFilterBar()"
+                                [title]="'cube.screen.filter.show' | translate">
+                            <span nz-icon nzType="filter"></span>
+                        </button>
+                    }
                 </div>
             }
-            @if (cubeMeta && (!screen || editModel || hasVisibleFilter)) {
+            @if (cubeMeta && showFilterBar) {
                 <div class="puzzle-filter-row">
                     <div class="filter-items" cdkDropList cdkDropListOrientation="horizontal"
                          (cdkDropListDropped)="dropFilter($event)">
@@ -293,6 +304,11 @@
                                 <button nz-button nzSize="small" (click)="reset()">{{ 'global.reset' | translate }}</button>
                             }
                             <button nz-button nzType="primary" nzSize="small" (click)="query()">{{ 'cube.dashboard.query' | translate }}</button>
+                            @if (screen) {
+                                <button nz-button nzSize="small" (click)="toggleFilterBar()" [title]="'cube.screen.filter.hide' | translate">
+                                    <span nz-icon nzType="eye-invisible"></span>
+                                </button>
+                            }
                         </div>
                     </div>
                 </div>

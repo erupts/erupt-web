@@ -245,6 +245,7 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
             }
         };
         this.code = this.route.snapshot.paramMap.get('code')!;
+        this.filterBarHidden = localStorage.getItem(`cube-filter-bar-${this.code}`) === 'true';
         const savedAi = localStorage.getItem(`cube-ai-panel-${this.code}`);
         if (savedAi) {
             try {
@@ -631,6 +632,19 @@ export class CubePuzzleDashboardComponent implements OnInit, OnDestroy {
     /** A filter the viewer can set: a published screen shows its filter bar only when it has one */
     get hasVisibleFilter(): boolean {
         return !!this.dsl?.filters?.some(it => !it.hidden);
+    }
+
+    /** The filter bar of a screen put away by hand; kept per dashboard in this browser */
+    filterBarHidden = false;
+
+    /** A dashboard always has its filter row; a screen has it while there is something in it and it was not put away */
+    get showFilterBar(): boolean {
+        return !this.screen || (!this.filterBarHidden && (this.editModel || this.hasVisibleFilter));
+    }
+
+    toggleFilterBar() {
+        this.filterBarHidden = !this.filterBarHidden;
+        localStorage.setItem(`cube-filter-bar-${this.code}`, String(this.filterBarHidden));
     }
 
     /** A data screen is always dark: its chrome is drawn for a dark stage */
