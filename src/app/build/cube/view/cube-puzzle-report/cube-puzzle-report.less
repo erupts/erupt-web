@@ -117,6 +117,12 @@
             }
         }
 
+        // The empty row of a scrolling table takes the width ng-zorro measures with getBoundingClientRect, which
+        // on a data screen is the width after the stage's scale: narrower than the table, so the hint sat left
+        .ant-table-placeholder .ant-table-expanded-row-fixed {
+            width: 100% !important;
+        }
+
         // Dimension column styles - clickable for filtering
         .dimension-column, .drillable-column {
             cursor: pointer;
