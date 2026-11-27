@@ -77,4 +77,31 @@ describe('ScreenHistory', () => {
         expect(a.frame.x).toBe(1);
     });
 
+    it('steps through the extras too, and gives them back only when they change', () => {
+        const a = report('a');
+        const reports = [a];
+        const history = new ScreenHistory(reports, 100, {accent: '#111'});
+        history.commit(reports, {accent: '#222'});
+        a.frame.x = 30;
+        history.commit(reports, {accent: '#222'});
+
+        expect(history.undo(reports, {accent: '#222'})).toEqual([]);
+        expect(history.restoredExtras).toBeNull();
+        expect(a.frame.x).toBe(0);
+
+        history.undo(reports, {accent: '#222'});
+        expect(history.restoredExtras).toEqual({accent: '#111'});
+
+        history.redo(reports, {accent: '#111'});
+        expect(history.restoredExtras).toEqual({accent: '#222'});
+    });
+
+    it('takes a change of the extras alone as a step', () => {
+        const reports = [report('a')];
+        const history = new ScreenHistory(reports, 100, {filters: []});
+        expect(history.commit(reports, {filters: []})).toBe(false);
+        expect(history.commit(reports, {filters: [{field: 'city'}]})).toBe(true);
+        expect(history.canUndo).toBe(true);
+    });
+
 });

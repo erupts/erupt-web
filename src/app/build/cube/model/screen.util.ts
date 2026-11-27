@@ -14,10 +14,12 @@ export const SCREEN_DEFAULT: Required<ScreenSettings> = {
     palette: ScreenPalette.TECH,
     headerStyle: ScreenHeader.LEFT,
     titleSize: 26,
+    titleColor: '',
     logo: '',
     clock: true,
     clockFormat: 'yyyy-MM-dd HH:mm:ss',
     panelTitleSize: 15,
+    panelTitleColor: '',
     numberFont: ScreenNumberFont.MONO,
     chartFontSize: 12,
 };
@@ -189,4 +191,29 @@ export function safeImageSrc(src: any): string | null {
     const url = src.trim();
     if (!url || url.startsWith('//')) return null;
     return /^[a-z][a-z0-9+.-]*:/i.test(url) && !/^https?:\/\//i.test(url) ? null : url;
+}
+
+/** Guides the designer laid on a screen, in pixels of the design resolution: x of the vertical, y of the horizontal */
+export interface ScreenGuides {
+    v: number[];
+    h: number[];
+}
+
+/** The tick spacing of a ruler, in design pixels: the finest of 1-2-5 steps that leaves labels room on the display */
+export function rulerStep(scale: number, minGap = 56): number {
+    for (const step of [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000]) {
+        if (step * scale >= minGap) return step;
+    }
+    return 10000;
+}
+
+/** Guides read back from storage: anything that is not a list of finite numbers is dropped */
+export function parseGuides(raw: string | null): ScreenGuides {
+    try {
+        const value = JSON.parse(raw || '{}');
+        const numbers = (list: any) => Array.isArray(list) ? list.filter(it => typeof it === 'number' && isFinite(it)) : [];
+        return {v: numbers(value?.v), h: numbers(value?.h)};
+    } catch {
+        return {v: [], h: []};
+    }
 }

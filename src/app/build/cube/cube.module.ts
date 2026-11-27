@@ -16,6 +16,7 @@ import {
     LineOutline,
     PictureOutline,
     SelectOutline,
+    SnippetsOutline,
     UndoOutline,
     UnlockOutline,
     VerticalAlignBottomOutline,
@@ -78,7 +79,7 @@ export class CubeModule {
     // The icons of the data screen editor, registered with the lazy module rather than the initial bundle
     constructor(iconService: NzIconService) {
         iconService.addIcon(AlignCenterOutline, AlignLeftOutline, AlignRightOutline, AppstoreAddOutline, BorderOutline,
-            ClockCircleOutline, DisconnectOutline, ExpandOutline, FontSizeOutline, GlobalOutline, LineOutline, PictureOutline, SelectOutline, UndoOutline, UnlockOutline, VerticalAlignBottomOutline,
+            ClockCircleOutline, DisconnectOutline, ExpandOutline, FontSizeOutline, GlobalOutline, LineOutline, PictureOutline, SelectOutline, SnippetsOutline, UndoOutline, UnlockOutline, VerticalAlignBottomOutline,
             VerticalAlignTopOutline, VideoCameraOutline);
     }
 }

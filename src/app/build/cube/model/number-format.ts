@@ -41,3 +41,15 @@ export function formatNumber(value: any, format?: NumberFormat | null): string {
     }
     return (format.prefix || '') + text + (unit ? unit.mark : '') + (format.suffix || '');
 }
+
+/**
+ * One frame of a figure rolling from one value to another: eased out, so it slows into the target, and kept to
+ * the decimals the target has, so the digits do not flicker through a long fraction on the way
+ */
+export function rollFrame(from: number, to: number, progress: number): number {
+    if (progress >= 1) return to;
+    const eased = 1 - Math.pow(1 - Math.max(0, progress), 3);
+    const decimals = Math.min(10, (String(to).split('.')[1] || '').length);
+    const factor = Math.pow(10, decimals);
+    return Math.round((from + (to - from) * eased) * factor) / factor;
+}

@@ -1,0 +1,29 @@
+// The frame of the data screen editor: layer panel, property panel, filter row on a screen, zoom control, rulers,
+// context menu. It is dark whatever theme the application is in (the application's own theme is left alone), so
+// these are literal colors, kept here once and imported by reference by every component that draws the frame.
+// The rulers are drawn on canvases and read the same values through the CSS properties of .editor-chrome-vars().
+
+@chrome: #11161d;              // panels
+@chrome-edge: #222b36;         // their borders and dividers
+@chrome-hover: #1a222c;        // a row or item under the pointer
+@chrome-ink: #c9d6e2;          // text
+@chrome-muted: #7f90a3;        // secondary text, ruler labels
+@chrome-faint: #4b5868;        // disabled
+@chrome-tick: #3a4757;         // ruler ticks
+// The editor's highlight follows the accent of the screen being edited: the designer sets --cube-chrome-accent on
+// the document (dropdowns and menus live in the overlay container, outside the designer). It is a CSS value,
+// not a Less color, so a tint of it is written with color-mix, never fade():
+//     ~"color-mix(in srgb, @{chrome-accent} 14%, transparent)"
+@chrome-accent: ~"var(--cube-chrome-accent, #22d3ee)";
+@chrome-field: #0b0f14;        // inputs on the frame
+@chrome-field-edge: #2c3744;
+@chrome-desk: #0a0d11;         // the desk around the sheet in the designer
+@chrome-sheet-edge: #2c3640;   // the outline of the sheet
+
+// The colors a canvas drawing of the frame needs, as CSS properties on the element it reads them from
+.editor-chrome-vars() {
+    --chrome: @chrome;
+    --chrome-edge: @chrome-edge;
+    --chrome-muted: @chrome-muted;
+    --chrome-tick: @chrome-tick;
+}

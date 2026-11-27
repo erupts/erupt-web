@@ -497,6 +497,14 @@
                                     </nz-form-control>
                                 </nz-form-item>
                             }
+                            @if (report.type === ReportType.TABLE) {
+                                <nz-form-item>
+                                    <nz-form-label>{{ 'cube.report.config.auto_scroll' | translate }}</nz-form-label>
+                                    <nz-form-control [nzExtra]="'cube.report.config.auto_scroll_hint' | translate">
+                                        <nz-switch [(ngModel)]="report.ui['autoScroll']" name="autoScroll"></nz-switch>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            }
                             @if (report.type === ReportType.MAP) {
                                 <nz-form-item>
                                     <nz-form-label>{{ 'cube.report.config.map.select' | translate }}</nz-form-label>

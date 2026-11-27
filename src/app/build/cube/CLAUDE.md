@@ -83,9 +83,14 @@ actions) and differ in what places it:
 - the DSL of a dashboard that was never edited is empty: `ngOnInit` fills in `settings`, `reports` and `filters`
   once, so templates and "add" handlers read them without guards;
 - the application's theme is left alone on a screen page (switching the whole app to dark while a screen is open
-  was tried and rejected). The editor chrome (layer panel, property panel, filter row, zoom control) and the
-  filter controls on a screen are dark by their own literal colors, the same `@chrome-*` values repeated in the
-  dashboard less, `cube-screen-props.less` and the filter control's less. `cube-puzzle-filter-control` takes
+  was tried and rejected). The editor chrome (layer panel, property panel, filter row, zoom control, rulers,
+  context menu) and the filter controls on a screen are dark by literal colors kept once in
+  `style/editor-chrome.less` (`@chrome-*`), which the dashboard less, `cube-screen-props.less` and the filter
+  control's less import by reference; the ruler canvases read them as CSS properties (`.editor-chrome-vars()` on
+  the design viewport). The frame's highlight (`@chrome-accent`) follows the accent of the screen:
+  `--cube-chrome-accent`, set on the document by `syncChromeAccent()` (not on the designer's root: filter
+  dropdowns and the context menu open in the overlay container, outside it). It is a CSS value, so a tint is
+  `color-mix`, never `fade()`. On the stage itself the accent stays `var(--screen-accent, #22d3ee)`. `cube-puzzle-filter-control` takes
   `[dark]` and passes `cube-dark-dropdown` as the dropdown class of its select and date pickers, whose panels
   live in the overlay container and are styled by the global block at the end of the filter control's less. A
   new kind of control on the frame needs its dark dressing added there;
@@ -108,8 +113,22 @@ actions) and differ in what places it:
 - undo / redo is `ScreenHistory` (`model/screen-history.ts`, with a spec). It is kept by looking: a timer compares
   the reports with the last step every 300 ms and records a difference, skipping while a mouse button is down so a
   drag is one step. Nothing that changes a report has to notify it. A step is restored into the same objects, so
-  components survive; charts whose content (not frame) changed are re-queried. It covers `dsl.reports` only, not
-  the screen settings or filters.
+  components survive; charts whose content (not frame) changed are re-queried. The settings and the filter
+  definitions ride along as `extras` (`historyExtras()`; a filter's `value` is left out, it is what the viewer
+  picked): when a step brings them back they are put in place, the layout re-applied and every chart re-queried.
+- unsaved edits: `beforeunload` and the route's `canDeactivate` (`canLeave()`) ask before they are lost, except in
+  reuse-tab URL mode, which keeps the page. They compare the DSL at that moment with what it was when editing
+  began or was last saved (`signature()`, filter values and empty objects left out); nothing polls for it.
+  Ctrl / cmd + S is `saveInPlace()`: it saves and stays in the edit state (the save button saves and leaves it);
+- the editor's context menu (`openStageMenu`, `#stageMenu`) opens on a report, its layer row or the empty canvas and
+  acts on the selection. It is opened on a CDK overlay directly, not through `NzContextMenuService`: that service
+  closes on any scroll, and a table scrolling its rows (auto scroll, or a refresh) closed the menu before it was
+  placed, leaving it in the top left corner. ng-zorro wraps an item's content in `.ant-menu-title-content`, so the
+  item layout is styled through `::ng-deep`; the shortcut sheet (`showShortcuts`, `?`) lists `shortcuts`, which must follow
+  `onKeydown`;
+- rulers (`drawRulers`, two canvases over the viewport, not on the scaled stage) follow the zoom and pan; a guide
+  is pulled out of a ruler and dropped back on it to remove it. Guides are kept per dashboard in `localStorage`
+  (`cube-screen-guides-{code}`), not in the DSL, and handed to moveable as guidelines (`ScreenEditor.guides`).
 - how a report behaves as an object of the screen is kept under `report.ui.screen` (`ReportScreenStyle`): `locked`
   (the canvas cannot pick it, `pointer-events: none` lets a press reach what lies below; selectable from the layer
   panel but not movable), `hidden` (`display: none` in the editor and published alike, so it is never queried) and
@@ -120,6 +139,14 @@ actions) and differ in what places it:
 - a KPI is written by `report.ui.format` (`NumberFormat` in `model/number-format.ts`, with a spec): thousands
   separator, unit, decimals, prefix, suffix; without one the raw value is shown as before. The property panel
   edits it;
+- on a data screen a KPI rolls to each new figure (`rollKpi()`, frames from `rollFrame()` in `number-format.ts`),
+  from zero on first load. The frames run outside Angular and write the text node `{{ kpiText }}` renders into,
+  never `textContent`, which would replace the node Angular keeps writing. Other dashboards show the figure at
+  once, and so does a screen when the viewer asks for reduced motion;
+- a table scrolls its rows by itself when `report.ui.autoScroll` is on (the report dialog's custom tab), at a
+  fixed 30 px/s: it rests at the bottom, jumps to the top and rests, waits under the
+  mouse, and carries on from where a hand scroll left it (`startAutoScroll()`, outside Angular as well). It works
+  on any dashboard, not only a screen;
 - the background image is uploaded from the settings dialog through the core attachment endpoint
   (`/file/upload/CubeDashboard/background`), which needs the transient `background` field declared on the
   `CubeDashboard` entity; the stored path is kept as `/erupt-attachment/...` in `settings.backgroundImage` and
@@ -133,6 +160,7 @@ actions) and differ in what places it:
   of the stage chrome: in the screen block of the dashboard less `@accent` is that variable, so a tint of it is
   written with `color-mix`, never `fade()`. `palette` (`model/screen-palette.ts`, with a spec) gives charts their
   series colors, a single-series chart taking the first; `ACCENT` derives tints from the accent. `headerStyle`,
-  `titleSize`, `logo`, `clock`, `clockFormat` shape the title bar (its height stays `SCREEN_HEADER_HEIGHT`);
-  `panelTitleSize` is `--screen-panel-title`, `numberFont` a class on the stage, and `chartFontSize` selects a G2
+  `titleSize`, `titleColor`, `logo`, `clock`, `clockFormat` shape the title bar (its height stays
+  `SCREEN_HEADER_HEIGHT`); `panelTitleSize` is `--screen-panel-title` and `panelTitleColor`
+  `--screen-panel-title-color` (blank = the stage's ink), `numberFont` a class on the stage, and `chartFontSize` selects a G2
   theme registered per size (`screenTheme()`); the ECharts map and the S2 pivot do not follow it yet.

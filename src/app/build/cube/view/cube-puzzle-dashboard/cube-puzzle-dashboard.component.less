@@ -1,3 +1,5 @@
+@import (reference) '../../style/editor-chrome.less';
+
 :host {
     height: 100%;
     overflow: auto;
@@ -6,6 +8,18 @@
 @keyframes sk-shimmer {
     0%   { background-position: 100% 50%; }
     100% { background-position: 0%   50%; }
+}
+
+// the scan panel's band: from above the panel to below it (its height is 30% of the panel)
+@keyframes screen-scan {
+    from { transform: translateY(-100%); }
+    to   { transform: translateY(334%); }
+}
+
+// the flow panel's spark: across the frame from left to right
+@keyframes screen-flow {
+    from { background-position: 100% 0; }
+    to   { background-position: 0 0; }
 }
 
 .cube-skeleton {
@@ -389,15 +403,19 @@
         gap: 2px;
         padding: 3px;
         border-radius: 6px;
-        border: 1px solid #222b36;
-        background: #11161d;
-        color: #c9d6e2;
+        border: 1px solid @chrome-edge;
+        background: @chrome;
+        color: @chrome-ink;
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 
         button {
             width: 26px;
             padding: 0;
-            color: #c9d6e2;
+            color: @chrome-ink;
+
+            &.on {
+                color: @chrome-accent;
+            }
 
             &:hover {
                 color: #fff;
@@ -452,12 +470,128 @@
         }
 
         &.screen-design {
-            background-color: #0a0d11;
+            .editor-chrome-vars();
+
+            // rulers along the top and the left edge, drawn on canvases, and the square where they meet
+            .screen-ruler {
+                position: absolute;
+                z-index: 15;
+                display: block;
+            }
+
+            .ruler-top {
+                top: 0;
+                left: 0;
+                width: 100%;
+                cursor: row-resize;
+            }
+
+            .ruler-left {
+                top: 0;
+                left: 0;
+                height: 100%;
+                cursor: col-resize;
+            }
+
+            .screen-ruler-corner {
+                position: absolute;
+                z-index: 16;
+                top: 0;
+                left: 0;
+                background: @chrome;
+                border-right: 1px solid @chrome-edge;
+                border-bottom: 1px solid @chrome-edge;
+            }
+
+            // the guides: a hairline with a wider band to grab, the coordinate shown while hovering or dragging
+            .screen-guides {
+                position: absolute;
+                inset: 0;
+                z-index: 14;
+                overflow: hidden;
+                pointer-events: none;
+            }
+
+            .screen-guide {
+                position: absolute;
+                pointer-events: auto;
+
+                &::before {
+                    content: '';
+                    position: absolute;
+                    background: #f43f5e;
+                }
+
+                span {
+                    position: absolute;
+                    display: none;
+                    padding: 0 4px;
+                    border-radius: 2px;
+                    font: 10px/16px ui-monospace, Menlo, monospace;
+                    color: #fff;
+                    background: #f43f5e;
+                    white-space: nowrap;
+                }
+
+                &:hover span, &.guide-dragging span {
+                    display: block;
+                }
+
+                &.guide-h {
+                    left: 0;
+                    right: 0;
+                    height: 7px;
+                    margin-top: -3px;
+                    cursor: row-resize;
+
+                    &::before {
+                        left: 0;
+                        right: 0;
+                        top: 3px;
+                        height: 1px;
+                    }
+
+                    span {
+                        left: 24px;
+                        top: -14px;
+                    }
+                }
+
+                &.guide-v {
+                    top: 0;
+                    bottom: 0;
+                    width: 7px;
+                    margin-left: -3px;
+                    cursor: col-resize;
+
+                    &::before {
+                        top: 0;
+                        bottom: 0;
+                        left: 3px;
+                        width: 1px;
+                    }
+
+                    span {
+                        top: 24px;
+                        left: 8px;
+                    }
+                }
+
+                &.guide-dragging {
+                    pointer-events: none;
+
+                    &::before {
+                        background: #fb7185;
+                    }
+                }
+            }
+
+            background-color: @chrome-desk;
             background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
             background-size: 16px 16px !important;
 
             .puzzle-stage {
-                box-shadow: 0 0 0 1px #2c3640, 0 12px 40px rgba(0, 0, 0, 0.5);
+                box-shadow: 0 0 0 1px @chrome-sheet-edge, 0 12px 40px rgba(0, 0, 0, 0.5);
             }
 
             &.screen-backdrop .puzzle-stage {
@@ -686,7 +820,7 @@
                     font-size: var(--screen-panel-title, 15px);
                     font-weight: 600;
                     letter-spacing: 0.06em;
-                    color: @ink;
+                    color: var(--screen-panel-title-color, @ink);
 
                     &::before {
                         content: '';
@@ -756,6 +890,11 @@
 
             .puzzle-content {
                 background: none !important;
+            }
+
+            // no chrome at all, the rule under the title included
+            ::ng-deep .ant-card-head {
+                border-bottom-color: transparent;
             }
         }
 
@@ -875,6 +1014,104 @@
             }
         }
 
+        // The frame over a faint grid drawn in the accent
+        .puzzle-item.panel-grid {
+            @g: ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 8%, transparent)";
+
+            .puzzle-content {
+                background:
+                    linear-gradient(@g 1px, transparent 1px) 0 0 / 20px 20px,
+                    linear-gradient(90deg, @g 1px, transparent 1px) 0 0 / 20px 20px,
+                    linear-gradient(150deg, #0b1624, #08111c 66%) !important;
+            }
+        }
+
+        // A dark glass card lit from two corners: the accent at the top left, a violet turn of it at the bottom right
+        .puzzle-item.panel-aurora {
+            border-color: rgba(255, 255, 255, 0.08);
+            border-radius: 14px;
+
+            .puzzle-content {
+                border-radius: 13px;
+                background:
+                    radial-gradient(120% 80% at 0% 0%, ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 26%, transparent)", transparent 62%),
+                    radial-gradient(90% 70% at 100% 100%, ~"color-mix(in srgb, color-mix(in srgb, var(--screen-accent, #22d3ee), #a855f7) 24%, transparent)", transparent 62%),
+                    linear-gradient(160deg, #0c1626, #070d18) !important;
+            }
+
+            ::ng-deep .ant-card-head {
+                border-bottom-color: rgba(255, 255, 255, 0.06);
+            }
+        }
+
+        // A hologram: fine scanlines, a tinted top, and a band of light sweeping down the panel
+        .puzzle-item.panel-scan {
+            border-color: ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 35%, transparent)";
+
+            .puzzle-content {
+                position: relative;
+                background:
+                    repeating-linear-gradient(0deg, ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 6%, transparent)" 0 1px, transparent 1px 3px),
+                    linear-gradient(180deg, ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 10%, transparent)", transparent 40%),
+                    #07121d !important;
+
+                // the sweep is clipped by the content, so it never leaves the panel
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 30%;
+                    pointer-events: none;
+                    background: linear-gradient(180deg, transparent, ~"color-mix(in srgb, var(--screen-accent, #22d3ee) 12%, transparent)", transparent);
+                    animation: screen-scan 5s linear infinite;
+                }
+            }
+        }
+
+        // A spark of the accent running along the frame
+        .puzzle-item.panel-flow {
+            border-color: fade(@line, 55%);
+
+            &::after {
+                content: '';
+                position: absolute;
+                inset: -1px;
+                padding: 1px;
+                pointer-events: none;
+                background: linear-gradient(90deg, transparent 35%, @accent 50%, transparent 65%) 0 0 / 300% 100%;
+                // only the 1px ring between the padding box and the content box shows
+                -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+                -webkit-mask-composite: xor;
+                mask-composite: exclude;
+                animation: screen-flow 3.5s linear infinite;
+            }
+        }
+
+        // A raised card: rounded, a highlight on its top edge and a deep shadow under it
+        .puzzle-item.panel-raised {
+            border-color: transparent;
+            border-radius: 10px;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35);
+
+            .puzzle-content {
+                border-radius: 10px;
+                background: linear-gradient(180deg, #15253b, #0b1524) !important;
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), inset 0 -1px 0 rgba(0, 0, 0, 0.45);
+            }
+
+            ::ng-deep .ant-card-head {
+                border-bottom-color: rgba(255, 255, 255, 0.05);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .puzzle-item.panel-scan .puzzle-content::after, .puzzle-item.panel-flow::after {
+                animation: none;
+            }
+        }
+
         &.screen-view .item-actions {
             display: none;
         }
@@ -888,14 +1125,7 @@
 
     // ── the editor of a data screen ───────────────────────────────
     // Its chrome (layer list, property panel, filter row, zoom control) is one dark frame around the dark
-    // stage, whatever theme the application is in: the application's own theme is left alone, and these few
-    // components carry literal colors instead. cube-screen-props and the filter control repeat them.
-    @chrome: #11161d;        // panels
-    @chrome-edge: #222b36;   // their borders
-    @chrome-hover: #1a222c;
-    @chrome-ink: #c9d6e2;
-    @chrome-muted: #7f90a3;
-    @chrome-accent: #22d3ee;
+    // stage, whatever theme the application is in; the colors are style/editor-chrome.less.
 
     .layer-panel {
         flex-shrink: 0;
@@ -956,7 +1186,7 @@
         }
 
         &.active {
-            background: fade(@chrome-accent, 12%);
+            background: ~"color-mix(in srgb, @{chrome-accent} 12%, transparent)";
             color: #e9fbff;
 
             &::before {
@@ -1055,7 +1285,7 @@
         // One line, always: a row that wraps would push the stage down and rescale it. Filters that do not
         // fit scroll sideways, and the buttons stay put at the right end.
         scrollbar-width: thin;
-        scrollbar-color: #2c3744 transparent;
+        scrollbar-color: @chrome-field-edge transparent;
 
         .filter-items {
             flex: 1;
@@ -1081,12 +1311,26 @@
 
         .ant-btn:not(.ant-btn-primary):not(.ant-btn-text) {
             background: @chrome-hover;
-            border-color: #2c3744;
+            border-color: @chrome-field-edge;
             color: @chrome-ink;
 
             &:hover {
                 border-color: @chrome-accent;
                 color: #fff;
+            }
+        }
+
+        // the query button is the row's one call to action: in the screen's accent, not the application's primary
+        .ant-btn-primary {
+            background: @chrome-accent;
+            border-color: @chrome-accent;
+            color: #04080f;
+            box-shadow: none;
+
+            &:hover {
+                background: ~"color-mix(in srgb, @{chrome-accent} 85%, #fff)";
+                border-color: ~"color-mix(in srgb, @{chrome-accent} 85%, #fff)";
+                color: #04080f;
             }
         }
     }
@@ -1388,4 +1632,138 @@
         background: var(--erupt-fill-tertiary, rgba(0, 0, 0, 0.02)) !important;
     }
 
+}
+
+// the editor's context menu, dark like the rest of the editor chrome. ng-zorro wraps an item's content in a
+// span of its own (.ant-menu-title-content), which only ::ng-deep reaches
+.cube-stage-menu {
+    min-width: 216px;
+    padding: 4px;
+    border: 1px solid @chrome-edge;
+    border-radius: 8px;
+    background: @chrome;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(0, 0, 0, 0.3);
+
+    li[nz-menu-item] {
+        margin: 0;
+        padding: 0 8px;
+        height: 30px;
+        line-height: 30px;
+        border-radius: 5px;
+        font-size: 13px;
+        color: @chrome-ink;
+        transition: background 0.12s;
+
+        ::ng-deep .ant-menu-title-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        [nz-icon] {
+            width: 14px;
+            font-size: 14px;
+            color: @chrome-muted;
+        }
+
+        kbd {
+            margin-left: auto;
+            padding-left: 20px;
+            font: 11px ui-monospace, Menlo, monospace;
+            letter-spacing: 0.05em;
+            color: @chrome-muted;
+            background: none;
+            border: none;
+        }
+
+        &:hover {
+            background: @chrome-hover;
+
+            [nz-icon] {
+                color: @chrome-ink;
+            }
+        }
+
+        &.ant-dropdown-menu-item-disabled {
+            color: @chrome-faint;
+            background: none;
+
+            [nz-icon], kbd {
+                color: @chrome-faint;
+            }
+        }
+
+        &.ant-dropdown-menu-item-danger:not(.ant-dropdown-menu-item-disabled) {
+            color: #ff7875;
+
+            [nz-icon] {
+                color: #ff7875;
+            }
+
+            &:hover {
+                color: #fff;
+                background: #a8071a;
+
+                [nz-icon], kbd {
+                    color: #fff;
+                }
+            }
+        }
+    }
+
+    li[nz-menu-divider] {
+        margin: 4px 2px;
+        height: 1px;
+        background: @chrome-edge;
+    }
+}
+
+// the shortcut sheet
+.cube-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 4px 28px;
+
+    h4 {
+        margin: 8px 0 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--erupt-text-secondary, #8c8c8c);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .shortcut-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 5px 0;
+        border-bottom: 1px dashed var(--erupt-border-secondary, #f0f0f0);
+    }
+
+    .shortcut-keys {
+        display: inline-flex;
+        gap: 4px;
+        flex-shrink: 0;
+    }
+
+    kbd {
+        min-width: 22px;
+        padding: 1px 6px;
+        border: 1px solid var(--erupt-border, #d9d9d9);
+        border-bottom-width: 2px;
+        border-radius: 4px;
+        font: 11px/18px ui-monospace, Menlo, monospace;
+        text-align: center;
+        background: var(--erupt-fill-quaternary, #fafafa);
+    }
+
+    .shortcut-tip {
+        grid-column: 1 / -1;
+        margin: 12px 0 0;
+        font-size: 12px;
+        color: var(--erupt-text-secondary, #8c8c8c);
+    }
 }

@@ -89,6 +89,11 @@ export enum ScreenPanel {
     CHAMFER = 'chamfer',    // two corners cut off
     HEADLINE = 'headline',  // no frame, the title on a band
     GLASS = 'glass',        // a rounded, translucent card
+    GRID = 'grid',          // the frame over a faint grid
+    AURORA = 'aurora',      // a dark glass card lit from two corners
+    SCAN = 'scan',          // a hologram: scanlines and a sweeping band of light
+    FLOW = 'flow',          // a spark running along the frame
+    RAISED = 'raised',      // a rounded card standing off the stage on a shadow
 }
 
 /** How the title bar of a screen is laid out */
@@ -126,10 +131,12 @@ export interface ScreenSettings {
     palette?: ScreenPalette;
     headerStyle?: ScreenHeader;
     titleSize?: number;             // px, of the screen title
+    titleColor?: string;            // blank = the stage's ink
     logo?: string;                  // an image in place of the title's mark
     clock?: boolean;
     clockFormat?: string;           // an Angular date format
     panelTitleSize?: number;        // px, of a report's title
+    panelTitleColor?: string;       // blank = the stage's ink
     numberFont?: ScreenNumberFont;
     chartFontSize?: number;         // px, of axis labels and legends
 }

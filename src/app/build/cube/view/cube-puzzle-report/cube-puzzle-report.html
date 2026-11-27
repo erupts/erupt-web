@@ -25,7 +25,7 @@
         @if (report.type === ReportType.KPI) {
             <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; gap: 6px;">
                 @if (chartData && chartData.length > 0) {
-                    <span [style.font-size]="(report.ui['fontSize'] || 22) + 'px'"
+                    <span #kpiValue [style.font-size]="(report.ui['fontSize'] || 22) + 'px'"
                           class="kpi-value"
                           [style.color]="report.ui['color']">
                         {{ kpiText }}
@@ -40,7 +40,8 @@
             </div>
         }
         @if (report.type === ReportType.TABLE) {
-            <div #tableContainer style="height: 100%; width: 100%; display: flex; flex-direction: column;">
+            <div #tableContainer style="height: 100%; width: 100%; display: flex; flex-direction: column;"
+                 (mouseenter)="tableHovered = true" (mouseleave)="tableHovered = false">
                 <!-- Active filter display area -->
                 @if (activeFilters.size > 0) {
                     <div class="filter-tags-container">

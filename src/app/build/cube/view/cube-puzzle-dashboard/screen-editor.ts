@@ -42,7 +42,7 @@ export class ScreenEditor {
      * @param width  width of the canvas in its own pixels (the design resolution)
      * @param height height of the canvas in its own pixels
      */
-    constructor(private readonly canvas: HTMLElement, width: number, height: number) {
+    constructor(private readonly canvas: HTMLElement, private readonly width: number, private readonly height: number) {
         this.moveable = new Moveable(canvas, {
             draggable: true,
             resizable: true,
@@ -116,6 +116,12 @@ export class ScreenEditor {
         if (!this.moveable.draggable) return;
         this.els.forEach((el, i) => this.change(el, {x: this.frames[i].x + x, y: this.frames[i].y + y}));
         this.refresh();
+    }
+
+    /** Snaps to the designer's own guides as well as to the canvas edges and center lines */
+    guides(vertical: number[], horizontal: number[]): void {
+        this.moveable.verticalGuidelines = [0, this.width / 2, this.width, ...vertical];
+        this.moveable.horizontalGuidelines = [0, this.height / 2, this.height, ...horizontal];
     }
 
     /** The stage is shown at this scale: keep the handles their size on the display */
