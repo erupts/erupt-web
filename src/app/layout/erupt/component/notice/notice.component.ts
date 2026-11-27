@@ -32,7 +32,11 @@ export class NoticeComponent implements OnInit, OnDestroy {
     pageSize = 10;
     total = 0;
     searchKeyword: string = ''; // search keyword
-    onlyUnread: boolean = true; // show only unread
+    private static readonly ONLY_UNREAD_KEY = "notice-only-unread";
+
+    // all messages by default, unread ones carry a red dot; the checkbox narrows to unread
+    // and is remembered across openings
+    onlyUnread: boolean = localStorage.getItem(NoticeComponent.ONLY_UNREAD_KEY) === "true";
 
     scene: number;
     scenes: NoticeScene[] = [];
@@ -83,6 +87,7 @@ export class NoticeComponent implements OnInit, OnDestroy {
 
     onOnlyUnreadChange(onlyUnread: boolean): void {
         this.onlyUnread = onlyUnread;
+        localStorage.setItem(NoticeComponent.ONLY_UNREAD_KEY, String(onlyUnread));
         this.pageIndex = 1;
         this.loadMessages();
     }
