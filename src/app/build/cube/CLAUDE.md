@@ -59,7 +59,9 @@ actions) and differ in what places it:
 - the published view of a screen shows no filter row and no report actions, so filter defaults are applied by
   `applyFilterDefaults()` when the DSL loads rather than by the filter controls;
 - screen mode forces `DashboardTheme.DARK`; the screen chrome (header, panel styles, backdrop) lives in the
-  `.gridster-wrapper.screen-viewport` block of the dashboard less, uses literal colors on purpose and follows the
+  `.gridster-wrapper.screen-viewport` block, which is `cube-screen-stage.less`, a second stylesheet of the
+  dashboard component: one file went over the 40 kB component style budget and failed the production build
+  (`anyComponentStyle` in angular.json; a development build does not check it). It uses literal colors on purpose and follows the
   erupt-iot hall (`erupt-iot.html` in the core repo): near-black navy, hairline borders, one cyan accent,
   monospace figures. Charts take the transparent `erupt-screen` G2 theme and `SCREEN_PALETTE` from the report
   component. `ScreenPanel.NONE` draws no panel at all, for a report laid over another one.
