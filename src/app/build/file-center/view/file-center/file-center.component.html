@@ -1,28 +1,38 @@
 <div class="fc">
     <div class="fc-toolbar">
+        <!-- where you are: the store, then the folders down to the open one -->
         <div class="fc-crumbs">
+            <i class="fa fa-folder-open-o fc-crumbs-icon"></i>
             @for (crumb of crumbs(); track crumb.path; let last = $last) {
                 <a (click)="openCrumb(crumb.path)" [class.last]="last">{{ crumb.name }}</a>
                 @if (!last) {
-                    <span class="sep">/</span>
+                    <i class="fa fa-angle-right sep"></i>
                 }
             }
         </div>
-        <input nz-input class="fc-search" [(ngModel)]="filter" [placeholder]="t('search')">
-        <input type="file" #picker multiple hidden (change)="upload(currentDir(), picker.files)">
-        <button nz-button nzType="primary" [disabled]="!writable" (click)="pick(picker)">
-            <i class="fa fa-upload"></i> {{ t('upload') }}
+        <nz-input-group nzSize="small" class="fc-search" [nzPrefix]="searchIcon">
+            <input nz-input nzSize="small" [(ngModel)]="filter" [placeholder]="t('search')">
+        </nz-input-group>
+        <ng-template #searchIcon><i class="fa fa-search"></i></ng-template>
+        <span class="fc-divider"></span>
+        <!-- what acts on the selection is an icon; what adds something says so -->
+        <button nz-button nzSize="small" nzType="text" class="fc-icon-btn" [disabled]="!writable || !selected()"
+                nz-tooltip [nzTooltipTitle]="t('rename')" (click)="startRename()">
+            <i class="fa fa-i-cursor"></i>
         </button>
-        <button nz-button [disabled]="!writable || !columns.length" (click)="startMkdir()">
-            <i class="fa fa-folder-o"></i> {{ t('new_folder') }}
-        </button>
-        <button nz-button [disabled]="!writable || !selected()" (click)="startRename()">
-            <i class="fa fa-i-cursor"></i> {{ t('rename') }}
-        </button>
-        <button nz-button nzDanger [disabled]="!writable || !selected()"
+        <button nz-button nzSize="small" nzType="text" nzDanger class="fc-icon-btn" [disabled]="!writable || !selected()"
+                nz-tooltip [nzTooltipTitle]="t('delete')"
                 nz-popconfirm [nzPopconfirmTitle]="t('confirm_delete')" nzPopconfirmPlacement="bottomRight"
                 (nzOnConfirm)="remove()">
-            <i class="fa fa-trash-o"></i> {{ t('delete') }}
+            <i class="fa fa-trash-o"></i>
+        </button>
+        <span class="fc-divider"></span>
+        <button nz-button nzSize="small" [disabled]="!writable || !columns.length" (click)="startMkdir()">
+            <i class="fa fa-folder-o"></i> {{ t('new_folder') }}
+        </button>
+        <input type="file" #picker multiple hidden (change)="upload(currentDir(), picker.files)">
+        <button nz-button nzSize="small" nzType="primary" [disabled]="!writable" (click)="pick(picker)">
+            <i class="fa fa-upload"></i> {{ t('upload') }}
         </button>
     </div>
 
